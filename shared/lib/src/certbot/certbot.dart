@@ -36,6 +36,8 @@ class Certbot {
   static const LIVE_WWW_PATH = '/etc/nginx/live';
 
   static final Certbot _self = Certbot._internal();
+
+  bool _sendToStdout = false;
   factory Certbot() => _self;
 
   /// The certbot log file
@@ -97,10 +99,10 @@ class Certbot {
       symlink('/etc/nginx/custom', LIVE_WWW_PATH);
       _deploy(hostname, domain);
     } else {
-      printerr('*' * 90);
-      printerr(
-          "Nginx-LE is starting in 'Certificate Acquisition' mode. It will only respond to CertBot validation requests.");
-      printerr('*' * 90);
+      printerr(red('*') * 100);
+      printerr(red(
+          "Nginx-LE is starting in 'Certificate Acquisition' mode. It will only respond to CertBot validation requests."));
+      printerr('*' * 100);
 
       /// symlink in the http configs which only permit certbot access
       symlink('/etc/nginx/acquire', LIVE_WWW_PATH);
@@ -299,7 +301,11 @@ class Certbot {
   }
 
   void log(String message) {
-    logfile.append(message);
+    if (_sendToStdout) {
+      print(message);
+    } else {
+      logfile.append(message);
+    }
   }
 
   void logError(String message) {
@@ -381,6 +387,10 @@ class Certbot {
       createDir(dir, recursive: true);
     }
     return dir;
+  }
+
+  void sendToStdout() {
+    _sendToStdout = true;
   }
 }
 
