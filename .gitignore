@@ -1,0 +1,15 @@
+container/.dart_tool
+shared/.dart_tool
+shared/.packages
+shared/.dart_tool/package_config.json
+update-dshell.txt
+
+
+shared/.dart_tool/package_config.json
+shared/.packages
+update-dshell.txt
+cli/bin/nginx-le
+
+.bash_history
+.vscode/
+nginx-le.code-workspace
