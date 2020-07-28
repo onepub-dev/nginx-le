@@ -70,7 +70,6 @@ class Image {
 
   void delete() {
     'docker image rm $imageid'.run;
-    
   }
 
   @override
