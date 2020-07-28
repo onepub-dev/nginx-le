@@ -43,8 +43,10 @@ void certbot_dns_auth_hook() {
 
   /// our own envs.
   var domain = env('DOMAIN');
+  Certbot().log('DOMAIN: $domain');
   var hostname = env('HOSTNAME');
-  var tld = env('CERTBOT_TLD');
+  Certbot().log('HOSTNAME: $hostname');
+  var tld = env('TLD');
   Certbot().log('tld: $tld');
   var username = env(NAMECHEAP_API_USER);
   Certbot().log('username: $username');

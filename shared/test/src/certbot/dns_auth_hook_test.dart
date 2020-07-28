@@ -5,24 +5,24 @@ import 'package:test/test.dart';
 
 /// You must run this command with the console option.
 void main() {
-  test('dns_auth_hook', () {
-    Settings().setVerbose(enabled: true);
-    prepareCertHooks();
+  //test('dns_auth_hook', () {
+  Settings().setVerbose(enabled: true);
+  prepareCertHooks();
 
-    setNameCheapAuthDetails();
+  Certbot().sendToStdout();
 
-    certbot_dns_auth_hook();
-  });
+  certbot_dns_auth_hook();
+  // });
 
-  test('dns_cleanup_hook', () {
-    Settings().setVerbose(enabled: true);
+  // test('dns_cleanup_hook', () {
+  //   Settings().setVerbose(enabled: true);
 
-    prepareCertHooks();
+  //   prepareCertHooks();
 
-    setNameCheapAuthDetails();
+  //   setNameCheapAuthDetails();
 
-    certbot_dns_cleanup_hook();
-  });
+  //   certbot_dns_cleanup_hook();
+  // });
 }
 
 void prepareCertHooks() {
