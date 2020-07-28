@@ -67,15 +67,17 @@ class Challenge {
     return waitForRecordToBeVisible(
         certRecord: certRecord,
         hostname: hostname,
+        domain: domain,
         tld: tld,
         certBotAuthKey: certbotAuthKey);
   }
 
   bool waitForRecordToBeVisible(
-      {DNSRecord certRecord,
-      String hostname,
-      String tld,
-      String certBotAuthKey}) {
+      {@required DNSRecord certRecord,
+      @required String hostname,
+      @required String domain,
+      @required String tld,
+      @required String certBotAuthKey}) {
     var found = false;
 
     // wait for upto an hour for namecheap to update the visible dns entry.
@@ -84,9 +86,11 @@ class Challenge {
     Certbot().log('Waiting for challenge "$certBotAuthKey" be visible');
     while (!found && retryAttempts < 360) {
       // ignore: unnecessary_cast
-      var token = 'dig +short ${challengeHost(hostname: hostname)} TXT'
-          .toList(nothrow: true);
-      print('dig returned: $token');
+      var dig = 'dig +short ${challengeHost(hostname: hostname)}.${domain} TXT';
+      Certbot().log('running $dig');
+      var token = dig.toList(nothrow: true);
+
+      Certbot().log('dig returned token $token');
 
       if (token != null && token.isNotEmpty) {
         var challenge = token[0];
