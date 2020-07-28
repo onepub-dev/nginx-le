@@ -1,0 +1,31 @@
+import 'package:dshell/dshell.dart';
+import 'package:nginx_le_shared/nginx_le_shared.dart';
+
+void main() {
+  var cmd = '''docker create 
+      --name="nginx-le" 
+      --env=HOST=www
+      --env=DOMAIN=noojee.org 
+      --env=TLD=org
+      --env=MODE=private 
+      --env=EMAIL_ADDRESS=bsutton@noojee.com.au 
+      --env=DEBUG=false 
+      --net=host --log-driver=journald -v certificates:/etc/letsencrypt 4bbc656ae28c''';
+
+  var lines = <String>[];
+  var progress =
+      Progress((line) => lines.add(line), stderr: (line) => lines.add(line));
+
+  cmd.replaceAll('\n', ' ').start(nothrow: true, progress: progress);
+
+  if (progress.exitCode != 0) {
+    printerr(red('docker create failed with exitCode ${progress.exitCode}'));
+    lines.forEach(print);
+  } else {
+    // only the first 12 characters are actually used to start/stop containers.
+    var containerid = lines[0].substring(0, 12);
+    if (Containers().findByContainerId(containerid) == null) {
+      printerr(red('Docker failed to create the container!'));
+    }
+  }
+}
