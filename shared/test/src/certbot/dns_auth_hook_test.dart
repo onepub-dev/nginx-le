@@ -3,7 +3,6 @@ import 'package:dshell/dshell.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:test/test.dart';
 
-
 /// You must run this command with the console option.
 void main() {
   test('dns_auth_hook', () {
