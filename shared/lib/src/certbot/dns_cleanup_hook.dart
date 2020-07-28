@@ -27,7 +27,7 @@ void certbot_dns_cleanup_hook() {
   /// our own envs.
   var domain = env('DOMAIN');
   var hostname = env('HOSTNAME');
-  var tld = env('CERTBOT_TLD');
+  var tld = env('TLD');
   Certbot().log('tld: $tld');
   var username = env(NAMECHEAP_API_USER);
   Certbot().log('username: $username');

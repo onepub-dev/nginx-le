@@ -37,7 +37,7 @@ void dns_auth_acquire({
 
   /// Pass environment vars down to the auth hook.
   setEnv('LOG_FILE', join(logDir, 'letsencrypt.log'));
-  setEnv('CERTBOT_TLD', tld);
+  setEnv('TLD', tld);
 
   /// These are set via in the Dockerfile
   var auth_hook = env('CERTBOT_DNS_AUTH_HOOK_PATH');
