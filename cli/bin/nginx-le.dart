@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
-import 'package:meta/meta.dart';
 import 'package:nginx_le/nginx_le.dart';
 import 'package:nginx_le/src/commands/external/certificates_command.dart';
 import 'package:nginx_le/src/commands/external/config_command.dart';
@@ -13,7 +12,6 @@ import 'package:nginx_le/src/commands/external/restart_command.dart';
 import 'package:nginx_le/src/commands/external/revoke_command.dart';
 import 'package:nginx_le/src/commands/external/stop_command.dart';
 import 'package:nginx_le/src/version/version.g.dart';
-import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 enum Mode { public, private }
 
@@ -45,32 +43,4 @@ void main(List<String> args) {
     print(runner.usage);
     exit(1);
   }, test: (e) => e is UsageException);
-}
-
-void run(
-    {@required String cmd,
-    @required String hostname,
-    @required String domain,
-    @required String tld,
-    @required String emailaddress,
-    @required String mode,
-    @required bool debug}) {
-  /// The volume will only be created if it doesn't already exist.
-  print('Creating certificates volume');
-  'docker volume create certificates'
-      .forEach(devNull, stderr: (line) => print(red(line)));
-
-  print('Creating lastpass volume');
-  'docker volume create lastpass'
-      .forEach(devNull, stderr: (line) => print(red(line)));
-
-  setEnv('HOSTNAME', hostname);
-  setEnv('DOMAIN', hostname);
-  setEnv('TLD', tld);
-  setEnv('EMAIL_ADDRESS', emailaddress);
-  setEnv('MODE', mode);
-  setEnv('DEBUG', '$debug');
-  setEnv('LETS_ENCRYPT_ROOT_PATH', Certbot.letsEncryptRootPath);
-
-  'docker-compose up '.run;
 }
