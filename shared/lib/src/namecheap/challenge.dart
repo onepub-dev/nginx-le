@@ -27,7 +27,8 @@ class Challenge {
       {@required String hostname,
       @required String domain,
       @required String tld,
-      @required String certbotAuthKey}) {
+      @required String certbotAuthKey,
+      int retries = 20}) {
     var records =
         _getHosts(domain: domain, tld: tld, certbotAuthKey: certbotAuthKey);
 
@@ -69,7 +70,8 @@ class Challenge {
         hostname: hostname,
         domain: domain,
         tld: tld,
-        certBotAuthKey: certbotAuthKey);
+        certBotAuthKey: certbotAuthKey,
+        retries: retries);
   }
 
   bool waitForRecordToBeVisible(
@@ -77,14 +79,15 @@ class Challenge {
       @required String hostname,
       @required String domain,
       @required String tld,
-      @required String certBotAuthKey}) {
+      @required String certBotAuthKey,
+      int retries}) {
     var found = false;
 
     // wait for upto an hour for namecheap to update the visible dns entry.
     var retryAttempts = 0;
 
     Certbot().log('Waiting for challenge "$certBotAuthKey" be visible');
-    while (!found && retryAttempts < 360) {
+    while (!found && retryAttempts < retries) {
       // ignore: unnecessary_cast
       var dig = 'dig +short ${challengeHost(hostname: hostname)}.${domain} TXT';
       Certbot().log('running $dig');
@@ -132,8 +135,11 @@ class Challenge {
     // Find the challenge TXT record and remove it if found.
     var found = false;
     var newRecords = <DNSRecord>[];
+    var challengeName = challengeHost(hostname: hostname);
+    Settings().verbose('Cleaning $challengeName');
     for (var h in records) {
-      if (h.name == challengeHost(hostname: hostname) &&
+      Settings().verbose('Found DNS: hostname=${h.name}');
+      if (h.name == challengeName &&
           h.address == certbotAuthKey &&
           h.type == 'TXT') {
         found = true;
