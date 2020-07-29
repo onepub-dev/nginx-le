@@ -49,12 +49,13 @@ class ConfigCommand extends Command<void> {
       config.dnsProvider = null;
     }
 
+    getContentSource(config);
+
     var containerName = 'nginx-le';
 
     if (config.startMethod != ConfigYaml.START_METHOD_DOCKER_COMPOSE) {
       var image = selectImage(config);
 
-      getContentSource(config);
       deleteOldContainers(containerName, image);
       createContainer(image, config, debug);
     } else {
@@ -279,8 +280,6 @@ class ConfigCommand extends Command<void> {
 
   /// Ask users where the website content is located.
   void getContentSource(ConfigYaml config) {
-    setLocationPath(config);
-
     var contentSource = <String>[
       ConfigYaml.CONTENT_SOURCE_PATH,
       ConfigYaml.CONTENT_SOURCE_LOCATION
@@ -293,70 +292,67 @@ class ConfigCommand extends Command<void> {
         defaultOption: config.contentSourceType);
 
     if (selection == ConfigYaml.CONTENT_SOURCE_PATH) {
-      var valid = false;
-      String wwwroot;
-      do {
-        /// wwwroot
-        var defaultPath =
-            config.wwwRoot ?? WwwRoot(config.includePath).preferredPath;
-        wwwroot =
-            ask(prompt: 'Path (on host) to wwwroot', defaultValue: defaultPath);
-        if (!exists(wwwroot)) {
-          print(red('The path $wwwroot does not exist.'));
-          if (confirm(prompt: 'Create $wwwroot?')) {
-            if (isWritable(findParent(wwwroot))) {
-              createDir(wwwroot, recursive: true);
-            } else {
-              'sudo mkdir -p $wwwroot'.run;
-            }
-            valid = true;
-          }
-        } else {
-          valid = true;
-        }
-      } while (!valid);
-
-      valid = false;
-
-      do {
-        /// write out the location file
-        var wwwBuilder = WwwRoot(wwwroot);
-        var locationConfig = wwwBuilder.build();
-
-        if (config.wwwRoot != null) {
-          backupOldWwwLocation(config, locationConfig);
-        }
-
-        if (!isWritable(findParent(wwwBuilder.locationConfigPath))) {
-          var tmp = FileSync.tempFile();
-          tmp.write(locationConfig);
-          'sudo mv $tmp ${wwwBuilder.locationConfigPath}'.run;
-        } else {
-          wwwBuilder.locationConfigPath.write(locationConfig);
-        }
-
-        config.wwwRoot = wwwroot;
-        valid = true;
-      } while (!valid);
-
+      selectSourcePath(config);
       config.contentSourceType = ConfigYaml.CONTENT_SOURCE_PATH;
     } else {
-      var valid = false;
-      do {
-        /// wwwroot
-        var locationPath = ask(prompt: 'Path to Location Directory');
-        if (!exists(locationPath)) {
-          print(red('The path $locationPath does not exists'));
-        } else {
-          valid = true;
-        }
-      } while (!valid);
+      setLocationPath(config);
       config.contentSourceType = ConfigYaml.CONTENT_SOURCE_LOCATION;
     }
   }
 
+  void selectSourcePath(ConfigYaml config) {
+    var valid = false;
+    String wwwroot;
+    do {
+      /// wwwroot
+      var defaultPath =
+          config.wwwRoot ?? WwwRoot(config.includePath).preferredPath;
+      print('');
+      print(green('Path to static web content'));
+      wwwroot =
+          ask(prompt: 'Path (on host) to wwwroot', defaultValue: defaultPath);
+      if (!exists(wwwroot)) {
+        print(red('The path $wwwroot does not exist.'));
+        if (confirm(prompt: 'Create $wwwroot?')) {
+          if (isWritable(findParent(wwwroot))) {
+            createDir(wwwroot, recursive: true);
+          } else {
+            'sudo mkdir -p $wwwroot'.run;
+          }
+          valid = true;
+        }
+      } else {
+        valid = true;
+      }
+    } while (!valid);
+
+    valid = false;
+
+    do {
+      /// write out the location file
+      var wwwBuilder = WwwRoot(wwwroot);
+      var locationConfig = wwwBuilder.build();
+
+      if (config.wwwRoot != null) {
+        backupOldWwwLocation(config, locationConfig);
+      }
+
+      if (!isWritable(findParent(wwwBuilder.locationConfigPath))) {
+        var tmp = FileSync.tempFile();
+        tmp.write(locationConfig);
+        'sudo mv $tmp ${wwwBuilder.locationConfigPath}'.run;
+      } else {
+        wwwBuilder.locationConfigPath.write(locationConfig);
+      }
+
+      config.wwwRoot = wwwroot;
+      valid = true;
+    } while (!valid);
+  }
+
   void backupOldWwwLocation(ConfigYaml config, String newLocationConfig) {
     var oldConfig = WwwRoot(config.wwwRoot);
+    if (!exists(oldConfig.locationConfigPath)) return; // nothing to backup
     var existingLocationConfig =
         read(oldConfig.locationConfigPath).toList().join('\n');
     if (existingLocationConfig != newLocationConfig) {
@@ -386,6 +382,8 @@ class ConfigCommand extends Command<void> {
     var valid = false;
     String includePath;
     do {
+      print('');
+      print('${green('Location of nginx include files')}');
       includePath = ask(
           prompt:
               'Parent directory (on host) of `location` and `upstream` files:',
