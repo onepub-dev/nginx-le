@@ -96,4 +96,10 @@ class Images {
     }
     return null;
   }
+
+  Image pull({String fullname}) {
+    'docker pull $fullname'.run;
+    flushCache();
+    return findByFullname(fullname);
+  }
 }
