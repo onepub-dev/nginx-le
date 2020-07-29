@@ -39,20 +39,19 @@ void acquire(List<String> args) {
   var config = InternalRunConfig.load();
 
   if (config.mode == 'private') {
-    config.setcredentials(namecheap_apikey, namecheap_apiuser);
-
-    /// TODO is this necessary?
-    config.save();
-    if (config.hasCredentials) {
-      /// these are used by the certbot auth and clenaup hooks.
-      setEnv('HOSTNAME', config.hostname);
-      setEnv('DOMAIN', config.domain);
-      setEnv(NAMECHEAP_API_KEY, namecheap_apikey);
-      setEnv(NAMECHEAP_API_USER, namecheap_apiuser);
-    } else {
+    if (!(namecheap_apikey != null &&
+        namecheap_apikey.isNotEmpty &&
+        namecheap_apiuser != null &&
+        namecheap_apiuser.isNotEmpty)) {
       throw CommandException(
           'The NameCheap arguments $NAMECHEAP_API_KEY and $NAMECHEAP_API_USER were not set');
     }
+
+    /// these are used by the certbot auth and clenaup hooks.
+    setEnv('HOSTNAME', config.hostname);
+    setEnv('DOMAIN', config.domain);
+    setEnv(NAMECHEAP_API_KEY, namecheap_apikey);
+    setEnv(NAMECHEAP_API_USER, namecheap_apiuser);
   }
 
   Certbot().acquire(
