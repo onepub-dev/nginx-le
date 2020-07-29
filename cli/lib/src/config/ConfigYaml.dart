@@ -55,7 +55,7 @@ class ConfigYaml {
   // The type of content source (wwwroot or location)
   String contentSourceType;
 
-  /// root path where nginx gets the location and upstream files from.
+  /// root path where nginx gets the .location and .upstream files from.
   String _includePath;
 
   /// If the user chose a content source of CONTENT_SOURCE_PATH this contains the path to the

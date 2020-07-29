@@ -295,7 +295,7 @@ class ConfigCommand extends Command<void> {
       selectSourcePath(config);
       config.contentSourceType = ConfigYaml.CONTENT_SOURCE_PATH;
     } else {
-      setLocationPath(config);
+      setIncludePath(config);
       config.contentSourceType = ConfigYaml.CONTENT_SOURCE_LOCATION;
     }
   }
@@ -378,7 +378,7 @@ class ConfigCommand extends Command<void> {
     }
   }
 
-  void setLocationPath(ConfigYaml config) {
+  void setIncludePath(ConfigYaml config) {
     var valid = false;
     String includePath;
     do {
@@ -386,12 +386,11 @@ class ConfigCommand extends Command<void> {
       print('${green('Location of nginx include files')}');
       includePath = ask(
           prompt:
-              'Parent directory (on host) of `location` and `upstream` files:',
+              'Include directory (on host) for `.location` and `.upstream` files:',
           defaultValue: config.includePath,
           validator: Ask.required);
 
-      createPath(locationsPath(includePath));
-      createPath(upstreamPath(includePath));
+      createPath(includePath);
 
       valid = true;
     } while (!valid);
@@ -434,10 +433,6 @@ class ConfigCommand extends Command<void> {
     config.containerid = container.containerid;
   }
 }
-
-String upstreamPath(String includePath) => join(includePath, 'upstream');
-
-String locationsPath(String includePath) => join(includePath, 'locations');
 
 void showUsage(ArgParser parser) {
   print(parser.usage);
