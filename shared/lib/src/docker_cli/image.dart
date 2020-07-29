@@ -37,12 +37,18 @@ class Image {
     String name;
     String tag;
 
+    Settings().verbose('$fullname');
+
     if (fullname.contains('/')) {
       var parts = fullname.split('/');
       repo = parts[0];
-      parts = parts[1].split(':');
-      name = parts[0];
-      tag = parts[1];
+      if (parts[1].contains(':')) {
+        parts = parts[1].split(':');
+        name = parts[0];
+        tag = parts[1];
+      } else {
+        name = parts[1];
+      }
     } else {
       if (fullname.contains(':')) {
         var parts = fullname.split(':');
@@ -70,6 +76,10 @@ class Image {
 
   void delete() {
     'docker image rm $imageid'.run;
+  }
+
+  void pull() {
+    'docker pull $imageid'.run;
   }
 
   @override
