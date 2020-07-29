@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le_cli/src/config/ConfigYaml.dart';
+import 'package:nginx_le/src/config/ConfigYaml.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:uuid/uuid.dart';
 
@@ -76,7 +76,7 @@ class BuildCommand extends Command<void> {
       'update-dshell.txt'.write(Uuid().v4());
     }
 
-    print(blue('Building nginx-le $imageName '));
+    print(green('Building nginx-le $imageName '));
 
     /// required to give docker access to our ssh keys.
     'docker build -t $imageName .'.run;

@@ -4,22 +4,23 @@ import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
 import 'package:meta/meta.dart';
-import 'package:nginx_le_cli/nginx_le_cli.dart';
-import 'package:nginx_le_cli/src/commands/external/certificates_command.dart';
-import 'package:nginx_le_cli/src/commands/external/config_command.dart';
-import 'package:nginx_le_cli/src/commands/external/doctor_command.dart';
-import 'package:nginx_le_cli/src/commands/external/logs_command.dart';
-import 'package:nginx_le_cli/src/commands/external/restart_command.dart';
-import 'package:nginx_le_cli/src/commands/external/revoke_command.dart';
-import 'package:nginx_le_cli/src/commands/external/stop_command.dart';
+import 'package:nginx_le/nginx_le.dart';
+import 'package:nginx_le/src/commands/external/certificates_command.dart';
+import 'package:nginx_le/src/commands/external/config_command.dart';
+import 'package:nginx_le/src/commands/external/doctor_command.dart';
+import 'package:nginx_le/src/commands/external/logs_command.dart';
+import 'package:nginx_le/src/commands/external/restart_command.dart';
+import 'package:nginx_le/src/commands/external/revoke_command.dart';
+import 'package:nginx_le/src/commands/external/stop_command.dart';
+import 'package:nginx_le/src/version/version.g.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 enum Mode { public, private }
 
 /// Starts the ngix docker instance
 void main(List<String> args) {
-  var runner = CommandRunner<void>(
-      'nginx-le', 'Cli tools to manage your nginx-le server');
+  var runner = CommandRunner<void>('nginx-le',
+      'Cli tools to manage your nginx-le server. Version: $packageVersion');
 
   runner.addCommand(BuildCommand());
   runner.addCommand(ConfigCommand());
@@ -44,20 +45,6 @@ void main(List<String> args) {
     print(runner.usage);
     exit(1);
   }, test: (e) => e is UsageException);
-}
-
-void usage(ArgParser parser) {
-  print('');
-  print('nginx-le - Runs nginx with builtin certificate renewal');
-  print('');
-  print('Available Commands:');
-  print('  build - builds an nginx-le image ');
-  print('  start - starts an nginx-le container ');
-  print(
-      '  acquire - obtains or renews a certficate when running in private mode.');
-  print('  cli - attaches to the containers cli.');
-  print(parser.usage);
-  exit(1);
 }
 
 void run(

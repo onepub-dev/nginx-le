@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le_cli/src/config/ConfigYaml.dart';
+import 'package:nginx_le/src/config/ConfigYaml.dart';
 
 /// Starts nginx and the certbot scheduler.
 class RestartCommand extends Command<void> {
