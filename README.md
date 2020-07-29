@@ -291,7 +291,7 @@ ginx-le:
       EMAIL_ADDRESS: support@example.com
       DEBUG: "true"
     volumes:
-      - certificates:/etc/nginx/certs
+      - certificates:/etc/letsencrypt
       - /opt/nginx/includes:/etc/nginx/includes
     logging:
       driver: "journald"
@@ -418,7 +418,7 @@ On a daily bases use the `start` command and only use the `acquire namecheap --a
 ## Internals
 Nginx-LE stores cerificates on a persisten volume which by convention is called `certificates`. 
 
-The `certificates` folder is mounted into the containers `/etc/nginx/certs/` folder.
+The `certificates` folder is mounted into the containers `/etc/letsencrypt/` folder.
 
 
 # Create a dockerfile
