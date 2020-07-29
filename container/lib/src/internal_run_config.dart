@@ -11,28 +11,19 @@ class InternalRunConfig {
   String tld;
   String emailaddress;
   String mode;
-  String namecheap_apikey;
-  String namecheap_apiuser;
+  bool staging;
+  bool debug;
 
   static const savefile = '/etc/nginx-le/started-with';
-  InternalRunConfig(
-      {@required this.hostname,
-      @required this.domain,
-      @required this.tld,
-      @required this.emailaddress,
-      @required this.mode});
-
-  bool get hasCredentials =>
-      namecheap_apikey != null &&
-      namecheap_apikey.isNotEmpty &&
-      namecheap_apiuser != null &&
-      namecheap_apiuser.isNotEmpty;
-
-  void setcredentials(String namecheap_apikey, String namecheap_apiuser) {
-    this.namecheap_apikey = namecheap_apikey;
-    this.namecheap_apiuser = namecheap_apiuser;
-    save();
-  }
+  InternalRunConfig({
+    @required this.hostname,
+    @required this.domain,
+    @required this.tld,
+    @required this.emailaddress,
+    @required this.mode,
+    @required this.staging,
+    @required this.debug,
+  });
 
   void save() {
     savefile.write('version:1');
@@ -41,8 +32,8 @@ class InternalRunConfig {
     savefile.append('tld:${tld.trim()}');
     savefile.append('emailaddress:${emailaddress.trim()}');
     savefile.append('mode:${mode.trim()}');
-    savefile.append('namecheap_apikey:${namecheap_apikey?.trim()}');
-    savefile.append('namecheap_apiuser:${namecheap_apiuser?.trim()}');
+    savefile.append('staging:${staging}');
+    savefile.append('debug:${debug}');
   }
 
   static InternalRunConfig load() {
@@ -53,8 +44,8 @@ class InternalRunConfig {
     var tld = lines[3];
     var emailAddress = lines[4];
     var mode = lines[5];
-    var namecheap_apikey = lines[6];
-    var namecheap_apiuser = lines[7];
+    var staging = lines[6];
+    var debug = lines[7];
 
     if (version != 'version:1') {
       throw ArgumentError.value(version, 'Invalid version');
@@ -80,13 +71,12 @@ class InternalRunConfig {
       throw ArgumentError.value(mode, 'Expected mode');
     }
 
-    if (!namecheap_apikey.startsWith('namecheap_apikey')) {
-      throw ArgumentError.value(namecheap_apikey, 'Expected namecheap_apikey');
+    if (!staging.startsWith('staging')) {
+      throw ArgumentError.value(mode, 'Expected staging');
     }
 
-    if (!namecheap_apiuser.startsWith('namecheap_apiuser')) {
-      throw ArgumentError.value(
-          namecheap_apiuser, 'Expected namecheap_apiuser');
+    if (!debug.startsWith('debug')) {
+      throw ArgumentError.value(mode, 'Expected debug');
     }
 
     hostname = hostname.split(':')[1];
@@ -94,14 +84,16 @@ class InternalRunConfig {
     tld = tld.split(':')[1];
     emailAddress = emailAddress.split(':')[1];
     mode = mode.split(':')[1];
-    namecheap_apikey = namecheap_apikey.split(':')[1];
-    namecheap_apiuser = namecheap_apiuser.split(':')[1];
+    staging = staging.split(':')[1];
+    debug = debug.split(':')[1];
 
     return InternalRunConfig(
         hostname: hostname,
         domain: domain,
         tld: tld,
         emailaddress: emailAddress,
-        mode: mode);
+        mode: mode,
+        staging: staging == 'true',
+        debug: debug == 'true');
   }
 }
