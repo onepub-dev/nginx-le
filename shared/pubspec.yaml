@@ -1,5 +1,5 @@
 name: nginx_le_shared
-version: 0.4.1
+version: 0.4.3
 homepage: https://github.com/bsutton/nginx-le
 description: shared library used by Nginx-LE
 environment: 
@@ -10,6 +10,7 @@ dependencies:
   path: ^1.6.4
   cron: ^0.2.3
   dshell: ^1.9.12
+  instant: ^0.3.2
   xml: ^4.2.0
   http: ^0.12.1
   intl: ^0.16.1
