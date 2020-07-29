@@ -31,7 +31,9 @@ class TailInIsolate {
 
     var cmd = 'tail -n $lines';
 
-    if (follow) cmd += ' -f';
+    /// We use -F as certbot log rotates the files and -F is specifically used
+    /// in this situation.
+    if (follow) cmd += ' -F';
 
     cmd += ' $filename';
 
