@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le_cli/src/builders/locations/wwwroot.dart';
-import 'package:nginx_le_cli/src/config/ConfigYaml.dart';
+import 'package:nginx_le/src/builders/locations/wwwroot.dart';
+import 'package:nginx_le/src/config/ConfigYaml.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:uuid/uuid.dart';
 
@@ -163,6 +163,8 @@ class ConfigCommand extends Command<void> {
   }
 
   void selectCertType(ConfigYaml config) {
+    print('');
+    print(green('During testing please select "staging"'));
     var certTypes = ['production', 'staging'];
     var certificateType = menu(
         prompt: 'Certificate Type:',
@@ -180,6 +182,9 @@ class ConfigCommand extends Command<void> {
   }
 
   void selectTLD(ConfigYaml config) {
+    print('');
+    print(green('The servers top level domain (e.g. com.au)'));
+
     var tld = ask(
         prompt: 'TLD:',
         defaultValue: config.tld,
@@ -188,6 +193,8 @@ class ConfigCommand extends Command<void> {
   }
 
   void selectHost(ConfigYaml config) {
+    print('');
+    print(green('The servers hostname (e.g. www)'));
     var hostname = ask(
         prompt: 'Hostname:',
         defaultValue: config.hostname,
@@ -196,23 +203,52 @@ class ConfigCommand extends Command<void> {
   }
 
   void selectDomain(ConfigYaml config) {
+    print('');
+    print(green('The servers domain (e.g. microsoft.com.au)'));
+
     var domain = ask(
         prompt: 'Domain:', defaultValue: config.domain, validator: Ask.fqdn);
     config.domain = domain;
   }
 
   Image selectImage(ConfigYaml config) {
+    print('');
+    print(green('Select the image to utilise.'));
+    var latest = 'noojee/nginx-le:latest';
+    var images = Images()
+        .images
+        .where(
+            (image) => image.repository == 'noojee' && image.name == 'nginx-le')
+        .toList();
+    var latestImage = Images().findByFullname(latest);
+    var downloadLatest = Image.fromName(latest);
+    if (latestImage == null) {
+      downloadLatest.imageid = 'Download'.padRight(12);
+      images.insert(0, downloadLatest);
+    }
     var image = menu<Image>(
         prompt: 'Image:',
-        options: Images().images,
+        options: images,
         format: (image) =>
             '${image.imageid} - ${image.repository}/${image.name}:${image.tag}',
         defaultOption: config.image);
     config.image = image;
+
+    if (image == downloadLatest) {
+      print(orange('Downloading the latest image'));
+      Images().pull(fullname: image.fullname);
+
+      /// after pulling the image additional information will be available
+      /// so replace the image with the fully detailed version.
+      Images().flushCache();
+      image = Images().findByFullname(latest);
+    }
     return image;
   }
 
   void selectMode(ConfigYaml config) {
+    print('');
+    print(green('Select the visibility of your Web Server'));
     config.mode ??= ConfigYaml.MODE_PRIVATE;
     var options = [ConfigYaml.MODE_PUBLIC, ConfigYaml.MODE_PRIVATE];
     var mode = menu(
@@ -230,6 +266,9 @@ class ConfigCommand extends Command<void> {
       ConfigYaml.START_METHOD_DOCKER_START,
       ConfigYaml.START_METHOD_DOCKER_COMPOSE
     ];
+
+    print('');
+    print(green('Select the method you will use to start Nginx-LE'));
     var startMethod = menu(
       prompt: 'Start Method:',
       options: startMethods,
@@ -246,6 +285,8 @@ class ConfigCommand extends Command<void> {
       ConfigYaml.CONTENT_SOURCE_PATH,
       ConfigYaml.CONTENT_SOURCE_LOCATION
     ];
+    print('');
+    print(green('Select how the Content is to be served'));
     var selection = menu(
         prompt: 'Content Source:',
         options: contentSource,
@@ -262,7 +303,7 @@ class ConfigCommand extends Command<void> {
             ask(prompt: 'Path (on host) to wwwroot', defaultValue: defaultPath);
         if (!exists(wwwroot)) {
           print(red('The path $wwwroot does not exist.'));
-          if (confirm(prompt: 'Create $wwwroot')) {
+          if (confirm(prompt: 'Create $wwwroot?')) {
             if (isWritable(findParent(wwwroot))) {
               createDir(wwwroot, recursive: true);
             } else {
@@ -289,7 +330,7 @@ class ConfigCommand extends Command<void> {
         if (!isWritable(findParent(wwwBuilder.locationConfigPath))) {
           var tmp = FileSync.tempFile();
           tmp.write(locationConfig);
-          'sudo mv $tmp $wwwBuilder.locationConfigPath'.run;
+          'sudo mv $tmp ${wwwBuilder.locationConfigPath}'.run;
         } else {
           wwwBuilder.locationConfigPath.write(locationConfig);
         }

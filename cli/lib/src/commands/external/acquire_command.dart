@@ -1,6 +1,6 @@
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le_cli/src/config/ConfigYaml.dart';
+import 'package:nginx_le/src/config/ConfigYaml.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 import 'util.dart';
@@ -40,6 +40,9 @@ class AcquireCommand extends Command<void> {
       if (config.isModePrivate) {
         cmd +=
             ' --$NAMECHEAP_API_KEY=${config.namecheap_apikey} --$NAMECHEAP_API_USER=${config.namecheap_apiusername}';
+        print('');
+        print(orange(
+            'Please be patient this can take a quit a few minutes to complete'));
       }
 
       if (config.isStaging) cmd += ' --staging';
