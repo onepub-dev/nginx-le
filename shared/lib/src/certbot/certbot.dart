@@ -80,11 +80,11 @@ class Certbot {
     if (!revoking) {
       if (!exists(getCertificateFullChainPath(hostname, domain))) {
         printerr(
-            "No Certifcates found for $hostname.$domain don't exist. You may need to run 'nginx-le acquire");
+            "No Certifcates found for $hostname.$domain. You may need to run 'nginx-le acquire");
       } else {
         if (hasExpired(hostname, domain)) {
           printerr(
-              "ERROR The Certificate for $hostname.$domain has expired. Please run 'start certbot");
+              "ERROR The Certificate for $hostname.$domain has expired. Please run 'nginx-le acquire.");
         } else {
           hasValidCerts = true;
         }

@@ -71,7 +71,7 @@ void start() {
     }
   }
 
-  print('Starting nginx-le');
+  print('Starting nginx');
 
   /// run the command passed in on the command line.
   'nginx'.start();
