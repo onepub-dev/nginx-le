@@ -54,7 +54,21 @@ void start() {
   startRenewalThread();
 
   if (acquire) {
-    startAcquireThread();
+    var certificates = Certificate.load();
+
+    /// expired certs are handled by the renew scheduler
+    /// If you are trying to change from a staging to a production
+    /// cert then you must first revoke the staging
+    if (certificates.isEmpty) {
+      startAcquireThread();
+    } else {
+      var certificate = certificates[0];
+
+      /// not the same type of cert then acquire it.
+      if (staging != certificate.staging) {
+        startAcquireThread();
+      }
+    }
   }
 
   print('Starting nginx-le');
