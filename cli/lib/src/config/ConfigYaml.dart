@@ -113,6 +113,9 @@ class ConfigYaml {
 
   String get includePath {
     _includePath ??= Nginx.locationIncludePath;
+    if (_includePath.isEmpty) {
+      _includePath = Nginx.locationIncludePath;
+    }
     return _includePath;
   }
 
