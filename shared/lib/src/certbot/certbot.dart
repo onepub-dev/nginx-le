@@ -290,7 +290,9 @@ class Certbot {
 
   void scheduleRenews() {
     var cron = Cron();
-    cron.schedule(Schedule.parse('*/3 * * * *'), () async {
+
+    /// run cron at 1 am  everyday
+    cron.schedule(Schedule.parse('0 1 * * *'), () async {
       renew();
     });
   }
