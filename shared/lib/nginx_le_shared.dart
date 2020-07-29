@@ -15,3 +15,4 @@ export 'src/nginx.dart';
 export 'src/tail/tail.dart';
 export 'src/tail/tail_cli.dart';
 export 'src/tail/docker_logs.dart';
+export 'src/version/version.g.dart';
