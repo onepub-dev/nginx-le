@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:dshell/dshell.dart' as d;
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le_cli/src/builders/locations/wwwroot.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:yaml/yaml.dart';
 
@@ -113,7 +112,7 @@ class ConfigYaml {
   bool get isModePrivate => mode == MODE_PRIVATE;
 
   String get includePath {
-    _includePath ??= Location.DEFAULT_INCLUDE_PATH;
+    _includePath ??= Nginx.locationIncludePath;
     return _includePath;
   }
 

@@ -1,5 +1,5 @@
-name: nginx_le_cli
-version: 0.2.0
+name: nginx_le
+version: 0.3.14
 homepage: https://github.com/bsutton/nginx-le
 description: Command line tools for Nginx-LE
 environment: 
@@ -9,6 +9,7 @@ dependencies:
   args: ^1.5.2
   encrypt: ^4.0.2
   path: ^1.6.4
+  pub_semver: ^1.0.0
   cron: ^0.2.3
   dshell: ^1.9.12
   xml: ^4.2.0
@@ -20,8 +21,7 @@ dependencies:
   public_suffix: ^1.0.0
   uuid: ^2.0.4
   yaml: ^2.2.0
-  nginx_le_shared: ^0.2.0
-    #path: ../shared
+  nginx_le_shared: ^0.3.8
 dev_dependencies: 
   test: ^1.0.0
 executables: 
