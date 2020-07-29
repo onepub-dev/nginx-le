@@ -1,9 +1,7 @@
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le_cli/src/config/ConfigYaml.dart';
+import 'package:nginx_le/src/config/ConfigYaml.dart';
 
 abstract class Location {
-  static const DEFAULT_INCLUDE_PATH = '/etc/nginx/includes';
-
   String build();
 
   /// The name of the file we store the wwwroot location config.
@@ -29,10 +27,10 @@ class WwwRoot implements Location {
   @override
   String get fileName => 'wwwroot.location';
 
-  String get preferredPath => join('/', 'usr', 'share', 'nginx', 'html');
+  String get preferredPath => join('/', 'opt', 'nginx', 'wwwroot');
 
   /// The path where we store the wwwroots location config
-  /// This will normally be /etc/nginx/locations/wwwroot.location
+  /// This will normally be /opt/nginx/locations/wwwroot.location
   String get locationConfigPath =>
       join(ConfigYaml().includePath, 'locations', fileName);
 }
