@@ -78,9 +78,9 @@ RUN mkdir /etc/nginx/acquire
 # nginx looks here for our certs.
 RUN mkdir /etc/nginx/certs
 
-# nginx defaults.conf looks here for locations and upstream directories
+# nginx defaults.conf looks here for .location and .upstream files
 # which need to be mounted via a volume mount.
-RUN mkdir /etc/nginx/includes
+RUN mkdir /etc/nginx/include
 
 #
 # install certbot 

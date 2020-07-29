@@ -30,7 +30,6 @@ class WwwRoot implements Location {
   String get preferredPath => join('/', 'opt', 'nginx', 'wwwroot');
 
   /// The path where we store the wwwroots location config
-  /// This will normally be /opt/nginx/locations/wwwroot.location
-  String get locationConfigPath =>
-      join(ConfigYaml().includePath, 'locations', fileName);
+  /// This will normally be /opt/nginx/include/wwwroot.location
+  String get locationConfigPath => join(ConfigYaml().includePath, fileName);
 }
