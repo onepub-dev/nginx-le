@@ -1,6 +1,7 @@
 #! /usr/bin/env dshell
 import 'package:dshell/dshell.dart';
 import 'package:meta/meta.dart';
+import 'package:nginx_le_shared/src/namecheap/env.dart';
 
 import 'certbot.dart';
 
@@ -47,6 +48,12 @@ void dns_auth_acquire({
       auth_hook, 'Environment variable: CERTBOT_DNS_AUTH_HOOK_PATH missing');
   ArgumentError.checkNotNull(cleanup_hook,
       'Environment variable: CERTBOT_DNS_CLEANUP_HOOK_PATH missing');
+
+  ArgumentError.checkNotNull(env(NAMECHEAP_API_KEY),
+      'Environment variable: NAMECHEAP_API_KEY missing');
+
+  ArgumentError.checkNotNull(env(NAMECHEAP_API_USER),
+      'Environment variable: NAMECHEAP_API_USER missing');
 
   var certbot = 'certbot certonly '
       ' --manual '
