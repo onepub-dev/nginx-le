@@ -53,6 +53,11 @@ void certbot_dns_auth_hook() {
   var apiKey = env(NAMECHEAP_API_KEY);
   Certbot().log('apiKey: $apiKey');
 
+  /// the number of times we look to see if the DNS challenge is resolving.
+  var retriesString = env('DNS_RETRIES') ?? '20';
+  var retries = int.tryParse(retriesString);
+  Certbot().log('DNS_RETRIES: $retries');
+
   if (fqdn == null || fqdn.isEmpty) {
     printerr('Throwing exception: fqdn is empty');
     throw ArgumentError('No fqdn found in env var CERTBOT_DOMAIN');
@@ -74,7 +79,8 @@ void certbot_dns_auth_hook() {
         hostname: hostname,
         domain: domain,
         tld: tld,
-        certbotAuthKey: certbotAuthKey))) {
+        certbotAuthKey: certbotAuthKey,
+        retries: retries))) {
       Certbot().log('createDNSChallenged SUCCESS');
     } else {
       Certbot().log('createDNSChallenged failed');
