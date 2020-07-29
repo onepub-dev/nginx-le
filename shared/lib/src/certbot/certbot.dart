@@ -5,6 +5,7 @@ import 'package:dshell/dshell.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart';
 
+import '../../nginx_le_shared.dart';
 import 'dns_auth.dart';
 import 'http_auth.dart';
 
@@ -79,7 +80,7 @@ class Certbot {
     if (!revoking) {
       if (!exists(getCertificateFullChainPath(hostname, domain))) {
         printerr(
-            "ERROR: The Certfifcate for $hostname.$domain don't exist. Please run 'certbot'");
+            "No Certifcates found for $hostname.$domain don't exist. You may need to run 'nginx-le acquire");
       } else {
         if (hasExpired(hostname, domain)) {
           printerr(
@@ -209,50 +210,18 @@ class Certbot {
   /// Checks if the certificate for the given hostname.domain
   /// has expired
   bool hasExpired(String hostname, String domain) {
-    var hasExpired = true;
-
-    var lines = certificates();
-
-    var found = false;
-    for (var line in lines) {
-      if (line.trim().startsWith('Expiry Date')) {
-        found = true;
-        var parts = line.trim().split(RegExp(r'\s+'));
-
-        var dateString = parts[2];
-
-        var year = int.parse(dateString.substring(0, 4));
-        var month = int.parse(dateString.substring(5, 7));
-        var day = int.parse(dateString.substring(8, 10));
-        // not working in a unit tests?
-        // var format = DateFormat(dateString, 'yyyy-MM-dd');
-        // var expiryDate = format.parse(dateString);
-        var expiryDate = DateTime(year, month, day);
-
-        if (!expiryDate.isAfter(DateTime.now().subtract(Duration(days: 1)))) ;
-        {
-          // we are not yet expired
-          hasExpired = false;
-          break;
-        }
-      }
+    var certificatelist = certificates();
+    if (certificatelist.isEmpty) {
+      return true;
     }
 
-    if (!found) {
-      throw CertbotException(
-          'Unable to find the Expiry Date for $hostname.$domain');
-    }
-
-    return hasExpired;
+    var certificate = certificatelist[0];
+    return certificate.hasExpired();
   }
 
   /// Obtain the list of active certificates
-  List<String> certificates() {
-    var cmd = 'certbot certificates '
-        ' --config-dir=${Certbot.letsEncryptConfigPath}';
-
-    var lines = cmd.toList(nothrow: true);
-    return lines;
+  List<Certificate> certificates() {
+    return Certificate.load();
   }
 
   /// Renews or gets for the first time the certificates
