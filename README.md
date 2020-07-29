@@ -226,14 +226,14 @@ During configuration select 'Simple wwwroot' when prompted for the `Content Sour
 
 Enter the path to the root folder.
 
-By default Nginx-LE will create a location file on the host system at `/etc/nginx/includes/locations/wwwroot.location` on the `host` system and then mount that location into the Nginx-LE container.
+By default Nginx-LE will create a location file on the host system at `/opt/nginx/includes/locations/wwwroot.location` on the `host` system and then mount that location into the Nginx-LE container.
 
 You can modify the default file if it doesn't suit your requirements.
 
 ### Locations
 During configuration select 'Locations' when prompted for the `Content Source`.
 
-Nginx-LE will configure nginx to include location files from the host system at `/etc/nginx/includes/locations`. This directory is mounted into the container at the same location.
+Nginx-LE will configure nginx to include location files from the host system at `/opt/nginx/includes/locations`. This directory is mounted into the container at the same location.
 
 You can place any number of nginx location files in this directory and they will be mounted the next time that the Nginx-LE container is started or nginx is reloaded (you can do this from within the docker cli).
 
@@ -255,7 +255,7 @@ location / {
 
 If you are using Nginx-LE as a proxy server for an application server then you will need to provide one or more `upstream` files to configure the connection to those servers.
 
-Nginx-LE will  include the upstream files from the host system at `/etc/nginx/includes/upstream`. This directory is mounted into the container at the same location.
+Nginx-LE will  include the upstream files from the host system at `/opt/nginx/includes/upstream`. This directory is mounted into the container at the same location.
 
 You can place any number of nginx upstream files in this directory and they will be mounted the next time that the Nginx-LE container is started or nginx is reloaded (you can do this from within the docker cli).
 
@@ -292,7 +292,7 @@ ginx-le:
       DEBUG: "true"
     volumes:
       - certificates:/etc/nginx/certs
-      - /etc/nginx/includes:/etc/nginx/includes
+      - /opt/nginx/includes:/etc/nginx/includes
     logging:
       driver: "journald"
 ```
@@ -301,7 +301,7 @@ The `Mode` must be `public` or `private`.  If `public` is selected then certbot 
 
 ## Volumes
 The `certificates` volume is used to store the certbot certificates between restarts.
-The `/etc/nginx/includes` host path is where you place the nginx `location` and `upstream` includes.
+The `/opt/nginx/includes` host path is where you place the nginx `location` and `upstream` includes.
 
 # Starting Nginx-LE
 
@@ -430,7 +430,7 @@ The base nginx configuration is defined by:
 * /etc/nginx/nginx.conf
 * /etc/nginx/custom/defaults.conf
 
-If you are happy with the standard configuration you can simply add `location` files under `/etc/nginx/includes/locations` and `upstream` files under `/etc/nginx/include/upstream`.
+If you are happy with the standard configuration you can simply add `location` files under `/opt/nginx/includes/locations` and `upstream` files under `/opt/nginx/include/upstream`.
 
 Otherwise you can replace the `/etc/nginx/custom/default.conf` with your own customised defaults.
 
