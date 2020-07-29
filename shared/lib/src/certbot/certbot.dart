@@ -98,6 +98,9 @@ class Certbot {
       /// symlink the user's custom content.
       symlink('/etc/nginx/custom', LIVE_WWW_PATH);
       _deploy(hostname, domain);
+      printerr(green('*') * 100);
+      printerr(green('Nginx-LE is running with an active Certificate'));
+      printerr(green('*') * 100);
     } else {
       printerr(red('*') * 100);
       printerr(red(
