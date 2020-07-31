@@ -53,9 +53,8 @@ class ConfigCommand extends Command<void> {
 
     var containerName = 'nginx-le';
 
+    var image = selectImage(config);
     if (config.startMethod != ConfigYaml.START_METHOD_DOCKER_COMPOSE) {
-      var image = selectImage(config);
-
       deleteOldContainers(containerName, image);
       createContainer(image, config, debug);
     } else {
