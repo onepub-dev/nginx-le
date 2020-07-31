@@ -419,18 +419,30 @@ class ConfigCommand extends Command<void> {
   }
 
   void selectContainer(ConfigYaml config) {
-    var containers = Containers().containers();
+    /// try for the default container name.
+    var containers = Containers()
+        .containers()
+        .where((container) => container.names == 'nginx-le')
+        .toList();
+
+    if (containers.isEmpty) {
+      containers = Containers().containers();
+    }
 
     var defaultOption = Containers().findByContainerId(config.containerid);
 
-    var container = menu<Container>(
-        prompt: 'Select Container:',
-        options: containers,
-        defaultOption: defaultOption,
-        format: (container) =>
-            '${container.names.padRight(30)} ${container.image?.fullname}');
-
-    config.containerid = container.containerid;
+    if (containers.length == 1) {
+      config.containerid = containers[0].containerid;
+    } else {
+      print(green('Select the docker container running nginx-le'));
+      var container = menu<Container>(
+          prompt: 'Select Container:',
+          options: containers,
+          defaultOption: defaultOption,
+          format: (container) =>
+              '${container.names.padRight(30)} ${container.image?.fullname}');
+      config.containerid = container.containerid;
+    }
   }
 }
 
