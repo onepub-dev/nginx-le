@@ -24,7 +24,9 @@ class Container {
   Image get image => Images().findByImageId(imageid);
 
   void stop() {
-    'docker stop $containerid'.run;
+    if (isRunning) {
+      'docker stop $containerid'.run;
+    }
   }
 
   void start() {
@@ -47,5 +49,11 @@ class Container {
 
   void showLogs() {
     'docker logs $containerid'.run;
+  }
+
+  /// Attaches to the running container and starts a bash command prompt.
+  void cli() {
+    'docker exec -it $containerid /bin/bash'
+        .start(nothrow: true, progress: Progress.print(), terminal: true);
   }
 }
