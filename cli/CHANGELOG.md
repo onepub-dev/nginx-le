@@ -1,3 +1,8 @@
+# 0.5.3
+# 0.5.2
+added a 'cli' method to the container.
+# 0.5.1
+Now asks for image even when in docker-compose mode.
 # 0.5.0
 # 0.4.5
 # 0.4.4

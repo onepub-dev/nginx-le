@@ -1,3 +1,9 @@
+# 0.5.3
+container .stop check if the container is running.
+# 0.5.2
+Had to add the terminal:true option.
+# 0.5.1
+Added a 'cli' method to the container class which attaches to the container and starts a bash shell.
 # 0.5.0
 # 0.4.5
 # 0.4.4
