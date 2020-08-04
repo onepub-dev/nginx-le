@@ -33,9 +33,12 @@ class ConfigYaml {
   static const EMAILADDRESS = 'emailaddress';
   static const DNSPROVIDER = 'dns_provider';
   static const CERTIFICATE_TYPE = 'certificate_type';
-  static const INCLUDE_PATH = 'include_path';
+  static const HOST_INCLUDE_PATH = 'host_include_path';
   static const CONTENT_SOURCE = 'content_source';
   static const WWW_ROOT = 'www_root';
+
+  // defaults:
+  static const DEFAULT_HOST_INCLUDE_PATH = '/opt/nginx/include';
 
   String startMethod;
   String mode;
@@ -55,8 +58,8 @@ class ConfigYaml {
   // The type of content source (wwwroot or location)
   String contentSourceType;
 
-  /// root path where nginx gets the .location and .upstream files from.
-  String _includePath;
+  /// host path which is mounted into ngix and contains .location and .upstream files from.
+  String _hostIncludePath;
 
   /// If the user chose a content source of CONTENT_SOURCE_PATH this contains the path to the
   /// wwwroot file the selected during configuration.
@@ -91,7 +94,7 @@ class ConfigYaml {
       containerid = getValue(CONTAINERID);
       dnsProvider = getValue(DNSPROVIDER);
       contentSourceType = getValue(CONTENT_SOURCE);
-      _includePath = getValue(INCLUDE_PATH);
+      _hostIncludePath = getValue(HOST_INCLUDE_PATH);
       wwwRoot = getValue(WWW_ROOT);
 
       if (dnsProvider == NAMECHEAP_PROVIDER) {
@@ -111,16 +114,16 @@ class ConfigYaml {
 
   bool get isModePrivate => mode == MODE_PRIVATE;
 
-  String get includePath {
-    _includePath ??= Nginx.locationIncludePath;
-    if (_includePath.isEmpty) {
-      _includePath = Nginx.locationIncludePath;
+  String get hostIncludePath {
+    _hostIncludePath ??= DEFAULT_HOST_INCLUDE_PATH;
+    if (_hostIncludePath.isEmpty) {
+      _hostIncludePath = DEFAULT_HOST_INCLUDE_PATH;
     }
-    return _includePath;
+    return _hostIncludePath;
   }
 
-  set includePath(String includePath) {
-    _includePath = includePath;
+  set hostIncludePath(String hostIncludePath) {
+    _hostIncludePath = hostIncludePath;
   }
 
   YamlDocument _load(String content) {
@@ -140,7 +143,7 @@ class ConfigYaml {
     configPath.append('$CONTAINERID: $containerid');
     configPath.append('$DNSPROVIDER: $dnsProvider');
     configPath.append('$CONTENT_SOURCE: $contentSourceType');
-    configPath.append('$INCLUDE_PATH: $includePath');
+    configPath.append('$HOST_INCLUDE_PATH: $hostIncludePath');
     configPath.append('$WWW_ROOT: $wwwRoot');
 
     if (dnsProvider == NAMECHEAP_PROVIDER) {
