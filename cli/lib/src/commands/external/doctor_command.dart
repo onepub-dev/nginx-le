@@ -65,7 +65,7 @@ class DoctorCommand extends Command<void> {
     if (config.contentSourceType == ConfigYaml.CONTENT_SOURCE_PATH) {
       _colprint(['WWW Root', config.wwwRoot]);
     } else {
-      _colprint(['Include Path', config.includePath]);
+      _colprint(['Host Include Path', config.hostIncludePath]);
     }
 
     print('');

@@ -108,7 +108,7 @@ class ConfigCommand extends Command<void> {
     if (config.contentSourceType == ConfigYaml.CONTENT_SOURCE_PATH) {
       volumes += ' -v ${config.wwwRoot}:${config.wwwRoot}';
     }
-    volumes += ' -v ${config.includePath}:${Nginx.locationIncludePath}';
+    volumes += ' -v ${config.hostIncludePath}:${Nginx.containerIncludePath}';
 
     var cmd = 'docker create'
         ' --name="nginx-le"'
@@ -305,7 +305,7 @@ class ConfigCommand extends Command<void> {
     do {
       /// wwwroot
       var defaultPath =
-          config.wwwRoot ?? WwwRoot(config.includePath).preferredPath;
+          config.wwwRoot ?? WwwRoot(config.hostIncludePath).preferredHostPath;
       print('');
       print(green('Path to static web content'));
       wwwroot =
@@ -336,12 +336,12 @@ class ConfigCommand extends Command<void> {
         backupOldWwwLocation(config, locationConfig);
       }
 
-      if (!isWritable(findParent(wwwBuilder.locationConfigPath))) {
+      if (!isWritable(findParent(wwwBuilder.hostLocationConfigPath))) {
         var tmp = FileSync.tempFile();
         tmp.write(locationConfig);
-        'sudo mv $tmp ${wwwBuilder.locationConfigPath}'.run;
+        'sudo mv $tmp ${wwwBuilder.hostLocationConfigPath}'.run;
       } else {
-        wwwBuilder.locationConfigPath.write(locationConfig);
+        wwwBuilder.hostLocationConfigPath.write(locationConfig);
       }
 
       config.wwwRoot = wwwroot;
@@ -351,12 +351,12 @@ class ConfigCommand extends Command<void> {
 
   void backupOldWwwLocation(ConfigYaml config, String newLocationConfig) {
     var oldConfig = WwwRoot(config.wwwRoot);
-    if (!exists(oldConfig.locationConfigPath)) return; // nothing to backup
+    if (!exists(oldConfig.hostLocationConfigPath)) return; // nothing to backup
     var existingLocationConfig =
-        read(oldConfig.locationConfigPath).toList().join('\n');
+        read(oldConfig.hostLocationConfigPath).toList().join('\n');
     if (existingLocationConfig != newLocationConfig) {
       // looks like the user manually changed the contents of the file.
-      var backup = '${oldConfig.locationConfigPath}.bak';
+      var backup = '${oldConfig.hostLocationConfigPath}.bak';
       if (exists(backup)) {
         var target = '$backup.${Uuid().v4()}';
         if (!isWritable(backup)) {
@@ -367,34 +367,34 @@ class ConfigCommand extends Command<void> {
       }
 
       if (!isWritable(dirname(backup))) {
-        'sudo cp ${oldConfig.locationConfigPath} $backup'.run;
+        'sudo cp ${oldConfig.hostLocationConfigPath} $backup'.run;
       } else {
-        copy(oldConfig.locationConfigPath, backup);
+        copy(oldConfig.hostLocationConfigPath, backup);
       }
 
       print(
-          'Your original location file ${oldConfig.locationConfigPath} has been backed up to $backup');
+          'Your original location file ${oldConfig.hostLocationConfigPath} has been backed up to $backup');
     }
   }
 
   void setIncludePath(ConfigYaml config) {
     var valid = false;
-    String includePath;
+    String hostIncludePath;
     do {
       print('');
       print('${green('Location of nginx include files')}');
-      includePath = ask(
+      hostIncludePath = ask(
           prompt:
               'Include directory (on host) for `.location` and `.upstream` files:',
-          defaultValue: config.includePath,
+          defaultValue: config.hostIncludePath,
           validator: Ask.required);
 
-      createPath(includePath);
+      createPath(hostIncludePath);
 
       valid = true;
     } while (!valid);
 
-    config.includePath = includePath;
+    config.hostIncludePath = hostIncludePath;
   }
 
   void createPath(String path) {
