@@ -1,3 +1,5 @@
+# 0.5.4
+synchronized released with shared.
 # 0.5.3
 # 0.5.2
 added a 'cli' method to the container.

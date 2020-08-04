@@ -1,3 +1,5 @@
+# 0.5.4
+synchronized release with nginx-le
 # 0.5.3
 container .stop check if the container is running.
 # 0.5.2

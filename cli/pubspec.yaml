@@ -1,5 +1,5 @@
 name: nginx_le
-version: 0.5.2
+version: 0.5.4
 homepage: https://github.com/bsutton/nginx-le
 description: Command line tools for Nginx-LE
 environment: 
@@ -21,6 +21,7 @@ dependencies:
   public_suffix: ^1.0.0
   uuid: ^2.0.4
   nginx_le_shared: ^0.5.1
+  yaml: ^2.2.1
 dev_dependencies: 
   test: ^1.0.0
 executables: 
