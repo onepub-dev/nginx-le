@@ -165,11 +165,15 @@ class ConfigCommand extends Command<void> {
   void selectCertType(ConfigYaml config) {
     print('');
     print(green('During testing please select "staging"'));
-    var certTypes = ['production', 'staging'];
+    var certTypes = [
+      ConfigYaml.CERTIFICATE_TYPE_PRODUCTION,
+      ConfigYaml.CERTIFICATE_TYPE_STAGING
+    ];
+    config.certificateType ??= ConfigYaml.CERTIFICATE_TYPE_STAGING;
     var certificateType = menu(
         prompt: 'Certificate Type:',
         options: certTypes,
-        defaultOption: 'staging');
+        defaultOption: config.certificateType);
     config.certificateType = certificateType;
   }
 
@@ -188,7 +192,7 @@ class ConfigCommand extends Command<void> {
     var tld = ask(
         prompt: 'TLD:',
         defaultValue: config.tld,
-        validator: AskMultiValidator([Ask.required, Ask.alphaNumeric]));
+        validator: AskMultiValidator([Ask.required]));
     config.tld = tld;
   }
 

@@ -16,6 +16,9 @@ class ConfigYaml {
   static const MODE_PUBLIC = 'public';
   static const MODE_PRIVATE = 'private';
 
+  static const CERTIFICATE_TYPE_PRODUCTION = 'production';
+  static const CERTIFICATE_TYPE_STAGING = 'staging';
+
   static const START_METHOD_NGINX_LE = 'nginx-le';
   static const START_METHOD_DOCKER_START = 'docker-start';
   static const START_METHOD_DOCKER_COMPOSE = 'docker-compose';
@@ -110,7 +113,7 @@ class ConfigYaml {
   ///
   bool get isConfigured => d.exists(configPath) && domain != null;
 
-  bool get isStaging => certificateType == 'staging';
+  bool get isStaging => certificateType == ConfigYaml.CERTIFICATE_TYPE_STAGING;
 
   bool get isModePrivate => mode == MODE_PRIVATE;
 

@@ -25,15 +25,10 @@ class RevokeCommand extends Command<void> {
         defaultsTo: false,
         negatable: false,
         help: 'Outputs additional logging information');
-    // argParser.addFlag('staging',
-    //     abbr: 's',
-    //     defaultsTo: false,
-    //     help: 'Revokes a staging (test) certificate');
   }
 
   @override
   void run() {
-    //var staging = argResults['staging'] as bool;
     var debug = argResults['debug'] as bool;
     Settings().setVerbose(enabled: debug);
 

@@ -1,4 +1,5 @@
 #! /usr/bin/env dshell
+
 import 'package:dshell/dshell.dart';
 
 /// Runs a command with tty access.

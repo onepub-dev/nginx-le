@@ -13,4 +13,4 @@ cli/bin/nginx-le
 .bash_history
 .vscode/
 nginx-le.code-workspace
-shared/.vscode/launch.json
+shared/.vscode/
