@@ -14,7 +14,7 @@ packages:
       name: analyzer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.39.15"
+    version: "0.39.16"
   archive:
     dependency: transitive
     description:
@@ -49,7 +49,7 @@ packages:
       name: basic_utils
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.6.0"
+    version: "2.6.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -133,7 +133,7 @@ packages:
       name: dshell
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.10.7"
+    version: "1.10.16"
   encrypt:
     dependency: "direct main"
     description:
@@ -301,7 +301,7 @@ packages:
       name: nginx_le_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.1"
+    version: "1.0.0"
   node_interop:
     dependency: transitive
     description:
@@ -560,7 +560,7 @@ packages:
       name: vm_service
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.0"
+    version: "4.2.0"
   watcher:
     dependency: transitive
     description:
