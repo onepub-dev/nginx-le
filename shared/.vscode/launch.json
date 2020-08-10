@@ -10,7 +10,13 @@
             "request": "launch",
             "type": "dart",
             "console": "terminal",
-            
-        }
+        },
+        {
+            "name": "dns auth hook",
+            "program": "test/src/certbot/dns_auth_hook_test.dart",
+            "request": "launch",
+            "type": "dart",
+            "console": "terminal",
+        },
     ]
 }
