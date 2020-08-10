@@ -15,4 +15,3 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 void main() {
   certbot_http_cleanup_hook();
 }
-
