@@ -1,5 +1,5 @@
 name: nginx_le
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/bsutton/nginx-le
 description: Command line tools for Nginx-LE
 environment: 
