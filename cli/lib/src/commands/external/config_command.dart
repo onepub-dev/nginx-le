@@ -71,7 +71,7 @@ class ConfigCommand extends Command<void> {
     if (existing != null) {
       print('A containers with the name $containerName already exists');
       if (!confirm(
-          prompt:
+          
               'Do you want to delete the older container and create one with the new settings?')) {
         print('Settings not saved. config command aborted');
         exit(-1);
@@ -80,7 +80,7 @@ class ConfigCommand extends Command<void> {
           print(
               'The old container is running. To delete the container it must be stopped.');
           if (confirm(
-              prompt:
+              
                   'Do you want the container ${existing.containerid} stopped?')) {
             existing.stop();
           } else {
@@ -149,13 +149,13 @@ class ConfigCommand extends Command<void> {
     config.dnsProvider = ConfigYaml.NAMECHEAP_PROVIDER;
 
     var namecheap_username = ask(
-        prompt: 'NameCheap API Username:',
+         'NameCheap API Username:',
         defaultValue: config.namecheap_apiusername,
         validator: Ask.required);
     config.namecheap_apiusername = namecheap_username;
 
     var namecheap_apikey = ask(
-        prompt: 'NameCheap API Key:',
+         'NameCheap API Key:',
         defaultValue: config.namecheap_apikey,
         hidden: true,
         validator: Ask.required);
@@ -179,7 +179,7 @@ class ConfigCommand extends Command<void> {
 
   void selectEmailAddress(ConfigYaml config) {
     var emailaddress = ask(
-        prompt: 'Email Address:',
+         'Email Address:',
         defaultValue: config.emailaddress,
         validator: Ask.email);
     config.emailaddress = emailaddress;
@@ -190,7 +190,7 @@ class ConfigCommand extends Command<void> {
     print(green('The servers top level domain (e.g. com.au)'));
 
     var tld = ask(
-        prompt: 'TLD:',
+         'TLD:',
         defaultValue: config.tld,
         validator: AskMultiValidator([Ask.required]));
     config.tld = tld;
@@ -200,7 +200,7 @@ class ConfigCommand extends Command<void> {
     print('');
     print(green('The servers hostname (e.g. www)'));
     var hostname = ask(
-        prompt: 'Hostname:',
+         'Hostname:',
         defaultValue: config.hostname,
         validator: Ask.alphaNumeric);
     config.hostname = hostname;
@@ -211,7 +211,7 @@ class ConfigCommand extends Command<void> {
     print(green('The servers domain (e.g. microsoft.com.au)'));
 
     var domain = ask(
-        prompt: 'Domain:', defaultValue: config.domain, validator: Ask.fqdn);
+         'Domain:', defaultValue: config.domain, validator: Ask.fqdn);
     config.domain = domain;
   }
 
@@ -313,10 +313,10 @@ class ConfigCommand extends Command<void> {
       print('');
       print(green('Path to static web content'));
       wwwroot =
-          ask(prompt: 'Path (on host) to wwwroot', defaultValue: defaultPath);
+          ask( 'Path (on host) to wwwroot', defaultValue: defaultPath);
       if (!exists(wwwroot)) {
         print(red('The path $wwwroot does not exist.'));
-        if (confirm(prompt: 'Create $wwwroot?')) {
+        if (confirm( 'Create $wwwroot?')) {
           if (isWritable(findParent(wwwroot))) {
             createDir(wwwroot, recursive: true);
           } else {
@@ -388,7 +388,7 @@ class ConfigCommand extends Command<void> {
       print('');
       print('${green('Location of nginx include files')}');
       hostIncludePath = ask(
-          prompt:
+          
               'Include directory (on host) for `.location` and `.upstream` files:',
           defaultValue: config.hostIncludePath,
           validator: Ask.required);

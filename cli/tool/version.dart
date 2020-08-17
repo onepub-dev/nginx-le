@@ -26,11 +26,11 @@ Version askForVersion(Version version) {
 
 /// Ask the user to confirm the selected version no.
 Version confirmVersion(Version version) {
-  if (!confirm(prompt: 'Is this the correct version')) {
+  if (!confirm( 'Is this the correct version')) {
     try {
-      var versionString = ask(prompt: 'Enter the new version: ');
+      var versionString = ask( 'Enter the new version: ');
 
-      if (!confirm(prompt: 'Is $versionString the correct version')) {
+      if (!confirm( 'Is $versionString the correct version')) {
         exit(1);
       }
 
@@ -67,7 +67,7 @@ Version keepVersion() {
   while (version == null) {
     try {
       var entered =
-          ask(prompt: 'Enter the new Version No.:', validator: Ask.required);
+          ask( 'Enter the new Version No.:', validator: Ask.required);
       version = Version.parse(entered);
     } on FormatException catch (e) {
       print(e);
@@ -82,7 +82,7 @@ Version getCustomVersion() {
   while (version == null) {
     try {
       var entered =
-          ask(prompt: 'Enter the new Version No.:', validator: Ask.required);
+          ask( 'Enter the new Version No.:', validator: Ask.required);
       version = Version.parse(entered);
     } on FormatException catch (e) {
       print(e);
