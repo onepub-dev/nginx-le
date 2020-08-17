@@ -1,3 +1,5 @@
+# 1.0.3
+Upgraded to dshell 1.11.0 and fixed breaking changes.
 # 1.0.2
 Upgraded to dshell 1.11.0 and fixed breaking changes.
 # 1.0.1
