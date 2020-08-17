@@ -14,7 +14,7 @@ void main(List<String> args) {
 
   print('Version: $version');
 
-  if (confirm(prompt: 'Proceed to publish with this version?')) {
+  if (confirm( 'Proceed to publish with this version?')) {
     'nginx-le build -u --image=bsuttonnoojee/nginx-le:$version'
         .start(workingDirectory: '../..');
     // 'docker build -f ../../Dockerfile -t bsuttonnoojee/nginx-le:$version .'.run;
