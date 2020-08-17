@@ -71,8 +71,7 @@ class ConfigCommand extends Command<void> {
     if (existing != null) {
       print('A containers with the name $containerName already exists');
       if (!confirm(
-          
-              'Do you want to delete the older container and create one with the new settings?')) {
+          'Do you want to delete the older container and create one with the new settings?')) {
         print('Settings not saved. config command aborted');
         exit(-1);
       } else {
@@ -80,8 +79,7 @@ class ConfigCommand extends Command<void> {
           print(
               'The old container is running. To delete the container it must be stopped.');
           if (confirm(
-              
-                  'Do you want the container ${existing.containerid} stopped?')) {
+              'Do you want the container ${existing.containerid} stopped?')) {
             existing.stop();
           } else {
             printerr(red(
@@ -148,14 +146,11 @@ class ConfigCommand extends Command<void> {
   void selectDNSProvider(ConfigYaml config) {
     config.dnsProvider = ConfigYaml.NAMECHEAP_PROVIDER;
 
-    var namecheap_username = ask(
-         'NameCheap API Username:',
-        defaultValue: config.namecheap_apiusername,
-        validator: Ask.required);
+    var namecheap_username = ask('NameCheap API Username:',
+        defaultValue: config.namecheap_apiusername, validator: Ask.required);
     config.namecheap_apiusername = namecheap_username;
 
-    var namecheap_apikey = ask(
-         'NameCheap API Key:',
+    var namecheap_apikey = ask('NameCheap API Key:',
         defaultValue: config.namecheap_apikey,
         hidden: true,
         validator: Ask.required);
@@ -178,10 +173,8 @@ class ConfigCommand extends Command<void> {
   }
 
   void selectEmailAddress(ConfigYaml config) {
-    var emailaddress = ask(
-         'Email Address:',
-        defaultValue: config.emailaddress,
-        validator: Ask.email);
+    var emailaddress = ask('Email Address:',
+        defaultValue: config.emailaddress, validator: Ask.email);
     config.emailaddress = emailaddress;
   }
 
@@ -189,20 +182,16 @@ class ConfigCommand extends Command<void> {
     print('');
     print(green('The servers top level domain (e.g. com.au)'));
 
-    var tld = ask(
-         'TLD:',
-        defaultValue: config.tld,
-        validator: AskMultiValidator([Ask.required]));
+    var tld = ask('TLD:',
+        defaultValue: config.tld, validator: AskMultiValidator([Ask.required]));
     config.tld = tld;
   }
 
   void selectHost(ConfigYaml config) {
     print('');
     print(green('The servers hostname (e.g. www)'));
-    var hostname = ask(
-         'Hostname:',
-        defaultValue: config.hostname,
-        validator: Ask.alphaNumeric);
+    var hostname = ask('Hostname:',
+        defaultValue: config.hostname, validator: Ask.alphaNumeric);
     config.hostname = hostname;
   }
 
@@ -210,8 +199,8 @@ class ConfigCommand extends Command<void> {
     print('');
     print(green('The servers domain (e.g. microsoft.com.au)'));
 
-    var domain = ask(
-         'Domain:', defaultValue: config.domain, validator: Ask.fqdn);
+    var domain =
+        ask('Domain:', defaultValue: config.domain, validator: Ask.fqdn);
     config.domain = domain;
   }
 
@@ -312,11 +301,10 @@ class ConfigCommand extends Command<void> {
           config.wwwRoot ?? WwwRoot(config.hostIncludePath).preferredHostPath;
       print('');
       print(green('Path to static web content'));
-      wwwroot =
-          ask( 'Path (on host) to wwwroot', defaultValue: defaultPath);
+      wwwroot = ask('Path (on host) to wwwroot', defaultValue: defaultPath);
       if (!exists(wwwroot)) {
         print(red('The path $wwwroot does not exist.'));
-        if (confirm( 'Create $wwwroot?')) {
+        if (confirm('Create $wwwroot?')) {
           if (isWritable(findParent(wwwroot))) {
             createDir(wwwroot, recursive: true);
           } else {
@@ -388,8 +376,7 @@ class ConfigCommand extends Command<void> {
       print('');
       print('${green('Location of nginx include files')}');
       hostIncludePath = ask(
-          
-              'Include directory (on host) for `.location` and `.upstream` files:',
+          'Include directory (on host) for `.location` and `.upstream` files:',
           defaultValue: config.hostIncludePath,
           validator: Ask.required);
 
