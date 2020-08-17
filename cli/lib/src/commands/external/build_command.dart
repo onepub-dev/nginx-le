@@ -100,8 +100,7 @@ class BuildCommand extends Command<void> {
       if (container.isRunning) {
         print(orange(
             'The container ${container.containerid} ${container.names} is running. To delete the container it must be stopped.'));
-        if (confirm(
-             'Stop ${container.containerid} ${container.names}')) {
+        if (confirm('Stop ${container.containerid} ${container.names}')) {
           container.stop();
         } else {
           printerr(
