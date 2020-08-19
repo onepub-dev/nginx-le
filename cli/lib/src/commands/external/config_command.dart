@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le/src/builders/locations/wwwroot.dart';
 import 'package:nginx_le/src/config/ConfigYaml.dart';
+import 'package:nginx_le/src/content_providers/content_provider.dart';
+import 'package:nginx_le/src/content_providers/content_providers.dart';
+import 'package:nginx_le/src/util/ask_fqdn_validator.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
-import 'package:uuid/uuid.dart';
 
 /// Starts nginx and the certbot scheduler.
 class ConfigCommand extends Command<void> {
@@ -16,11 +17,12 @@ class ConfigCommand extends Command<void> {
   String get name => 'config';
 
   ConfigCommand() {
+    /// argParser.addOption('template')
     argParser.addFlag('debug',
         defaultsTo: false,
         negatable: false,
         abbr: 'd',
-        help: 'Outputs additional logging information');
+        help: 'Outputs additional logging information and puts the container into debug mode');
   }
 
   @override
@@ -34,8 +36,7 @@ class ConfigCommand extends Command<void> {
 
     selectMode(config);
 
-    selectHost(config);
-    selectDomain(config);
+    selectFQDN(config);
 
     selectTLD(config);
 
@@ -49,11 +50,20 @@ class ConfigCommand extends Command<void> {
       config.dnsProvider = null;
     }
 
-    getContentSource(config);
+    selectContentProvider(config);
 
     var containerName = 'nginx-le';
 
     var image = selectImage(config);
+
+    config.save();
+    print('Configuration saved.');
+
+    var provider = ContentProviders().getByName(config.contentProvider);
+
+    provider.createLocationFile();
+    provider.createUpstreamFile();
+
     if (config.startMethod != ConfigYaml.START_METHOD_DOCKER_COMPOSE) {
       deleteOldContainers(containerName, image);
       createContainer(image, config, debug);
@@ -61,31 +71,26 @@ class ConfigCommand extends Command<void> {
       selectContainer(config);
     }
 
+    /// save the new container id.
     config.save();
-    print('Configuration saved.');
   }
 
   void deleteOldContainers(String containerName, Image image) {
     var existing = Containers().findByName(containerName);
 
     if (existing != null) {
-      print('A containers with the name $containerName already exists');
-      if (!confirm(
-          'Do you want to delete the older container and create one with the new settings?')) {
-        print('Settings not saved. config command aborted');
+      print('A container with the name $containerName already exists');
+      if (!confirm('Do you want to delete the older container and create one with the new settings?')) {
+        print(orange('Container does not refect your new settings!'));
         exit(-1);
       } else {
         if (existing.isRunning) {
-          print(
-              'The old container is running. To delete the container it must be stopped.');
-          if (confirm(
-              'Do you want the container ${existing.containerid} stopped?')) {
+          print('The old container is running. To delete the container it must be stopped.');
+          if (confirm('Do you want the container ${existing.containerid} stopped?')) {
             existing.stop();
           } else {
-            printerr(red(
-                'Unable to delete container ${existing.containerid} as it is running'));
-            printerr(
-                'Delete all containers for ${image.imageid} and try again.');
+            printerr(red('Unable to delete container ${existing.containerid} as it is running'));
+            printerr('Delete all containers for ${image.imageid} and try again.');
             exit(1);
           }
         }
@@ -98,15 +103,19 @@ class ConfigCommand extends Command<void> {
     print('Creating container from Image ${image.fullname}.');
 
     var lines = <String>[];
-    var progress =
-        Progress((line) => lines.add(line), stderr: (line) => lines.add(line));
+    var progress = Progress((line) => lines.add(line), stderr: (line) => lines.add(line));
 
     var volumes = '';
-
-    if (config.contentSourceType == ConfigYaml.CONTENT_SOURCE_PATH) {
-      volumes += ' -v ${config.wwwRoot}:${config.wwwRoot}';
+    var provider = ContentProviders().getByName(config.contentProvider);
+    for (var volume in provider.getVolumes()) {
+      volumes += ' -v ${volume.hostPath}:${volume.containerPath}';
     }
-    volumes += ' -v ${config.hostIncludePath}:${Nginx.containerIncludePath}';
+
+    var dnsProvider = '';
+    if (config.dnsProvider == ConfigYaml.NAMECHEAP_PROVIDER) {
+      dnsProvider = ' --env=${NAMECHEAP_API_KEY}=${config.namecheap_apikey}';
+      dnsProvider += ' --env=${NAMECHEAP_API_USER}=${config.namecheap_apiusername}';
+    }
 
     var cmd = 'docker create'
         ' --name="nginx-le"'
@@ -116,9 +125,11 @@ class ConfigCommand extends Command<void> {
         ' --env=MODE=${config.mode}'
         ' --env=EMAIL_ADDRESS=${config.emailaddress}'
         ' --env=DEBUG=$debug'
+        ' --env=ACQUIRE=true' // be default try to auto acquire a certificate.
         ' --net=host'
         ' --log-driver=journald'
         ' -v certificates:${Certbot.letsEncryptRootPath}'
+        '$dnsProvider'
         '$volumes'
         ' ${config.image.imageid}';
 
@@ -146,35 +157,26 @@ class ConfigCommand extends Command<void> {
   void selectDNSProvider(ConfigYaml config) {
     config.dnsProvider = ConfigYaml.NAMECHEAP_PROVIDER;
 
-    var namecheap_username = ask('NameCheap API Username:',
-        defaultValue: config.namecheap_apiusername, validator: Ask.required);
+    var namecheap_username =
+        ask('NameCheap API Username:', defaultValue: config.namecheap_apiusername, validator: Ask.required);
     config.namecheap_apiusername = namecheap_username;
 
-    var namecheap_apikey = ask('NameCheap API Key:',
-        defaultValue: config.namecheap_apikey,
-        hidden: true,
-        validator: Ask.required);
+    var namecheap_apikey =
+        ask('NameCheap API Key:', defaultValue: config.namecheap_apikey, hidden: true, validator: Ask.required);
     config.namecheap_apikey = namecheap_apikey;
   }
 
   void selectCertType(ConfigYaml config) {
     print('');
     print(green('During testing please select "staging"'));
-    var certTypes = [
-      ConfigYaml.CERTIFICATE_TYPE_PRODUCTION,
-      ConfigYaml.CERTIFICATE_TYPE_STAGING
-    ];
+    var certTypes = [ConfigYaml.CERTIFICATE_TYPE_PRODUCTION, ConfigYaml.CERTIFICATE_TYPE_STAGING];
     config.certificateType ??= ConfigYaml.CERTIFICATE_TYPE_STAGING;
-    var certificateType = menu(
-        prompt: 'Certificate Type:',
-        options: certTypes,
-        defaultOption: config.certificateType);
+    var certificateType = menu(prompt: 'Certificate Type:', options: certTypes, defaultOption: config.certificateType);
     config.certificateType = certificateType;
   }
 
   void selectEmailAddress(ConfigYaml config) {
-    var emailaddress = ask('Email Address:',
-        defaultValue: config.emailaddress, validator: Ask.email);
+    var emailaddress = ask('Email Address:', defaultValue: config.emailaddress, validator: Ask.email);
     config.emailaddress = emailaddress;
   }
 
@@ -182,37 +184,22 @@ class ConfigCommand extends Command<void> {
     print('');
     print(green('The servers top level domain (e.g. com.au)'));
 
-    var tld = ask('TLD:',
-        defaultValue: config.tld, validator: AskMultiValidator([Ask.required]));
+    var tld = ask('TLD:', defaultValue: config.tld, validator: AskMultiValidator([Ask.required]));
     config.tld = tld;
   }
 
-  void selectHost(ConfigYaml config) {
+  void selectFQDN(ConfigYaml config) {
     print('');
-    print(green('The servers hostname (e.g. www)'));
-    var hostname = ask('Hostname:',
-        defaultValue: config.hostname, validator: Ask.alphaNumeric);
-    config.hostname = hostname;
-  }
-
-  void selectDomain(ConfigYaml config) {
-    print('');
-    print(green('The servers domain (e.g. microsoft.com.au)'));
-
-    var domain =
-        ask('Domain:', defaultValue: config.domain, validator: Ask.fqdn);
-    config.domain = domain;
+    print(green("The server's FQDN (e.g. www.microsoft.com)"));
+    var fqdn = ask('FQDN:', defaultValue: config.fqdn, validator: AskFQDNOrLocalhost());
+    config.fqdn = fqdn;
   }
 
   Image selectImage(ConfigYaml config) {
     print('');
     print(green('Select the image to utilise.'));
     var latest = 'noojee/nginx-le:latest';
-    var images = Images()
-        .images
-        .where(
-            (image) => image.repository == 'noojee' && image.name == 'nginx-le')
-        .toList();
+    var images = Images().images.where((image) => image.repository == 'noojee' && image.name == 'nginx-le').toList();
     var latestImage = Images().findByFullname(latest);
     var downloadLatest = Image.fromName(latest);
     if (latestImage == null) {
@@ -222,8 +209,7 @@ class ConfigCommand extends Command<void> {
     var image = menu<Image>(
         prompt: 'Image:',
         options: images,
-        format: (image) =>
-            '${image.imageid} - ${image.repository}/${image.name}:${image.tag}',
+        format: (image) => '${image.imageid} - ${image.repository}/${image.name}:${image.tag}',
         defaultOption: config.image);
     config.image = image;
 
@@ -271,149 +257,26 @@ class ConfigCommand extends Command<void> {
   }
 
   /// Ask users where the website content is located.
-  void getContentSource(ConfigYaml config) {
-    var contentSource = <String>[
-      ConfigYaml.CONTENT_SOURCE_PATH,
-      ConfigYaml.CONTENT_SOURCE_LOCATION
-    ];
+  void selectContentProvider(ConfigYaml config) {
+    var contentProviders = ContentProviders().providers;
+
+    var defaultProvider = ContentProviders().getByName(config.contentProvider);
     print('');
-    print(green('Select how the Content is to be served'));
-    var selection = menu(
-        prompt: 'Content Source:',
-        options: contentSource,
-        defaultOption: config.contentSourceType);
+    print(green('Select the Content Provider'));
+    var provider = menu<ContentProvider>(
+        prompt: 'Content Provider:',
+        options: contentProviders,
+        defaultOption: defaultProvider,
+        format: (provider) => '${provider.name.padRight(12)} - ${provider.summary}');
 
-    if (selection == ConfigYaml.CONTENT_SOURCE_PATH) {
-      selectSourcePath(config);
-      config.contentSourceType = ConfigYaml.CONTENT_SOURCE_PATH;
-    } else {
-      setIncludePath(config);
-      config.contentSourceType = ConfigYaml.CONTENT_SOURCE_LOCATION;
-    }
-  }
+    config.contentProvider = provider.name;
 
-  void selectSourcePath(ConfigYaml config) {
-    var valid = false;
-    String wwwroot;
-    do {
-      /// wwwroot
-      var defaultPath =
-          config.wwwRoot ?? WwwRoot(config.hostIncludePath).preferredHostPath;
-      print('');
-      print(green('Path to static web content'));
-      wwwroot = ask('Path (on host) to wwwroot', defaultValue: defaultPath);
-      if (!exists(wwwroot)) {
-        print(red('The path $wwwroot does not exist.'));
-        if (confirm('Create $wwwroot?')) {
-          if (isWritable(findParent(wwwroot))) {
-            createDir(wwwroot, recursive: true);
-          } else {
-            'sudo mkdir -p $wwwroot'.run;
-          }
-          valid = true;
-        }
-      } else {
-        valid = true;
-      }
-    } while (!valid);
-
-    valid = false;
-
-    do {
-      /// write out the location file
-      var wwwBuilder = WwwRoot(wwwroot);
-      var locationConfig = wwwBuilder.build();
-
-      if (config.wwwRoot != null) {
-        backupOldWwwLocation(config, locationConfig);
-      }
-
-      if (!isWritable(findParent(wwwBuilder.hostLocationConfigPath))) {
-        var tmp = FileSync.tempFile();
-        tmp.write(locationConfig);
-        'sudo mv $tmp ${wwwBuilder.hostLocationConfigPath}'.run;
-      } else {
-        wwwBuilder.hostLocationConfigPath.write(locationConfig);
-      }
-
-      config.wwwRoot = wwwroot;
-      valid = true;
-    } while (!valid);
-  }
-
-  void backupOldWwwLocation(ConfigYaml config, String newLocationConfig) {
-    var oldConfig = WwwRoot(config.wwwRoot);
-    if (!exists(oldConfig.hostLocationConfigPath)) return; // nothing to backup
-    var existingLocationConfig =
-        read(oldConfig.hostLocationConfigPath).toList().join('\n');
-    if (existingLocationConfig != newLocationConfig) {
-      // looks like the user manually changed the contents of the file.
-      var backup = '${oldConfig.hostLocationConfigPath}.bak';
-      if (exists(backup)) {
-        var target = '$backup.${Uuid().v4()}';
-        if (!isWritable(backup)) {
-          'sudo mv $backup $target'.run;
-        } else {
-          move(backup, '$backup.${Uuid().v4()}');
-        }
-      }
-
-      if (!isWritable(dirname(backup))) {
-        'sudo cp ${oldConfig.hostLocationConfigPath} $backup'.run;
-      } else {
-        copy(oldConfig.hostLocationConfigPath, backup);
-      }
-
-      print(
-          'Your original location file ${oldConfig.hostLocationConfigPath} has been backed up to $backup');
-    }
-  }
-
-  void setIncludePath(ConfigYaml config) {
-    var valid = false;
-    String hostIncludePath;
-    do {
-      print('');
-      print('${green('Location of nginx include files')}');
-      hostIncludePath = ask(
-          'Include directory (on host) for `.location` and `.upstream` files:',
-          defaultValue: config.hostIncludePath,
-          validator: Ask.required);
-
-      createPath(hostIncludePath);
-
-      valid = true;
-    } while (!valid);
-
-    config.hostIncludePath = hostIncludePath;
-  }
-
-  void createPath(String path) {
-    if (!exists(path)) {
-      if (isWritable(findParent(path))) {
-        createDir(path, recursive: true);
-      } else {
-        'sudo mkdir -p $path'.run;
-      }
-    }
-  }
-
-  /// climb the tree until we find a parent directory that exists.
-  /// If path exists we will return it.
-  String findParent(String path) {
-    var current = path;
-    while (!exists(current)) {
-      current = dirname(current);
-    }
-    return current;
+    provider.promptForSettings();
   }
 
   void selectContainer(ConfigYaml config) {
     /// try for the default container name.
-    var containers = Containers()
-        .containers()
-        .where((container) => container.names == 'nginx-le')
-        .toList();
+    var containers = Containers().containers().where((container) => container.names == 'nginx-le').toList();
 
     if (containers.isEmpty) {
       containers = Containers().containers();
@@ -429,8 +292,7 @@ class ConfigCommand extends Command<void> {
           prompt: 'Select Container:',
           options: containers,
           defaultOption: defaultOption,
-          format: (container) =>
-              '${container.names.padRight(30)} ${container.image?.fullname}');
+          format: (container) => '${container.names.padRight(30)} ${container.image?.fullname}');
       config.containerid = container.containerid;
     }
   }
