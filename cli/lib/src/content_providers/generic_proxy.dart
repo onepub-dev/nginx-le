@@ -17,18 +17,21 @@ class GenericProxy extends ContentProvider {
     fqdn ??= 'localhost';
 
     fqdn = ask('FQDN of web application server:',
-        defaultValue: fqdn, validator: AskMultiValidator([Ask.required, AskFQDNOrLocalhost()]));
+        defaultValue: fqdn,
+        validator: AskMultiValidator([Ask.required, AskFQDNOrLocalhost()]));
 
     var port = config.settings[portKey] as int;
     port ??= 8080;
 
     port = int.parse(ask('TCP Port of web application server:',
-        defaultValue: '$port', validator: AskMultiValidator([Ask.required, Ask.integer])));
+        defaultValue: '$port',
+        validator: AskMultiValidator([Ask.required, Ask.integer])));
 
     config.settings[fqdnKey] = fqdn;
     config.settings[portKey] = port;
 
-    askForLocationPath('Host directory for generated proxy `.location` and `.upstream` files');
+    askForLocationPath(
+        'Host directory for generated proxy `.location` and `.upstream` files');
   }
 
   @override
@@ -45,7 +48,8 @@ class GenericProxy extends ContentProvider {
   void createLocationFile() {
     var config = ConfigYaml();
     var location = join(config.hostIncludePath, '$name.location');
-    find('*.location', root: config.hostIncludePath).forEach((file) => delete(file));
+    find('*.location', root: config.hostIncludePath)
+        .forEach((file) => delete(file));
 
     location.write(r'''location / {
       	#try_files $uri $uri/ =404;
@@ -65,7 +69,8 @@ class GenericProxy extends ContentProvider {
   @override
   void createUpstreamFile() {
     var config = ConfigYaml();
-    find('*.upstream', root: ConfigYaml().hostIncludePath).forEach((file) => delete(file));
+    find('*.upstream', root: ConfigYaml().hostIncludePath)
+        .forEach((file) => delete(file));
     var location = join(config.hostIncludePath, '$name.upstream');
 
     var fqdn = config.settings[fqdnKey] as String;
@@ -81,7 +86,9 @@ class GenericProxy extends ContentProvider {
   List<Volume> getVolumes() {
     var config = ConfigYaml();
     return [
-      Volume(hostPath: config.hostIncludePath, containerPath: Nginx.containerIncludePath),
+      Volume(
+          hostPath: config.hostIncludePath,
+          containerPath: Nginx.containerIncludePath),
     ];
   }
 }

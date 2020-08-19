@@ -3,15 +3,16 @@ import 'dart:io';
 import 'package:dshell/dshell.dart' as d;
 import 'package:dshell/dshell.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
-import 'package:yaml/yaml.dart';
+import 'package:settings_yaml/settings_yaml.dart';
 
 class ConfigYaml {
   static final _self = ConfigYaml._internal();
   static const configDir = '.nginx-le';
   static const configFile = 'settings.yaml';
 
-  static const CONTENT_SOURCE_PATH = 'Simple wwwroot';
-  static const CONTENT_SOURCE_LOCATION = 'Locations';
+  // static const CONTENT_SOURCE_PATH = 'Simple wwwroot';
+  // static const CONTENT_SOURCE_LOCATION = 'Locations';
+  // static const CONTENT_SOURCE_TOMCAT = 'Tomcat';
 
   static const MODE_PUBLIC = 'public';
   static const MODE_PRIVATE = 'private';
@@ -23,13 +24,13 @@ class ConfigYaml {
   static const START_METHOD_DOCKER_START = 'docker-start';
   static const START_METHOD_DOCKER_COMPOSE = 'docker-compose';
 
-  YamlDocument _document;
+  SettingsYaml settings;
 
   /// keys
   static const START_METHOD_KEY = 'start-method';
   static const MODE_KEY = 'mode';
   static const HOSTNAME_KEY = 'host';
-  static const DOMAIN_KEY = 'domain';
+  static const FQDN_KEY = 'fqdn';
   static const TLD_KEY = 'tld';
   static const IMAGE = 'image';
   static const CONTAINERID = 'containerid';
@@ -37,7 +38,7 @@ class ConfigYaml {
   static const DNSPROVIDER = 'dns_provider';
   static const CERTIFICATE_TYPE = 'certificate_type';
   static const HOST_INCLUDE_PATH = 'host_include_path';
-  static const CONTENT_SOURCE = 'content_source';
+  static const CONTENT_PROVIDER = 'content_provider';
   static const WWW_ROOT = 'www_root';
 
   // defaults:
@@ -45,8 +46,7 @@ class ConfigYaml {
 
   String startMethod;
   String mode;
-  String hostname;
-  String domain;
+  String fqdn;
   String tld;
   Image image;
 
@@ -58,15 +58,11 @@ class ConfigYaml {
 
   String dnsProvider;
 
-  // The type of content source (wwwroot or location)
-  String contentSourceType;
+  // The name of the selected [ContentProvider]
+  String contentProvider;
 
   /// host path which is mounted into ngix and contains .location and .upstream files from.
   String _hostIncludePath;
-
-  /// If the user chose a content source of CONTENT_SOURCE_PATH this contains the path to the
-  /// wwwroot file the selected during configuration.
-  String wwwRoot;
 
   /// Name Cheap settings
   static const NAMECHEAP_PROVIDER = 'namecheap';
@@ -83,35 +79,27 @@ class ConfigYaml {
       d.createDir(d.dirname(configPath), recursive: true);
     }
 
-    if (d.exists(configPath)) {
-      var contents = d.waitForEx<String>(File(configPath).readAsString());
-      _document = _load(contents);
-      startMethod = getValue(START_METHOD_KEY);
-      mode = getValue(MODE_KEY);
-      hostname = getValue(HOSTNAME_KEY);
-      domain = getValue(DOMAIN_KEY);
-      tld = getValue(TLD_KEY);
-      image = Images().findByImageId(getValue(IMAGE));
-      certificateType = getValue(CERTIFICATE_TYPE);
-      emailaddress = getValue(EMAILADDRESS);
-      containerid = getValue(CONTAINERID);
-      dnsProvider = getValue(DNSPROVIDER);
-      contentSourceType = getValue(CONTENT_SOURCE);
-      _hostIncludePath = getValue(HOST_INCLUDE_PATH);
-      wwwRoot = getValue(WWW_ROOT);
+    settings = SettingsYaml.load(filePath: configPath);
+    startMethod = settings[START_METHOD_KEY] as String;
+    mode = settings[MODE_KEY] as String;
+    fqdn = settings[FQDN_KEY] as String;
+    tld = settings[TLD_KEY] as String;
+    image = Images().findByImageId(settings[IMAGE] as String);
+    certificateType = settings[CERTIFICATE_TYPE] as String;
+    emailaddress = settings[EMAILADDRESS] as String;
+    containerid = settings[CONTAINERID] as String;
+    dnsProvider = settings[DNSPROVIDER] as String;
+    contentProvider = settings[CONTENT_PROVIDER] as String;
+    _hostIncludePath = settings[HOST_INCLUDE_PATH] as String;
 
-      if (dnsProvider == NAMECHEAP_PROVIDER) {
-        var namecheapMap = getMap(NAMECHEAP_PROVIDER);
-        if (namecheapMap != null) {
-          namecheap_apikey = namecheapMap[NAMECHEAP_KEY] as String;
-          namecheap_apiusername = namecheapMap[NAMECHEAP_USERNAME] as String;
-        }
-      }
+    if (dnsProvider == NAMECHEAP_PROVIDER) {
+      namecheap_apikey = settings[NAMECHEAP_KEY] as String;
+      namecheap_apiusername = settings[NAMECHEAP_USERNAME] as String;
     }
   }
 
   ///
-  bool get isConfigured => d.exists(configPath) && domain != null;
+  bool get isConfigured => d.exists(configPath) && fqdn != null;
 
   bool get isStaging => certificateType == ConfigYaml.CERTIFICATE_TYPE_STAGING;
 
@@ -125,67 +113,53 @@ class ConfigYaml {
     return _hostIncludePath;
   }
 
+  String get domain {
+    if (fqdn == null) return '';
+
+    if (fqdn.contains('.')) {
+      /// return everything but the first part (hostname).
+      return fqdn.split('.').sublist(1).join('.');
+    }
+
+    return fqdn;
+  }
+
+  String get hostname {
+    if (fqdn == null) return '';
+
+    if (fqdn.contains('.')) {
+      return fqdn.split('.')[0];
+    }
+
+    return fqdn;
+  }
+
   set hostIncludePath(String hostIncludePath) {
     _hostIncludePath = hostIncludePath;
   }
 
-  YamlDocument _load(String content) {
-    return loadYamlDocument(content);
-  }
-
   void save() {
-    configPath.write('# Nginx-LE configuration file');
-    configPath.append('$START_METHOD_KEY: $startMethod');
-    configPath.append('$MODE_KEY: $mode');
-    configPath.append('$HOSTNAME_KEY: $hostname');
-    configPath.append('$DOMAIN_KEY: $domain');
-    configPath.append('$TLD_KEY: $tld');
-    configPath.append('$IMAGE: ${image?.imageid}');
-    configPath.append('$CERTIFICATE_TYPE: ${certificateType}');
-    configPath.append('$EMAILADDRESS: $emailaddress');
-    configPath.append('$CONTAINERID: $containerid');
-    configPath.append('$DNSPROVIDER: $dnsProvider');
-    configPath.append('$CONTENT_SOURCE: $contentSourceType');
-    configPath.append('$HOST_INCLUDE_PATH: $hostIncludePath');
-    configPath.append('$WWW_ROOT: $wwwRoot');
+    settings[START_METHOD_KEY] = startMethod;
+    settings[MODE_KEY] = mode;
+    settings[FQDN_KEY] = fqdn;
+    settings[TLD_KEY] = tld;
+    settings[IMAGE] = '${image?.imageid}';
+    settings[CERTIFICATE_TYPE] = certificateType;
+    settings[EMAILADDRESS] = emailaddress;
+    settings[CONTAINERID] = containerid;
+    settings[DNSPROVIDER] = dnsProvider;
+    settings[CONTENT_PROVIDER] = contentProvider;
+    settings[HOST_INCLUDE_PATH] = hostIncludePath;
 
     if (dnsProvider == NAMECHEAP_PROVIDER) {
-      configPath.append('$NAMECHEAP_PROVIDER:');
-      configPath.append('  $NAMECHEAP_KEY: $namecheap_apikey');
-      configPath.append('  $NAMECHEAP_USERNAME: $namecheap_apiusername');
+      settings[NAMECHEAP_KEY] = namecheap_apikey;
+      settings[NAMECHEAP_USERNAME] = namecheap_apiusername;
     }
+    settings.save();
   }
 
   String get configPath {
     return d.join(d.HOME, configDir, configFile);
-  }
-
-  /// reads the value of a top level [key].
-  ///
-  String getValue(String key) {
-    if (_document.contents.value == null) {
-      return null;
-    } else {
-      return _document.contents.value[key] as String;
-    }
-  }
-
-  /// returns a list of elements attached to [key].
-  YamlList getList(String key) {
-    if (_document.contents.value == null) {
-      return null;
-    } else {
-      return _document.contents.value[key] as YamlList;
-    }
-  }
-
-  /// returns the map of elements attached to [key].
-  YamlMap getMap(String key) {
-    if (_document.contents.value == null) {
-      return null;
-    } else {
-      return _document.contents.value[key] as YamlMap;
-    }
   }
 
   void validate(void Function() showUsage) {

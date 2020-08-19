@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
 import 'package:nginx_le/src/config/ConfigYaml.dart';
+import 'package:nginx_le/src/content_providers/content_providers.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /// Starts nginx and the certbot scheduler.
@@ -50,8 +51,7 @@ class DoctorCommand extends Command<void> {
     print(green('Nginx-LE configuration file'));
     _colprint(['ConfigPath', config.configPath]);
     _colprint(['Mode', config.mode]);
-    _colprint(['Hostname', config.hostname]);
-    _colprint(['Domain', config.domain]);
+    _colprint(['FQDN', config.fqdn]);
     _colprint(['TLD', config.tld]);
     _colprint(['Docker ImageID', config.image?.imageid]);
     _colprint(['Cert Type', config.certificateType]);
@@ -60,12 +60,15 @@ class DoctorCommand extends Command<void> {
     _colprint(['Namecheap api key', config.namecheap_apikey]);
     _colprint(['Namecheap api username', config.namecheap_apiusername]);
 
+    var provider = ContentProviders().getByName(config.contentProvider);
     print('');
-    _colprint(['Content Source', config.contentSourceType]);
-    if (config.contentSourceType == ConfigYaml.CONTENT_SOURCE_PATH) {
-      _colprint(['WWW Root', config.wwwRoot]);
-    } else {
-      _colprint(['Host Include Path', config.hostIncludePath]);
+    _colprint(['Content Provider', config.contentProvider]);
+    for (var volume in provider.getVolumes()) {
+      _colprint([
+        'Volume',
+        'host: ${volume.hostPath}',
+        'container: ${volume.containerPath}'
+      ]);
     }
 
     print('');
