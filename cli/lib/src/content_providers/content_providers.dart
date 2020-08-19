@@ -20,7 +20,8 @@ class ContentProviders {
 
     for (var provider in providers) {
       if (names.containsKey(provider.name)) {
-        throw ArgumentError('The ContentProvider name ${provider.name} is already used.');
+        throw ArgumentError(
+            'The ContentProvider name ${provider.name} is already used.');
       }
     }
 
