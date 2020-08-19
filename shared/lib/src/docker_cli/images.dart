@@ -75,8 +75,6 @@ class Images {
   Image findByFullname(String fullname) {
     var match = Image.fromName(fullname);
 
-    Settings().verbose('Match ${match.repository} ${match.name} ${match.tag}');
-
     return findByParts(
         repository: match.repository, name: match.name, tag: match.tag);
   }

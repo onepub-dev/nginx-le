@@ -37,8 +37,6 @@ class Image {
     String name;
     String tag;
 
-    Settings().verbose('$fullname');
-
     if (fullname.contains('/')) {
       var parts = fullname.split('/');
       repo = parts[0];
