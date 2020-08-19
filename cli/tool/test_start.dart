@@ -1,4 +1,5 @@
 #! /usr/bin/env dshell
+
 import 'package:dshell/dshell.dart';
 
 /// Starts the ngix docker instance using the host subdirectory 'certs' to store acquired certifiates.
