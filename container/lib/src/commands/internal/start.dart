@@ -48,8 +48,8 @@ void start() {
   Certbot().deployCertificates(
       hostname: hostname,
       domain: domain,
-      reload: false // don't try to reload nginx as it won't be running as yet.
-      );
+      reload: false, // don't try to reload nginx as it won't be running as yet.
+      acquire: acquire);
 
   startRenewalThread();
 
