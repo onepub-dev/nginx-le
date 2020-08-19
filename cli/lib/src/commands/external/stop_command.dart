@@ -33,7 +33,7 @@ class StopCommand extends Command<void> {
 
     var container = Containers().findByContainerId(config.containerid);
     if (container.isRunning) {
-      print('stopping...');
+      print('Stopping...');
       container.stop();
     } else {
       printerr('The container ${config.containerid} is not running');
