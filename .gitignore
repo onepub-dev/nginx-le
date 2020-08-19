@@ -14,3 +14,4 @@ cli/bin/nginx-le
 .vscode/
 nginx-le.code-workspace
 shared/.vscode/
+.history
