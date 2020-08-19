@@ -49,7 +49,7 @@ void start() {
       hostname: hostname,
       domain: domain,
       reload: false, // don't try to reload nginx as it won't be running as yet.
-      acquire: acquire);
+      autoAcquireMode: acquire);
 
   startRenewalThread();
 

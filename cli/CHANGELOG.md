@@ -1,3 +1,7 @@
+# 1.0.7
+fixed bug in auto acquire in shared lib.
+# 1.0.5
+Updated to support a number of content providers including tomcat.
 # 1.0.3
 Upgraded to dshell 1.11.0 and fixed breaking changes.
 # 1.0.2

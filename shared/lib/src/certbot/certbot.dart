@@ -72,17 +72,23 @@ class Certbot {
   ///
 
   void deployCertificates(
-      {@required String hostname, @required String domain, bool revoking = false, bool reload = true, bool acquire}) {
+      {@required String hostname,
+      @required String domain,
+      bool revoking = false,
+      bool reload = true,
+      bool autoAcquireMode}) {
     var hasValidCerts = false;
 
     if (!revoking) {
       if (!exists(getCertificateFullChainPath(hostname, domain))) {
-        if (!acquire) {
-          printerr("No Certificates found for $hostname.$domain. You may need to run 'nginx-le acquire");
+        if (!autoAcquireMode) {
+          printerr(
+              "No Certificates found for $hostname.$domain. You may need to run 'nginx-le acquire");
         }
       } else {
         if (hasExpired(hostname, domain)) {
-          printerr("ERROR The Certificate for $hostname.$domain has expired. Please run 'nginx-le acquire.");
+          printerr(
+              "ERROR The Certificate for $hostname.$domain has expired. Please run 'nginx-le acquire.");
         } else {
           hasValidCerts = true;
         }
@@ -118,7 +124,10 @@ class Certbot {
   /// Used more for testing, but essentially deletes any existing certificates
   /// and places the system into acquire mode.
   /// Could also be used to play with and remove staging certificates
-  void revoke({@required String hostname, @required String domain, bool staging = false}) {
+  void revoke(
+      {@required String hostname,
+      @required String domain,
+      bool staging = false}) {
     var workDir = _createDir(Certbot.letsEncryptWorkPath);
     var logDir = _createDir(Certbot.letsEncryptLogPath);
     var configDir = _createDir(Certbot.letsEncryptConfigPath);
@@ -133,7 +142,10 @@ class Certbot {
     if (staging) cmd += ' --staging ';
 
     cmd.start(
-        runInShell: true, nothrow: true, progress: Progress((line) => print(line), stderr: (line) => printerr(line)));
+        runInShell: true,
+        nothrow: true,
+        progress:
+            Progress((line) => print(line), stderr: (line) => printerr(line)));
 
     _delete(hostname, domain);
   }
@@ -153,7 +165,10 @@ class Certbot {
         ' --logs-dir=$logDir ';
 
     cmd.start(
-        runInShell: true, nothrow: true, progress: Progress((line) => print(line), stderr: (line) => printerr(line)));
+        runInShell: true,
+        nothrow: true,
+        progress:
+            Progress((line) => print(line), stderr: (line) => printerr(line)));
   }
 
   /// Returns the path where lets encrypt certificates are stored.
@@ -229,10 +244,20 @@ class Certbot {
 
     if (mode.toLowerCase() == 'public') {
       http_auth_acquire(
-          hostname: hostname, domain: domain, tld: tld, emailaddress: emailaddress, staging: staging, debug: debug);
+          hostname: hostname,
+          domain: domain,
+          tld: tld,
+          emailaddress: emailaddress,
+          staging: staging,
+          debug: debug);
     } else {
       dns_auth_acquire(
-          hostname: hostname, domain: domain, tld: tld, emailaddress: emailaddress, staging: staging, debug: debug);
+          hostname: hostname,
+          domain: domain,
+          tld: tld,
+          emailaddress: emailaddress,
+          staging: staging,
+          debug: debug);
     }
   }
 
@@ -274,14 +299,17 @@ class Certbot {
 
     /// we need to leave the original files in place as they form part
     /// of the letsencrypt archive
-    copy(join(certpath, 'fullchain.pem'), '/tmp/fullchain.pem', overwrite: true);
+    copy(join(certpath, 'fullchain.pem'), '/tmp/fullchain.pem',
+        overwrite: true);
     copy(join(certpath, 'privkey.pem'), '/tmp/privkey.pem', overwrite: true);
 
     /// but we need to move them in place using move so that
     /// the replace is essentially atomic so that nginx does see partially
     /// created certificates.
-    move('/tmp/fullchain.pem', join(nginxCertPath, 'fullchain.pem'), overwrite: true);
-    move('/tmp/privkey.pem', join(nginxCertPath, 'privkey.pem'), overwrite: true);
+    move('/tmp/fullchain.pem', join(nginxCertPath, 'fullchain.pem'),
+        overwrite: true);
+    move('/tmp/privkey.pem', join(nginxCertPath, 'privkey.pem'),
+        overwrite: true);
   }
 
   void reloadNginx() {
@@ -313,7 +341,8 @@ class Certbot {
     var latest = join(livepath, '$hostname.$domain');
 
     /// find all the dirs that begin with <fqdn> in the live directory.
-    var paths = find('$hostname.$domain*', root: livepath, types: [FileSystemEntityType.directory]).toList();
+    var paths = find('$hostname.$domain*',
+        root: livepath, types: [FileSystemEntityType.directory]).toList();
 
     var max = 0;
     for (var path in paths) {
