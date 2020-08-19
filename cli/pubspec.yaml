@@ -19,7 +19,9 @@ dependencies:
   meta: ^1.0.0
   pedantic: ^1.0.0
   public_suffix: ^1.0.0
+  settings_yaml: ^2.0.0
   uuid: ^2.0.4
+  validators: ^2.0.0
   nginx_le_shared: ^1.0.0
   yaml: ^2.2.1
 dev_dependencies: 
