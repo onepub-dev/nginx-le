@@ -30,11 +30,9 @@ class RestartCommand extends Command<void> {
     Settings().setVerbose(enabled: debug);
 
     var config = ConfigYaml();
-
     config.validate(() => showUsage(argParser));
 
-    print(
-        'Restarting nginx hostname=${config.hostname} domain=${config.domain} mode=${config.mode}');
+    print('Restarting nginx fqdn=${config.fqdn} mode=${config.mode}');
 
     'docker restart ${config.containerid}'.run;
   }
