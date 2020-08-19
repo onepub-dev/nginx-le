@@ -3,7 +3,7 @@ import 'package:meta/meta.dart';
 
 /// Used to store the variables that the container was started
 /// with.
-/// This allows subsequent commands run agains the container
+/// This allows subsequent commands run against the container
 /// to access the startup variables.
 class InternalRunConfig {
   String hostname;
