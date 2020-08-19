@@ -1,3 +1,7 @@
+# 1.0.7
+fixed bug in auto acquire in shared lib.
+# 1.0.6
+See nginx_le for details
 # 1.0.3
 upgraded to latest shared lib.
 # 1.0.2

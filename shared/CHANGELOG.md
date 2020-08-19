@@ -1,3 +1,8 @@
+# 1.0.7
+incremented to sync release version no.s
+# 1.0.6
+added autoacquiremode flag
+# 1.0.3
 # 1.0.2
 Upgraded to dshell 1.11.0 and fixed breaking changes.
 
