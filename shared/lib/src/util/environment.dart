@@ -7,6 +7,9 @@ class Environment {
   static final _self = Environment._internal();
   factory Environment() => _self;
 
+  static const String NAMECHEAP_API_KEY = 'NAMECHEAP_API_KEY';
+  static const String NAMECHEAP_API_USER = 'NAMECHEAP_API_USER';
+
   Environment._internal();
 
   bool get debug => env('DEBUG') == 'true';

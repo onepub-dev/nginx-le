@@ -28,7 +28,7 @@ void acquire(List<String> args) {
         namecheap_apiuser != null &&
         namecheap_apiuser.isNotEmpty)) {
       throw CommandException(
-          'The NameCheap arguments ${Environment().NAMECHEAP_API_KEY} and ${Environment().NAMECHEAP_API_USER} were not set');
+          'The NameCheap arguments ${Environment.NAMECHEAP_API_KEY} and ${Environment.NAMECHEAP_API_USER} were not set');
     }
 
     /// these are used by the certbot auth and clenaup hooks.
