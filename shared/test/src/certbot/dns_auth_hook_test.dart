@@ -5,38 +5,26 @@ import 'package:test/test.dart';
 
 /// You must run this command with the console option.
 void main() {
-  //test('dns_auth_hook', () {
   Settings().setVerbose(enabled: true);
   prepareCertHooks();
 
   Certbot().sendToStdout();
 
   certbot_dns_auth_hook();
-  // });
-
-  // test('dns_cleanup_hook', () {
-  //   Settings().setVerbose(enabled: true);
-
-  //   prepareCertHooks();
-
-  //   setNameCheapAuthDetails();
-
-  //   certbot_dns_cleanup_hook();
-  // });
 }
 
 void prepareCertHooks() {
   var letsencryptDir = '/tmp/letsencrypt';
-  setEnv(Certbot.LETSENCRYPT_ROOT_ENV, letsencryptDir);
-  setEnv('CERTBOT_DOMAIN', 'noojee.org');
-  setEnv('HOSTNAME', 'slayer');
-  setEnv('DOMAIN', 'noojee.org');
 
-  setEnv('TLD', 'org');
-  setEnv('MODE', 'private');
-  setEnv('CERTBOT_VALIDATION', 'TEST_TOKEN_ABC134');
+  Environment().certbotRoot = letsencryptDir;
+  Environment().certbotDomain = 'noojee.org';
+  Environment().hostname = 'slayer';
+  Environment().domain = 'noojee.org';
+  Environment().tld = 'org';
+  Environment().mode = 'private';
+  Environment().certbotValidation = 'TEST_TOKEN_ABC134';
+  Environment().certbotRootOverwrite = '/tmp/nginx/certs';
 
-  setEnv(Certbot.NGINX_CERT_ROOT_OVERWRITE, '/tmp/nginx/certs');
   _createDir(Certbot.nginxCertPath);
 
   _createDir(Certbot.letsEncryptWorkPath);
@@ -45,14 +33,8 @@ void prepareCertHooks() {
   _createDir(join(Certbot.letsEncryptConfigPath, 'live'));
 
   print(pwd);
-  setEnv(
-      'CERTBOT_DNS_AUTH_HOOK_PATH',
-      // 'dshell ../container/bin/certbot_hooks/dns_auth.dart',
-      'dns_auth');
-  setEnv(
-      'CERTBOT_DNS_CLEANUP_HOOK_PATH',
-      // 'dshell ../container/bin/certbot_hooks/dns_cleanup.dart',
-      'dns_cleanup');
+  Environment().certbotDNSAuthHookPath = 'dns_auth';
+  Environment().certbotDNSCleanupHookPath = 'dns_cleanup';
 
   setNameCheapAuthDetails();
 }
@@ -61,8 +43,8 @@ void setNameCheapAuthDetails() {
   var apiKey = ask('Namecheap api key');
   var username = ask('Namecheap api username');
   // pass the security details down to the createDNSChallenge.dart process
-  setEnv(NAMECHEAP_API_USER, username);
-  setEnv(NAMECHEAP_API_KEY, apiKey);
+  Environment().namecheapApiUser = username;
+  Environment().namecheapApiKey = apiKey;
 }
 
 String _createDir(String dir) {

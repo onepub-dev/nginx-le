@@ -1,4 +1,5 @@
 import 'package:dshell/dshell.dart';
+import 'package:nginx_le_shared/src/util/environment.dart';
 
 import 'certbot.dart';
 
@@ -9,18 +10,16 @@ void certbot_http_cleanup_hook() {
   ///
   /// Get the environment vars passed to use
   ///
-  var verbose = env('VERBOSE') == 'true';
+  var verbose = Environment().certbotVerbose;
   Certbot().log('verbose: $verbose');
 
   Settings().setVerbose(enabled: verbose);
-  ArgumentError.checkNotNull(
-      env('CERTBOT_TOKEN'), 'The environment variable CERTBOT_TOKEN was empty');
+  ArgumentError.checkNotNull(Environment().certbotToken, 'The environment variable CERTBOT_TOKEN was empty');
 
   /// This path MUST match the path set in the nginx config files:
   /// /etc/nginx/custom/default.conf
   /// /etc/nginx/acquire/default.conf
-  var path = join('/', 'opt', 'letsencrypt', 'wwwroot', '.well-known',
-      env('CERTBOT_TOKEN'));
+  var path = join('/', 'opt', 'letsencrypt', 'wwwroot', '.well-known', Environment().certbotToken);
   if (exists(path)) {
     delete(path);
   }

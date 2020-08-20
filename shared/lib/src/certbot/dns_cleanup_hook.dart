@@ -1,6 +1,6 @@
 import 'package:dshell/dshell.dart';
 import 'package:nginx_le_shared/src/namecheap/challenge.dart';
-import 'package:nginx_le_shared/src/namecheap/env.dart';
+import 'package:nginx_le_shared/src/util/environment.dart';
 
 import 'certbot.dart';
 
@@ -11,27 +11,27 @@ void certbot_dns_cleanup_hook() {
   ///
   /// Get the environment vars passed to use
   ///
-  var verbose = env('VERBOSE') == 'true';
+  var verbose = Environment().certbotVerbose;
   Certbot().log('verbose: $verbose');
 
   Settings().setVerbose(enabled: verbose);
 
   /// Certbot generated envs.
   // ignore: unnecessary_cast
-  var fqdn = env('CERTBOT_DOMAIN') as String;
+  var fqdn = Environment().certbotDomain;
   Certbot().log('fqdn: $fqdn');
 
-  var certbotAuthKey = env('CERTBOT_VALIDATION');
+  var certbotAuthKey = Environment().certbotValidation;
   Certbot().log('CertbotAuthKey: $certbotAuthKey');
 
   /// our own envs.
-  var domain = env('DOMAIN');
-  var hostname = env('HOSTNAME');
-  var tld = env('TLD');
+  var domain = Environment().domain;
+  var hostname = Environment().hostname;
+  var tld = Environment().tld;
   Certbot().log('tld: $tld');
-  var username = env(NAMECHEAP_API_USER);
+  var username = Environment().namecheapApiUser;
   Certbot().log('username: $username');
-  var apiKey = env(NAMECHEAP_API_KEY);
+  var apiKey = Environment().namecheapApiKey;
   Certbot().log('apiKey: $apiKey');
 
   if (fqdn == null || fqdn.isEmpty) {
@@ -44,18 +44,13 @@ void certbot_dns_cleanup_hook() {
     /// Create the required DNS entry for the Certbot challenge.
     ///
     Settings().verbose('Creating challenge');
-    var challenge = Challenge.simple(
-        apiKey: apiKey, username: username, apiUsername: username);
+    var challenge = Challenge.simple(apiKey: apiKey, username: username, apiUsername: username);
     Settings().verbose('calling challenge.present');
 
     ///
     /// Writes the DNS record and waits for it to be visible.
     ///
-    challenge.cleanUp(
-        hostname: hostname,
-        domain: domain,
-        tld: tld,
-        certbotAuthKey: certbotAuthKey);
+    challenge.cleanUp(hostname: hostname, domain: domain, tld: tld, certbotAuthKey: certbotAuthKey);
   } catch (e) {
     printerr(e.toString());
   }

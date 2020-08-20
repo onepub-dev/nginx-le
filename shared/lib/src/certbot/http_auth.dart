@@ -1,5 +1,6 @@
 import 'package:dshell/dshell.dart';
 import 'package:meta/meta.dart';
+import 'package:nginx_le_shared/src/util/environment.dart';
 
 import 'certbot.dart';
 
@@ -16,13 +17,11 @@ void http_auth_acquire({
   var configDir = _createDir(Certbot.letsEncryptConfigPath);
 
   /// These are set via in the Dockerfile
-  var auth_hook = env('CERTBOT_HTTP_AUTH_HOOK_PATH');
-  var cleanup_hook = env('CERTBOT_HTTP_CLEANUP_HOOK_PATH');
+  var auth_hook = Environment().certbotDNSAuthHookPath;
+  var cleanup_hook = Environment().certbotDNSCleanupHookPath;
 
-  ArgumentError.checkNotNull(
-      auth_hook, 'Environment variable: CERTBOT_HTTP_AUTH_HOOK_PATH missing');
-  ArgumentError.checkNotNull(cleanup_hook,
-      'Environment variable: CERTBOT_HTTP_CLEANUP_HOOK_PATH missing');
+  ArgumentError.checkNotNull(auth_hook, 'Environment variable: CERTBOT_HTTP_AUTH_HOOK_PATH missing');
+  ArgumentError.checkNotNull(cleanup_hook, 'Environment variable: CERTBOT_HTTP_CLEANUP_HOOK_PATH missing');
 
   var certbot = 'certbot certonly '
       ' --manual '
@@ -41,10 +40,7 @@ void http_auth_acquire({
   if (staging) certbot += ' --staging ';
 
   certbot.start(
-      runInShell: true,
-      nothrow: true,
-      progress:
-          Progress((line) => print(line), stderr: (line) => printerr(line)));
+      runInShell: true, nothrow: true, progress: Progress((line) => print(line), stderr: (line) => printerr(line)));
 }
 
 String _createDir(String dir) {

@@ -12,8 +12,8 @@ void main() {
     var apiKey = ask('Namecheap api key');
     var username = ask('Namecheap api username');
     // pass the security details down to the createDNSChallenge.dart process
-    setEnv(NAMECHEAP_API_USER, username);
-    setEnv(NAMECHEAP_API_KEY, apiKey);
+    Environment().namecheapApiUser = username;
+    Environment().namecheapApiKey = apiKey;
 
     Certbot().acquire(
         hostname: 'slayer',
