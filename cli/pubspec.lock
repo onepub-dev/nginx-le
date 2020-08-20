@@ -133,7 +133,7 @@ packages:
       name: dshell
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.11.0"
+    version: "1.11.1"
   encrypt:
     dependency: "direct main"
     description:
@@ -301,7 +301,7 @@ packages:
       name: nginx_le_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.10"
+    version: "1.1.2"
   node_interop:
     dependency: transitive
     description:

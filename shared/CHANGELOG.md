@@ -1,3 +1,9 @@
+# 1.1.2
+# 1.1.1
+# 1.1.0
+# 1.0.11
+# 1.0.11
+Fixed the HTTP auth hooks. Was uising the DNS auth hook due to a mix up in environment vars.
 # 1.0.10
 Added missing consts for namecheap
 # 1.0.9
