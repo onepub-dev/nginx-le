@@ -28,19 +28,19 @@ is close to instantaneous.
 
 # Public Web Server
 
-Public Web Servers is where the Web Server exposes port 80 and 443 on a public IP address.
+A Public Web Servers is where the Web Server exposes port 80 and 443 on a public IP address with a public DNS A record (e.g. host.mydomain.com resolves to the webservers IP address).
 
 For Public Web Servers Nginx-LE uses the standard Certbot HTTP auth mechanism.
 
-Lets Encrypt certificates are automatically renewed.
+Lets Encrypt certificates are automatically acquired and renewed.
 
 A public web server may be behind a NAT however it MUST have port 80 open to the world to allow certbot to validate the server.
 
 # Private Web Server
 
-For a private web server (one with no public internet access) Nginx-LE using the certbot DNS auth method.
+For a Private web server (one with no public internet access) Nginx-LE using the certbot DNS auth method.
 
-Nginx-LE will need to make an `outbound` connection to the `Lets Encrypt` server but no inbound connection is required.
+Nginx-LE will need to make an `outbound` connection (TCP port 443) to the `Lets Encrypt` and the hoster of your DNS servers but no inbound connection is required.
 
 Note: At this point the `private` mode only works with a `NameCheap` dns server as that is the only api we currently support.
 
@@ -59,9 +59,6 @@ To install the cli tooling:
 2) activate Nginx-LE
 
 `pub global activate nginx_le`
-
-
-
 
 On linux this amounts to:
 ```
@@ -83,17 +80,19 @@ The Nginx-LE cli exposes the following commands:
 | Command | Description | Comment
 | ------ |:------|:-----
 | build| Builds the docker image. | Only required if you need to customise the image.
-| config | Configures the server settings | You must run config before you can run any other commands.
-| start | Starts nginx-le | Starts the Docker container for a specific FQDN
+| config | Configures nginx-le and creates the docker container.| You must run config before you can run any other commands (except build).
+| start | Starts nginx-le | Starts the nginx-le docker container
 | restart | Restarts nginx-le | Restarts the docker container
 | stop | Stops nginx-le | Stops the docker container.
-| acquire | Acquires or renews a Lets Encrypt certificate | The method use depends on the --mode switch used via `start`
-| revoke | Revokes the current Lets Encrypt certificate | Full certificate revocation.
+| acquire | Acquires or renews a Lets Encrypt certificate | The method use depends on the mode selected when you ran `nginx-le config`
+| revoke | Revokes the current Lets Encrypt certificate | Full certificate revocation. You need to run revoke/acquire if you change the type of certificate between production and staging.
 | cli | Attaches you to the Docker container in a bash shell. | Play inside the nginx-le docker container.
-| logs | Tails the 
+| logs | Tails various logs in the container | 
 
 
 # Building Nginx-LE
+
+Most users of Nginx-LE will never need to run a build. The build tooling is primarily used by the Nginx-LE development team.
 
 To build Nginx-LE install the Nginx-LE cli tools as noted above.
 
@@ -137,6 +136,8 @@ The flag can be abbreviated to `-d`.
 # Configure Nginx-LE
 Use the `nginx-le config` command to configure you Nginx-LE container.
 
+When you run config, Nginx-LE will destroy and create a new container with the new settings.
+
 
 
 
@@ -147,10 +148,22 @@ Select the method by which you are going to start Nginx-LE
 | docker start | `nginx-le config` will create a container. Use `docker start` and `docker stop` to start/stop the container.
 | docker-compose up | `docker-compose up` will create and start the container. You must specify a number of environment variables and volumes in the docker-compose.yaml file to configure Nginx-LE. You must have started the container with `docker-compose` at least once before running `nginx-le config`. Use `docker-compose up` and `docker-compose down` to start/stop the container.
 
-The configure command saves a number settings so that you don't have to pass them when running other commands.
+The `config` command saves each of the entered settings so that you don't have to pass them when running other commands.
 
-The configure command also lets you setup where the content is to be served. Nginx-LE provides for both a simple wwwroot path
-as well as configuring a set of location and upstream servers.
+The configure command also lets you setup how the content is to be served. 
+
+Nginx-LE supports four types of Content Providers
+
+| Provider | Description  |
+| ----| ----- | ----- |
+| Static | Serve static web content from a local folder.  |
+| Generic Proxy | Pass requests through to a Web Application server that can respond to HTTP requests. This is normally on the same host as the Nginx-LE server as the connnection is not encrypted.
+| Tomcat Proxy | Pass requests to a local Tomcat web application server on port 8080.
+| Custom | Allows you to configure your own Nginx location and upstream settings.
+|
+
+
+
 
 -- If you are running a server in private mode it also requests a password to encrypt your DNS server api keys so that you don't have to re-enter the keys each time you want to acquire a certificate.
 
