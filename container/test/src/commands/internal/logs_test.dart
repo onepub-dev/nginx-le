@@ -58,7 +58,7 @@ void main() {
 }
 
 void setup() {
-  setEnv(Certbot.LETSENCRYPT_ROOT_ENV, '/tmp/letsencrypt');
+  Environment().certbotRoot = '/tmp/letsencrypt';
   if (!exists(Certbot.letsEncryptRootPath)) {
     createDir(Certbot.letsEncryptRootPath);
   }
@@ -69,8 +69,8 @@ void setup() {
 
   touch(join(Certbot.letsEncryptLogPath, Certbot.LOG_FILE_NAME), create: true);
 
-  setEnv(Nginx.NGINX_ACCESS_LOG_ENV, '/tmp/nginx/access.log');
-  setEnv(Nginx.NGINX_ERROR_LOG_ENV, '/tmp/nginx/error.log');
+  Environment().nginxAccessLogPath = '/tmp/nginx/access.log';
+  Environment().nginxErrorLogPath = '/tmp/nginx/error.log';
 
   if (!exists(dirname(Nginx.accesslogpath))) {
     createDir(dirname(Nginx.accesslogpath), recursive: true);

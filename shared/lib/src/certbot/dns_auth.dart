@@ -38,19 +38,23 @@ void dns_auth_acquire({
   var configDir = _createDir(Certbot.letsEncryptConfigPath);
 
   /// Pass environment vars down to the auth hook.
-  setEnv('LOG_FILE', join(logDir, 'letsencrypt.log'));
-  setEnv('TLD', tld);
+  Environment().logfile = join(logDir, 'letsencrypt.log');
+  Environment().tld = tld;
 
   /// These are set via in the Dockerfile
   var auth_hook = Environment().certbotDNSAuthHookPath;
   var cleanup_hook = Environment().certbotDNSCleanupHookPath;
 
-  ArgumentError.checkNotNull(auth_hook, 'Environment variable: CERTBOT_DNS_AUTH_HOOK_PATH missing');
-  ArgumentError.checkNotNull(cleanup_hook, 'Environment variable: CERTBOT_DNS_CLEANUP_HOOK_PATH missing');
+  ArgumentError.checkNotNull(
+      auth_hook, 'Environment variable: CERTBOT_DNS_AUTH_HOOK_PATH missing');
+  ArgumentError.checkNotNull(cleanup_hook,
+      'Environment variable: CERTBOT_DNS_CLEANUP_HOOK_PATH missing');
 
-  ArgumentError.checkNotNull(Environment().namecheapApiKey, 'Environment variable: NAMECHEAP_API_KEY missing');
+  ArgumentError.checkNotNull(Environment().namecheapApiKey,
+      'Environment variable: NAMECHEAP_API_KEY missing');
 
-  ArgumentError.checkNotNull(Environment().namecheapApiUser, 'Environment variable: NAMECHEAP_API_USER missing');
+  ArgumentError.checkNotNull(Environment().namecheapApiUser,
+      'Environment variable: NAMECHEAP_API_USER missing');
 
   var certbot = 'certbot certonly '
       ' --manual '
@@ -69,7 +73,10 @@ void dns_auth_acquire({
   if (staging) certbot += ' --staging ';
 
   certbot.start(
-      runInShell: true, nothrow: true, progress: Progress((line) => print(line), stderr: (line) => printerr(line)));
+      runInShell: true,
+      nothrow: true,
+      progress:
+          Progress((line) => print(line), stderr: (line) => printerr(line)));
 }
 
 String _createDir(String dir) {

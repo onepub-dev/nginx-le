@@ -24,14 +24,14 @@ void main() {
 
 void prepareCertHooks() {
   var letsencryptDir = '/tmp/letsencrypt';
-  setEnv(Certbot.LETSENCRYPT_ROOT_ENV, letsencryptDir);
-  setEnv('CERTBOT_DOMAIN', 'noojee.org');
-  setEnv('TLD', 'org');
-  setEnv('MODE', 'private');
-  setEnv('CERTBOT_VALIDATION', 'TEST_TOKEN_ABC134');
-  setEnv('CERTBOT_TOKEN', 'token_file');
+  Environment().certbotRoot = letsencryptDir;
+  Environment().certbotDomain = 'noojee.org';
+  Environment().tld = 'org';
+  Environment().mode = 'private';
+  Environment().certbotValidation = 'TEST_TOKEN_ABC134';
+  Environment().certbotToken = 'token_file';
 
-  setEnv(Certbot.NGINX_CERT_ROOT_OVERWRITE, '/tmp/nginx/certs');
+  Environment().certbotRootOverwrite = '/tmp/nginx/certs';
   _createDir(Certbot.nginxCertPath);
 
   _createDir(Certbot.letsEncryptWorkPath);
@@ -40,14 +40,8 @@ void prepareCertHooks() {
   _createDir(join(Certbot.letsEncryptConfigPath, 'live'));
 
   print(pwd);
-  setEnv(
-      'CERTBOT_HTTP_AUTH_HOOK_PATH',
-      // 'dshell ../container/bin/certbot_hooks/dns_auth.dart',
-      'http_auth');
-  setEnv(
-      'CERTBOT_HTTP_CLEANUP_HOOK_PATH',
-      // 'dshell ../container/bin/certbot_hooks/dns_cleanup.dart',
-      'http_cleanup');
+  Environment().certbotDNSAuthHookPath = 'http_auth';
+  Environment().certbotDNSCleanupHookPath = 'http_cleanup';
 }
 
 String _createDir(String dir) {

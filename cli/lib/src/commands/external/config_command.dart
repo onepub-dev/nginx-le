@@ -120,9 +120,10 @@ class ConfigCommand extends Command<void> {
 
     var dnsProvider = '';
     if (config.dnsProvider == ConfigYaml.NAMECHEAP_PROVIDER) {
-      dnsProvider = ' --env=${NAMECHEAP_API_KEY}=${config.namecheap_apikey}';
+      dnsProvider =
+          ' --env=${Environment().NAMECHEAP_API_KEY}=${config.namecheap_apikey}';
       dnsProvider +=
-          ' --env=${NAMECHEAP_API_USER}=${config.namecheap_apiusername}';
+          ' --env=${Environment().NAMECHEAP_API_USER}=${config.namecheap_apiusername}';
     }
 
     var cmd = 'docker create'
@@ -133,7 +134,7 @@ class ConfigCommand extends Command<void> {
         ' --env=MODE=${config.mode}'
         ' --env=EMAIL_ADDRESS=${config.emailaddress}'
         ' --env=DEBUG=$debug'
-        ' --env=ACQUIRE=true' // be default try to auto acquire a certificate.
+        ' --env=AUTO_AUTO_ACQUIRE=true' // be default try to auto acquire a certificate.
         ' --net=host'
         ' --log-driver=journald'
         ' -v certificates:${Certbot.letsEncryptRootPath}'

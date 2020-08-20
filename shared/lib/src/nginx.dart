@@ -1,4 +1,4 @@
-import 'package:dshell/dshell.dart';
+import '../nginx_le_shared.dart';
 
 class Nginx {
   static const NGINX_ACCESS_LOG_ENV = 'NGINX_ACCESS_LOG_ENV';
@@ -9,20 +9,20 @@ class Nginx {
   static const DEFAULT_CONTAINER_INCLUDE_PATH = '/etc/nginx/include';
 
   static String get accesslogpath {
-    var path = env(NGINX_ACCESS_LOG_ENV);
+    var path = Environment().nginxAccessLogPath;
     path ??= '/var/log/nginx/access.log';
     return path;
   }
 
   /// The default path where nginx looks for the include files (Locations and Upstream)
   static String get containerIncludePath {
-    var path = env(NGINX_LOCATION_INCLUDE_PATH);
+    var path = Environment().nginxLocationIncludePath;
     path ??= DEFAULT_CONTAINER_INCLUDE_PATH;
     return path;
   }
 
   static String get errorlogpath {
-    var path = env(NGINX_ERROR_LOG_ENV);
+    var path = Environment().nginxErrorLogPath;
     path ??= '/var/log/nginx/error.log';
     return path;
   }
