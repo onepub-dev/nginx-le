@@ -54,6 +54,10 @@ void start() {
 
       /// not the same type of cert then acquire it.
       if (staging != certificate.staging) {
+        Certbot().revoke(
+            hostname: Environment().hostname,
+            domain: Environment().domain,
+            staging: staging);
         startAcquireThread();
       }
     }
