@@ -500,4 +500,35 @@ This allows `nginx` to start and then `nginx-le` can then you can run the `acqui
 Once a valid certificate has been acquired `nginx-le` switches the `live` symlink back to `/etc/nginx/custom` and does a `nginx` reload and your site is online.
 
 
+## Nginx-LE use the following environment variables to control the containers operation:
 
+
+| Name | Type | Description |
+| ----- | ---- | ---- |
+| DEBUG | bool | |
+| LOG_FILE | String | 
+| CERTBOT_VERBOSE | String
+| HOSTNAME | String
+| DOMAIN | String
+| TLD | String
+| EMAIL_ADDRESS | String
+| MODE | String | public or private
+| STAGING | bool | True to use a 'test' certbot certificate.
+| AUTO_ACQUIRE | bool
+| HOSTNAME | String
+| HOSTNAME | String
+| CERTBOT_TOKEN | String
+| CERTBOT_VALIDATION | String
+| CERTBOT_DOMAIN | String | Will be the same as DOMAIN but required by Certbot
+| LETSENCRYPT_ROOT_ENV | String
+| NAMECHEAP_API_KEY | String
+| NAMECHEAP_API_USER | String
+| NGINX_CERT_ROOT_OVERWRITE | String | Path 
+| CERTBOT_DNS_AUTH_HOOK_PATH | String | Path to the DNS auth hook
+| CERTBOT_DNS_CLEANUP_HOOK_PATH | String | Path to the DNS auth hook cleanup script.
+| CERTBOT_HTTP_AUTH_HOOK_PATH | String | Path to the DNS auth hook
+| CERTBOT_HTTP_CLEANUP_HOOK_PATH | String | Path to the DNS auth hook cleanup script.
+| DNS_RETRIES | int | The number of times the DNS Auth Hook will check the DNS for the required TXT record.
+| NGINX_ACCESS_LOG_ENV | String | Path to the Nginx access.log file in the container.
+| NGINX_ERROR_LOG_ENV | String | Path to the Nginx error.log file in the container
+| NGINX_LOCATION_INCLUDE_PATH | String | Path of the .location and .upstream files.
