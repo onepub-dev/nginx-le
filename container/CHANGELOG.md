@@ -1,3 +1,8 @@
+# 1.0.10
+
+Added missing consts for namecheap
+# 1.0.9
+Completed work on centralising all environment var access.
 # 1.0.7
 fixed bug in auto acquire in shared lib.
 # 1.0.6

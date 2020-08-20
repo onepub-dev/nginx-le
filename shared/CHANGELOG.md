@@ -1,3 +1,10 @@
+# 1.0.10
+Added missing consts for namecheap
+# 1.0.9
+Completed work on centralising all environment var access.
+# 1.0.8
+Moved all of the environment var access to a single class to ensure consistency and removed the InternalConfig file as its no longer used.
+
 # 1.0.7
 incremented to sync release version no.s
 # 1.0.6

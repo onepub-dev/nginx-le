@@ -121,9 +121,9 @@ class ConfigCommand extends Command<void> {
     var dnsProvider = '';
     if (config.dnsProvider == ConfigYaml.NAMECHEAP_PROVIDER) {
       dnsProvider =
-          ' --env=${Environment().NAMECHEAP_API_KEY}=${config.namecheap_apikey}';
+          ' --env=${Environment.NAMECHEAP_API_KEY}=${config.namecheap_apikey}';
       dnsProvider +=
-          ' --env=${Environment().NAMECHEAP_API_USER}=${config.namecheap_apiusername}';
+          ' --env=${Environment.NAMECHEAP_API_USER}=${config.namecheap_apiusername}';
     }
 
     var cmd = 'docker create'
