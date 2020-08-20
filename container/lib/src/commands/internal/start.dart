@@ -2,46 +2,34 @@ import 'package:dshell/dshell.dart';
 import 'package:isolate/isolate_runner.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
-import '../../internal_run_config.dart';
-
 void start() {
   print('Nginx-LE starting Version:$packageVersion');
 
-  /// These environment variables are normally set when the contianer is
+  /// These environment variables are set when the contianer is
   /// created via nginx-le config or by docker-compose.
-  var debug = env('DEBUG') == 'true';
+  ///
+  /// NOTE: you can NOT change these by setting an environment var before you call nginx-le start
+  /// They can only be changed by re-running nginx-le config and recreating the container.
+  ///
+  var debug = Environment().debug;
   Settings().setVerbose(enabled: debug);
 
-  var hostname = env('HOSTNAME');
+  var hostname = Environment().hostname;
   Settings().verbose('HOSTNAME=$hostname');
-  var domain = env('DOMAIN');
+  var domain = Environment().domain;
   Settings().verbose('DOMAIN=$domain');
-  var tld = env('TLD');
+  var tld = Environment().tld;
   Settings().verbose('TLD=$tld');
-  var emailaddress = env('EMAIL_ADDRESS');
+  var emailaddress = Environment().emailaddress;
   Settings().verbose('EMAIL_ADDRESS=$emailaddress');
-  var mode = env('MODE');
+  var mode = Environment().mode;
   Settings().verbose('MODE=$mode');
 
-  var stagingString = env('STAGING');
-  Settings().verbose('STAGING=$stagingString');
-  stagingString ?? false;
-  var staging = stagingString == 'true';
+  var staging = Environment().staging;
+  Settings().verbose('STAGING=$staging');
 
-  var acquireString = env('ACQUIRE');
-  Settings().verbose('ACQUIRE=$acquireString');
-  acquireString ?? false;
-  var acquire = acquireString == 'true';
-
-  InternalRunConfig(
-    hostname: hostname,
-    domain: domain,
-    tld: tld,
-    emailaddress: emailaddress,
-    mode: mode,
-    staging: staging,
-    debug: debug,
-  ).save();
+  var autoAcquire = Environment().autoAcquire;
+  Settings().verbose('AUTO_ACQUIRE=$autoAcquire');
 
   /// Places the server into acquire mode if certificates are not valid.
   ///
@@ -49,16 +37,16 @@ void start() {
       hostname: hostname,
       domain: domain,
       reload: false, // don't try to reload nginx as it won't be running as yet.
-      autoAcquireMode: acquire);
+      autoAcquireMode: autoAcquire);
 
   startRenewalThread();
 
-  if (acquire) {
+  if (autoAcquire) {
     var certificates = Certificate.load();
 
     /// expired certs are handled by the renew scheduler
     /// If you are trying to change from a staging to a production
-    /// cert then you must first revoke the staging
+    /// cert then you must first revoke the staging certificate
     if (certificates.isEmpty) {
       startAcquireThread();
     } else {
@@ -120,21 +108,19 @@ void startAcquireThread() {
 }
 
 void acquireThread(String _) {
-  var config = InternalRunConfig.load();
-
   /// The namecheap environment vars should be inherited from the process.
   Certbot().acquire(
-      hostname: config.hostname,
-      domain: config.domain,
-      tld: config.tld,
-      emailaddress: config.emailaddress,
-      mode: config.mode,
-      staging: config.staging,
-      debug: config.debug);
+      hostname: Environment().hostname,
+      domain: Environment().domain,
+      tld: Environment().tld,
+      emailaddress: Environment().emailaddress,
+      mode: Environment().mode,
+      staging: Environment().staging,
+      debug: Environment().debug);
 
   Certbot().deployCertificates(
-      hostname: config.hostname,
-      domain: config.domain,
+      hostname: Environment().hostname,
+      domain: Environment().domain,
       reload: true // don't try to reload nginx as it won't be running as yet.
       );
 }

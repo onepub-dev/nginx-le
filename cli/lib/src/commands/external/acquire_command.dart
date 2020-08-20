@@ -28,7 +28,7 @@ class AcquireCommand extends Command<void> {
     var debug = argResults['debug'] as bool;
 
     Settings().setVerbose(enabled: debug);
-    setEnv('VERBOSE', '$debug');
+    Environment().certbotVerbose = debug;
 
     var config = ConfigYaml();
 
@@ -38,14 +38,11 @@ class AcquireCommand extends Command<void> {
       var cmd = 'docker exec -it ${config.containerid} /home/bin/acquire ';
 
       if (config.isModePrivate) {
-        cmd +=
-            ' --$NAMECHEAP_API_KEY=${config.namecheap_apikey} --$NAMECHEAP_API_USER=${config.namecheap_apiusername}';
         print('');
         print(orange(
             'Please be patient this can take a quit a few minutes to complete'));
       }
 
-      if (config.isStaging) cmd += ' --staging';
       if (debug == true) cmd += ' --debug';
       cmd.run;
     } else {
