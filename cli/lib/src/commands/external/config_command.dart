@@ -134,7 +134,7 @@ class ConfigCommand extends Command<void> {
         ' --env=MODE=${config.mode}'
         ' --env=EMAIL_ADDRESS=${config.emailaddress}'
         ' --env=DEBUG=$debug'
-        ' --env=AUTO_AUTO_ACQUIRE=true' // be default try to auto acquire a certificate.
+        ' --env=AUTO_ACQUIRE=true' // be default try to auto acquire a certificate.
         ' --net=host'
         ' --log-driver=journald'
         ' -v certificates:${Certbot.letsEncryptRootPath}'
