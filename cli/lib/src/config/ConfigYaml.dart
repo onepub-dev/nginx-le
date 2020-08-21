@@ -54,7 +54,11 @@ class ConfigYaml {
 
   /// the name of the container to run
   String containerid;
+
+  /// email
   String emailaddress;
+  String smtpServer;
+  int smtpServerPort;
 
   String dnsProvider;
 
@@ -164,14 +168,12 @@ class ConfigYaml {
 
   void validate(void Function() showUsage) {
     if (!isConfigured) {
-      printerr(red(
-          "A saved configuration doesn't exist. You must use first run 'nginx-le config."));
+      printerr(red("A saved configuration doesn't exist. You must use first run 'nginx-le config."));
       showUsage();
     }
 
     if (image == null) {
-      printerr(red(
-          "Your configuration is in an inconsistent state. (image is null). Run 'nginx-le config'."));
+      printerr(red("Your configuration is in an inconsistent state. (image is null). Run 'nginx-le config'."));
       showUsage();
     }
 

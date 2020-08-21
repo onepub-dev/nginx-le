@@ -23,7 +23,7 @@ void prepareCertHooks() {
   Environment().tld = 'org';
   Environment().mode = 'private';
   Environment().certbotValidation = 'TEST_TOKEN_ABC134';
-  Environment().certbotRootOverwrite = '/tmp/nginx/certs';
+  Environment().certbotRootPathOverwrite = '/tmp/nginx/certs';
 
   _createDir(Certbot.nginxCertPath);
 

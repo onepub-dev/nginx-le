@@ -1,8 +1,8 @@
 @Timeout(Duration(minutes: 60))
 import 'package:dshell/dshell.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
-import 'package:nginx_le_shared/src/certbot/http_auth_hook.dart';
-import 'package:nginx_le_shared/src/certbot/http_cleanup_hook.dart';
+import 'package:nginx_le_shared/src/auth_providers/http_auth/http_auth_hook.dart';
+import 'package:nginx_le_shared/src/auth_providers/http_auth/http_cleanup_hook.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -31,7 +31,7 @@ void prepareCertHooks() {
   Environment().certbotValidation = 'TEST_TOKEN_ABC134';
   Environment().certbotToken = 'token_file';
 
-  Environment().certbotRootOverwrite = '/tmp/nginx/certs';
+  Environment().certbotRootPathOverwrite = '/tmp/nginx/certs';
   _createDir(Certbot.nginxCertPath);
 
   _createDir(Certbot.letsEncryptWorkPath);
