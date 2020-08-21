@@ -47,5 +47,5 @@ void acquire(List<String> args) {
       staging: staging,
       debug: debug);
   Certbot().deployCertificates(
-      hostname: Environment().hostname, domain: Environment().domain);
+      hostname: Environment().hostname, domain: Environment().domain, autoAcquireMode: Environment().autoAcquire);
 }

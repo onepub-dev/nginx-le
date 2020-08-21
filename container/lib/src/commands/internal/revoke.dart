@@ -38,5 +38,6 @@ void revoke(List<String> args) {
   Certbot().deployCertificates(
       hostname: Environment().hostname,
       domain: Environment().domain,
-      revoking: true);
+      revoking: true,
+      autoAcquireMode: Environment().autoAcquire);
 }

@@ -54,10 +54,7 @@ void start() {
 
       /// not the same type of cert then acquire it.
       if (staging != certificate.staging) {
-        Certbot().revoke(
-            hostname: Environment().hostname,
-            domain: Environment().domain,
-            staging: staging);
+        Certbot().revoke(hostname: Environment().hostname, domain: Environment().domain, staging: staging);
         startAcquireThread();
       }
     }
@@ -112,19 +109,33 @@ void startAcquireThread() {
 }
 
 void acquireThread(String _) {
-  /// The namecheap environment vars should be inherited from the process.
-  Certbot().acquire(
-      hostname: Environment().hostname,
-      domain: Environment().domain,
-      tld: Environment().tld,
-      emailaddress: Environment().emailaddress,
-      mode: Environment().mode,
-      staging: Environment().staging,
-      debug: Environment().debug);
+  try {
+    /// The namecheap environment vars should be inherited from the process.
+    Certbot().acquire(
+        hostname: Environment().hostname,
+        domain: Environment().domain,
+        tld: Environment().tld,
+        emailaddress: Environment().emailaddress,
+        mode: Environment().mode,
+        staging: Environment().staging,
+        debug: Environment().debug);
 
-  Certbot().deployCertificates(
-      hostname: Environment().hostname,
-      domain: Environment().domain,
-      reload: true // don't try to reload nginx as it won't be running as yet.
-      );
+    Certbot().deployCertificates(
+        hostname: Environment().hostname,
+        domain: Environment().domain,
+        reload: true, // don't try to reload nginx as it won't be running as yet.
+        autoAcquireMode: Environment().autoAcquire);
+  } on CertbotException catch (e, st) {
+    printerr(e.message);
+    printerr(e.details);
+    printerr(st.toString());
+    Email.sendError(subject: e.message, body: '${e.details}\n ${st.toString()}');
+  } catch (e, st) {
+    /// we don't rethrow as we don't want to shutdown the scheduler.
+    /// as this may be a temporary error.
+    printerr(e.toString());
+    printerr(st.toString());
+
+    Email.sendError(subject: e.toString(), body: st.toString());
+  }
 }
