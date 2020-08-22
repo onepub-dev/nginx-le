@@ -16,3 +16,5 @@ shared/.vscode/
 .history
 container/letsencrypt/logs/letsencrypt.log
 container/letsencrypt/config/renewal/noojee.org.conf
+cli/update.dcli.txt
+shared/pubspec.lock

@@ -11,15 +11,15 @@ RUN apt update  && apt install --no-install-recommends -y \
     wget 
 
 
-# install dshell
-# The `nginx-le build -u` command updates this file to force an upgrade of dshell
-COPY update-dshell.txt  /dev/nul
-RUN wget https://github.com/bsutton/dshell/raw/master/bin/linux/dshell_install
-RUN chmod +x dshell_install
-RUN ./dshell_install
+# install dcli
+# The `nginx-le build -u` command updates this file to force an upgrade of dcli
+COPY update-dcli.txt  /dev/nul
+RUN wget https://github.com/bsutton/dcli/raw/master/bin/linux/dcli_install
+RUN chmod +x dcli_install
+RUN ./dcli_install
 ENV PATH="${PATH}:/usr/lib/dart/bin:/root/.pub-cache/bin"
 
-RUN dshell version
+RUN dcli version
 
 
 RUN mkdir -p /home/build/container/bin/cerbot_hooks
@@ -40,8 +40,8 @@ COPY shared/analysis_options.yaml /home/build/shared
 WORKDIR /home/build
 
 # compile all the nginx-le tools.
-RUN dshell compile container/bin/*.dart
-RUN dshell compile container/bin/certbot_hooks/*.dart
+RUN dcli compile container/bin/*.dart
+RUN dcli compile container/bin/certbot_hooks/*.dart
 
 
 

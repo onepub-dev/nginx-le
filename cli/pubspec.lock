@@ -134,13 +134,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.20.0"
-  dshell:
-    dependency: transitive
-    description:
-      name: dshell
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.11.1"
   encrypt:
     dependency: "direct main"
     description:
@@ -427,7 +420,7 @@ packages:
       name: settings_yaml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "2.0.1"
   shelf:
     dependency: transitive
     description:

@@ -19,7 +19,7 @@ incremented to sync release version no.s
 added autoacquiremode flag
 # 1.0.3
 # 1.0.2
-Upgraded to dshell 1.11.0 and fixed breaking changes.
+Upgraded to dcli 1.11.0 and fixed breaking changes.
 
 # 1.0.1
 Fixed: default certificate type was ignoring the currently selected certificate type.

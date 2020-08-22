@@ -48,13 +48,13 @@ Note: At this point the `private` mode only works with a `NameCheap` dns server 
 
 Nginx-LE provides cli tooling to manage your Nginx-LE instance.
 
-The cli tooling is based on dart and the DShell library.
+The cli tooling is based on dart and the DCli library.
 
 To install the cli tooling:
 
-1) Install dshell
+1) Install dcli
 
-(install guide)[https://github.com/bsutton/dshell/wiki/Installing-DShell]
+(install guide)[https://github.com/bsutton/dcli/wiki/Installing-DCli]
 
 2) activate Nginx-LE
 
@@ -64,14 +64,14 @@ On linux this amounts to:
 ```
 sudo apt-get update
 sudo apt-get install --no-install-recommends -y wget ca-certificates gnupg2
-wget https://raw.githubusercontent.com/bsutton/dshell/master/bin/linux/dshell_install
-chmod +x dshell_install
-export PATH="$PATH":"$HOME/.pub-cache/bin":"$HOME/.dshell/bin"
-./dshell_install
+wget https://raw.githubusercontent.com/bsutton/dcli/master/bin/linux/dcli_install
+chmod +x dcli_install
+export PATH="$PATH":"$HOME/.pub-cache/bin":"$HOME/.dcli/bin"
+./dcli_install
 pub global activate nginx_le
 ```
 
-The DShell installer also installs dart (if its not already installed).
+The DCli installer also installs dart (if its not already installed).
 
 ## cli commands
 
@@ -123,10 +123,10 @@ e.g. --image=noojee/nginx-le:1.0.0
 The switch can be abbreviated to `-i`.
 
 
-### update-dshell
-The optonal flag `--update-dshell` causes the build to pull the latest version of dart/dshell rather than using the docker cache instance.
+### update-dcli
+The optonal flag `--update-dcli` causes the build to pull the latest version of dart/dcli rather than using the docker cache instance.
 
-You only need to add this switch if you have an existing build and you need to update the dshell/dart version.
+You only need to add this switch if you have an existing build and you need to update the dcli/dart version.
 
 ### debug
 The optional flag `--debug` outputs additional build information.
