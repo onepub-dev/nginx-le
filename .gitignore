@@ -2,12 +2,11 @@ container/.dart_tool
 shared/.dart_tool
 shared/.packages
 shared/.dart_tool/package_config.json
-update-dshell.txt
+update-dcli.txt
 
 
 shared/.dart_tool/package_config.json
 shared/.packages
-update-dshell.txt
 cli/bin/nginx-le
 
 .bash_history
@@ -15,3 +14,4 @@ cli/bin/nginx-le
 nginx-le.code-workspace
 shared/.vscode/
 .history
+container/letsencrypt/logs/letsencrypt.log
