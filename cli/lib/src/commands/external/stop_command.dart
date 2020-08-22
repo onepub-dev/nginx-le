@@ -1,6 +1,5 @@
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le/src/config/ConfigYaml.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 class StopCommand extends Command<void> {
@@ -17,10 +16,7 @@ class StopCommand extends Command<void> {
     //         'The docker containerid to attach to in the form --containerid="XXXXX"');
     // argParser.addOption('name',
     //     abbr: 'n', help: 'The name of the docker container to attach to');
-    argParser.addFlag('debug',
-        abbr: 'd',
-        negatable: false,
-        help: 'Outputs additional logging information');
+    argParser.addFlag('debug', abbr: 'd', negatable: false, help: 'Outputs additional logging information');
   }
 
   @override

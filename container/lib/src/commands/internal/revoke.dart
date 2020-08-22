@@ -8,28 +8,20 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 void revoke(List<String> args) {
   var parser = ArgParser();
   parser.addFlag(
-    'staging',
-    defaultsTo: false,
-    negatable: false,
-  );
-  parser.addFlag(
     'debug',
     defaultsTo: false,
     negatable: false,
   );
 
   var results = parser.parse(args);
-  var staging = results['staging'] as bool;
   var debug = results['debug'] as bool;
 
   Settings().setVerbose(enabled: debug);
   Settings().verbose('HOSTNAME:${Environment().hostname}');
   Settings().verbose('DOMAIN:${Environment().domain}');
 
-  Certbot().revoke(
-      hostname: Environment().hostname,
-      domain: Environment().domain,
-      staging: staging);
+  Certbot.revokeAll();
+
 
   /// delete all of the certificates
   // find('*', root: _latestCertificatePath(hostname, domain))

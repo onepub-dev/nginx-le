@@ -1,10 +1,10 @@
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le_shared/src/namecheap/challenge.dart';
 import 'package:nginx_le_shared/src/util/environment.dart';
 
-import 'certbot.dart';
+import '../../../../nginx_le_shared.dart';
+import 'challenge.dart';
 
-void certbot_dns_cleanup_hook() {
+void namncheap_dns_cleanup_hook() {
   Certbot().log('*' * 80);
   Certbot().log('cert_bot_dns_cleanup_hook started');
 
@@ -44,18 +44,13 @@ void certbot_dns_cleanup_hook() {
     /// Create the required DNS entry for the Certbot challenge.
     ///
     Settings().verbose('Creating challenge');
-    var challenge = Challenge.simple(
-        apiKey: apiKey, username: username, apiUsername: username);
+    var challenge = Challenge.simple(apiKey: apiKey, username: username, apiUsername: username);
     Settings().verbose('calling challenge.present');
 
     ///
     /// Writes the DNS record and waits for it to be visible.
     ///
-    challenge.cleanUp(
-        hostname: hostname,
-        domain: domain,
-        tld: tld,
-        certbotAuthKey: certbotAuthKey);
+    challenge.cleanUp(hostname: hostname, domain: domain, tld: tld, certbotAuthKey: certbotAuthKey);
   } catch (e) {
     printerr(e.toString());
   }

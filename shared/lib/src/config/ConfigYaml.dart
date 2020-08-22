@@ -35,11 +35,15 @@ class ConfigYaml {
   static const IMAGE = 'image';
   static const CONTAINERID = 'containerid';
   static const EMAILADDRESS = 'emailaddress';
-  static const DNSPROVIDER = 'dns_provider';
+  static const DNS_AUTH_PROVIDER = 'dns_auth_provider';
   static const CERTIFICATE_TYPE = 'certificate_type';
   static const HOST_INCLUDE_PATH = 'host_include_path';
   static const CONTENT_PROVIDER = 'content_provider';
   static const WWW_ROOT = 'www_root';
+
+  static const SMTP_SERVER = 'smtp_server';
+  static const SMTP_SERVER_PORT = 'smtp_server_port';
+  static const DOMAIN_WILDCARD = 'domain_wildcard';
 
   // defaults:
   static const DEFAULT_HOST_INCLUDE_PATH = '/opt/nginx/include';
@@ -58,9 +62,10 @@ class ConfigYaml {
   /// email
   String emailaddress;
   String smtpServer;
-  int smtpServerPort;
+  int smtpServerPort = 25;
 
-  String dnsProvider;
+  /// If true we are using a wildcard dns (e.g. *.clouddialer.com.au)
+  bool wildcard = false;
 
   // The name of the selected [ContentProvider]
   String contentProvider;
@@ -68,13 +73,7 @@ class ConfigYaml {
   /// host path which is mounted into ngix and contains .location and .upstream files from.
   String _hostIncludePath;
 
-  /// Name Cheap settings
-  static const NAMECHEAP_PROVIDER = 'namecheap';
-  static const NAMECHEAP_KEY = 'apiKey';
-  static const NAMECHEAP_USERNAME = 'apiUsername';
-
-  String namecheap_apikey;
-  String namecheap_apiusername;
+  String certbothAuthProvider;
 
   factory ConfigYaml() => _self;
 
@@ -92,14 +91,15 @@ class ConfigYaml {
     certificateType = settings[CERTIFICATE_TYPE] as String;
     emailaddress = settings[EMAILADDRESS] as String;
     containerid = settings[CONTAINERID] as String;
-    dnsProvider = settings[DNSPROVIDER] as String;
+    certbothAuthProvider = settings[DNS_AUTH_PROVIDER] as String;
     contentProvider = settings[CONTENT_PROVIDER] as String;
     _hostIncludePath = settings[HOST_INCLUDE_PATH] as String;
 
-    if (dnsProvider == NAMECHEAP_PROVIDER) {
-      namecheap_apikey = settings[NAMECHEAP_KEY] as String;
-      namecheap_apiusername = settings[NAMECHEAP_USERNAME] as String;
-    }
+    smtpServer = settings[SMTP_SERVER] as String;
+    smtpServerPort = settings[SMTP_SERVER_PORT] as int ?? 25;
+
+    /// If true we are using a wildcard dns (e.g. *.clouddialer.com.au)
+    wildcard = ((settings[DOMAIN_WILDCARD] as bool) ?? false);
   }
 
   ///
@@ -151,14 +151,14 @@ class ConfigYaml {
     settings[CERTIFICATE_TYPE] = certificateType;
     settings[EMAILADDRESS] = emailaddress;
     settings[CONTAINERID] = containerid;
-    settings[DNSPROVIDER] = dnsProvider;
+    settings[DNS_AUTH_PROVIDER] = certbothAuthProvider;
     settings[CONTENT_PROVIDER] = contentProvider;
     settings[HOST_INCLUDE_PATH] = hostIncludePath;
 
-    if (dnsProvider == NAMECHEAP_PROVIDER) {
-      settings[NAMECHEAP_KEY] = namecheap_apikey;
-      settings[NAMECHEAP_USERNAME] = namecheap_apiusername;
-    }
+    settings[SMTP_SERVER] = smtpServer;
+    settings[SMTP_SERVER_PORT] = smtpServerPort;
+    settings[DOMAIN_WILDCARD] = wildcard;
+
     settings.save();
   }
 

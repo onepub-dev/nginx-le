@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le/src/config/ConfigYaml.dart';
 import 'package:nginx_le/src/content_providers/content_provider.dart';
 import 'package:nginx_le/src/content_providers/content_providers.dart';
 import 'package:nginx_le/src/util/ask_fqdn_validator.dart';
@@ -34,20 +33,19 @@ class ConfigCommand extends Command<void> {
 
     selectStartMethod(config);
 
-    selectMode(config);
-
     selectFQDN(config);
 
     selectTLD(config);
 
     selectEmail(config);
 
+    selectMode(config);
     selectCertType(config);
 
-    if (config.isModePrivate) {
+    if (config.isModePrivate || config.wildcard) {
       selectDNSProvider(config);
     } else {
-      config.dnsProvider = null;
+      config.certbothAuthProvider = null;
     }
 
     selectContentProvider(config);
@@ -81,7 +79,7 @@ class ConfigCommand extends Command<void> {
     if (existing != null) {
       print('A container with the name $containerName already exists');
       if (!confirm('Do you want to delete the older container and create one with the new settings?')) {
-        print(orange('Container does not refect your new settings!'));
+        print(orange('Container does not reflect your new settings!'));
         exit(-1);
       } else {
         if (existing.isRunning) {
@@ -111,10 +109,13 @@ class ConfigCommand extends Command<void> {
       volumes += ' -v ${volume.hostPath}:${volume.containerPath}';
     }
 
-    var dnsProvider = '';
-    if (config.dnsProvider == ConfigYaml.NAMECHEAP_PROVIDER) {
-      dnsProvider = ' --env=${Environment.NAMECHEAP_API_KEY}=${config.namecheap_apikey}';
-      dnsProvider += ' --env=${Environment.NAMECHEAP_API_USER}=${config.namecheap_apiusername}';
+    var authProvider = AuthProviders().getByName(config.certbothAuthProvider);
+    var environments = authProvider.environment;
+
+    var dnsProviderEnvs = '';
+
+    for (var env in environments) {
+      dnsProviderEnvs += ' --env=${env.name}=${env.value}';
     }
 
     var cmd = 'docker create'
@@ -123,15 +124,17 @@ class ConfigCommand extends Command<void> {
         ' --env=DOMAIN=${config.domain}'
         ' --env=TLD=${config.tld}'
         ' --env=MODE=${config.mode}'
+        ' --env=CERTBOT_AUTH_PROVIDER=${config.certbothAuthProvider}'
         ' --env=EMAIL_ADDRESS=${config.emailaddress}'
         ' --env=SMTP_SERVER=${config.smtpServer}'
         ' --env=SMTP_SERVER_PORT=${config.smtpServerPort}'
         ' --env=DEBUG=$debug'
+        ' --env=DOMAIN_WILDCARD=${config.wildcard}'
         ' --env=AUTO_ACQUIRE=true' // be default try to auto acquire a certificate.
+        '$dnsProviderEnvs'
         ' --net=host'
         ' --log-driver=journald'
         ' -v certificates:${Certbot.letsEncryptRootPath}'
-        '$dnsProvider'
         '$volumes'
         ' ${config.image.imageid}';
 
@@ -150,25 +153,39 @@ class ConfigCommand extends Command<void> {
         printerr(red('Docker failed to create the container!'));
         exit(1);
       } else {
-        print('Container created');
+        print(green('Container created'));
         config.containerid = containerid;
       }
     }
+    print(green('Use nginx-le start to start the container'));
   }
 
   void selectDNSProvider(ConfigYaml config) {
-    config.dnsProvider = ConfigYaml.NAMECHEAP_PROVIDER;
+    var authProviders = DnsAuthProviders().providers;
 
-    var namecheap_username =
-        ask('NameCheap API Username:', defaultValue: config.namecheap_apiusername, validator: Ask.required);
-    config.namecheap_apiusername = namecheap_username;
+    var defaultProvider = DnsAuthProviders().getByName(config.certbothAuthProvider);
+    print('');
+    print(green('Select the DNS Auth Provider'));
+    var provider = menu<AuthProvider>(
+        prompt: 'Content Provider:',
+        options: authProviders,
+        defaultOption: defaultProvider,
+        format: (provider) => '${provider.name.padRight(12)} - ${provider.summary}');
 
-    var namecheap_apikey =
-        ask('NameCheap API Key:', defaultValue: config.namecheap_apikey, hidden: true, validator: Ask.required);
-    config.namecheap_apikey = namecheap_apikey;
+    config.certbothAuthProvider = provider.name;
+
+    provider.promptForSettings(config);
   }
 
   void selectCertType(ConfigYaml config) {
+    print(green('Only select wildcard if the system has multiple fqdns.'));
+
+    const wildcard = 'Wildcard';
+    var domainType =
+        menu(prompt: 'Domain Type', options: ['FQDN', wildcard], defaultOption: config.wildcard ? wildcard : 'FQDN');
+
+    config.wildcard = (domainType == wildcard);
+
     print('');
     print(green('During testing please select "staging"'));
     var certTypes = [ConfigYaml.CERTIFICATE_TYPE_PRODUCTION, ConfigYaml.CERTIFICATE_TYPE_STAGING];
@@ -184,12 +201,12 @@ class ConfigCommand extends Command<void> {
         defaultValue: config.emailaddress, validator: AskMultiValidator([Ask.required, Ask.email]));
     config.emailaddress = emailaddress;
 
-    var smtpServer = ask('SMTP Server:',
-        defaultValue: config.emailaddress, validator: AskMultiValidator([Ask.required, Ask.fqdn, AskRange(1, 65535)]));
+    var smtpServer =
+        ask('SMTP Server:', defaultValue: config.smtpServer, validator: AskMultiValidator([Ask.required, Ask.fqdn]));
     config.smtpServer = smtpServer;
 
     var smtpServerPort = ask('SMTP Server port:',
-        defaultValue: config.emailaddress,
+        defaultValue: '${config.smtpServerPort}',
         validator: AskMultiValidator([Ask.required, Ask.integer, AskRange(1, 65535)]));
     config.smtpServerPort = int.tryParse(smtpServerPort) ?? 25;
   }

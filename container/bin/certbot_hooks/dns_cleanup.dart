@@ -1,5 +1,7 @@
 #! /usr/bin/env dshell
 
+import 'package:nginx_le_shared/nginx_le_shared.dart';
+
 /// Runs within the container.
 ///
 /// This app is called by Certbot to provide the DNS validation.
@@ -11,7 +13,6 @@
 /// Once the TXT record is available we return an let
 ///
 void main() {
-  certbot_dns_cleanup_hook();
+  var authProvider = AuthProviders().getByName(Environment().certbotAuthProvider);
+  authProvider.cleanup_hook();
 }
-
-void certbot_dns_cleanup_hook() {}

@@ -267,6 +267,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.11.4"
+  mailer:
+    dependency: transitive
+    description:
+      name: mailer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.4"
   matcher:
     dependency: transitive
     description:
@@ -298,10 +305,10 @@ packages:
   nginx_le_shared:
     dependency: "direct main"
     description:
-      name: nginx_le_shared
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.2"
+      path: "../shared"
+      relative: true
+    source: path
+    version: "1.1.4"
   node_interop:
     dependency: transitive
     description:

@@ -1,14 +1,13 @@
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le/src/config/ConfigYaml.dart';
+
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 import 'util.dart';
 
 class RevokeCommand extends Command<void> {
   @override
-  String get description =>
-      'Revokes the active Lets Encrypt certificate and places the server into acquire mode.';
+  String get description => 'Revokes the active Lets Encrypt certificate and places the server into acquire mode.';
 
   @override
   String get name => 'revoke';
@@ -21,10 +20,7 @@ class RevokeCommand extends Command<void> {
     // argParser.addOption('name',
     //     abbr: 'n', help: 'The name of the docker container to attach to');
     argParser.addFlag('debug',
-        abbr: 'd',
-        defaultsTo: false,
-        negatable: false,
-        help: 'Outputs additional logging information');
+        abbr: 'd', defaultsTo: false, negatable: false, help: 'Outputs additional logging information');
   }
 
   @override
@@ -39,12 +35,11 @@ class RevokeCommand extends Command<void> {
 
     if (Containers().findByContainerId(config.containerid).isRunning) {
       var cmd = 'docker exec -it ${config.containerid} /home/bin/revoke';
-      if (config.isStaging) cmd += ' --staging';
       if (debug) cmd += ' --debug';
       cmd.run;
     } else {
       printerr(red(
-          "The Nginx-LE container ${config.containerid} isn't running. Use 'nginx-le start' to start the container"));
+          "The Nginx-LE container ${config.containerid} isn't running. Use 'nginx-le start' to start the container."));
     }
   }
 }

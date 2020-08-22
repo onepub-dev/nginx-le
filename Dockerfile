@@ -3,8 +3,13 @@
 FROM ubuntu:20.04 as builder
 
 
-RUN apt-get update
-RUN apt-get install --no-install-recommends -y wget ca-certificates gnupg2 openssh-client git
+RUN apt update  && apt install --no-install-recommends -y \
+    ca-certificates \
+    git \
+    gnupg2 \
+    openssh-client \
+    wget 
+
 
 # install dshell
 # The `nginx-le build -u` command updates this file to force an upgrade of dshell
@@ -50,17 +55,26 @@ WORKDIR /
 RUN mkdir -p /home
 ENV HOME="/home"
 
-RUN apt-get update
-
-
 # set the timezone
 ENV TZ=Australia/Melbourne
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-RUN apt-get install -y  tzdata
 
 
-# install nginx
-RUN apt-get install -y  gnupg nginx ca-certificates openssl dnsutils
+RUN apt  update && apt install --no-install-recommends -y \
+    ca-certificates \
+    certbot \
+    dnsutils \
+    gnupg \
+    nginx \
+    openssl \
+    python3-certbot-dns-cloudflare \
+    python3-certbot-nginx \
+    software-properties-common \
+    tzdata \
+    vim
+
+
+# config nginx 
 RUN useradd nginx
 
 # setup nginx log files.
@@ -85,8 +99,7 @@ RUN mkdir /etc/nginx/include
 #
 # install certbot 
 #
-RUN apt-get install -y certbot python3-certbot-nginx
-RUN apt-get install -y software-properties-common
+
 
 ENV LETS_ENCRYPT_ROOT_PATH=/etc/letsencrypt
 
@@ -105,8 +118,7 @@ RUN openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048
 # location for the .well-know folder certbot will interact with.
 RUN mkdir -p /opt/letsencrypt/wwwroot/.well-known/acme-challenge
 
-# install vim
-RUN apt-get install -y vim
+
 
 
 #

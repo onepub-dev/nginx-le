@@ -1,6 +1,7 @@
 @Timeout(Duration(minutes: 60))
 import 'package:dshell/dshell.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/namecheap/namecheap_provider.dart';
 import 'package:test/test.dart';
 
 /// You must run this command with the console option.
@@ -10,7 +11,8 @@ void main() {
 
   Certbot().sendToStdout();
 
-  certbot_dns_auth_hook();
+  var provider = DnsAuthProviders().getByName(NameCheapAuthProvider().name);
+  provider.auth_hook();
 }
 
 void prepareCertHooks() {

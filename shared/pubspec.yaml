@@ -1,5 +1,5 @@
 name: nginx_le_shared
-version: 1.1.2
+version: 1.1.4
 homepage: https://github.com/bsutton/nginx-le
 description: shared library used by Nginx-LE
 environment: 
@@ -14,9 +14,11 @@ dependencies:
   http: ^0.12.1
   intl: ^0.16.1
   isolate: ^2.0.3
+  mailer: ^3.0.4
   meta: ^1.0.0
   pedantic: ^1.0.0
   public_suffix: ^1.0.0
+  settings_yaml: ^2.0.0
   uuid: ^2.0.4
   xml: ^4.2.0
   yaml: ^2.2.1

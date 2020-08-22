@@ -1,6 +1,7 @@
 import 'package:dshell/dshell.dart';
 @Timeout(Duration(minutes: 30))
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/dns_auth_providers.dart';
 import 'package:test/test.dart';
 
 import 'dns_auth_hook_test.dart';
@@ -15,23 +16,22 @@ void main() {
     Environment().namecheapApiUser = username;
     Environment().namecheapApiKey = apiKey;
 
-    Certbot().acquire(
-        hostname: 'slayer',
-        domain: 'noojee.org',
-        tld: 'org',
-        emailaddress: 'bsutton@noojee.com.au',
-        mode: 'private',
-        staging: true);
+    var authProvider = DnsAuthProviders().getByName('namecheap');
+
+    authProvider.promptForSettings(ConfigYaml());
+    Environment().hostname = 'slayer';
+
+    Environment().domain = 'noojee.org';
+    Environment().tld = 'org';
+    Environment().emailaddress = 'bsutton@noojee.com.au';
+    Environment().mode = 'private';
+    Environment().staging = true;
+
+    authProvider.acquire();
 
     Certbot().revoke(hostname: 'slayer', domain: 'noojee.org', staging: true);
 
-    Certbot().acquire(
-        hostname: 'slayer',
-        domain: 'noojee.org',
-        tld: 'org',
-        emailaddress: 'bsutton@noojee.com.au',
-        mode: 'private',
-        staging: true);
+    authProvider.acquire();
 
     Certbot().revoke(hostname: 'slayer', domain: 'noojee.org', staging: true);
   });

@@ -2,22 +2,18 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le/src/config/ConfigYaml.dart';
+import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /// Starts nginx and the certbot scheduler.
 class RestartCommand extends Command<void> {
   @override
-  String get description =>
-      'starts the ngix server after it has been started at least once';
+  String get description => 'starts the ngix server after it has been started at least once';
 
   @override
   String get name => 'restart';
 
   RestartCommand() {
-    argParser.addFlag('debug',
-        abbr: 'd',
-        negatable: false,
-        help: 'Outputs additional logging information');
+    argParser.addFlag('debug', abbr: 'd', negatable: false, help: 'Outputs additional logging information');
   }
 
   @override

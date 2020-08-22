@@ -5,6 +5,7 @@ import '../nginx.dart';
 
 class Environment {
   static final _self = Environment._internal();
+
   factory Environment() => _self;
 
   static const String NAMECHEAP_API_KEY = 'NAMECHEAP_API_KEY';
@@ -20,6 +21,11 @@ class Environment {
   set logfile(String logfile) => setEnv('LOG_FILE', logfile);
 
   /// domains
+
+  /// if true we are using a wild card domain.
+  bool get wildcard => (env('DOMAIN_WILDCARD') ?? 'false') == 'true';
+  set wildcard(bool wildcard) => setEnv('DOMAIN_WILDCARD', '$wildcard');
+
   String get fqdn => '$hostname.$domain';
 
   String get hostname => env('HOSTNAME');
@@ -59,6 +65,10 @@ class Environment {
   String get namecheapApiUser => env('NAMECHEAP_API_USER');
   set namecheapApiUser(String namecheapApiUser) => setEnv('NAMECHEAP_API_USER', namecheapApiUser);
 
+  /// the certbot auth provider.
+  String get certbotAuthProvider => env('CERTBOT_AUTH_PROVIDER');
+  set certbotAuthProvider(String certbotAuthProvider) => setEnv('CERTBOT_AUTH_PROVIDER', certbotAuthProvider);
+
   /// Certbot
 
   bool get certbotVerbose => env('CERTBOT_VERBOSE') == 'true';
@@ -76,17 +86,15 @@ class Environment {
   String get certbotToken => env('CERTBOT_TOKEN');
   set certbotToken(String token) => setEnv('CERTBOT_TOKEN', token);
 
+  /// passed in via the docker container
   String get certbotDNSAuthHookPath => env('CERTBOT_DNS_AUTH_HOOK_PATH');
-  set certbotDNSAuthHookPath(String path) => setEnv('CERTBOT_DNS_AUTH_HOOK_PATH', path);
-
+  set certbotDNSAuthHookPath(String certbotDNSAuthHookPath) => env('CERTBOT_DNS_AUTH_HOOK_PATH');
   String get certbotDNSCleanupHookPath => env('CERTBOT_DNS_CLEANUP_HOOK_PATH');
-  set certbotDNSCleanupHookPath(String path) => setEnv('CERTBOT_DNS_CLEANUP_HOOK_PATH', path);
+  set certbotDNSCleanupHookPath(String certbotDNSCleanupHookPath) => env('CERTBOT_DNS_CLEANUP_HOOK_PATH');
 
+  /// passed in via the docker container
   String get certbotHTTPAuthHookPath => env('CERTBOT_HTTP_AUTH_HOOK_PATH');
-  set certbotHTTPAuthHookPath(String path) => setEnv('CERTBOT_HTTP_AUTH_HOOK_PATH', path);
-
   String get certbotHTTPCleanupHookPath => env('CERTBOT_HTTP_CLEANUP_HOOK_PATH');
-  set certbotHTTPCleanupHookPath(String path) => setEnv('CERTBOT_HTTP_CLEANUP_HOOK_PATH', path);
 
   int get certbotDNSRetries => int.tryParse(env('DNS_RETRIES') ?? '20') ?? 20;
   set certbotDNSRetries(int retries) => setEnv('DNS_RETRIES', 'retries');

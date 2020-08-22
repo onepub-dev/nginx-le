@@ -52,9 +52,10 @@ void start() {
     } else {
       var certificate = certificates[0];
 
-      /// not the same type of cert then acquire it.
-      if (staging != certificate.staging) {
-        Certbot().revoke(hostname: Environment().hostname, domain: Environment().domain, staging: staging);
+      /// not the same type of cert then acquire it
+      /// If we have more then one then somethings wrong so start again by revoke all of them.
+      if (certificates.length > 1 || staging != certificate.staging || '$hostname.$domain' != certificate.fqdn) {
+        Certbot.revokeAll();
         startAcquireThread();
       }
     }
@@ -110,15 +111,12 @@ void startAcquireThread() {
 
 void acquireThread(String _) {
   try {
-    /// The namecheap environment vars should be inherited from the process.
-    Certbot().acquire(
-        hostname: Environment().hostname,
-        domain: Environment().domain,
-        tld: Environment().tld,
-        emailaddress: Environment().emailaddress,
-        mode: Environment().mode,
-        staging: Environment().staging,
-        debug: Environment().debug);
+    if (Environment().mode.toLowerCase() == 'public') {
+      HTTPAuthProvider().acquire();
+    } else {
+      var authProvider = DnsAuthProviders().getByName(Environment().certbotAuthProvider);
+      authProvider.acquire();
+    }
 
     Certbot().deployCertificates(
         hostname: Environment().hostname,
