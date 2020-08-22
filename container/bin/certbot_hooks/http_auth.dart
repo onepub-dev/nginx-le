@@ -13,5 +13,6 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 /// Once the TXT record is available we return an let
 ///
 void main() {
-  certbot_http_auth_hook();
+  var provider = HTTPAuthProvider();
+  provider.auth_hook();
 }

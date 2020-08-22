@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le/src/config/ConfigYaml.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /// Starts nginx and the certbot scheduler.
@@ -15,10 +14,7 @@ class StartCommand extends Command<void> {
 
   StartCommand() {
     argParser.addFlag('debug',
-        defaultsTo: false,
-        abbr: 'd',
-        negatable: false,
-        help: 'Outputs additional logging information');
+        defaultsTo: false, abbr: 'd', negatable: false, help: 'Outputs additional logging information');
   }
 
   @override
@@ -31,8 +27,7 @@ class StartCommand extends Command<void> {
 
     var container = Containers().findByContainerId(config.containerid);
     if (container.isRunning) {
-      printerr(
-          'The container ${config.containerid} is already running. Consider nginx-le restart');
+      printerr('The container ${config.containerid} is already running. Consider nginx-le restart');
       showUsage(argParser);
     }
 

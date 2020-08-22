@@ -13,6 +13,9 @@ class Certificate {
   /// If [staging] is false then this is a staging/test certificate.
   bool staging;
 
+  /// If the fqdn starts with a '*' then its a wild card certificate.
+  bool wildcard = false;
+
   String certificatePath;
 
   String privateKeyPath;
@@ -20,6 +23,10 @@ class Certificate {
   void parseName(String line) {
     var parts = line.split(':');
     fqdn = parts[1].trim();
+
+    if (fqdn.startsWith('*')) {
+      wildcard = true;
+    }
   }
 
   void parseDomains(String line) {
@@ -105,7 +112,10 @@ class Certificate {
   String toString() {
     var offset = DateTime.now().timeZoneOffset;
     var hours = offset.inHours + offset.inMinutes / 60;
-    return '''Name: $fqdn Domains: $domains Expiry: ${dateTimeToOffset(datetime: expiryDate, offset: hours)}
+    return '''Name: $fqdn 
+    Wildcard: $wildcard
+    Domains: $domains 
+    Expiry: ${dateTimeToOffset(datetime: expiryDate, offset: hours)}
     Certificate Path: $certificatePath
     Private Key Path: $privateKeyPath''';
   }

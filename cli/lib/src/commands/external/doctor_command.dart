@@ -2,15 +2,13 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le/src/config/ConfigYaml.dart';
 import 'package:nginx_le/src/content_providers/content_providers.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /// Starts nginx and the certbot scheduler.
 class DoctorCommand extends Command<void> {
   @override
-  String get description =>
-      'Displays current config and diagnostic information';
+  String get description => 'Displays current config and diagnostic information';
 
   @override
   String get name => 'doctor';
@@ -21,8 +19,7 @@ class DoctorCommand extends Command<void> {
   void run() {
     print('');
     _colprint(['OS', '${Platform.operatingSystem}']);
-    print(Format.row(['OS Version', '${Platform.operatingSystemVersion}'],
-        widths: [17, -1]));
+    print(Format.row(['OS Version', '${Platform.operatingSystemVersion}'], widths: [17, -1]));
     _colprint(['Path separator', '${Platform.pathSeparator}']);
     print('');
     _colprint(['dart version', '${DartSdk().version}']);
@@ -56,26 +53,30 @@ class DoctorCommand extends Command<void> {
     _colprint(['Docker ImageID', config.image?.imageid]);
     _colprint(['Cert Type', config.certificateType]);
     _colprint(['Docker container', config.containerid]);
-    _colprint(['DNS Provider', config.dnsProvider]);
-    _colprint(['Namecheap api key', config.namecheap_apikey]);
-    _colprint(['Namecheap api username', config.namecheap_apiusername]);
+
+    if (config.isModePrivate) {
+      _colprint(['HTTP AuthProvider', 'true']);
+    } else {
+      _colprint(['DNS Auth Provider', config.certbothAuthProvider]);
+
+      var authProvider = DnsAuthProviders().getByName(config.certbothAuthProvider);
+      var envs = authProvider.environment;
+      for (var env in envs) {
+        _colprint([env.name, env.value]);
+      }
+    }
 
     var provider = ContentProviders().getByName(config.contentProvider);
     print('');
     _colprint(['Content Provider', config.contentProvider]);
     for (var volume in provider.getVolumes()) {
-      _colprint([
-        'Volume',
-        'host: ${volume.hostPath}',
-        'container: ${volume.containerPath}'
-      ]);
+      _colprint(['Volume', 'host: ${volume.hostPath}', 'container: ${volume.containerPath}']);
     }
 
     print('');
 
     if (config.image == null) {
-      printerr(
-          red("The image has not been configured.  Run 'nginx-le config'"));
+      printerr(red("The image has not been configured.  Run 'nginx-le config'"));
     } else {
       var image = Images().findByImageId(config.image.imageid);
 
@@ -88,8 +89,7 @@ class DoctorCommand extends Command<void> {
     }
 
     if (config.containerid == null) {
-      printerr(
-          red("The Container has not been configured. Run 'nginx-le config'"));
+      printerr(red("The Container has not been configured. Run 'nginx-le config'"));
     } else {
       var container = Containers().findByContainerId(config.containerid);
 
@@ -97,12 +97,7 @@ class DoctorCommand extends Command<void> {
         printerr(red('The Container ${config.containerid} does not exist'));
       }
       {
-        _colprint([
-          'Container Name',
-          container.names,
-          'Running',
-          container.isRunning.toString()
-        ]);
+        _colprint(['Container Name', container.names, 'Running', container.isRunning.toString()]);
       }
     }
   }

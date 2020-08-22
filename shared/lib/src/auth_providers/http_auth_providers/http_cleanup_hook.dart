@@ -1,7 +1,7 @@
 import 'package:dshell/dshell.dart';
 import 'package:nginx_le_shared/src/util/environment.dart';
 
-import 'certbot.dart';
+import '../../certbot/certbot.dart';
 
 void certbot_http_cleanup_hook() {
   Certbot().log('*' * 80);

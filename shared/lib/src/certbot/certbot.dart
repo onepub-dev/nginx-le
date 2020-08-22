@@ -7,8 +7,6 @@ import 'package:nginx_le_shared/src/util/email.dart';
 import 'package:path/path.dart';
 
 import '../../nginx_le_shared.dart';
-import '../auth_providers/namecheap/dns_auth.dart';
-import '../auth_providers/http_auth/http_auth.dart';
 
 class Certbot {
   static const LETSENCRYPT_ROOT_ENV = 'LETSENCRYPT_ROOT_ENV';
@@ -102,14 +100,14 @@ class Certbot {
       /// symlink the user's custom content.
       symlink('/etc/nginx/custom', LIVE_WWW_PATH);
       _deploy(hostname, domain);
-      printerr(green('*') * 100);
-      printerr(green('Nginx-LE is running with an active Certificate'));
-      printerr(green('*') * 100);
+      printerr(green('*') * 120);
+      printerr(green('* Nginx-LE is running with an active Certificate.'));
+      printerr(green('*') * 120);
     } else {
-      printerr(red('*') * 100);
+      printerr(red('*') * 120);
       printerr(red(
-          "Nginx-LE is starting in 'Certificate Acquisition' mode. It will only respond to CertBot validation requests."));
-      printerr('*' * 100);
+          "* Nginx-LE is running in 'Certificate Acquisition' mode. It will only respond to CertBot validation requests."));
+      printerr(red('*') * 120);
 
       /// symlink in the http configs which only permit certbot access
       symlink('/etc/nginx/acquire', LIVE_WWW_PATH);
@@ -169,7 +167,13 @@ class Certbot {
         ' --logs-dir=$logDir ';
 
     cmd.start(
-        runInShell: true, nothrow: true, progress: Progress((line) => print(line), stderr: (line) => printerr(line)));
+        runInShell: true,
+        nothrow: true,
+        progress: Progress((line) {
+          if (!line.startsWith('- - - -') && !line.startsWith('Saving debug ')) {
+            print(line);
+          }
+        }, stderr: (line) => printerr(line)));
   }
 
   /// Returns the path where lets encrypt certificates are stored.
@@ -227,29 +231,6 @@ class Certbot {
   /// Obtain the list of active certificates
   List<Certificate> certificates() {
     return Certificate.load();
-  }
-
-  /// Renews or gets for the first time the certificates
-  /// for the given [hostname].[domain]
-  /// If [debug] is true then only a staging certificate will be requested.
-  void acquire({
-    @required String hostname,
-    @required String domain,
-    @required String tld,
-    @required String emailaddress,
-    @required String mode,
-    bool staging = false,
-    bool debug = true,
-  }) {
-    /// first determine the method based on whether we are in public or private mode
-
-    if (mode.toLowerCase() == 'public') {
-      http_auth_acquire(
-          hostname: hostname, domain: domain, tld: tld, emailaddress: emailaddress, staging: staging, debug: debug);
-    } else {
-      dns_auth_acquire(
-          hostname: hostname, domain: domain, tld: tld, emailaddress: emailaddress, staging: staging, debug: debug);
-    }
   }
 
   void scheduleRenews() {
@@ -387,6 +368,20 @@ class Certbot {
 
   void sendToStdout() {
     _sendToStdout = true;
+  }
+
+  /// Revoke all the certificates we have.
+  static void revokeAll() {
+    /// we revoke all the certs we have.
+    /// We should only have one but if things go wrong we might have old ones
+    /// lying around so this cleans things up.
+    for (var cert in Certbot().certificates()) {
+      print('Revoking ${cert.fqdn}');
+      var hostname = cert.fqdn.split('.')[0];
+      var domain = cert.fqdn.split('.').sublist(1).join('.');
+      Certbot().revoke(hostname: hostname, domain: domain, staging: cert.staging);
+    }
+    print('');
   }
 }
 

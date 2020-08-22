@@ -1,16 +1,16 @@
 @Timeout(Duration(minutes: 60))
 import 'package:dshell/dshell.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
-import 'package:nginx_le_shared/src/auth_providers/http_auth/http_auth_hook.dart';
-import 'package:nginx_le_shared/src/auth_providers/http_auth/http_cleanup_hook.dart';
 import 'package:test/test.dart';
 
 void main() {
   test('http_auth_hook', () {
     Settings().setVerbose(enabled: true);
+
     prepareCertHooks();
 
-    certbot_http_auth_hook();
+    var provider = HTTPAuthProvider();
+    provider.auth_hook();
   });
 
   test('http_cleanup_hook', () {
@@ -18,7 +18,8 @@ void main() {
 
     prepareCertHooks();
 
-    certbot_http_cleanup_hook();
+    var provider = HTTPAuthProvider();
+    provider.cleanup_hook();
   });
 }
 

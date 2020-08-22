@@ -1,3 +1,4 @@
+@Timeout(Duration(minutes: 10))
 import 'dart:async';
 
 import 'package:async/async.dart';

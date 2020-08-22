@@ -1,24 +1,20 @@
 import 'package:dshell/dshell.dart';
-import 'package:nginx_le/src/config/ConfigYaml.dart';
+import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 void askForLocationPath(String prompt) {
   var hostIncludePath = askForHostPath(
-      title: 'Location of nginx include files',
-      prompt: prompt,
-      defaultPath: ConfigYaml().hostIncludePath);
+      title: 'Location of nginx include files', prompt: prompt, defaultPath: ConfigYaml().hostIncludePath);
 
   ConfigYaml().hostIncludePath = hostIncludePath;
 }
 
-String askForHostPath(
-    {String title, String prompt, String defaultPath, bool autoCreate = true}) {
+String askForHostPath({String title, String prompt, String defaultPath, bool autoCreate = true}) {
   var valid = false;
   String hostPath;
   do {
     print('');
     if (title != null) print('${green(title)}');
-    hostPath =
-        ask('$prompt:', defaultValue: defaultPath, validator: Ask.required);
+    hostPath = ask('$prompt:', defaultValue: defaultPath, validator: Ask.required);
 
     if (autoCreate) {
       createPath(hostPath);
