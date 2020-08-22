@@ -17,7 +17,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:pedantic/pedantic.dart';
 
 const defaultBaseURL = 'https://api.namecheap.com/xml.response';

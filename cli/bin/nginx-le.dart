@@ -1,9 +1,9 @@
-#! /usr/bin/env dshell
+#! /usr/bin/env dcli
 
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:nginx_le/nginx_le.dart';
 import 'package:nginx_le/src/commands/external/certificates_command.dart';
 import 'package:nginx_le/src/commands/external/config_command.dart';

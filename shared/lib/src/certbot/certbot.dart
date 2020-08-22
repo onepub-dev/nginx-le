@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cron/cron.dart';
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:meta/meta.dart';
 import 'package:nginx_le_shared/src/util/email.dart';
 import 'package:path/path.dart';

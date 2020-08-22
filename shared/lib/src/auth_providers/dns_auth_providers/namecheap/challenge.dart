@@ -1,6 +1,6 @@
 // A challenge represents all the data needed to specify a dns-01 challenge to lets-encrypt.
 
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:meta/meta.dart';
 import 'package:nginx_le_shared/src/certbot/certbot.dart';
 

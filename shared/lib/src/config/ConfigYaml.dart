@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:dshell/dshell.dart' as d;
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart' as d;
+import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 

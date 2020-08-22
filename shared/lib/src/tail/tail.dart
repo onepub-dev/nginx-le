@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 
 import 'isolate_source.dart';
 

@@ -1,4 +1,4 @@
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:validators/validators.dart';
 
 class AskFQDNOrLocalhost extends AskValidator {

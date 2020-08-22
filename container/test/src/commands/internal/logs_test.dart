@@ -1,5 +1,5 @@
 @Timeout(Duration(minutes: 10))
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:nginx_le_container/src/commands/internal/logs.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:test/test.dart';

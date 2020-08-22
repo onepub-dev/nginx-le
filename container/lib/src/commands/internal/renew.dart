@@ -1,5 +1,5 @@
 import 'package:args/args.dart';
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /// revokes any existing certificates by deleting

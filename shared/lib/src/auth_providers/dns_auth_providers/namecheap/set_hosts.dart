@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:xml/xml.dart';
 
 import 'dns_record.dart';

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:nginx_le/src/content_providers/content_providers.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
@@ -39,8 +39,8 @@ class DoctorCommand extends Command<void> {
     print('');
     print('Permissions');
     _showPermissions('HOME', HOME);
-    _showPermissions('.dshell', Settings().dshellPath);
-    _showPermissions('cache', Settings().dshellCachePath);
+    _showPermissions('.dcli', Settings().dcliPath);
+    _showPermissions('cache', Settings().dcliCachePath);
 
     var config = ConfigYaml();
 
@@ -160,7 +160,7 @@ class _Owner {
       var lsLine = 'ls -alFd $path'.firstLine;
 
       if (lsLine == null) {
-        throw DShellException('No file/directory matched ${absolute(path)}');
+        throw DCliException('No file/directory matched ${absolute(path)}');
       }
 
       var parts = lsLine.split(' ');

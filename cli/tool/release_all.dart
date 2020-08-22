@@ -1,8 +1,8 @@
-#! /bin/env dshell
+#! /bin/env dcli
 
 import 'dart:io';
 
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 
 import 'version.dart';
 
