@@ -15,3 +15,4 @@ nginx-le.code-workspace
 shared/.vscode/
 .history
 container/letsencrypt/logs/letsencrypt.log
+container/letsencrypt/config/renewal/noojee.org.conf
