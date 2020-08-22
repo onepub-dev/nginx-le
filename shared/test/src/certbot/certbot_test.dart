@@ -1,4 +1,4 @@
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 @Timeout(Duration(minutes: 30))
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/dns_auth_providers.dart';

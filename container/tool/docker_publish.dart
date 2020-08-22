@@ -1,8 +1,8 @@
-#! /bin/env dshell
+#! /bin/env dcli
 
 import 'dart:io';
 
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 
 void main(List<String> args) {
   var script = Script.fromFile(Platform.script.toFilePath());

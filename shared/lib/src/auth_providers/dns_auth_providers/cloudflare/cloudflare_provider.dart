@@ -1,4 +1,4 @@
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/generic_auth_provider.dart';
 import 'package:nginx_le_shared/src/config/ConfigYaml.dart';
 import 'package:nginx_le_shared/src/util/env_var.dart';

@@ -127,8 +127,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.3"
-  dshell:
+  dcli:
     dependency: "direct main"
+    description:
+      name: dcli
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.20.0"
+  dshell:
+    dependency: transitive
     description:
       name: dshell
       url: "https://pub.dartlang.org"

@@ -1,5 +1,5 @@
 @Timeout(Duration(minutes: 60))
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/namecheap/namecheap_provider.dart';
 import 'package:test/test.dart';

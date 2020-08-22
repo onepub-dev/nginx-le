@@ -1,4 +1,4 @@
-#! /usr/bin/env dshell
+#! /usr/bin/env dcli
 
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 

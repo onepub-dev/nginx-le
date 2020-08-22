@@ -1,4 +1,4 @@
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:meta/meta.dart';
 
 import 'image.dart';

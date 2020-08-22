@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:uuid/uuid.dart';
 
@@ -15,9 +15,9 @@ class BuildCommand extends Command<void> {
   BuildCommand() {
     argParser.addOption('image', abbr: 'i', help: 'The docker image name in the form --image="repo/image:version"');
 
-    argParser.addFlag('update-dshell',
+    argParser.addFlag('update-dcli',
         abbr: 'u',
-        help: 'Pass this flag to force the build to pull the latest version of dart/dshell',
+        help: 'Pass this flag to force the build to pull the latest version of dart/dcli',
         negatable: false,
         defaultsTo: false);
 
@@ -57,11 +57,11 @@ class BuildCommand extends Command<void> {
         deleteImage(image);
       }
     }
-    var pulldshell = results['update-dshell'] as bool;
+    var pulldcli = results['update-dcli'] as bool;
 
-    /// force dshell to pull the latest version.
-    if (pulldshell || !exists('update-dshell.txt')) {
-      'update-dshell.txt'.write(Uuid().v4());
+    /// force dcli to pull the latest version.
+    if (pulldcli || !exists('update-dcli.txt')) {
+      'update-dcli.txt'.write(Uuid().v4());
     }
 
     print(green('Building nginx-le docker image $imageName '));

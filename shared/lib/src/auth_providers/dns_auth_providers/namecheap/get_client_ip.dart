@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 
 var getIPURL = 'https://dynamicdns.park-your-domain.com/getip';
 

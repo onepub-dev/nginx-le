@@ -3,7 +3,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:async/async.dart';
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 
 import 'messages.dart';
 

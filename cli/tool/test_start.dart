@@ -1,6 +1,6 @@
-#! /usr/bin/env dshell
+#! /usr/bin/env dcli
 
-import 'package:dshell/dshell.dart';
+import 'package:dcli/dcli.dart';
 
 /// Starts the ngix docker instance using the host subdirectory 'certs' to store acquired certifiates.
 void main(List<String> args) {
