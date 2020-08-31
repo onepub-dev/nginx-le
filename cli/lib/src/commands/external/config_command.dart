@@ -153,11 +153,21 @@ class ConfigCommand extends Command<void> {
         printerr(red('Docker failed to create the container!'));
         exit(1);
       } else {
-        print(green('Container created'));
+        print(green('Container created.'));
         config.containerid = containerid;
       }
     }
-    print(green('Use nginx-le start to start the container'));
+    print('');
+
+    var startMethod = ConfigYaml().startMethod;
+    if (startMethod == ConfigYaml.START_METHOD_NGINX_LE) {
+      print(blue('Use nginx-le start to start the container'));
+    } else if (startMethod == ConfigYaml.START_METHOD_DOCKER_START) {
+      print(blue('Use your Dockerfile to start nginx-le'));
+    } else {
+      // ConfigYaml.START_METHOD_DOCKER_COMPOSE
+      print(blue('Use your docker-compose file to start nginx-le.'));
+    }
   }
 
   void selectDNSProvider(ConfigYaml config) {
