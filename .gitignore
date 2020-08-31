@@ -14,7 +14,6 @@ cli/bin/nginx-le
 nginx-le.code-workspace
 shared/.vscode/
 .history
-container/letsencrypt/logs/letsencrypt.log
-container/letsencrypt/config/renewal/noojee.org.conf
+container/letsencrypt
 cli/update.dcli.txt
 shared/pubspec.lock
