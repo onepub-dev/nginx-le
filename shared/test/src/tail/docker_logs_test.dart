@@ -17,7 +17,7 @@ void main() {
   test('DockerLogs.start', () async {
     var complete = Completer<void>();
     DockerLogs('be4d6307ffbf', 100, follow: true).start().listen((event) {
-      print('Unittest: $event');
+      print(event);
     });
 
     await complete.future;
