@@ -42,14 +42,19 @@ void main() {
     var path = Directory('/tmp').createTempSync().path;
 
     Environment().certbotRoot = path;
-    createDir(join(Certbot.letsEncryptConfigPath, 'live', 'robtest18-new.clouddialer.com.au'), recursive: true);
-    var fqnd001 = join(Certbot.letsEncryptConfigPath, 'live', 'robtest18-new.clouddialer.com.au-0001');
+    createDir(
+        join(Certbot.letsEncryptConfigPath, 'live',
+            'robtest18-new.clouddialer.com.au'),
+        recursive: true);
+    var fqnd001 = join(Certbot.letsEncryptConfigPath, 'live',
+        'robtest18-new.clouddialer.com.au-0001');
     createDir(fqnd001, recursive: true);
 
     // noojee.org-0001
     // noojee.org-new
     // noojee.org-new-0001
-    var latest = Certbot().latestCertificatePath('robtest18-new', 'clouddialer.com.au');
+    var latest =
+        Certbot().latestCertificatePath('robtest18-new', 'clouddialer.com.au');
     expect(latest, equals(fqnd001));
 
     // createDir(join(path, 'robtest18.clouddialer.com.au'));
