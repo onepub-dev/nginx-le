@@ -39,8 +39,8 @@ class DoctorCommand extends Command<void> {
     print('');
     print('Permissions');
     _showPermissions('HOME', HOME);
-    _showPermissions('.dcli', Settings().dcliPath);
-    _showPermissions('cache', Settings().dcliCachePath);
+    _showPermissions('.dcli', Settings().pathToDCli);
+    _showPermissions('cache', Settings().pathToDCliCache);
 
     var config = ConfigYaml();
 

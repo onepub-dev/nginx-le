@@ -133,7 +133,7 @@ packages:
       name: dcli
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.20.0"
+    version: "0.21.1"
   encrypt:
     dependency: "direct main"
     description:
@@ -147,7 +147,7 @@ packages:
       name: equatable
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.3"
+    version: "1.2.4"
   file:
     dependency: transitive
     description:
@@ -420,7 +420,7 @@ packages:
       name: settings_yaml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.1.1"
   shelf:
     dependency: transitive
     description:
@@ -553,7 +553,7 @@ packages:
       name: uuid
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0"
+    version: "2.2.2"
   validators:
     dependency: "direct main"
     description:

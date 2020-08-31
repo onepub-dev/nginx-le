@@ -7,7 +7,7 @@ import 'package:dcli/dcli.dart';
 void main(List<String> args) {
   var script = Script.fromFile(Platform.script.toFilePath());
 
-  var root = script.projectRoot;
+  var root = script.pathToProjectRoot;
 
   var pubspec = PubSpecFile.fromFile(join(root, 'pubspec.yaml'));
 
@@ -16,8 +16,7 @@ void main(List<String> args) {
   print('Version: $version');
 
   if (confirm('Proceed to publish with this version?')) {
-    'nginx-le build -u --image=bsuttonnoojee/nginx-le:$version'
-        .start(workingDirectory: '../..');
+    'nginx-le build -u --image=bsuttonnoojee/nginx-le:$version'.start(workingDirectory: '../..');
     // 'docker build -f ../../Dockerfile -t bsuttonnoojee/nginx-le:$version .'.run;
     'docker push bsuttonnoojee/nginx-le:$version'.run;
   } else {
