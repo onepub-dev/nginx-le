@@ -21,7 +21,7 @@ class ConfigYaml {
   static const CERTIFICATE_TYPE_STAGING = 'staging';
 
   static const START_METHOD_NGINX_LE = 'nginx-le';
-  static const START_METHOD_DOCKER_START = 'docker-start';
+  static const START_METHOD_DOCKER_START = 'docker start/run';
   static const START_METHOD_DOCKER_COMPOSE = 'docker-compose';
 
   SettingsYaml settings;
