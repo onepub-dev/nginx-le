@@ -1,5 +1,5 @@
 name: nginx_le_container
-version: 1.1.4
+version: 1.1.6
 description: Commands that live in the nginx-le docker container.
 repository: https://github.com/bsutton/nginx-le
 environment: 
@@ -21,8 +21,3 @@ dependencies:
   nginx_le_shared: ^1.0.0
 dev_dependencies: 
   test: ^1.0.0
-
-
-dependency_overrides:
-  nginx_le_shared:
-    path: ../shared
