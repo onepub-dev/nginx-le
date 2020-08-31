@@ -168,12 +168,14 @@ class ConfigYaml {
 
   void validate(void Function() showUsage) {
     if (!isConfigured) {
-      printerr(red("A saved configuration doesn't exist. You must use first run 'nginx-le config."));
+      printerr(red(
+          "A saved configuration doesn't exist. You must use first run 'nginx-le config."));
       showUsage();
     }
 
     if (image == null) {
-      printerr(red("Your configuration is in an inconsistent state. (image is null). Run 'nginx-le config'."));
+      printerr(red(
+          "Your configuration is in an inconsistent state. (image is null). Run 'nginx-le config'."));
       showUsage();
     }
 

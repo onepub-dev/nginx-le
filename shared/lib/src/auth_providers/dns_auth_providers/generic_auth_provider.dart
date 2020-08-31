@@ -41,8 +41,10 @@ abstract class GenericAuthProvider extends AuthProvider {
     var auth_hook_path = Environment().certbotDNSAuthHookPath;
     var cleanup_hook_path = Environment().certbotDNSCleanupHookPath;
 
-    ArgumentError.checkNotNull(auth_hook_path, 'Environment variable: CERTBOT_DNS_AUTH_HOOK_PATH missing');
-    ArgumentError.checkNotNull(cleanup_hook_path, 'Environment variable: CERTBOT_DNS_CLEANUP_HOOK_PATH missing');
+    ArgumentError.checkNotNull(auth_hook_path,
+        'Environment variable: CERTBOT_DNS_AUTH_HOOK_PATH missing');
+    ArgumentError.checkNotNull(cleanup_hook_path,
+        'Environment variable: CERTBOT_DNS_CLEANUP_HOOK_PATH missing');
 
     var certbot = 'certbot certonly '
         ' --manual '
@@ -74,7 +76,8 @@ abstract class GenericAuthProvider extends AuthProvider {
     if (progress.exitCode != 0) {
       var system = 'hostname'.firstLine;
 
-      throw CertbotException('certbot failed acquiring a certificate for $hostname.$domain on $system',
+      throw CertbotException(
+          'certbot failed acquiring a certificate for $hostname.$domain on $system',
           details: lines.join('\n'));
     }
   }

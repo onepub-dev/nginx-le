@@ -14,7 +14,8 @@ class DnsAuthProviders {
 
     for (var provider in providers) {
       if (names.containsKey(provider.name)) {
-        throw ArgumentError('The DnsAuthProvider name ${provider.name} is already used.');
+        throw ArgumentError(
+            'The DnsAuthProvider name ${provider.name} is already used.');
       }
     }
 

@@ -22,7 +22,6 @@ void revoke(List<String> args) {
 
   Certbot.revokeAll();
 
-
   /// delete all of the certificates
   // find('*', root: _latestCertificatePath(hostname, domain))
   //     .forEach((file) => delete(file));
