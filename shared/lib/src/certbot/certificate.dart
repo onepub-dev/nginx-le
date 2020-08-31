@@ -23,15 +23,15 @@ class Certificate {
   void parseName(String line) {
     var parts = line.split(':');
     fqdn = parts[1].trim();
-
-    if (fqdn.startsWith('*')) {
-      wildcard = true;
-    }
   }
 
   void parseDomains(String line) {
     var parts = line.split(':');
     domains = parts[1].trim();
+
+    if (domains.startsWith('*')) {
+      wildcard = true;
+    }
   }
 
   void parseExpiryDate(String line) {
