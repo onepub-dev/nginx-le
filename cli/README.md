@@ -143,8 +143,7 @@ Use the `nginx-le config` command to configure you Nginx-LE container.
 When you run config, Nginx-LE will destroy and create a new container with the new settings.
 
 
-
-
+## Start Method
 Select the method by which you are going to start Nginx-LE
 | Method&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Description |
 | :---------------- | ---|
@@ -154,6 +153,7 @@ Select the method by which you are going to start Nginx-LE
 
 The `config` command saves each of the entered settings so that you don't have to pass them when running other commands.
 
+## Content Provider
 The configure command also lets you setup how the content is to be served. 
 
 Nginx-LE supports four types of Content Providers
@@ -166,16 +166,15 @@ Nginx-LE supports four types of Content Providers
 | Custom | Allows you to configure your own Nginx location and upstream settings.
 |
 
+## Auth Provider
+To acquire a LetsEncrypt certificate you must be able to prove that you own the domain for which the certificate is being issued.
 
+Nginx-LE supports a number of methods.
 
-
--- If you are running a server in private mode it also requests a password to encrypt your DNS server api keys so that you don't have to re-enter the keys each time you want to acquire a certificate.
-
-e.g.
-
-```bash
-nginx-le config 
-```
+| Auth Provider | Usage Case | Description
+| ----| ---- |----
+| HTTP | For a public facing webserver using a FQDN certificate. | Your webserver must be accessible on a public ip address.  This the simpliest form of validation.
+| Cloudflare | For 
 
 ## Mode
 Nginx-LE supports to web server modes, public and private.
@@ -519,8 +518,6 @@ Once a valid certificate has been acquired `nginx-le` switches the `live` symlin
 | MODE | String | public or private
 | STAGING | bool | True to use a 'test' certbot certificate.
 | AUTO_ACQUIRE | bool
-| HOSTNAME | String
-| HOSTNAME | String
 | CERTBOT_TOKEN | String
 | CERTBOT_VALIDATION | String
 | CERTBOT_DOMAIN | String | Will be the same as DOMAIN but required by Certbot
@@ -530,12 +527,13 @@ Once a valid certificate has been acquired `nginx-le` switches the `live` symlin
 | NGINX_CERT_ROOT_OVERWRITE | String | Path 
 | CERTBOT_DNS_AUTH_HOOK_PATH | String | Path to the DNS auth hook
 | CERTBOT_DNS_CLEANUP_HOOK_PATH | String | Path to the DNS auth hook cleanup script.
-| CERTBOT_HTTP_AUTH_HOOK_PATH | String | Path to the DNS auth hook
-| CERTBOT_HTTP_CLEANUP_HOOK_PATH | String | Path to the DNS auth hook cleanup script.
+| CERTBOT_HTTP_AUTH_HOOK_PATH | String | Path to the HTTP auth hook
+| CERTBOT_HTTP_CLEANUP_HOOK_PATH | String | Path to the HTTP auth hook cleanup script.
 | DNS_RETRIES | int | The number of times the DNS Auth Hook will check the DNS for the required TXT record.
 | NGINX_ACCESS_LOG_ENV | String | Path to the Nginx access.log file in the container.
 | NGINX_ERROR_LOG_ENV | String | Path to the Nginx error.log file in the container
 | NGINX_LOCATION_INCLUDE_PATH | String | Path of the .location and .upstream files.
+| CERTBOT_AUTH_PROVIDER | String | Select the Certbot Authentication method. Supporte values are: HTTP01Auth, cloudflare, namecheap
 
 
 # Releasing Nginx-le
