@@ -119,7 +119,7 @@ class CloudFlareProvider extends GenericAuthProvider {
     _createDir(dirname(_settings));
 
     _settings.write('dns_cloudflare_email = ${Environment().emailaddress}');
-    _settings.append('dns_cloudflare_api_key = ${env(ENV_API_TOKEN)}');
+    _settings.append('dns_cloudflare_api_key = ${env[ENV_API_TOKEN]}');
 
     'chmod 600 $_settings'.run;
   }
