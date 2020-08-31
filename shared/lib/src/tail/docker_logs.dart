@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:dcli/dcli.dart';
+import 'package:meta/meta.dart';
 
 import 'isolate_source.dart';
 
@@ -26,8 +27,8 @@ class DockerLogsInIsolate {
 
   /// Returns the last [lines] of [containerid]  and then
   /// follows the file.
-  Stream<String> _dockerLog(String containerid,
-      {int lines = 100, bool follow = false}) {
+  @visibleForTesting
+  Stream<String> dockerLog(String containerid, {int lines = 100, bool follow = false}) {
     Settings().verbose('docker logs:  $lines  ${Isolate.current.debugName}');
 
     var cmd = 'docker logs --tail $lines $containerid';
@@ -39,7 +40,7 @@ class DockerLogsInIsolate {
 }
 
 class DockerLogs {
-  var isoStream = IsolateSource<String, String, int, bool>();
+  var isoSource = IsolateSource<String, String, int, bool>();
   String containerid;
   int lines;
   bool follow;
@@ -47,22 +48,16 @@ class DockerLogs {
   DockerLogs(this.containerid, this.lines, {this.follow = false});
 
   Stream<String> start() {
-    isoStream.onStart = _dockerLog;
-    isoStream.onStop = _dockerLogsStop;
+    isoSource.onStart = _dockerLog;
+    isoSource.onStop = _dockerLogsStop;
 
-    isoStream.start(containerid, lines, follow);
+    isoSource.start(containerid, lines, follow);
 
-    // set up the handler to recieve the stream data
-    // process it and return.
-    // isoStream.stream.listen((data) {
-    //   print('main: $data');
-    // });
-
-    return isoStream.stream;
+    return isoSource.stream;
   }
 
   void stop() {
-    isoStream.stop();
+    isoSource.stop();
   }
 }
 
@@ -82,8 +77,7 @@ void _dockerLogsStop() {
 
 /// Called when the tail command is to be started
 Stream<String> _dockerLog(String containerid, int lines, bool follow) {
-  return _dockerLogsIsolate._dockerLog(containerid,
-      lines: lines, follow: follow);
+  return _dockerLogsIsolate.dockerLog(containerid, lines: lines, follow: follow);
 }
 
 class DockerLogsException implements Exception {
