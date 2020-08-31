@@ -1,3 +1,6 @@
+# 1.1.6
+Fixed logging. Was ignoring output to stderr.
+# 1.1.5
 # 1.1.4
 # 1.1.3
 # 1.1.2
