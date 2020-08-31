@@ -92,7 +92,10 @@ The Nginx-LE cli exposes the following commands:
 
 # Building Nginx-LE
 
-Most users of Nginx-LE will never need to run a build. The build tooling is primarily used by the Nginx-LE development team.
+Most users of Nginx-LE will never need to run a build. The build tooling is primarily used by the Nginx-LE development team and if you need to customize the Nginx-LE Dockerfile.
+
+
+However if you want to customise the Nginx-LE Dockerfile then you m
 
 To build Nginx-LE install the Nginx-LE cli tools as noted above.
 
@@ -110,6 +113,7 @@ Before you build your container you need to create your Dockerfile. See the sect
 
 To build the Nginx-LE image run:
 ```
+git clone https://github.com/bsutton/nginx-le.git
 nginx-le build --tag=<repo/image:version>
 ```
 
@@ -532,3 +536,33 @@ Once a valid certificate has been acquired `nginx-le` switches the `live` symlin
 | NGINX_ACCESS_LOG_ENV | String | Path to the Nginx access.log file in the container.
 | NGINX_ERROR_LOG_ENV | String | Path to the Nginx error.log file in the container
 | NGINX_LOCATION_INCLUDE_PATH | String | Path of the .location and .upstream files.
+
+
+# Releasing Nginx-le
+If you are involved in developing Nginx-LE you will get to the point where you need to make a release.
+
+The easists way to release Nginx-LE is to use the release-all.dart script in cli/tools
+
+```
+cd cli
+tool/release_all.dart
+```
+
+Select the appropriate version no. when prompted and the release_all script will do the reset.
+
+## release details 
+
+There are four components that need to be released
+
+The three dart components:
+nginx-le/cli
+nginx-le/container
+nginx-le/shared
+
+You must update the version no.s so that they all match.
+
+You must also publish nginx-le/shared first as the other to packages can't be published until the `shared` package is released.
+
+Finally you need to publish the Nginx-LE docker image using:
+
+docker push 
