@@ -54,7 +54,9 @@ void start() {
 
       /// not the same type of cert then acquire it
       /// If we have more then one then somethings wrong so start again by revoke all of them.
-      if (certificates.length > 1 || staging != certificate.staging || '$hostname.$domain' != certificate.fqdn) {
+      if (certificates.length > 1 ||
+          staging != certificate.staging ||
+          '$hostname.$domain' != certificate.fqdn) {
         Certbot.revokeAll();
         startAcquireThread();
       }
@@ -114,20 +116,23 @@ void acquireThread(String _) {
     if (Environment().mode.toLowerCase() == 'public') {
       HTTPAuthProvider().acquire();
     } else {
-      var authProvider = DnsAuthProviders().getByName(Environment().certbotAuthProvider);
+      var authProvider =
+          DnsAuthProviders().getByName(Environment().certbotAuthProvider);
       authProvider.acquire();
     }
 
     Certbot().deployCertificates(
         hostname: Environment().hostname,
         domain: Environment().domain,
-        reload: true, // don't try to reload nginx as it won't be running as yet.
+        reload:
+            true, // don't try to reload nginx as it won't be running as yet.
         autoAcquireMode: Environment().autoAcquire);
   } on CertbotException catch (e, st) {
     printerr(e.message);
     printerr(e.details);
     printerr(st.toString());
-    Email.sendError(subject: e.message, body: '${e.details}\n ${st.toString()}');
+    Email.sendError(
+        subject: e.message, body: '${e.details}\n ${st.toString()}');
   } catch (e, st) {
     /// we don't rethrow as we don't want to shutdown the scheduler.
     /// as this may be a temporary error.

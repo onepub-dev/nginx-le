@@ -7,7 +7,9 @@ import 'package:test/test.dart';
 void main() {
   test('dockerLog', () async {
     var complete = Completer<void>();
-    DockerLogsInIsolate().dockerLog('be4d6307ffbf', follow: true).listen((event) {
+    DockerLogsInIsolate()
+        .dockerLog('be4d6307ffbf', follow: true)
+        .listen((event) {
       print(event);
     });
 
