@@ -7,7 +7,7 @@ import '../../../../nginx_le_shared.dart';
 
 class CloudFlareProvider extends GenericAuthProvider {
   static const _SETTING_API_TOKEN = 'cloudflare_api_token';
-  static const ENV_API_TOKEN = 'ENV_API_TOKEN';
+  static const ENV_API_TOKEN = 'CLOUDFLARE_API_TOKEN';
 
   final _settings = join('/tmp', 'cloudflare', 'settings.ini');
 
@@ -42,8 +42,7 @@ class CloudFlareProvider extends GenericAuthProvider {
   }
 
   String get apiToken => ConfigYaml().settings[_SETTING_API_TOKEN] as String;
-  set apiToken(String apiToken) =>
-      ConfigYaml().settings[_SETTING_API_TOKEN] = apiToken;
+  set apiToken(String apiToken) => ConfigYaml().settings[_SETTING_API_TOKEN] = apiToken;
 
   @override
   List<EnvVar> get environment {
@@ -102,8 +101,7 @@ class CloudFlareProvider extends GenericAuthProvider {
     if (progress.exitCode != 0) {
       var system = 'hostname'.firstLine;
 
-      throw CertbotException(
-          'certbot failed acquiring a certificate for $hostname.$domain on $system',
+      throw CertbotException('certbot failed acquiring a certificate for $hostname.$domain on $system',
           details: lines.join('\n'));
     }
   }
