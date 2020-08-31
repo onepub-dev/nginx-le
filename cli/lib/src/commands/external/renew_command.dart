@@ -20,7 +20,10 @@ class RevokeCommand extends Command<void> {
     // argParser.addOption('name',
     //     abbr: 'n', help: 'The name of the docker container to attach to');
     argParser.addFlag('debug',
-        abbr: 'd', defaultsTo: false, negatable: false, help: 'Outputs additional logging information');
+        abbr: 'd',
+        defaultsTo: false,
+        negatable: false,
+        help: 'Outputs additional logging information');
   }
 
   @override

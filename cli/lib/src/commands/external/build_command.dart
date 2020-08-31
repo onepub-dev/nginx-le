@@ -13,18 +13,27 @@ class BuildCommand extends Command<void> {
   String get name => 'build';
 
   BuildCommand() {
-    argParser.addOption('image', abbr: 'i', help: 'The docker image name in the form --image="repo/image:version"');
+    argParser.addOption('image',
+        abbr: 'i',
+        help: 'The docker image name in the form --image="repo/image:version"');
 
     argParser.addFlag('update-dcli',
         abbr: 'u',
-        help: 'Pass this flag to force the build to pull the latest version of dart/dcli',
+        help:
+            'Pass this flag to force the build to pull the latest version of dart/dcli',
         negatable: false,
         defaultsTo: false);
 
     argParser.addFlag('overwrite',
-        abbr: 'o', help: 'If an image with the same name exists then replace it.', negatable: false, defaultsTo: false);
+        abbr: 'o',
+        help: 'If an image with the same name exists then replace it.',
+        negatable: false,
+        defaultsTo: false);
 
-    argParser.addFlag('debug', abbr: 'd', negatable: false, help: 'Outputs additional build information');
+    argParser.addFlag('debug',
+        abbr: 'd',
+        negatable: false,
+        help: 'Outputs additional build information');
   }
   @override
   void run() {
@@ -36,7 +45,8 @@ class BuildCommand extends Command<void> {
     var overwrite = results['overwrite'] as bool;
 
     if (!exists('Dockerfile')) {
-      printerr('The Dockerfile must be present in your current working directory.');
+      printerr(
+          'The Dockerfile must be present in your current working directory.');
       showUsage(argParser);
     }
     var imageName = argResults['image'] as String;
@@ -50,7 +60,8 @@ class BuildCommand extends Command<void> {
     var image = Images().findByFullname(imageName);
     if (image != null) {
       if (!overwrite) {
-        printerr('The image $imageName already exists. Choose a different name or use --overwrite to replace it.');
+        printerr(
+            'The image $imageName already exists. Choose a different name or use --overwrite to replace it.');
         showUsage(argParser);
       } else {
         /// delete the image an all its associated containers.
@@ -76,8 +87,8 @@ class BuildCommand extends Command<void> {
     config.image = image;
     config.save();
 
-    print(
-        green("Build Complete. You should now run 'nginx-le config' to reconfigure your system to use the new image"));
+    print(green(
+        "Build Complete. You should now run 'nginx-le config' to reconfigure your system to use the new image"));
   }
 
   /// delete an [image] an all its associated containers.
@@ -91,7 +102,8 @@ class BuildCommand extends Command<void> {
         if (confirm('Stop ${container.containerid} ${container.names}')) {
           container.stop();
         } else {
-          printerr(red("Can't proceed when an dependant container is running."));
+          printerr(
+              red("Can't proceed when an dependant container is running."));
           exit(1);
         }
       }
