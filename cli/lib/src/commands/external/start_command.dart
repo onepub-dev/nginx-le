@@ -14,10 +14,13 @@ class StartCommand extends Command<void> {
 
   StartCommand() {
     argParser.addFlag('debug',
+        defaultsTo: false, abbr: 'd', negatable: false, help: 'Outputs additional logging information');
+
+    argParser.addFlag('interactive',
         defaultsTo: false,
-        abbr: 'd',
+        abbr: 'i',
         negatable: false,
-        help: 'Outputs additional logging information');
+        help: 'Starts the container in the foreground so you can see all output');
   }
 
   @override
@@ -25,19 +28,20 @@ class StartCommand extends Command<void> {
     var debug = argResults['debug'] as bool;
     Settings().setVerbose(enabled: debug);
 
+      var interactive = argResults['interactive'] as bool;
+
     var config = ConfigYaml();
     config.validate(() => showUsage(argParser));
 
     var container = Containers().findByContainerId(config.containerid);
     if (container.isRunning) {
-      printerr(
-          'The container ${config.containerid} is already running. Consider nginx-le restart');
+      printerr('The container ${config.containerid} is already running. Consider nginx-le restart');
       showUsage(argParser);
     }
 
     print('Starting nginx container ${config.containerid}');
 
-    container.start();
+    container.start(interactive: interactive);
 
     sleep(3);
 
