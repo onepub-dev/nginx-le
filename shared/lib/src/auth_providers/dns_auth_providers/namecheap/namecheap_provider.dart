@@ -8,8 +8,8 @@ import 'dns_cleanup_hook.dart';
 
 class NameCheapAuthProvider extends GenericAuthProvider {
   /// Name Cheap settings
-  static const NAMECHEAP_API_KEY = 'apiKey';
-  static const NAMECHEAP_API_USERNAME = 'apiUsername';
+  static const NAMECHEAP_API_KEY = 'NAMECHEAP_API_KEY';
+  static const NAMECHEAP_API_USERNAME = 'NAMECHEAP_API_USER';
 
   @override
   String get name => 'namecheap';

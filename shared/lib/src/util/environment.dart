@@ -61,12 +61,12 @@ class Environment {
 
   // name cheap
 
-  String get namecheapApiKey => env['NAMECHEAP_API_KEY'];
+  String get namecheapApiKey => env[NAMECHEAP_API_KEY];
   set namecheapApiKey(String namecheapApiKey) =>
-      env['NAMECHEAP_API_KEY'] = namecheapApiKey;
-  String get namecheapApiUser => env['NAMECHEAP_API_USER'];
+      env[NAMECHEAP_API_KEY] = namecheapApiKey;
+  String get namecheapApiUser => env[NAMECHEAP_API_USER];
   set namecheapApiUser(String namecheapApiUser) =>
-      env['NAMECHEAP_API_USER'] = namecheapApiUser;
+      env[NAMECHEAP_API_USER] = namecheapApiUser;
 
   /// the certbot auth provider.
   String get certbotAuthProvider => env['CERTBOT_AUTH_PROVIDER'];
