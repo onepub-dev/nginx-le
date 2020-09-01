@@ -17,3 +17,4 @@ shared/.vscode/
 container/letsencrypt
 cli/update.dcli.txt
 shared/pubspec.lock
+shared/.vscode/launch.json
