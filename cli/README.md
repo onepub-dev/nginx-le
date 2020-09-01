@@ -587,6 +587,7 @@ DOMAIN_WILDCARD=true|false
 This is the most versitile auth provider as its supports public and private websites as well as Wildcard and single FQDN certificates.
 
 CERTBOT_AUTH_PROVIDER=cloudflare
+CLOUDFLARE_API_TOKEN=<api token for cloudflare>
 Mode=public|private
 DOMAIN_WILDCARD=true|false
 
