@@ -20,6 +20,10 @@ void start() {
   Settings().verbose('DOMAIN=$domain');
   var tld = Environment().tld;
   Settings().verbose('TLD=$tld');
+
+  var wildcard = Environment().wildcard;
+  Settings().verbose('DOMAIN_WILDCARD=$wildcard');
+
   var emailaddress = Environment().emailaddress;
   Settings().verbose('EMAIL_ADDRESS=$emailaddress');
   var mode = Environment().mode;
@@ -45,18 +49,17 @@ void start() {
     var certificates = Certificate.load();
 
     /// expired certs are handled by the renew scheduler
-    /// If you are trying to change from a staging to a production
-    /// cert then you must first revoke the staging certificate
     if (certificates.isEmpty) {
       startAcquireThread();
     } else {
       var certificate = certificates[0];
 
-      /// not the same type of cert then acquire it
-      /// If we have more then one then somethings wrong so start again by revoke all of them.
+      /// If the certificate type has changed then we must acquire a new one.
+      /// If we have more then one certificate then somethings wrong so start again by revoke all of them.
       if (certificates.length > 1 ||
           staging != certificate.staging ||
-          '$hostname.$domain' != certificate.fqdn) {
+          '$hostname.$domain' != certificate.fqdn ||
+          wildcard != certificate.wildcard) {
         Certbot.revokeAll();
         startAcquireThread();
       }
@@ -113,26 +116,21 @@ void startAcquireThread() {
 
 void acquireThread(String _) {
   try {
-    if (Environment().mode.toLowerCase() == 'public') {
-      HTTPAuthProvider().acquire();
-    } else {
-      var authProvider =
-          DnsAuthProviders().getByName(Environment().certbotAuthProvider);
-      authProvider.acquire();
-    }
+    var authProvider = AuthProviders().getByName(Environment().certbotAuthProvider);
+    authProvider.acquire();
 
     Certbot().deployCertificates(
         hostname: Environment().hostname,
         domain: Environment().domain,
-        reload:
-            true, // don't try to reload nginx as it won't be running as yet.
+        reload: true, // don't try to reload nginx as it won't be running as yet.
         autoAcquireMode: Environment().autoAcquire);
   } on CertbotException catch (e, st) {
     printerr(e.message);
+    printerr('Cerbot Error details begin: ${'*' * 20}');
     printerr(e.details);
+    printerr('Cerbot Error details end: ${'*' * 20}');
     printerr(st.toString());
-    Email.sendError(
-        subject: e.message, body: '${e.details}\n ${st.toString()}');
+    Email.sendError(subject: e.message, body: '${e.details}\n ${st.toString()}');
   } catch (e, st) {
     /// we don't rethrow as we don't want to shutdown the scheduler.
     /// as this may be a temporary error.
