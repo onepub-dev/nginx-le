@@ -23,12 +23,9 @@ void acquire(List<String> args) {
   Settings().verbose('DOMAIN_WILDCARD:${Environment().wildcard}');
   Settings().verbose('AuthProvider:${Environment().certbotAuthProvider}');
 
-  var authProvider =
-      AuthProviders().getByName(Environment().certbotAuthProvider);
+  var authProvider = AuthProviders().getByName(Environment().certbotAuthProvider);
   authProvider.acquire();
 
   Certbot().deployCertificates(
-      hostname: Environment().hostname,
-      domain: Environment().domain,
-      autoAcquireMode: Environment().autoAcquire);
+      hostname: Environment().hostname, domain: Environment().domain, autoAcquireMode: Environment().autoAcquire);
 }

@@ -64,8 +64,7 @@ List<DNSRecord> getHosts(
     if (xmlHost.attributes.isEmpty) continue;
 
     if ((xmlHost as XmlElement).name.local != 'host') {
-      Settings().verbose(
-          "Skipping Invalid NodeType: ${xmlHost.nodeType} expected a 'host' node.");
+      Settings().verbose("Skipping Invalid NodeType: ${xmlHost.nodeType} expected a 'host' node.");
       continue;
     }
     var record = DNSRecord.fromXmlHost(xmlHost);

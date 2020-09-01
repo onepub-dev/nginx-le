@@ -33,18 +33,11 @@ void logs(List<String> args) {
     help: 'The certbot logs are included.',
   );
 
-  argParser.addFlag('error',
-      abbr: 'e',
-      defaultsTo: true,
-      negatable: false,
-      help: 'The nginx error logs are included.');
+  argParser.addFlag('error', abbr: 'e', defaultsTo: true, negatable: false, help: 'The nginx error logs are included.');
 
   // optional log files
   argParser.addFlag('access',
-      abbr: 'a',
-      defaultsTo: false,
-      negatable: false,
-      help: 'The nginx logs access logs are included.');
+      abbr: 'a', defaultsTo: false, negatable: false, help: 'The nginx logs access logs are included.');
 
   argParser.addFlag(
     'debug',
@@ -73,29 +66,21 @@ void logs(List<String> args) {
   var usedefaults = true;
 
   /// If the user explicitly sets a logfile then we ignore all of the default logfiles.
-  if (results.wasParsed('certbot') ||
-      results.wasParsed('access') ||
-      results.wasParsed('error')) {
+  if (results.wasParsed('certbot') || results.wasParsed('access') || results.wasParsed('error')) {
     usedefaults = false;
   }
 
   try {
     if (certbot && (usedefaults || results.wasParsed('certbot'))) {
-      group.add(Tail(Certbot().logfile, lineCount, follow: follow)
-          .start()
-          .map((line) => 'certbot: $line'));
+      group.add(Tail(Certbot().logfile, lineCount, follow: follow).start().map((line) => 'certbot: $line'));
     }
 
     if (access && (usedefaults || results.wasParsed('access'))) {
-      group.add(Tail(Nginx.accesslogpath, lineCount, follow: follow)
-          .start()
-          .map((line) => 'access: $line'));
+      group.add(Tail(Nginx.accesslogpath, lineCount, follow: follow).start().map((line) => 'access: $line'));
     }
 
     if (error && (usedefaults || results.wasParsed('error'))) {
-      group.add(Tail(Nginx.errorlogpath, lineCount, follow: follow)
-          .start()
-          .map((line) => 'error: $line'));
+      group.add(Tail(Nginx.errorlogpath, lineCount, follow: follow).start().map((line) => 'error: $line'));
     }
   } on TailException catch (error) {
     printerr(error.message);
@@ -123,7 +108,6 @@ void logs(List<String> args) {
 void showUsage(ArgParser parser) {
   print(parser.usage);
 
-  print(
-      'If you explictly specify any log file then the default set of log files is ignored');
+  print('If you explictly specify any log file then the default set of log files is ignored');
   exit(-1);
 }

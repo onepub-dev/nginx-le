@@ -38,26 +38,21 @@ void certbot_http_auth_hook() {
   var certbotAuthKey = Environment().certbotValidation;
   Certbot().log('CertbotAuthKey: "$certbotAuthKey"');
   if (certbotAuthKey == null || certbotAuthKey.isEmpty) {
-    Certbot().logError(
-        'The environment variable CERTBOT_VALIDATION was empty http_auth_hook ABORTED.');
+    Certbot().logError('The environment variable CERTBOT_VALIDATION was empty http_auth_hook ABORTED.');
   }
-  ArgumentError.checkNotNull(
-      certbotAuthKey, 'The environment variable CERTBOT_VALIDATION was empty');
+  ArgumentError.checkNotNull(certbotAuthKey, 'The environment variable CERTBOT_VALIDATION was empty');
 
   var token = Environment().certbotToken;
   Certbot().log('token: "$token"');
   if (token == null || token.isEmpty) {
-    Certbot().logError(
-        'The environment variable CERTBOT_TOKEN was empty http_auth_hook ABORTED.');
+    Certbot().logError('The environment variable CERTBOT_TOKEN was empty http_auth_hook ABORTED.');
   }
-  ArgumentError.checkNotNull(
-      certbotAuthKey, 'The environment variable CERTBOT_TOKEN was empty');
+  ArgumentError.checkNotNull(certbotAuthKey, 'The environment variable CERTBOT_TOKEN was empty');
 
   /// This path MUST match the path set in the nginx config files:
   /// /etc/nginx/custom/default.conf
   /// /etc/nginx/acquire/default.conf
-  var path = join('/', 'opt', 'letsencrypt', 'wwwroot', '.well-known',
-      'acme-challenge', token);
+  var path = join('/', 'opt', 'letsencrypt', 'wwwroot', '.well-known', 'acme-challenge', token);
   print('writing token to $path');
   Certbot().log('writing token to $path');
   path.write(certbotAuthKey);

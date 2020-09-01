@@ -12,11 +12,7 @@ class DNSRecord {
   bool isDDNSEnabled;
 
   DNSRecord(
-      {@required this.name,
-      @required this.type,
-      @required this.address,
-      @required this.mxPref,
-      @required this.ttl})
+      {@required this.name, @required this.type, @required this.address, @required this.mxPref, @required this.ttl})
       : isActive = true,
         isDDNSEnabled = false,
         hostId = '';

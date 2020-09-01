@@ -28,7 +28,7 @@ class StartCommand extends Command<void> {
     var debug = argResults['debug'] as bool;
     Settings().setVerbose(enabled: debug);
 
-      var interactive = argResults['interactive'] as bool;
+    var interactive = argResults['interactive'] as bool;
 
     var config = ConfigYaml();
     config.validate(() => showUsage(argParser));

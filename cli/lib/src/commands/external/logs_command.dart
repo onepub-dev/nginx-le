@@ -98,20 +98,18 @@ class LogsCommand extends Command<void> {
 
     var container = Containers().findByContainerId(config.containerid);
     if (!container.isRunning) {
-      printerr(red(
-          "Nginx-LE container ${config.containerid} isn't running. Use 'nginx-le start' to start the container"));
+      printerr(
+          red("Nginx-LE container ${config.containerid} isn't running. Use 'nginx-le start' to start the container"));
       exit(1);
     }
 
-    print(
-        'Logging Nginx-LE follow=$follow lines=$lineCount certbot=$certbot nginx=$nginx error=$error access=$access');
+    print('Logging Nginx-LE follow=$follow lines=$lineCount certbot=$certbot nginx=$nginx error=$error access=$access');
 
-    tailLogs(config.containerid, follow, lineCount, nginx, certbot, access,
-        error, debug);
+    tailLogs(config.containerid, follow, lineCount, nginx, certbot, access, error, debug);
   }
 
-  void tailLogs(String containerid, bool follow, int lines, bool nginx,
-      bool certbot, bool access, bool error, bool debug) {
+  void tailLogs(
+      String containerid, bool follow, int lines, bool nginx, bool certbot, bool access, bool error, bool debug) {
     // var docker_cmd = 'docker exec -it ${containerid} /home/bin/logs';
     // if (follow) docker_cmd += ' --follow';
     // docker_cmd += ' --lines $lines';
@@ -167,9 +165,7 @@ class LogsCommand extends Command<void> {
   }
 
   void logNginx(String containerid, int lines, {bool follow = false}) {
-    var stream = DockerLogs(containerid, lines, follow: follow)
-        .start()
-        .map((line) => 'nginx: $line');
+    var stream = DockerLogs(containerid, lines, follow: follow).start().map((line) => 'nginx: $line');
 
     // pre-close the group as onDone won't be called until the group is closed.
     var finished = Completer<void>();

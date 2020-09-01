@@ -47,8 +47,7 @@ String getUrl(
     var result = '';
 
     StreamSubscription<String> subscription;
-    subscription =
-        response.transform(Utf8Decoder()).transform(LineSplitter()).listen(
+    subscription = response.transform(Utf8Decoder()).transform(LineSplitter()).listen(
       (line) async {
         result += line;
       },

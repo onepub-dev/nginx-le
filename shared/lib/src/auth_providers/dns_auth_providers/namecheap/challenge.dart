@@ -17,10 +17,7 @@ class Challenge {
   static const CHALLENGE_HOST_NAME = '_acme-challenge';
 
   // newChallenge builds a challenge record from a fqdn name and a challenge authentication key.
-  Challenge.simple(
-      {@required this.apiKey,
-      @required this.apiUsername,
-      @required this.username});
+  Challenge.simple({@required this.apiKey, @required this.apiUsername, @required this.username});
 
 // Present installs a TXT record for the DNS challenge.
   bool present(
@@ -29,12 +26,10 @@ class Challenge {
       @required String tld,
       @required String certbotAuthKey,
       int retries = 20}) {
-    var records =
-        _getHosts(domain: domain, tld: tld, certbotAuthKey: certbotAuthKey);
+    var records = _getHosts(domain: domain, tld: tld, certbotAuthKey: certbotAuthKey);
 
     if (records.isEmpty) {
-      throw DNSProviderException(
-          'No Hosts returned from NameCheap domain $hostname.$domain.');
+      throw DNSProviderException('No Hosts returned from NameCheap domain $hostname.$domain.');
     }
 
     /// certbot wont' be happy if it finds to TXT records so remove any old
@@ -57,13 +52,7 @@ class Challenge {
 
     records.add(certRecord);
 
-    setHost(
-        records: records,
-        apiKey: apiKey,
-        apiUser: username,
-        username: username,
-        domain: domain,
-        tld: 'org');
+    setHost(records: records, apiKey: apiKey, apiUser: username, username: username, domain: domain, tld: 'org');
 
     return waitForRecordToBeVisible(
         certRecord: certRecord,
@@ -97,16 +86,15 @@ class Challenge {
 
       if (token != null && token.isNotEmpty) {
         var challenge = token[0];
-        Certbot().log(
-            'dig returned "$challenge" comparing $certBotAuthKey contains:  ${token.contains(certBotAuthKey)}');
+        Certbot()
+            .log('dig returned "$challenge" comparing $certBotAuthKey contains:  ${token.contains(certBotAuthKey)}');
 
         if (challenge.contains(certBotAuthKey)) {
           found = true;
           Certbot().log('DNS TXT Challenge record found!');
           break;
         } else {
-          Certbot().log(
-              'Stale DNS TXT acme challenge record found: $token. Ignored!');
+          Certbot().log('Stale DNS TXT acme challenge record found: $token. Ignored!');
         }
       } else {
         Certbot().log('DNS TXT acme challenge not found. Retrying.');
@@ -125,12 +113,8 @@ class Challenge {
 
   // CleanUp removes a TXT record used for a previous DNS challenge.
   void cleanUp(
-      {@required String hostname,
-      @required String domain,
-      @required String tld,
-      @required String certbotAuthKey}) {
-    var records =
-        _getHosts(domain: domain, tld: tld, certbotAuthKey: certbotAuthKey);
+      {@required String hostname, @required String domain, @required String tld, @required String certbotAuthKey}) {
+    var records = _getHosts(domain: domain, tld: tld, certbotAuthKey: certbotAuthKey);
 
     // Find the challenge TXT record and remove it if found.
     var found = false;
@@ -139,40 +123,23 @@ class Challenge {
     Settings().verbose('Cleaning $challengeName');
     for (var h in records) {
       Settings().verbose('Found DNS: hostname=${h.name}');
-      if (h.name == challengeName &&
-          h.address == certbotAuthKey &&
-          h.type == 'TXT') {
+      if (h.name == challengeName && h.address == certbotAuthKey && h.type == 'TXT') {
         found = true;
       } else {
         newRecords.add(h);
       }
     }
     if (found) {
-      setHost(
-          records: newRecords,
-          apiKey: apiKey,
-          apiUser: username,
-          username: username,
-          domain: domain,
-          tld: 'org');
+      setHost(records: newRecords, apiKey: apiKey, apiUser: username, username: username, domain: domain, tld: 'org');
     }
   }
 
-  List<DNSRecord> _getHosts(
-      {@required String domain,
-      @required String tld,
-      @required String certbotAuthKey}) {
+  List<DNSRecord> _getHosts({@required String domain, @required String tld, @required String certbotAuthKey}) {
     return getHosts(
-        apiKey: apiKey,
-        apiUser: username,
-        username: username,
-        clientIP: '192.168.1.1',
-        domain: domain,
-        tld: 'org');
+        apiKey: apiKey, apiUser: username, username: username, clientIP: '192.168.1.1', domain: domain, tld: 'org');
   }
 
-  List<DNSRecord> removeOldChallenge(
-      {List<DNSRecord> records, String hostname}) {
+  List<DNSRecord> removeOldChallenge({List<DNSRecord> records, String hostname}) {
     var found = <DNSRecord>[];
     for (var h in records) {
       if (h.name == challengeHost(hostname: hostname) && h.type == 'TXT') {

@@ -76,8 +76,7 @@ import 'messages.dart';
 /// }
 /// ```
 
-typedef Processor<R, ARG1, ARG2, ARG3> = Stream<R> Function(
-    ARG1 arg1, ARG2 arg2, ARG3 arg3);
+typedef Processor<R, ARG1, ARG2, ARG3> = Stream<R> Function(ARG1 arg1, ARG2 arg2, ARG3 arg3);
 typedef ResultStream<R> = void Function(R data);
 
 // Example of bi-directional communication between a main thread and isolate.
@@ -180,11 +179,8 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
       }
     }, onDone: (() => Settings().verbose('IsolatePort done')));
 
-    _isolate = await Isolate.spawn<SendPort>(
-        spawnEntryPoint, receiveFromIsolatePort.sendPort,
-        debugName: 'tail',
-        onExit: receiveFromIsolatePort.sendPort,
-        onError: receiveFromIsolatePort.sendPort);
+    _isolate = await Isolate.spawn<SendPort>(spawnEntryPoint, receiveFromIsolatePort.sendPort,
+        debugName: 'tail', onExit: receiveFromIsolatePort.sendPort, onError: receiveFromIsolatePort.sendPort);
   }
 
   /// Isolates entry point used by the above call to [spawn].
@@ -211,15 +207,13 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
       }
 
       try {
-        final currentMessage =
-            message as StartMessage<String, String, int, bool>;
+        final currentMessage = message as StartMessage<String, String, int, bool>;
 
         final startFunction = currentMessage.startFunction;
         final argument1 = currentMessage.argument1;
         final argument2 = currentMessage.argument2;
         final argument3 = currentMessage.argument3;
-        Settings().verbose(
-            'Isolate recieved Start Message $argument1 $argument2 $argument3');
+        Settings().verbose('Isolate recieved Start Message $argument1 $argument2 $argument3');
         startFunction(argument1, argument2, argument3).listen((dynamic event) {
           sendToMainPort.send(event);
         }).onDone(() {
@@ -232,8 +226,8 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
         try {
           sendToMainPort.send(Result<R>.error(error));
         } catch (error) {
-          sendToMainPort.send(Result<R>.error(
-              'cant send error with too big stackTrace, error is : ${error.toString()}'));
+          sendToMainPort
+              .send(Result<R>.error('cant send error with too big stackTrace, error is : ${error.toString()}'));
         }
       }
     });

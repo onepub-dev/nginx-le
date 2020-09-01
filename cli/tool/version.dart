@@ -9,8 +9,7 @@ Version askForVersion(Version version) {
     NewVersion('Small Patch'.padRight(25), version.nextPatch),
     NewVersion('Non-breaking change'.padRight(25), version.nextMinor),
     NewVersion('Breaking change'.padRight(25), version.nextBreaking),
-    NewVersion('Enter custom version no.'.padRight(25), null,
-        getVersion: getCustomVersion),
+    NewVersion('Enter custom version no.'.padRight(25), null, getVersion: getCustomVersion),
   ];
 
   print('');

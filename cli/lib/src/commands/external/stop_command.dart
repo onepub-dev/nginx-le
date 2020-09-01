@@ -12,10 +12,7 @@ class StopCommand extends Command<void> {
   String get name => 'stop';
 
   StopCommand() {
-    argParser.addFlag('debug',
-        abbr: 'd',
-        negatable: false,
-        help: 'Outputs additional logging information.');
+    argParser.addFlag('debug', abbr: 'd', negatable: false, help: 'Outputs additional logging information.');
   }
 
   @override

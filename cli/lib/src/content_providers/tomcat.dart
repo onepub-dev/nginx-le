@@ -22,21 +22,18 @@ class Tomcat extends ContentProvider {
     fqdn ??= 'localhost';
 
     fqdn = ask('FQDN of Tomcat server:',
-        defaultValue: fqdn,
-        validator: AskMultiValidator([Ask.required, AskFQDNOrLocalhost()]));
+        defaultValue: fqdn, validator: AskMultiValidator([Ask.required, AskFQDNOrLocalhost()]));
 
     var port = config.settings[portKey] as int;
     port ??= 8080;
 
     port = int.parse(ask('TCP Port of Tomcat server:',
-        defaultValue: '$port',
-        validator: AskMultiValidator([Ask.required, Ask.integer])));
+        defaultValue: '$port', validator: AskMultiValidator([Ask.required, Ask.integer])));
 
     config.settings[fqdnKey] = fqdn;
     config.settings[portKey] = port;
 
-    askForLocationPath(
-        'Host directory for generated tomcat `.location` and `.upstream` files');
+    askForLocationPath('Host directory for generated tomcat `.location` and `.upstream` files');
   }
 
   String get portKey => '$name-port';
@@ -45,8 +42,7 @@ class Tomcat extends ContentProvider {
 
   @override
   void createLocationFile() {
-    find('*.location', root: ConfigYaml().hostIncludePath)
-        .forEach((file) => delete(file));
+    find('*.location', root: ConfigYaml().hostIncludePath).forEach((file) => delete(file));
     var location = join(ConfigYaml().hostIncludePath, 'tomcat.location');
 
     location.write(r'''location / {
@@ -66,8 +62,7 @@ class Tomcat extends ContentProvider {
 
   @override
   void createUpstreamFile() {
-    find('*.upstream', root: ConfigYaml().hostIncludePath)
-        .forEach((file) => delete(file));
+    find('*.upstream', root: ConfigYaml().hostIncludePath).forEach((file) => delete(file));
     var config = ConfigYaml();
     var location = join(ConfigYaml().hostIncludePath, 'tomcat.upstream');
 
@@ -84,9 +79,7 @@ class Tomcat extends ContentProvider {
   List<Volume> getVolumes() {
     var config = ConfigYaml();
     return [
-      Volume(
-          hostPath: config.hostIncludePath,
-          containerPath: Nginx.containerIncludePath),
+      Volume(hostPath: config.hostIncludePath, containerPath: Nginx.containerIncludePath),
     ];
   }
 }

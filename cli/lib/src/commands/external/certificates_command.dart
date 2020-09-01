@@ -13,10 +13,7 @@ class CertificatesCommand extends Command<void> {
 
   CertificatesCommand() {
     argParser.addFlag('debug',
-        abbr: 'd',
-        defaultsTo: false,
-        negatable: false,
-        help: 'Outputs additional logging information');
+        abbr: 'd', defaultsTo: false, negatable: false, help: 'Outputs additional logging information');
   }
 
   @override
@@ -29,11 +26,9 @@ class CertificatesCommand extends Command<void> {
 
     var container = Containers().findByContainerId(config.containerid);
     if (container.isRunning) {
-      'docker exec -it ${config.containerid} /home/bin/certificates ${config.domain}'
-          .run;
+      'docker exec -it ${config.containerid} /home/bin/certificates ${config.domain}'.run;
     } else {
-      printerr(
-          'The container ${config.containerid} is not running. You need to start it first.');
+      printerr('The container ${config.containerid} is not running. You need to start it first.');
     }
   }
 }
