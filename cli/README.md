@@ -484,17 +484,13 @@ However the above instructions dictate that you put your `default.conf`  in `/et
 
 Note: the difference `custom` vs `live`.
 
+At runtime Nginx-LE pulls its configuration from the `live` directory.
 
-On startup the `live` directory is symlinked to your `/etc/nginx/custom` directory.
+On startup, if you have a valid certificate, the `live` directory is symlinked to your `/etc/nginx/custom` directory.
 
-This allows nginx-le to change the `live` folder to point to the `acquire` path when in `certificate acquistion` mode.
+If you don't have a valid certificate, the `live` directory is symlinked to to the `acquire` folder and Nginx-LE is placed into acquisition mode.
 
-When configured for SSL, nginx will fail on start if you don't have a valid certificates.
 
-To get around this problem, on startup nginx-le checks if you have active certificates. If you don't it placess the container
-into `acquire` mode.
-
-nginx-le does this by changing the `live` symlink to point to the `/etc/nginx/acquire` directory.
 
 The `acquire` path contains a single `index.html` page informing you that a certificate needs to be acquired. In this mode no other content will be served and only requests from certbot will be processed.
 
@@ -503,37 +499,97 @@ This allows `nginx` to start and then `nginx-le` can then you can run the `acqui
 Once a valid certificate has been acquired `nginx-le` switches the `live` symlink back to `/etc/nginx/custom` and does a `nginx` reload and your site is online.
 
 
-## Nginx-LE use the following environment variables to control the containers operation:
+# Environment variables
+Nginx-LE use the following environment variables to control the containers operation:
+
+If you are using Docker Compose or creating your own Docker container then you will need to set the appropriate environement variables.
+
+If you use `nginx-le config` to create the docker container then it automatically sets the environment variables.
+
+| Name | Type | Domain | Description |
+| ----- | ---- | ---- | ---- |
+| DEBUG | bool |  true\|false | Controls the logging level of Nginx-LE.
+| HOSTNAME | String | A valid host name| The host name of the web server. e.g. www
+| DOMAIN | String | A valid domain name | The domain name of the web server. e.g. microsoft.com.au
+| TLD | String | Top level domain name | The top level domain name of the web server. e.g. com.au
+| EMAIL_ADDRESS | String | valid email address| The email address that errors are sent to and also passed to Certbot.
+| MODE | String | public \| private | 
+| STAGING | bool | true\|false| True to use a 'test' certbot certificate. Recommended during testing.
+| DOMAIN_WILDCARD|bool| true \|false| Controls whether we acquire a single FQDN certificate or a domain wildcard certificate.
+| AUTO_ACQUIRE | bool| true\|false| Defaults to true. If true Nginx-LE will automatically 
+| CERTBOT_AUTH_PROVIDER | String |  HTTP01Auth \| cloudflare \| namecheap| Select the Certbot Authentication method. 
+|SMTP_SERVER| String | FQDN or IP| The FQDN or IP of the SMTP server Nginx-LE is to use to send error emails via.
+|SMTP_SERVER_PORT| int | Port no.| Defaults to 25, The tcp port no.of the SMTP server Nginx-LE is to use to send error emails via.
+
+## Internal enviornment variables
+Nginx-LE uses a no. of internal environmet variables primarily to communicate with Auth providers.
+You do not normally need to worry about these as the Nginx-LE `acquire` command sets these as necessary based on the select Auth Provider.
+
+| Name | Type | Domain | Description |
+| ----- | ---- | ---- | ---- |
+| LETSENCRYPT_ROOT_ENV | String | Path | Path to the letsencrypt root directory which defaults to: `/etc/letsencrypt`. You don't normally need to alter this. Its primary purpose is for Unit Testing.
+| LOG_FILE | String | Path | The name of the logfile that certbot writes to. We also write our log messages to this 
+| NGINX_CERT_ROOT_OVERWRITE | String | Path | Only used for Unit Testing. Sets the path where certbot saves certificates to.
+| CERTBOT_VERBOSE | String | true \| false | Used by the `acquire` command to control the log level of the Certbot Auth and Cleanup hooks.
+| CERTBOT_DNS_AUTH_HOOK_PATH | String | Path | Path to the DNS auth hook if we are using one of the DNS Auth providers. This is set by the `acquire` co
+| CERTBOT_DNS_CLEANUP_HOOK_PATH | String |Path | Path to the DNS auth hook cleanup script.
+| CERTBOT_HTTP_AUTH_HOOK_PATH | String | Path |Path to the HTTP auth hook
+| CERTBOT_HTTP_CLEANUP_HOOK_PATH | String | Path |Path to the HTTP auth hook cleanup script.
+| DNS_RETRIES | int | Integer |The number of times the DNS Auth Hook will check the DNS for the required TXT record.
+| NGINX_ACCESS_LOG_ENV | String |Path | Path to the Nginx access.log file in the container.
+| NGINX_ERROR_LOG_ENV | String | Path |Path to the Nginx error.log file in the container
+| NGINX_LOCATION_INCLUDE_PATH | String |Path | Path of the .location and .upstream files.
 
 
-| Name | Type | Description |
-| ----- | ---- | ---- |
-| DEBUG | bool | |
-| LOG_FILE | String | 
-| CERTBOT_VERBOSE | String
-| HOSTNAME | String
-| DOMAIN | String
-| TLD | String
-| EMAIL_ADDRESS | String
-| MODE | String | public or private
-| STAGING | bool | True to use a 'test' certbot certificate.
-| AUTO_ACQUIRE | bool
-| CERTBOT_TOKEN | String
+
+## Certbot environment variables.
+Certbot sets a number of environment variables during the auth process to communicate to the Auth and Cleanup hooks. You don't need to set this but if you are writing a custom auth or cleanup hook they are available to the hook.
+
+
+| Name | Type | Domain | Description |
+| ----- | ---- | ---- | ---- |
+| CERTBOT_TOKEN | String | Token | Generated by Certbot during the auth process for the Auth and Cleanup hooks. You do not need to set this.
 | CERTBOT_VALIDATION | String
 | CERTBOT_DOMAIN | String | Will be the same as DOMAIN but required by Certbot
-| LETSENCRYPT_ROOT_ENV | String
-| NAMECHEAP_API_KEY | String
-| NAMECHEAP_API_USER | String
-| NGINX_CERT_ROOT_OVERWRITE | String | Path 
-| CERTBOT_DNS_AUTH_HOOK_PATH | String | Path to the DNS auth hook
-| CERTBOT_DNS_CLEANUP_HOOK_PATH | String | Path to the DNS auth hook cleanup script.
-| CERTBOT_HTTP_AUTH_HOOK_PATH | String | Path to the HTTP auth hook
-| CERTBOT_HTTP_CLEANUP_HOOK_PATH | String | Path to the HTTP auth hook cleanup script.
-| DNS_RETRIES | int | The number of times the DNS Auth Hook will check the DNS for the required TXT record.
-| NGINX_ACCESS_LOG_ENV | String | Path to the Nginx access.log file in the container.
-| NGINX_ERROR_LOG_ENV | String | Path to the Nginx error.log file in the container
-| NGINX_LOCATION_INCLUDE_PATH | String | Path of the .location and .upstream files.
-| CERTBOT_AUTH_PROVIDER | String | Select the Certbot Authentication method. Supporte values are: HTTP01Auth, cloudflare, namecheap
+
+
+## Auth provider
+Nginx-LE supports a number of auth providers. Each auth provider has its on method of configuration.
+
+## HTTP01 Auth
+This is the default Certbot authentication method and only works if your web server is exposed on a public IP address with ports 80 and 443 open.
+
+HTTP01 Auth does not support wildcard certificates.
+
+Set the following environement variables
+
+CERTBOT_AUTH_PROVIDER=HTTP01Auth
+Mode=public
+WILD_CARD=false
+
+
+## Namecheap
+We don't recommend using this provider.
+
+The Namecheap API is very crappy and requires that we update EVERY dns record to just modifiy a single record.
+
+It is also currently limited to domains that have no more than 10 A records. This could be fixed but changing the requst from a HTTP GET to a POST but unfortunately Namecheap haven't documented the POST method.
+
+CERTBOT_AUTH_PROVIDER=namecheap
+NAMECHEAP_API_KEY=<name cheap Api Key>
+NAMECHEAP_API_USER=<name cheap user>
+Mode=public|private
+DOMAIN_WILDCARD=true|false
+
+
+## Cloudflare
+
+This is the most versitile auth provider as its supports public and private websites as well as Wildcard and single FQDN certificates.
+
+CERTBOT_AUTH_PROVIDER=cloudflare
+Mode=public|private
+DOMAIN_WILDCARD=true|false
+
 
 
 # Releasing Nginx-le

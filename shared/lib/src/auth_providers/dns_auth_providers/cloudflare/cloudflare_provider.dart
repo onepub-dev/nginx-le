@@ -42,7 +42,8 @@ class CloudFlareProvider extends GenericAuthProvider {
   }
 
   String get apiToken => ConfigYaml().settings[_SETTING_API_TOKEN] as String;
-  set apiToken(String apiToken) => ConfigYaml().settings[_SETTING_API_TOKEN] = apiToken;
+  set apiToken(String apiToken) =>
+      ConfigYaml().settings[_SETTING_API_TOKEN] = apiToken;
 
   @override
   List<EnvVar> get environment {
@@ -101,7 +102,8 @@ class CloudFlareProvider extends GenericAuthProvider {
     if (progress.exitCode != 0) {
       var system = 'hostname'.firstLine;
 
-      throw CertbotException('certbot failed acquiring a certificate for $hostname.$domain on $system',
+      throw CertbotException(
+          'certbot failed acquiring a certificate for $hostname.$domain on $system',
           details: lines.join('\n'));
     }
   }

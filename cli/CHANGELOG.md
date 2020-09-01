@@ -1,3 +1,6 @@
+# 1.4.1
+Updated doco on environment variables.
+Rationalised some of the environment variable names.
 # 1.4.0
 # 1.3.1
 # 1.3.0
