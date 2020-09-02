@@ -2,6 +2,9 @@
 
 Nginx-LE provides a docker container and tools to create an Nginx web server with Lets Encrypt built in.
 
+LetsEncrypt uses the cli tool Certbot to acquire certificates.  Nginx-LE automates the configuration and running of Certbot and Nginx.
+This documenation tends to use the terms LetsEncrypt and Certbot somewhat interchangably.
+
 Nginx-LE supports both public facing web servers and private (internal) web servers such as those used by individual developers.
 
 The key advantages of Nginx-LE are:
@@ -9,17 +12,12 @@ The key advantages of Nginx-LE are:
 * no down time when renewing certificates
 * for Public facing servers, works with any DNS server
 
-
-The key disadvantage
-* for Private servers we only support NameCheap.
-* currently supports a max of 10 Private servers
-
 ## Automatic renewal
 
 Both Public facing and internal Private Web Servers wiil have their certificates automatically renewed.
 
 ## No down time.
-Nginx-LE is able to renew certificate WITHOUT taking your web server offline. 
+Nginx-LE is able to renew a certificate WITHOUT taking your web server offline. 
 
 Nginx-LE leaves your web server fully operational whilst it acquires or renews a certificate.
 Once a new certificate is available it perform an Nginx `reload` command which 
@@ -169,12 +167,17 @@ Nginx-LE supports four types of Content Providers
 ## Auth Provider
 To acquire a LetsEncrypt certificate you must be able to prove that you own the domain for which the certificate is being issued.
 
-Nginx-LE supports a number of methods.
+Nginx-LE supports a number of Certbot Authentication methods.
 
 | Auth Provider | Usage Case | Description
 | ----| ---- |----
-| HTTP | For a public facing webserver using a FQDN certificate. | Your webserver must be accessible on a public ip address.  This the simpliest form of validation.
-| Cloudflare | For 
+| HTTP01Auth | For a public webserver using a FQDN certificate. | Your webserver must be accessible on a public ip address.  This the simpliest form of validation as it works with any DNS provider.
+| cloudflare | For public and private webservers. Supports FQDN and wildcard certificates. | The most flexible auth provider your DNS must be hosted with Cloudflare.
+| namecheap| For public and private webservers. Supports FQDN and wildcard certificates. | Not recommended. The namecheap api is dangerous and currently limited to domains that have no more than 10 A records.
+
+
+
+
 
 ## Mode
 Nginx-LE supports to web server modes, public and private.
@@ -588,6 +591,7 @@ This is the most versitile auth provider as its supports public and private webs
 
 CERTBOT_AUTH_PROVIDER=cloudflare
 CLOUDFLARE_API_TOKEN=<api token for cloudflare>
+EMAIL_ADDRESS=<email address used to acquire api token>
 Mode=public|private
 DOMAIN_WILDCARD=true|false
 
