@@ -8,7 +8,7 @@ class AskFQDNOrLocalhost extends AskValidator {
     line = line.trim().toLowerCase();
 
     if (!isFQDN(line) && line != 'localhost') {
-      throw AskValidatorException(red('Invalid FQDN.'));
+      throw AskValidatorException(red('Invalid FQDN $line.'));
     }
     return line;
   }
