@@ -30,5 +30,6 @@ void revoke(List<String> args) {
       hostname: Environment().hostname,
       domain: Environment().domain,
       revoking: true,
+      wildcard: Environment().wildcard,
       autoAcquireMode: Environment().autoAcquire);
 }

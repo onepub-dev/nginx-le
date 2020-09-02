@@ -35,22 +35,26 @@ void start() {
   var autoAcquire = Environment().autoAcquire;
   Settings().verbose('AUTO_ACQUIRE=$autoAcquire');
 
+  var certbotAuthProvider = Environment().certbotAuthProvider;
+  Settings().verbose('CERTBOT_AUTH_PROVIDER=$certbotAuthProvider');
+
   /// Places the server into acquire mode if certificates are not valid.
   ///
   Certbot().deployCertificates(
       hostname: hostname,
       domain: domain,
       reload: false, // don't try to reload nginx as it won't be running as yet.
+      wildcard: wildcard,
       autoAcquireMode: autoAcquire);
 
-  startRenewalThread();
+  startRenewalThread(debug: true);
 
   if (autoAcquire) {
     var certificates = Certificate.load();
 
     /// expired certs are handled by the renew scheduler
     if (certificates.isEmpty) {
-      startAcquireThread();
+      startAcquireThread(debug: true);
     } else {
       var certificate = certificates[0];
 
@@ -61,7 +65,7 @@ void start() {
           '$hostname.$domain' != certificate.fqdn ||
           wildcard != certificate.wildcard) {
         Certbot.revokeAll();
-        startAcquireThread();
+        startAcquireThread(debug: true);
       }
     }
   }
@@ -75,20 +79,23 @@ void start() {
 ////////////////////////////////////////////
 /// Renewal thread
 ////////////////////////////////////////////
-void startRenewalThread() {
+void startRenewalThread({bool debug = false}) {
   print('Starting the certificate renewal scheduler.');
 
   var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
   try {
-    iso.run(startScheduler, '');
+    iso.run(startScheduler, debug ? 'debug' : 'nodebug');
   } finally {
     waitForEx(iso.close());
   }
 }
 
 /// Isolate callback must be a top level function.
-void startScheduler(String _) {
+void startScheduler(String debug) {
+  if (debug == 'debug') {
+    Settings().setVerbose(enabled: true);
+  }
   // ngix is running we now need to start the certbot renew scheduler.
   Certbot().scheduleRenews();
 
@@ -102,19 +109,22 @@ void startScheduler(String _) {
 /// Acquire thread
 /////////////////////////////////////////////
 
-void startAcquireThread() {
+void startAcquireThread({bool debug = false}) {
   print('Starting the certificate acquire thread.');
 
   var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
   try {
-    iso.run(acquireThread, '');
+    iso.run(acquireThread, debug ? 'debug' : 'nodebug');
   } finally {
     waitForEx(iso.close());
   }
 }
 
-void acquireThread(String _) {
+void acquireThread(String debug) {
+  if (debug == 'debug') {
+    Settings().setVerbose(enabled: true);
+  }
   try {
     var authProvider = AuthProviders().getByName(Environment().certbotAuthProvider);
     authProvider.acquire();
@@ -123,6 +133,7 @@ void acquireThread(String _) {
         hostname: Environment().hostname,
         domain: Environment().domain,
         reload: true, // don't try to reload nginx as it won't be running as yet.
+        wildcard: Environment().wildcard,
         autoAcquireMode: Environment().autoAcquire);
   } on CertbotException catch (e, st) {
     printerr(e.message);

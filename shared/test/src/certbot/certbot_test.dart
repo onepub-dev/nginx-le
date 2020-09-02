@@ -31,11 +31,11 @@ void main() {
 
     authProvider.acquire();
 
-    Certbot().revoke(hostname: 'slayer', domain: 'noojee.org', staging: true);
+    Certbot().revoke(hostname: 'slayer', domain: 'noojee.org', staging: true, wildcard: false);
 
     authProvider.acquire();
 
-    Certbot().revoke(hostname: 'slayer', domain: 'noojee.org', staging: true);
+    Certbot().revoke(hostname: 'slayer', domain: 'noojee.org', staging: true, wildcard: false);
   });
 
   test('parse', () {
@@ -49,7 +49,7 @@ void main() {
     // noojee.org-0001
     // noojee.org-new
     // noojee.org-new-0001
-    var latest = Certbot().latestCertificatePath('robtest18-new', 'clouddialer.com.au');
+    var latest = Certbot().latestCertificatePath('robtest18-new', 'clouddialer.com.au', wildcard: false);
     expect(latest, equals(fqnd001));
 
     // createDir(join(path, 'robtest18.clouddialer.com.au'));
