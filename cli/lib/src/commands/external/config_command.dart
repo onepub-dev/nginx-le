@@ -26,6 +26,7 @@ class ConfigCommand extends Command<void> {
 
   @override
   void run() {
+    print('Nginx-LE config Version:$packageVersion');
     var debug = argResults['debug'] as bool;
     Settings().setVerbose(enabled: debug);
 
@@ -77,7 +78,7 @@ class ConfigCommand extends Command<void> {
     var existing = Containers().findByName(containerName);
 
     if (existing != null) {
-      print('A container with the name $containerName already exists');
+      print(orange('A container with the name $containerName already exists.'));
       if (!confirm('Do you want to delete the older container and create one with the new settings?')) {
         print(orange('Container does not reflect your new settings!'));
         exit(-1);
