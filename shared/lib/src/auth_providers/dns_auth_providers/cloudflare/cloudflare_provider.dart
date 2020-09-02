@@ -7,7 +7,7 @@ import '../../../../nginx_le_shared.dart';
 
 class CloudFlareProvider extends GenericAuthProvider {
   static const _SETTING_API_TOKEN = 'cloudflare_api_token';
-  static const ENV_API_TOKEN = 'CLOUDFLARE_API_TOKEN';
+  static const CLOUDFLARE_API_TOKEN = 'CLOUDFLARE_API_TOKEN';
 
   final _settings = join('/tmp', 'cloudflare', 'settings.ini');
 
@@ -48,7 +48,7 @@ class CloudFlareProvider extends GenericAuthProvider {
   List<EnvVar> get environment {
     var vars = <EnvVar>[];
 
-    vars.add(EnvVar(ENV_API_TOKEN, apiToken));
+    vars.add(EnvVar(CLOUDFLARE_API_TOKEN, apiToken));
 
     return vars;
   }
@@ -68,11 +68,14 @@ class CloudFlareProvider extends GenericAuthProvider {
     var domain = Environment().domain;
     var staging = Environment().staging;
     var wildcard = Environment().wildcard;
+    var apiToken = _apiToken;
 
     hostname = wildcard ? '*' : hostname;
 
     Settings().verbose('Starting cerbot with authProvider: $name to acquire a '
         '${staging ? 'staging' : 'production'} certificate for $hostname.$domain');
+
+    Settings().verbose('Cloudflare api token. Env:${CLOUDFLARE_API_TOKEN}: $apiToken');
 
     var certbot = 'certbot certonly '
         ' --dns-cloudflare '
@@ -120,10 +123,12 @@ class CloudFlareProvider extends GenericAuthProvider {
     _createDir(dirname(_settings));
 
     _settings.write('dns_cloudflare_email = ${Environment().emailaddress}');
-    _settings.append('dns_cloudflare_api_key = ${env[ENV_API_TOKEN]}');
+    _settings.append('dns_cloudflare_api_key = ${_apiToken}');
 
     'chmod 600 $_settings'.run;
   }
+
+  String get _apiToken => env[CLOUDFLARE_API_TOKEN];
 
   void deleteSettings() {
     delete(_settings);
