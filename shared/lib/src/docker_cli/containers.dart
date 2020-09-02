@@ -37,7 +37,12 @@ class Containers {
         }
 
         var container = Container(
-            containerid: containerid, imageid: imageid, created: created, status: status, ports: ports, names: names);
+            containerid: containerid,
+            imageid: imageid,
+            created: created,
+            status: status,
+            ports: ports,
+            names: names);
         containerCache.add(container);
       }
     }
@@ -54,7 +59,8 @@ class Containers {
   bool existsByName({@required String name, bool excludeStopped}) =>
       findByName(name, excludeStopped: excludeStopped) != null;
 
-  Container findByContainerId(String containerid, {bool excludeStopped = false}) {
+  Container findByContainerId(String containerid,
+      {bool excludeStopped = false}) {
     var list = containers(excludeStopped: excludeStopped);
 
     for (var container in list) {

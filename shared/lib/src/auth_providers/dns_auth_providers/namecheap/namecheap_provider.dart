@@ -37,8 +37,10 @@ class NameCheapAuthProvider extends GenericAuthProvider {
 
   @override
   void pre_auth() {
-    ArgumentError.checkNotNull(Environment().namecheapApiKey, 'Environment variable: NAMECHEAP_API_KEY missing');
-    ArgumentError.checkNotNull(Environment().namecheapApiUser, 'Environment variable: NAMECHEAP_API_USER missing');
+    ArgumentError.checkNotNull(Environment().namecheapApiKey,
+        'Environment variable: NAMECHEAP_API_KEY missing');
+    ArgumentError.checkNotNull(Environment().namecheapApiUser,
+        'Environment variable: NAMECHEAP_API_USER missing');
   }
 
   @override
@@ -61,10 +63,13 @@ class NameCheapAuthProvider extends GenericAuthProvider {
     return vars;
   }
 
-  set apiKey(String namecheap_apikey) => ConfigYaml().settings[_apiKeySetting] = namecheap_apikey;
+  set apiKey(String namecheap_apikey) =>
+      ConfigYaml().settings[_apiKeySetting] = namecheap_apikey;
   String get apiKey => ConfigYaml().settings[_apiKeySetting] as String;
-  set apiUsername(String namecheap_apiusername) => ConfigYaml().settings[_apiUsernameSetting] = namecheap_apiusername;
-  String get apiUsername => ConfigYaml().settings[_apiUsernameSetting] as String;
+  set apiUsername(String namecheap_apiusername) =>
+      ConfigYaml().settings[_apiUsernameSetting] = namecheap_apiusername;
+  String get apiUsername =>
+      ConfigYaml().settings[_apiUsernameSetting] as String;
 
   String get _apiKeySetting => 'namecheap_apikey';
   String get _apiUsernameSetting => 'namecheap_apiusername';

@@ -5,7 +5,8 @@ import 'package:nginx_le_shared/src/util/environment.dart';
 
 class Email {
   static void sendError({String subject, String body}) {
-    final smtpServer = SmtpServer(Environment().smtpServer, port: Environment().smtpServerPort);
+    final smtpServer = SmtpServer(Environment().smtpServer,
+        port: Environment().smtpServerPort);
 
     // Use the SmtpServer class to configure an SMTP server:
     // final smtpServer = SmtpServer('smtp.domain.com');

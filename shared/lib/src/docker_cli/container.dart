@@ -33,11 +33,15 @@ class Container {
     var option = (interactive ? ' -i ' : '');
     var cmd = 'docker start $option $containerid';
     print('running $cmd');
-    cmd.start(progress: Progress((line) => print(line), stderr: (line) => printerr(red(line))));
+    cmd.start(
+        progress: Progress((line) => print(line),
+            stderr: (line) => printerr(red(line))));
   }
 
   bool get isRunning {
-    return "docker container inspect -f '{{.State.Running}}' $containerid".firstLine == 'true';
+    return "docker container inspect -f '{{.State.Running}}' $containerid"
+            .firstLine ==
+        'true';
   }
 
   void delete() {
@@ -50,6 +54,7 @@ class Container {
 
   /// Attaches to the running container and starts a bash command prompt.
   void cli() {
-    'docker exec -it $containerid /bin/bash'.start(nothrow: true, progress: Progress.print(), terminal: true);
+    'docker exec -it $containerid /bin/bash'
+        .start(nothrow: true, progress: Progress.print(), terminal: true);
   }
 }

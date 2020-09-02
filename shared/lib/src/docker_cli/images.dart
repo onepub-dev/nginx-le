@@ -15,7 +15,8 @@ class Images {
     if (imageCache.isEmpty) {
       var lines = 'docker images'.toList(skipLines: 1);
 
-      var cmd = 'docker images --format "table {{.ID}}|{{.Repository}}|{{.Tag}}|{{.CreatedAt}}|{{.Size}}"';
+      var cmd =
+          'docker images --format "table {{.ID}}|{{.Repository}}|{{.Tag}}|{{.CreatedAt}}|{{.Size}}"';
       // print(cmd);
 
       lines = cmd.toList(skipLines: 1);
@@ -28,8 +29,12 @@ class Images {
         var created = parts[3];
         var size = parts[4];
 
-        var image =
-            Image(repositoryAndName: repositoryAndName, tag: tag, imageid: imageid, created: created, size: size);
+        var image = Image(
+            repositoryAndName: repositoryAndName,
+            tag: tag,
+            imageid: imageid,
+            created: created,
+            size: size);
         imageCache.add(image);
       }
     }
@@ -41,14 +46,18 @@ class Images {
     imageCache.clear();
   }
 
-  bool existsByImageId({@required String imageid}) => findByImageId(imageid) != null;
+  bool existsByImageId({@required String imageid}) =>
+      findByImageId(imageid) != null;
 
   bool existsByFullname({
     @required String fullname,
   }) =>
       findByFullname(fullname) != null;
 
-  bool existsByParts({@required String repository, @required String name, @required String tag}) =>
+  bool existsByParts(
+          {@required String repository,
+          @required String name,
+          @required String tag}) =>
       findByParts(repository: repository, name: name, tag: tag) != null;
 
   Image findByImageId(String imageid) {
@@ -66,14 +75,20 @@ class Images {
   Image findByFullname(String fullname) {
     var match = Image.fromName(fullname);
 
-    return findByParts(repository: match.repository, name: match.name, tag: match.tag);
+    return findByParts(
+        repository: match.repository, name: match.name, tag: match.tag);
   }
 
-  Image findByParts({@required String repository, @required String name, @required String tag}) {
+  Image findByParts(
+      {@required String repository,
+      @required String name,
+      @required String tag}) {
     var list = images;
 
     for (var image in list) {
-      if (repository == image.repository && name == image.name && tag == image.tag) {
+      if (repository == image.repository &&
+          name == image.name &&
+          tag == image.tag) {
         return image;
       }
     }

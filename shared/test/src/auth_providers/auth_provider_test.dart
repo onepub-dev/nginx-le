@@ -7,8 +7,8 @@ void main() {
   test('auth provider ...', () async {
     Environment().certbotDNSAuthHookPath = join(HOME, 'git', 'nginx-le', 'cli', 'bin', 'nginx-le.dart ');
     var provider = NameCheapAuthProvider();
-    var apiKey = '19541976b2ad446c84d925356e27b0cc'; // ask('Namecheap API Key');
-    var apiUsername = 'bsuttonnoojee'; // ask('Namecheap Username');
+    var apiKey = ask('Namecheap API Key');
+    var apiUsername = ask('Namecheap Username');
     provider.apiKey = apiKey;
     provider.apiUsername = apiUsername;
     provider.acquire();

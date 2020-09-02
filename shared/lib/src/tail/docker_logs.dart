@@ -28,7 +28,8 @@ class DockerLogsInIsolate {
   /// Returns the last [lines] of [containerid]  and then
   /// follows the file.
   @visibleForTesting
-  Stream<String> dockerLog(String containerid, {int lines = 100, bool follow = false}) {
+  Stream<String> dockerLog(String containerid,
+      {int lines = 100, bool follow = false}) {
     Settings().verbose('docker logs:  $lines  ${Isolate.current.debugName}');
 
     var cmd = 'docker logs --tail $lines $containerid';
@@ -77,7 +78,8 @@ void _dockerLogsStop() {
 
 /// Called when the tail command is to be started
 Stream<String> _dockerLog(String containerid, int lines, bool follow) {
-  return _dockerLogsIsolate.dockerLog(containerid, lines: lines, follow: follow);
+  return _dockerLogsIsolate.dockerLog(containerid,
+      lines: lines, follow: follow);
 }
 
 class DockerLogsException implements Exception {
