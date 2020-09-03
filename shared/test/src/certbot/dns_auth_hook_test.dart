@@ -23,7 +23,6 @@ void prepareCertHooks() {
   Environment().hostname = 'slayer';
   Environment().domain = 'noojee.org';
   Environment().tld = 'org';
-  Environment().mode = 'private';
   Environment().certbotValidation = 'TEST_TOKEN_ABC134';
   Environment().certbotRootPathOverwrite = '/tmp/nginx/certs';
 

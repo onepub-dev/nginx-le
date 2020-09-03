@@ -28,7 +28,6 @@ void prepareCertHooks() {
   Environment().certbotRoot = letsencryptDir;
   Environment().certbotDomain = 'noojee.org';
   Environment().tld = 'org';
-  Environment().mode = 'private';
   Environment().certbotValidation = 'TEST_TOKEN_ABC134';
   Environment().certbotToken = 'token_file';
 
