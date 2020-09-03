@@ -6,42 +6,42 @@ Nginx-LE uses the LetsEncrypt cli tool, Certbot, to acquire and renew certificat
 
 Nginx-LE ships as a Docker image which you can use with Docker or Docker Compose.
 
-You can also use Nginx-LE cli tooling which allows you to configure and build Nginx-LE containers in a couple of seconds.
+You can optionally use Nginx-LE cli tooling which allows you to configure and build Nginx-LE containers in a couple of seconds.
 
-Nginx-LE is suitable for production systems, internal infrastucture and even when a developer needs a web server on their local machine.
+Nginx-LE is suitable for production systems, internal infrastructure and even when a developer needs a web server on their local machine.
 
-This documenation tends to use the terms LetsEncrypt and Certbot somewhat interchangably.
+This documentation tends to use the terms LetsEncrypt and Certbot somewhat interchangeably.
 
 Nginx-LE supports both public facing web servers and private (internal) web servers such as those used by individual developers.
 
 The key advantages of Nginx-LE are:
-* automatical certificate acquisition and renewal
+* automatic certificate acquisition and renewal
 * no down time when renewing certificates
 * for Public facing servers, works with any DNS server
 * support for wildcard certificates
 * makes it easy for a developer to acquire a live certificate.
 
 # Prerequisites
-To obtain a Lets Encrypt certificate you must have a public DNS record for you host.
+To obtain a Lets Encrypt certificate you must have a public DNS record for your host.
 
-For a production web server this isn't a problem as it will already meet the pre-requisities.
+For a production web server this isn't a problem as it will already meet the prerequisites.
 
-For an internal private web server such as those used for running internal infrastructure or an individual develoers PC this can be a little tricker.
+For an internal private web server such as those used for running internal infrastructure or an individual developers PC this can be a little tricker.
 
 For a private web server you will still need to create a public DNS A record.
 
-For a private web server we need to do DNS authentication which means that you need to be using a DNS provider on list of DNS providers that Nginx-LE supports.
+For a private web server we need to do DNS authentication which means that you need to be using a DNS provider from list of DNS providers that Nginx-LE supports.
 
-The simpliest way to do this is to acquire the cheapest domain name that you can find.
+The simplest way to do this is to acquire the cheapest domain name that you can find.
 Host the domain name with Cloudflare (host is free for the volumes involved).
 
-For each developer or internal webserver create a DNS A record. The IP address you use in the DNS A record does NOT have to be a public IP address. You can just use any private IP address. I would suggest that you don't use any of your real internal ip addresses to avoid exposing information about your internal network.
+For each developer or internal web server create a DNS A record. The IP address you use in the DNS A record does NOT have to be a public IP address. You can just use any private IP address. I would suggest that you don't use any of your real internal ip addresses to avoid exposing information about your internal network.
 
 Now that you have a DNS A record are ready to acquire live certificates.
 
 ## Automatic renewal
 
-Nginx-LE supports the automatical renewal of both Public and  Private Web Servers.
+Nginx-LE supports the automatic renewal of both Public and  Private Web Servers.
 
 ## No down time.
 Nginx-LE is able to renew a certificate WITHOUT taking your web server offline. 
@@ -52,7 +52,7 @@ is close to instantaneous.
 
 # Public Web Server
 
-A Public Web Servers is where the Web Server exposes port 80 and 443 on a public IP address with a public DNS A record (e.g. host.mydomain.com resolves to the webservers IP address).
+A Public Web Servers is where the Web Server exposes port 80 and 443 on a public IP address with a public DNS A record (e.g. host.mydomain.com resolves to the web server's IP address).
 
 For Public Web Servers Nginx-LE uses the standard Certbot HTTP01Auth mechanism.
 
@@ -60,9 +60,9 @@ Lets Encrypt certificates are automatically acquired and renewed.
 
 A public web server may be behind a NAT however it MUST have port 80 and 43 open to the world to allow certbot to validate the server.
 
-Unfortunately you can't restrict the IP range that you webserver takes requests from as Certbot does not publish the IP addresses it uses.
+Unfortunately you can't restrict the IP range that your web server takes requests from as Certbot does not publish the IP addresses it uses.
 
-If this is a problem for you then you should use one of DNS Auth methods as these do not require your web server to exposed any ports.
+If this is a problem for you then you should use one of DNS Auth methods as these do not require your web server to expose any ports.
 
 
 # Private Web Server
@@ -77,11 +77,11 @@ Nginx-LE is designed to be flexible in how you go about building and deploying y
 
 | Method | Use case | Notes
 | ---- | ---- | ----
-|nginx-le config | Fastest way to get a server running | Prompts you for all the core information required to build a webserver and the creates a Nginx-LE container based on your responses. Use `nginx-le start` to start your web server.
+|nginx-le config | Fastest way to get a server running | Prompts you for all the core information required to build a web server and then creates a Nginx-LE container based on your responses. Use `nginx-le start` to start your web server.
 | docker-compose | Configure you container via environment variables | A natural fit if you are currently using docker-compose for deployment.
 | docker create | The hard way| Manually set up all of the required environment variables and then create your container.
 | Customise Image | When you need to modify the Nginx-LE docker image | Allows you to customise your image and add additional tools into the container.|
-| Build | You need to modify the source or detailed Nginx configuration | This is the DYI route. Get the big hammer out.
+| Build | You need to modify the source or detailed Nginx configuration | This is the DIY route. Get the big hammer out.
 
 # Nginx-LE cli tooling
 
@@ -133,7 +133,7 @@ The Nginx-LE cli exposes the following commands:
 
 # Building Nginx-LE
 
-Most users of Nginx-LE will never need to run a build. The build tooling is primarily used by the Nginx-LE development team and if you need to customize the code that under pins the Nginx-LE docker image.
+Most users of Nginx-LE will never need to run a build. The build tooling is primarily used by the Nginx-LE development team and if you need to customize the code that underpins the Nginx-LE docker image.
 
 When do you need to use the build command?
 
@@ -158,7 +158,7 @@ nginx-le build --image=<repo/image:version>
 The build command takes a number of switches.
 
 ### image
-The requried `--image` switch sets the docker image/tag name (repo/image:version) for the image.
+The required `--image` switch sets the docker image/tag name (repo/image:version) for the image.
 
 e.g. --image=noojee/nginx-le:1.0.0
 
@@ -166,7 +166,7 @@ The switch can be abbreviated to `-i`.
 
 
 ### update-dcli
-The optonal flag `--update-dcli` causes the build to pull the latest version of dart/dcli rather than using the docker cache instance.
+The optional flag `--update-dcli` causes the build to pull the latest version of dart/dcli rather than using the docker cache instance.
 
 You only need to add this switch if you have an existing build and you need to update the dcli/dart version.
 
@@ -199,7 +199,7 @@ Nginx-LE supports four types of Content Providers
 | Provider | Description  |
 | ----| ----- | ----- |
 | Static | Serve static web content from a local folder.  |
-| Generic Proxy | Pass requests through to a Web Application server that can respond to HTTP requests. This is normally on the same host as the Nginx-LE server as the connnection is not encrypted.
+| Generic Proxy | Pass requests through to a Web Application server that can respond to HTTP requests. This is normally on the same host as the Nginx-LE server as the connection is not encrypted.
 | Tomcat Proxy | Pass requests to a local Tomcat web application server on port 8080.
 | Custom | Allows you to configure your own Nginx location and upstream settings.
 |
@@ -211,7 +211,7 @@ The static Content Provider allows you to serve static content from a local dire
 The Static Content Provider will request the path to your static content and the default html file.
 
 ### Generic Proxy Content Provider
-The Generic proxy Content Provider allows you to proxy request through to a web application server.
+The Generic proxy Content Provider allows you to proxy requests through to a web application server.
 
 The Nginx-LE container exposes the secure HTTPS connection and then passes all requests through to your web application server via HTTP.
 
@@ -269,16 +269,16 @@ Nginx-LE supports a number of Certbot Authentication methods.
 
 | Auth Provider | Usage Case | Description
 | ----| ---- |----
-| HTTP01Auth | For a public webserver using a FQDN certificate. | Your webserver must be accessible on a public ip address.  This the simpliest form of validation as it works with any DNS provider.
-| cloudflare | For public and private webservers. Supports FQDN and wildcard certificates. | The most flexible auth provider, your DNS must be hosted with Cloudflare.
-| namecheap| For public and private webservers. Supports FQDN and wildcard certificates. | Not recommended. The namecheap api is dangerous and currently limited to domains that have no more than 10 A records.
+| HTTP01Auth | For a public web server using a FQDN certificate. | Your web server must be accessible on a public ip address.  This is the simplest form of validation as it works with any DNS provider.
+| cloudflare | For public and private web servers. Supports FQDN and wildcard certificates. | The most flexible auth provider, your DNS must be hosted with Cloudflare.
+| namecheap| For public and private web servers. Supports FQDN and wildcard certificates. | Not recommended. The namecheap api is dangerous and currently limited to domains that have no more than 10 A records.
 
 ## Start Paused
 The start paused option is mainly used by the Nginx-LE team for diagnosing startup issues.
 
-When you place Nginx-LE into start paused mode it will not start the nginx server not attempt to acquire a certificate.
+When you place Nginx-LE into start paused mode it will not start the nginx server nor attempt to acquire a certificate.
 
-Once you start Nginx-LE in paused mode you can attached to the Nginx-LE docker container and explore its configuration. 
+Once you start Nginx-LE in paused mode you can attach to the Nginx-LE docker container and explore its configuration. 
 
 You can connect to the Nginx-LE container (even when not in paused mode) by running `nginx-le cli`.
 
@@ -287,7 +287,7 @@ You can connect to the Nginx-LE container (even when not in paused mode) by runn
 
 May users deploy their docker containers using docker-compose. In these circumstances using the Nginx-LE cli tools may not be appropriate.
 
-This is the case for most production system, in which case you will just use the standard docker management tools.
+This is the case for most production systems, in which case you will just use the standard docker management tools.
 
 Whilst it can be useful to run `nginx-le config` it is not required.
 
@@ -354,9 +354,9 @@ However you start Nginx-LE, when you first start the Nginx-LE container it won't
 
 If you have set AUTO_ACQUIRE=true then Nginx-Le will automatically acquire a certificate.
 
-If you have set AUTO_ACQUIRE=false then when Nginx-LE detects that it doesn't have a vaid certificate it will enter certificate acquistion mode.
+If you have set AUTO_ACQUIRE=false then when Nginx-LE detects that it doesn't have a valid certificate it will enter certificate acquisition mode.
 
-In this mode it will display a default 'Certificate Acquistion Required' home page with instructions on obtaining a certificate.
+In this mode it will display a default 'Certificate Acquisition Required' home page with instructions on obtaining a certificate.
 
 You then need to run the `nginx-le acquire` command.
 
@@ -364,7 +364,7 @@ You then need to run the `nginx-le acquire` command.
 # Acquiring/Renewing certificates
 ## Public Mode
 
-Public mode is only suitable for webservers which are directly accessible on the internet.
+Public mode is only suitable for web servers which are directly accessible on the internet.
 
 To be considered directly accessible it MUST:
 
@@ -374,7 +374,7 @@ To be considered directly accessible it MUST:
 
 The public access can be via a NAT, proxy or other suitable mechanism.
 
-If your Nginx-LE webserver is in public mode then you can use the HTTP01Auth Auth Provider method unless you need a wildcard.
+If your Nginx-LE web server is in public mode then you can use the HTTP01Auth Auth Provider method unless you need a wildcard.
 
 If you need to acquire a wild card certificate (*.nginx.com) then you must use one of the DNS auth methods.
 
@@ -382,15 +382,15 @@ There is no specific setting required on the Nginx-LE container for public mode,
 
 ## Private Mode
 
-Private mode is only suitable for any webservers but some Auth Providers don't support Private Mode servers.
+Private mode is only suitable for any web servers but some Auth Providers don't support Private Mode servers.
 
-A Private mode web server is one that doesn't isn't accessable from the public internet. A development, test or internal web server will typically be private.
+A Private mode web server is one that doesn't isn't accessible from the public internet. A development, test or internal web server will typically be private.
 
 A Private web server must still have port 443 open (but only visible locally -be that your dev PC or your office network) however port 80 is not required.
 
-If your Nginx-LE webserver is in private mode then you can NOT use the HTTP01Auth method. You must use one of the DNS Auth Providers.
+If your Nginx-LE web server is in private mode then you can NOT use the HTTP01Auth method. You must use one of the DNS Auth Providers.
 
-You will still need to have a valid DNS entry for your webserver on a public DNS provier that is supported by one of Nginx-LE's DNS Auth Providers.
+You will still need to have a valid DNS entry for your web server on a public DNS provider that is supported by one of Nginx-LE's DNS Auth Providers.
 
 The IP address of the DNS A record does not need to be valid and can be a private IP address. The IP address is not used.
 
@@ -402,7 +402,7 @@ If you don't pass the AUTO_ACQUIRE environment variable or set it to false than 
 
 NOTE: we strongly recommend using AUTO_ACQUIRE and don't know of any valid reason why you would not.
 
-If you are using the Nginx-LE cli toosl then use:
+If you are using the Nginx-LE cli tools then use:
 
 To acquire a certificate use  `nginx-le acquire` command:
 
@@ -416,7 +416,7 @@ Note: The `acquire` command can take upto 5 minutes+ to acquire a certificate du
 
 If you have rolled your own Docker or docker-compose configuration then you can still use the cli tools if you first run `nginx-le config`. 
 
-If you can't use the Nginx-LE cli tools then you can still using the 'in-container' tools.
+If you can't use the Nginx-LE cli tools then you can still use the 'in-container' tools.
 
 To manually acquire a command first attached to the Nginx-LE container.
 
@@ -426,13 +426,13 @@ The run:
 acquire
 ```
 
-Once you have run acquire Nginx-LE will automatically renew certificates.
+Once you have run `acquire` Nginx-LE will automatically renew certificates.
 
 
 ## Using a Staging certificate
 Lets Encrypt puts fairly tight constraints on the number of times you can request a certificate for a given domain (5 per day).
 
-During testing we recommend that you use a Lets Encrypt staging certificate as the limts are much higher.
+During testing we recommend that you use a Lets Encrypt staging certificate as the limits are much higher.
 
 The environment variable 'PRODUCTION' controls whether you are using a Staging or Production certificate.
 
@@ -440,18 +440,18 @@ Once you have run the `acquire` command Nginx-LE will be able to automatically r
 
 
 ## Internals
-Nginx-LE stores cerificates on a persistent volume which by convention is called `certificates`. 
+Nginx-LE stores certificates on a persistent volume which by convention is called `certificates`. 
 
 The `certificates` folder is mounted into the containers `/etc/letsencrypt/` folder.
 
-It is critical that this is a persisent volume otherwise Nginx-LE will need to acquire an new certificate everytime it starts. 
+It is critical that this is a persistent volume otherwise Nginx-LE will need to acquire a new certificate every time it starts. 
 
-Lets Encrypt have hard limts (5 per day) on the no. of certificates you can acquire so if you don't have a persistant volume you will very quickly breach this limit.
+Lets Encrypt have hard limits (5 per day) on the no. of certificates you can acquire so if you don't have a persistant volume you will very quickly breach this limit.
 
 
 # Customising the Dockerfile
 
-In some circumstances it may be require that you modify the standard Dockerfile that Nginx-LE ships with.
+In some circumstances it may be required that you modify the standard Dockerfile that Nginx-LE ships with.
 
 This section details the internal structure of the docker image and what the hard requirements are.
 
@@ -491,7 +491,7 @@ If you modify the `nginx.conf` it must meet a small number of requirements.
 
 Changing any of the above settings will cause nginx-le to fail.
 
-## Whats with this 'live' directory
+## What's with this 'live' directory
 
 The `nginx.conf` loads its configuration from the `/etc/nginx/live/defaults.conf` file.
 
@@ -503,7 +503,7 @@ At runtime Nginx-LE pulls its configuration from the `live` directory.
 
 On startup, if you have a valid certificate, the `live` directory is symlinked to your `/etc/nginx/custom` directory.
 
-If you don't have a valid certificate, the `live` directory is symlinked to to the `acquire` folder and Nginx-LE is placed into acquisition mode.
+If you don't have a valid certificate, the `live` directory is symlinked to the `acquire` folder and Nginx-LE is placed into acquisition mode.
 
 
 The `acquire` path contains a single `index.html` page informing you that a certificate needs to be acquired. In this mode no other content will be served and only requests from certbot will be processed.
@@ -529,7 +529,7 @@ If you use `nginx-le config` to create the docker container then it automaticall
 | DOMAIN | String | A valid domain name | The domain name of the web server. e.g. microsoft.com.au
 | TLD | String | Top level domain name | The top level domain name of the web server. e.g. com.au
 | EMAIL_ADDRESS | String | valid email address| The email address that errors are sent to and also passed to Certbot which will use the email address to send renewal reminders to.
-| PRODUCTION | bool | true\|false| True to use a 'production' certbot certificate. False wil acquire a Staging (test) certificate. We recommend that you set this to false during testing.
+| PRODUCTION | bool | true\|false| True to use a 'production' certbot certificate. False will acquire a Staging (test) certificate. We recommend that you set this to false during testing.
 | DOMAIN_WILDCARD|bool| true \|false| Controls whether we acquire a single FQDN certificate or a domain wildcard certificate. Set to true to obtain a wild card domain. If you use this option on a number of servers which use the same domain then you will quickly hit the Certbot rate limits.
 | AUTO_ACQUIRE | bool| true\|false| Defaults to true. If true Nginx-LE will automatically acquire a certificate.
 | CERTBOT_AUTH_PROVIDER | String |  HTTP01Auth \| cloudflare \| namecheap| Select the Certbot Authentication method. 
@@ -541,8 +541,8 @@ If you use `nginx-le config` to create the docker container then it automaticall
 | AUTH_PROVIDER_PASSWORD | String | Auth Provider password | If the Auth Provider requires a password then this will be used to hold it.
 | AUTH_PROVIDER_EMAIL_ADDRESS | String | Auth Provider Email Address | If the Auth Provider requires an email address that differs from `EMAIL_ADDRESS` then this will be used to hold it.
 
-## Internal enviornment variables
-Nginx-LE uses a no. of internal environmet variables primarily to communicate with Auth providers.
+## Internal environment variables
+Nginx-LE uses a no. of internal environment variables primarily to communicate with Auth providers.
 You do not normally need to worry about these as the Nginx-LE sets these as necessary based on the select Auth Provider.
 
 | Name | Type | Domain | Description |
@@ -581,7 +581,7 @@ This is the default Certbot authentication method and only works if your web ser
 
 HTTP01 Auth does not support wildcard certificates.
 
-Set the following environement variables:
+Set the following environment variables:
 
 CERTBOT_AUTH_PROVIDER=HTTP01Auth
 
@@ -591,9 +591,9 @@ DOMAIN_WILDCARD=false
 ## Namecheap
 We don't recommend using this provider.
 
-The Namecheap API is very crappy and requires that we update EVERY dns record to just modifiy a single record.
+The Namecheap API is very crappy and requires that we update EVERY dns record to just modify a single record.
 
-It is also currently limited to domains that have no more than 10 A records. This could be fixed but changing the requst from a HTTP GET to a POST but unfortunately Namecheap haven't documented the POST method.
+It is also currently limited to domains that have no more than 10 A records. This could be fixed by changing the request from a HTTP GET to a POST but unfortunately Namecheap hasn't documented the POST method.
 
 CERTBOT_AUTH_PROVIDER=namecheap
 
@@ -606,7 +606,7 @@ DOMAIN_WILDCARD=true|false
 
 ## Cloudflare
 
-This is the most versitile auth provider as its supports public and private websites as well as Wildcard and single FQDN certificates.
+This is the most versatile auth provider as it supports public and private websites as well as Wildcard and single FQDN certificates.
 
 CERTBOT_AUTH_PROVIDER=cloudflare
 
@@ -621,7 +621,7 @@ DOMAIN_WILDCARD=true|false
 # Releasing Nginx-le
 If you are involved in developing Nginx-LE you will get to the point where you need to make a release.
 
-The easists way to release Nginx-LE is to use the release-all.dart script in cli/tools
+The easiest way to release Nginx-LE is to use the release-all.dart script in cli/tools
 
 ```
 cd cli
@@ -651,9 +651,9 @@ docker push
 
 Currently Nginx-LE ships with a limited no. of Auth Providers.
 
-We would welcome contributes of additional Auth Providers.
+We would welcome contributions of additional Auth Providers.
 
-Certbot current supports a number of DNS Auth Providers that could be added to Nginx-LE with a fairly low effort.
+Certbot currentlyt supports a number of DNS Auth Providers that could be added to Nginx-LE with a fairly low effort.
 
 You can see the list of Certbot Auth Providers here:
 
@@ -663,7 +663,7 @@ To add a new Auth Providers the following changes would need to be made:
 
 1) Update Dockerfile
 
-Modify the Nginx-LE docker file to by changing the `apt install` command to include the additional packages required to support the selected Certbot Auth provider.
+Modify the Nginx-LE docker file by changing the `apt install` command to include the additional packages required to support the selected Certbot Auth provider.
 
 Find the following section.
 
@@ -699,7 +699,7 @@ The shared/lib/src/auth_providers/dns_auth_providers/cloudlfare/cloudflare_provi
 
 Add you new auth provider to the AuthProviders class:
 
-shared/lib/src/auth_proviers/auth_providers.dart
+shared/lib/src/auth_providers/auth_providers.dart
 
 Find this section:
 
