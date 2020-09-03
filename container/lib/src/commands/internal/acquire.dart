@@ -15,13 +15,12 @@ void acquire(List<String> args) {
   Settings().setVerbose(enabled: debug);
 
   /// these are used by the certbot auth and clenaup hooks.
-  Settings().verbose('HOSTNAME:${Environment().hostname}');
+  Settings().verbose('${Environment().hostnameKey}:${Environment().hostname}');
 
-  Settings().verbose('DOMAIN:${Environment().domain}');
-  Settings().verbose('MODE:${Environment().mode}');
-  Settings().verbose('STAGING:${Environment().staging}');
-  Settings().verbose('DOMAIN_WILDCARD:${Environment().wildcard}');
-  Settings().verbose('AuthProvider:${Environment().certbotAuthProvider}');
+  Settings().verbose('${Environment().domainKey}:${Environment().domain}');
+  Settings().verbose('${Environment().stagingKey}:${Environment().staging}');
+  Settings().verbose('${Environment().domainWildcardKey}:${Environment().domainWildcard}');
+  Settings().verbose('${Environment().certbotAuthProviderKey}:${Environment().certbotAuthProvider}');
 
   var authProvider = AuthProviders().getByName(Environment().certbotAuthProvider);
   authProvider.acquire();
@@ -29,6 +28,6 @@ void acquire(List<String> args) {
   Certbot().deployCertificates(
       hostname: Environment().hostname,
       domain: Environment().domain,
-      wildcard: Environment().wildcard,
+      wildcard: Environment().domainWildcard,
       autoAcquireMode: Environment().autoAcquire);
 }

@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:dcli/dcli.dart';
 import 'package:xml/xml.dart';
 
+import '../../../../nginx_le_shared.dart';
 import 'dns_record.dart';
 import 'get_client_ip.dart';
 import 'get_url.dart';
@@ -34,7 +35,7 @@ void setHost(
 
   var clientIP = getClientIP();
   var url =
-      '$apiEndPoint?ApiUser=$apiUser&ApiKey=$apiKey&UserName=$username&Command=$setHostsCommand&ClientIp=$clientIP&SLD=$domainPart&TLD=$tld';
+      '$apiEndPoint?ApiUser=$apiUser&ApiKey=$apiKey&UserName=$username&Command=$setHostsCommand&ClientIp=$clientIP&SLD=$domainPart&${Environment().tldKey}=$tld';
 
   url += bulidRecords(records);
 
@@ -65,8 +66,7 @@ void setHost(
 
   if (success == false) {
     /// this should never happen as we should have been sent an error.
-    throw DNSProviderException(
-        'An error occured sending the host list for $domain with tld: $tld');
+    throw DNSProviderException('An error occured sending the host list for $domain with tld: $tld');
   }
 
   if (resultDomain != domain) {
@@ -80,8 +80,7 @@ String bulidRecords(List<DNSRecord> records) {
 
   var i = 1;
   for (var record in records) {
-    url +=
-        '&HostName$i=${record.name}&RecordType$i=${record.type}&Address$i=${record.address}&TTL$i=${record.ttl}';
+    url += '&HostName$i=${record.name}&RecordType$i=${record.type}&Address$i=${record.address}&TTL$i=${record.ttl}';
     i++;
   }
   return url;

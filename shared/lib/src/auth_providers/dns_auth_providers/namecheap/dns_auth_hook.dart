@@ -35,17 +35,17 @@ void namecheap_dns_auth_hook() {
   var certbotAuthKey = Environment().certbotValidation;
   Certbot().log('CertbotAuthKey: "$certbotAuthKey"');
   if (certbotAuthKey == null || certbotAuthKey.isEmpty) {
-    Certbot().logError(
-        'The environment variable CERTBOT_VALIDATION was empty dns_auth_hook ABORTED.');
+    Certbot()
+        .logError('The environment variable ${Environment().certbotValidationKey} was empty dns_auth_hook ABORTED.');
   }
   ArgumentError.checkNotNull(
-      certbotAuthKey, 'The environment variable CERTBOT_VALIDATION was empty');
+      certbotAuthKey, 'The environment variable ${Environment().certbotValidationKey} was empty');
 
   /// our own envs.
   var domain = Environment().domain;
-  Certbot().log('DOMAIN: $domain');
+  Certbot().log('${Environment().domainKey}: $domain');
   var hostname = Environment().hostname;
-  Certbot().log('HOSTNAME: $hostname');
+  Certbot().log('${Environment().hostnameKey}: $hostname');
   var tld = Environment().tld;
   Certbot().log('tld: $tld');
   var username = Environment().namecheapApiUser;
@@ -55,11 +55,11 @@ void namecheap_dns_auth_hook() {
 
   /// the number of times we look to see if the DNS challenge is resolving.
   var retries = Environment().certbotDNSRetries;
-  Certbot().log('DNS_RETRIES: $retries');
+  Certbot().log('${Environment().certbotDNSRetriesKey}: $retries');
 
   if (fqdn == null || fqdn.isEmpty) {
     printerr('Throwing exception: fqdn is empty');
-    throw ArgumentError('No fqdn found in env var CERTBOT_DOMAIN');
+    throw ArgumentError('No fqdn found in env var ${Environment().certbotDomainKey}');
   }
 
   try {
@@ -67,19 +67,14 @@ void namecheap_dns_auth_hook() {
     /// Create the required DNS entry for the Certbot challenge.
     ///
     Settings().verbose('Creating challenge');
-    var challenge = Challenge.simple(
-        apiKey: apiKey, username: username, apiUsername: username);
+    var challenge = Challenge.simple(apiKey: apiKey, username: username, apiUsername: username);
     Settings().verbose('calling challenge.present');
 
     ///
     /// Writes the DNS record and waits for it to be visible.
     ///
     if ((challenge.present(
-        hostname: hostname,
-        domain: domain,
-        tld: tld,
-        certbotAuthKey: certbotAuthKey,
-        retries: retries))) {
+        hostname: hostname, domain: domain, tld: tld, certbotAuthKey: certbotAuthKey, retries: retries))) {
       Certbot().log('createDNSChallenged SUCCESS');
     } else {
       Certbot().log('createDNSChallenged failed');

@@ -8,8 +8,8 @@ import 'dns_cleanup_hook.dart';
 
 class NameCheapAuthProvider extends GenericAuthProvider {
   /// Name Cheap settings
-  static const NAMECHEAP_API_KEY = 'NAMECHEAP_API_KEY';
-  static const NAMECHEAP_API_USERNAME = 'NAMECHEAP_API_USER';
+  static const AUTH_PROVIDER_TOKEN = 'AUTH_PROVIDER_TOKEN';
+  static const NAMECHEAP_API_USERNAME = 'AUTH_PROVIDER_USERNAME';
 
   @override
   String get name => 'namecheap';
@@ -37,10 +37,8 @@ class NameCheapAuthProvider extends GenericAuthProvider {
 
   @override
   void pre_auth() {
-    ArgumentError.checkNotNull(Environment().namecheapApiKey,
-        'Environment variable: NAMECHEAP_API_KEY missing');
-    ArgumentError.checkNotNull(Environment().namecheapApiUser,
-        'Environment variable: NAMECHEAP_API_USER missing');
+    ArgumentError.checkNotNull(Environment().namecheapApiKey, 'Environment variable: AUTH_PROVIDER_TOKEN missing');
+    ArgumentError.checkNotNull(Environment().namecheapApiUser, 'Environment variable: AUTH_PROVIDER_USERNAME missing');
   }
 
   @override
@@ -57,19 +55,16 @@ class NameCheapAuthProvider extends GenericAuthProvider {
   List<EnvVar> get environment {
     var vars = <EnvVar>[];
 
-    vars.add(EnvVar(NAMECHEAP_API_KEY, apiKey));
+    vars.add(EnvVar(AUTH_PROVIDER_TOKEN, apiKey));
     vars.add(EnvVar(NAMECHEAP_API_USERNAME, apiUsername));
 
     return vars;
   }
 
-  set apiKey(String namecheap_apikey) =>
-      ConfigYaml().settings[_apiKeySetting] = namecheap_apikey;
+  set apiKey(String namecheap_apikey) => ConfigYaml().settings[_apiKeySetting] = namecheap_apikey;
   String get apiKey => ConfigYaml().settings[_apiKeySetting] as String;
-  set apiUsername(String namecheap_apiusername) =>
-      ConfigYaml().settings[_apiUsernameSetting] = namecheap_apiusername;
-  String get apiUsername =>
-      ConfigYaml().settings[_apiUsernameSetting] as String;
+  set apiUsername(String namecheap_apiusername) => ConfigYaml().settings[_apiUsernameSetting] = namecheap_apiusername;
+  String get apiUsername => ConfigYaml().settings[_apiUsernameSetting] as String;
 
   String get _apiKeySetting => 'namecheap_apikey';
   String get _apiUsernameSetting => 'namecheap_apiusername';

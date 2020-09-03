@@ -4,12 +4,11 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 void main() {
   var cmd = '''docker create 
       --name="nginx-le" 
-      --env=HOST=www
-      --env=DOMAIN=noojee.org 
-      --env=TLD=org
-      --env=MODE=private 
-      --env=EMAIL_ADDRESS=bsutton@noojee.com.au 
-      --env=DEBUG=false 
+      --env=${Environment().hostnameKey}=www
+      --env=${Environment().domainKey}=noojee.org 
+      --env=${Environment().tldKey}=org
+      --env=${Environment().emailaddressKey}=bsutton@noojee.com.au 
+      --env=${Environment().debugKey}=false 
       --net=host --log-driver=journald -v certificates:/etc/letsencrypt 4bbc656ae28c''';
 
   var lines = <String>[];

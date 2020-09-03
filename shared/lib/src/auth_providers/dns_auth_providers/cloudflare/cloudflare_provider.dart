@@ -7,7 +7,7 @@ import '../../../../nginx_le_shared.dart';
 
 class CloudFlareProvider extends GenericAuthProvider {
   static const _SETTING_API_TOKEN = 'cloudflare_api_token';
-  static const CLOUDFLARE_API_TOKEN = 'CLOUDFLARE_API_TOKEN';
+  static const AUTH_PROVIDER_TOKEN = 'AUTH_PROVIDER_TOKEN';
 
   final _settings = join('/tmp', 'cloudflare', 'settings.ini');
 
@@ -48,7 +48,7 @@ class CloudFlareProvider extends GenericAuthProvider {
   List<EnvVar> get environment {
     var vars = <EnvVar>[];
 
-    vars.add(EnvVar(CLOUDFLARE_API_TOKEN, apiToken));
+    vars.add(EnvVar(AUTH_PROVIDER_TOKEN, apiToken));
 
     return vars;
   }
@@ -63,11 +63,11 @@ class CloudFlareProvider extends GenericAuthProvider {
     /// Pass environment vars down to the auth hook.
     Environment().logfile = join(logDir, 'letsencrypt.log');
 
-    var emailaddress = Environment().emailaddress;
+    var authProviderEmailaddressKey = Environment().authProviderEmailaddressKey;
     var hostname = Environment().hostname;
     var domain = Environment().domain;
     var staging = Environment().staging;
-    var wildcard = Environment().wildcard;
+    var wildcard = Environment().domainWildcard;
     var apiToken = _apiToken;
 
     hostname = wildcard ? '*' : hostname;
@@ -75,12 +75,12 @@ class CloudFlareProvider extends GenericAuthProvider {
     Settings().verbose('Starting cerbot with authProvider: $name to acquire a '
         '${staging ? 'staging' : 'production'} certificate for $hostname.$domain');
 
-    Settings().verbose('Cloudflare api token. Env:${CLOUDFLARE_API_TOKEN}: $apiToken');
+    Settings().verbose('Cloudflare api token. Env:${AUTH_PROVIDER_TOKEN}: $apiToken');
 
     var certbot = 'certbot certonly '
         ' --dns-cloudflare '
         ' --dns-cloudflare-credentials $_settings'
-        ' -m $emailaddress  '
+        ' -m $authProviderEmailaddressKey  '
         ' -d $hostname.$domain '
         ' --agree-tos '
         ' --manual-public-ip-logging-ok '
@@ -128,7 +128,7 @@ class CloudFlareProvider extends GenericAuthProvider {
     'chmod 600 $_settings'.run;
   }
 
-  String get _apiToken => env[CLOUDFLARE_API_TOKEN];
+  String get _apiToken => env[AUTH_PROVIDER_TOKEN];
 
   void deleteSettings() {
     delete(_settings);

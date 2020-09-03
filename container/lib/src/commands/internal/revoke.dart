@@ -17,8 +17,8 @@ void revoke(List<String> args) {
   var debug = results['debug'] as bool;
 
   Settings().setVerbose(enabled: debug);
-  Settings().verbose('HOSTNAME:${Environment().hostname}');
-  Settings().verbose('DOMAIN:${Environment().domain}');
+  Settings().verbose('${Environment().hostnameKey}:${Environment().hostname}');
+  Settings().verbose('${Environment().domainKey}:${Environment().domain}');
 
   Certbot.revokeAll();
 
@@ -30,6 +30,6 @@ void revoke(List<String> args) {
       hostname: Environment().hostname,
       domain: Environment().domain,
       revoking: true,
-      wildcard: Environment().wildcard,
+      wildcard: Environment().domainWildcard,
       autoAcquireMode: Environment().autoAcquire);
 }

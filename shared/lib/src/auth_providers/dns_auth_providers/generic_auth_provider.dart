@@ -41,8 +41,10 @@ abstract class GenericAuthProvider extends AuthProvider {
     var auth_hook_path = Environment().certbotDNSAuthHookPath;
     var cleanup_hook_path = Environment().certbotDNSCleanupHookPath;
 
-    ArgumentError.checkNotNull(auth_hook_path, 'Environment variable: CERTBOT_DNS_AUTH_HOOK_PATH missing');
-    ArgumentError.checkNotNull(cleanup_hook_path, 'Environment variable: CERTBOT_DNS_CLEANUP_HOOK_PATH missing');
+    ArgumentError.checkNotNull(
+        auth_hook_path, 'Environment variable: ${Environment().certbotDNSAuthHookPathKey} missing');
+    ArgumentError.checkNotNull(
+        cleanup_hook_path, 'Environment variable: ${Environment().certbotDNSCleanupHookPathKey} missing');
 
     Settings().verbose('Starting cerbot with authProvider: $name');
 
