@@ -35,10 +35,8 @@ class AcquireCommand extends Command<void> {
     if (Containers().findByContainerId(config.containerid).isRunning) {
       var cmd = 'docker exec -it ${config.containerid} /home/bin/acquire ';
 
-      if (config.isModePrivate) {
-        print('');
-        print(orange('Please be patient this can take a quite a few minutes to complete'));
-      }
+      print('');
+      print(orange('Please be patient this can take a quite a few minutes to complete'));
 
       if (debug == true) cmd += ' --debug';
       cmd.run;
