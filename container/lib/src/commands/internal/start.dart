@@ -11,32 +11,44 @@ void start() {
   /// NOTE: you can NOT change these by setting an environment var before you call nginx-le start
   /// They can only be changed by re-running nginx-le config and recreating the container.
   ///
+
+  var startPaused = Environment().startPaused;
+
+  if (startPaused) {
+    print(orange('Nginx-LE is paused. Run "nginx-le cli" to attached and explore the Nginx-LE container'));
+    while (true) {
+      sleep(10);
+    }
+  } else {
+    _start();
+  }
+}
+
+void _start() {
   var debug = Environment().debug;
   Settings().setVerbose(enabled: debug);
 
   var hostname = Environment().hostname;
-  Settings().verbose('HOSTNAME=$hostname');
+  Settings().verbose('${Environment().hostnameKey}=$hostname');
   var domain = Environment().domain;
-  Settings().verbose('DOMAIN=$domain');
+  Settings().verbose('${Environment().domainKey}=$domain');
   var tld = Environment().tld;
-  Settings().verbose('TLD=$tld');
+  Settings().verbose('${Environment().tldKey}=$tld');
 
-  var wildcard = Environment().wildcard;
-  Settings().verbose('DOMAIN_WILDCARD=$wildcard');
+  var wildcard = Environment().domainWildcard;
+  Settings().verbose('${Environment().domainWildcardKey}=$wildcard');
 
   var emailaddress = Environment().emailaddress;
-  Settings().verbose('EMAIL_ADDRESS=$emailaddress');
-  var mode = Environment().mode;
-  Settings().verbose('MODE=$mode');
+  Settings().verbose('${Environment().emailaddressKey}=$emailaddress');
 
-  var staging = Environment().staging;
-  Settings().verbose('STAGING=$staging');
+  var production = Environment().production;
+  Settings().verbose('${Environment().productionKey}=$production');
 
   var autoAcquire = Environment().autoAcquire;
-  Settings().verbose('AUTO_ACQUIRE=$autoAcquire');
+  Settings().verbose('${Environment().autoAcquireKey}=$autoAcquire');
 
   var certbotAuthProvider = Environment().certbotAuthProvider;
-  Settings().verbose('CERTBOT_AUTH_PROVIDER=$certbotAuthProvider');
+  Settings().verbose('${Environment().certbotAuthProviderKey}=$certbotAuthProvider');
 
   /// Places the server into acquire mode if certificates are not valid.
   ///
@@ -54,18 +66,18 @@ void start() {
 
     /// expired certs are handled by the renew scheduler
     if (certificates.isEmpty) {
-      startAcquireThread(debug: true);
+      startAcquireThread(debug: debug);
     } else {
       var certificate = certificates[0];
 
       /// If the certificate type has changed then we must acquire a new one.
       /// If we have more then one certificate then somethings wrong so start again by revoke all of them.
       if (certificates.length > 1 ||
-          staging != certificate.staging ||
+          production != certificate.production ||
           '$hostname.$domain' != certificate.fqdn ||
           wildcard != certificate.wildcard) {
         Certbot.revokeAll();
-        startAcquireThread(debug: true);
+        startAcquireThread(debug: debug);
       }
     }
   }
@@ -133,7 +145,7 @@ void acquireThread(String debug) {
         hostname: Environment().hostname,
         domain: Environment().domain,
         reload: true, // don't try to reload nginx as it won't be running as yet.
-        wildcard: Environment().wildcard,
+        wildcard: Environment().domainWildcard,
         autoAcquireMode: Environment().autoAcquire);
   } on CertbotException catch (e, st) {
     printerr(e.message);

@@ -3,6 +3,7 @@ import 'package:nginx_le_shared/src/util/environment.dart';
 
 import '../../../../nginx_le_shared.dart';
 import 'challenge.dart';
+import 'namecheap_provider.dart';
 
 void namncheap_dns_cleanup_hook() {
   Certbot().log('*' * 80);
@@ -24,19 +25,22 @@ void namncheap_dns_cleanup_hook() {
   var certbotAuthKey = Environment().certbotValidation;
   Certbot().log('CertbotAuthKey: $certbotAuthKey');
 
+  var authProvider = AuthProviders().getByName(NameCheapAuthProvider().name);
+
   /// our own envs.
   var domain = Environment().domain;
   var hostname = Environment().hostname;
   var tld = Environment().tld;
   Certbot().log('tld: $tld');
-  var username = Environment().namecheapApiUser;
+  var username = authProvider.envUsername;
   Certbot().log('username: $username');
-  var apiKey = Environment().namecheapApiKey;
+  var apiKey = authProvider.envToken;
   Certbot().log('apiKey: $apiKey');
 
   if (fqdn == null || fqdn.isEmpty) {
     printerr('Throwing exception: fqdn is empty');
-    throw ArgumentError('No fqdn found in env var ${Environment().certbotDomainKey}');
+    throw ArgumentError(
+        'No fqdn found in env var ${Environment().certbotDomainKey}');
   }
 
   try {
@@ -44,13 +48,18 @@ void namncheap_dns_cleanup_hook() {
     /// Create the required DNS entry for the Certbot challenge.
     ///
     Settings().verbose('Creating challenge');
-    var challenge = Challenge.simple(apiKey: apiKey, username: username, apiUsername: username);
+    var challenge = Challenge.simple(
+        apiKey: apiKey, username: username, apiUsername: username);
     Settings().verbose('calling challenge.present');
 
     ///
     /// Writes the DNS record and waits for it to be visible.
     ///
-    challenge.cleanUp(hostname: hostname, domain: domain, tld: tld, certbotAuthKey: certbotAuthKey);
+    challenge.cleanUp(
+        hostname: hostname,
+        domain: domain,
+        tld: tld,
+        certbotValidationString: certbotAuthKey);
   } catch (e) {
     printerr(e.toString());
   }

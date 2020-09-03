@@ -27,10 +27,9 @@ class Challenge {
       {@required String hostname,
       @required String domain,
       @required String tld,
-      @required String certbotAuthKey,
+      @required String certbotValidationString,
       int retries = 20}) {
-    var records =
-        _getHosts(domain: domain, tld: tld, certbotAuthKey: certbotAuthKey);
+    var records = _getHosts(domain: domain, tld: tld);
 
     if (records.isEmpty) {
       throw DNSProviderException(
@@ -49,7 +48,7 @@ class Challenge {
     var certRecord = DNSRecord(
         name: challengeHost(hostname: hostname),
         type: 'TXT',
-        address: certbotAuthKey,
+        address: certbotValidationString,
         mxPref: '10',
         ttl: '${60}'); // 10 seconds because we don't want it hanging around.
 
@@ -70,7 +69,7 @@ class Challenge {
         hostname: hostname,
         domain: domain,
         tld: tld,
-        certBotAuthKey: certbotAuthKey,
+        certBotAuthKey: certbotValidationString,
         retries: retries);
   }
 
@@ -128,9 +127,8 @@ class Challenge {
       {@required String hostname,
       @required String domain,
       @required String tld,
-      @required String certbotAuthKey}) {
-    var records =
-        _getHosts(domain: domain, tld: tld, certbotAuthKey: certbotAuthKey);
+      @required String certbotValidationString}) {
+    var records = _getHosts(domain: domain, tld: tld);
 
     // Find the challenge TXT record and remove it if found.
     var found = false;
@@ -140,7 +138,7 @@ class Challenge {
     for (var h in records) {
       Settings().verbose('Found DNS: hostname=${h.name}');
       if (h.name == challengeName &&
-          h.address == certbotAuthKey &&
+          h.address == certbotValidationString &&
           h.type == 'TXT') {
         found = true;
       } else {
@@ -158,10 +156,10 @@ class Challenge {
     }
   }
 
-  List<DNSRecord> _getHosts(
-      {@required String domain,
-      @required String tld,
-      @required String certbotAuthKey}) {
+  List<DNSRecord> _getHosts({
+    @required String domain,
+    @required String tld,
+  }) {
     return getHosts(
         apiKey: apiKey,
         apiUser: username,

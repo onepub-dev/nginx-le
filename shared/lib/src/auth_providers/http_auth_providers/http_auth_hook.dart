@@ -29,35 +29,41 @@ void certbot_http_auth_hook() {
   // ignore: unnecessary_cast
   var fqdn = Environment().certbotDomain;
   Certbot().log('fqdn: $fqdn');
-  Certbot().log('${Environment().certbotTokenKey}: ${Environment().certbotToken}');
+  Certbot()
+      .log('${Environment().certbotTokenKey}: ${Environment().certbotToken}');
   print('${Environment().certbotTokenKey}: ${Environment().certbotToken}');
-  Certbot().log('${Environment().certbotValidationKey}: ${Environment().certbotValidation}');
-  print('${Environment().certbotValidationKey}: ${Environment().certbotValidation}');
+  Certbot().log(
+      '${Environment().certbotValidationKey}: ${Environment().certbotValidation}');
+  print(
+      '${Environment().certbotValidationKey}: ${Environment().certbotValidation}');
 
   // ignore: unnecessary_cast
-  var certbotAuthKey = Environment().certbotValidation;
-  Certbot().log('CertbotAuthKey: "$certbotAuthKey"');
-  if (certbotAuthKey == null || certbotAuthKey.isEmpty) {
-    Certbot()
-        .logError('The environment variable ${Environment().certbotValidationKey} was empty http_auth_hook ABORTED.');
+  var certbotValidation = Environment().certbotValidation;
+  Certbot().log('${Environment().certbotValidationKey}: "$certbotValidation"');
+  if (certbotValidation == null || certbotValidation.isEmpty) {
+    Certbot().logError(
+        'The environment variable ${Environment().certbotValidationKey} was empty http_auth_hook ABORTED.');
   }
-  ArgumentError.checkNotNull(
-      certbotAuthKey, 'The environment variable ${Environment().certbotValidationKey} was empty');
+  ArgumentError.checkNotNull(certbotValidation,
+      'The environment variable ${Environment().certbotValidationKey} was empty');
 
   var token = Environment().certbotToken;
   Certbot().log('token: "$token"');
   if (token == null || token.isEmpty) {
-    Certbot().logError('The environment variable ${Environment().certbotTokenKey} was empty http_auth_hook ABORTED.');
+    Certbot().logError(
+        'The environment variable ${Environment().certbotTokenKey} was empty http_auth_hook ABORTED.');
   }
-  ArgumentError.checkNotNull(certbotAuthKey, 'The environment variable ${Environment().certbotTokenKey} was empty');
+  ArgumentError.checkNotNull(token,
+      'The environment variable ${Environment().certbotTokenKey} was empty');
 
   /// This path MUST match the path set in the nginx config files:
   /// /etc/nginx/custom/default.conf
   /// /etc/nginx/acquire/default.conf
-  var path = join('/', 'opt', 'letsencrypt', 'wwwroot', '.well-known', 'acme-challenge', token);
+  var path = join('/', 'opt', 'letsencrypt', 'wwwroot', '.well-known',
+      'acme-challenge', token);
   print('writing token to $path');
   Certbot().log('writing token to $path');
-  path.write(certbotAuthKey);
+  path.write(token);
 
   Certbot().log('certbot_http_auth_hook completed');
   Certbot().log('*' * 80);

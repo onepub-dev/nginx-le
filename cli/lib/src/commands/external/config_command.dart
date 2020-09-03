@@ -21,7 +21,8 @@ class ConfigCommand extends Command<void> {
         defaultsTo: false,
         negatable: false,
         abbr: 'd',
-        help: 'Outputs additional logging information and puts the container into debug mode');
+        help:
+            'Outputs additional logging information and puts the container into debug mode');
   }
 
   @override
@@ -32,24 +33,16 @@ class ConfigCommand extends Command<void> {
 
     var config = ConfigYaml();
 
-    selectStartMethod(config);
-
     selectFQDN(config);
-
     selectTLD(config);
-
-    selectEmail(config);
-
     selectMode(config);
     selectCertType(config);
-
-    if (config.isModePrivate || config.wildcard) {
-      selectDNSProvider(config);
-    } else {
-      config.certbothAuthProvider = null;
-    }
-
+    selectAuthProvider(config);
     selectContentProvider(config);
+    selectStartMode(config);
+
+    selectEmail(config);
+    selectStartMethod(config);
 
     var containerName = 'nginx-le';
 
@@ -79,17 +72,22 @@ class ConfigCommand extends Command<void> {
 
     if (existing != null) {
       print(orange('A container with the name $containerName already exists.'));
-      if (!confirm('Do you want to delete the older container and create one with the new settings?')) {
+      if (!confirm(
+          'Do you want to delete the older container and create one with the new settings?')) {
         print(orange('Container does not reflect your new settings!'));
         exit(-1);
       } else {
         if (existing.isRunning) {
-          print('The old container is running. To delete the container it must be stopped.');
-          if (confirm('Do you want the container ${existing.containerid} stopped?')) {
+          print(
+              'The old container is running. To delete the container it must be stopped.');
+          if (confirm(
+              'Do you want the container ${existing.containerid} stopped?')) {
             existing.stop();
           } else {
-            printerr(red('Unable to delete container ${existing.containerid} as it is running'));
-            printerr('Delete all containers for ${image.imageid} and try again.');
+            printerr(red(
+                'Unable to delete container ${existing.containerid} as it is running'));
+            printerr(
+                'Delete all containers for ${image.imageid} and try again.');
             exit(1);
           }
         }
@@ -102,7 +100,8 @@ class ConfigCommand extends Command<void> {
     print('Creating container from Image ${image.fullname}.');
 
     var lines = <String>[];
-    var progress = Progress((line) => lines.add(line), stderr: (line) => lines.add(line));
+    var progress =
+        Progress((line) => lines.add(line), stderr: (line) => lines.add(line));
 
     var volumes = '';
     var provider = ContentProviders().getByName(config.contentProvider);
@@ -121,17 +120,17 @@ class ConfigCommand extends Command<void> {
 
     var cmd = 'docker create'
         ' --name="nginx-le"'
-        ' --env=HOSTNAME=${config.hostname}'
-        ' --env=DOMAIN=${config.domain}'
-        ' --env=TLD=${config.tld}'
-        ' --env=MODE=${config.mode}'
-        ' --env=CERTBOT_AUTH_PROVIDER=${config.certbothAuthProvider}'
-        ' --env=EMAIL_ADDRESS=${config.emailaddress}'
-        ' --env=SMTP_SERVER=${config.smtpServer}'
-        ' --env=SMTP_SERVER_PORT=${config.smtpServerPort}'
-        ' --env=DEBUG=$debug'
-        ' --env=DOMAIN_WILDCARD=${config.wildcard}'
-        ' --env=AUTO_ACQUIRE=true' // be default try to auto acquire a certificate.
+        ' --env=${Environment().hostnameKey}=${config.hostname}'
+        ' --env=${Environment().domainKey}=${config.domain}'
+        ' --env=${Environment().tldKey}=${config.tld}'
+        ' --env=${Environment().startPausedKey}=${config.startPaused}'
+        ' --env=${Environment().certbotAuthProviderKey}=${config.certbothAuthProvider}'
+        ' --env=${Environment().emailaddressKey}=${config.emailaddress}'
+        ' --env=${Environment().smtpServerKey}=${config.smtpServer}'
+        ' --env=${Environment().smtpServerPortKey}=${config.smtpServerPort}'
+        ' --env=${Environment().debugKey}=$debug'
+        ' --env=${Environment().domainWildcardKey}=${config.domainWildcard}'
+        ' --env=${Environment().autoAcquireKey}=false' // be default try to auto acquire a certificate.
         '$dnsProviderEnvs'
         ' --net=host'
         ' --log-driver=journald'
@@ -171,17 +170,18 @@ class ConfigCommand extends Command<void> {
     }
   }
 
-  void selectDNSProvider(ConfigYaml config) {
-    var authProviders = DnsAuthProviders().providers;
+  void selectAuthProvider(ConfigYaml config) {
+    var authProviders = AuthProviders().getValidProviders(config);
 
-    var defaultProvider = DnsAuthProviders().getByName(config.certbothAuthProvider);
+    var defaultProvider =
+        AuthProviders().getByName(config.certbothAuthProvider);
     print('');
-    print(green('Select the DNS Auth Provider'));
+    print(green('Select the Auth Provider'));
     var provider = menu<AuthProvider>(
         prompt: 'Content Provider:',
         options: authProviders,
         defaultOption: defaultProvider,
-        format: (provider) => '${provider.name.padRight(12)} - ${provider.summary}');
+        format: (provider) => provider.summary);
 
     config.certbothAuthProvider = provider.name;
 
@@ -192,16 +192,24 @@ class ConfigCommand extends Command<void> {
     print(green('Only select wildcard if the system has multiple fqdns.'));
 
     const wildcard = 'Wildcard';
-    var domainType =
-        menu(prompt: 'Domain Type', options: ['FQDN', wildcard], defaultOption: config.wildcard ? wildcard : 'FQDN');
+    var domainType = menu(
+        prompt: 'Certificate Type',
+        options: ['FQDN', wildcard],
+        defaultOption: config.domainWildcard ? wildcard : 'FQDN');
 
-    config.wildcard = (domainType == wildcard);
+    config.domainWildcard = (domainType == wildcard);
 
     print('');
     print(green('During testing please select "staging"'));
-    var certTypes = [ConfigYaml.CERTIFICATE_TYPE_PRODUCTION, ConfigYaml.CERTIFICATE_TYPE_STAGING];
+    var certTypes = [
+      ConfigYaml.CERTIFICATE_TYPE_PRODUCTION,
+      ConfigYaml.CERTIFICATE_TYPE_STAGING
+    ];
     config.certificateType ??= ConfigYaml.CERTIFICATE_TYPE_STAGING;
-    var certificateType = menu(prompt: 'Certificate Type:', options: certTypes, defaultOption: config.certificateType);
+    var certificateType = menu(
+        prompt: 'Certificate Type:',
+        options: certTypes,
+        defaultOption: config.certificateType);
     config.certificateType = certificateType;
   }
 
@@ -209,16 +217,19 @@ class ConfigCommand extends Command<void> {
     print('');
     print(green('Errors are notified via email'));
     var emailaddress = ask('Email Address:',
-        defaultValue: config.emailaddress, validator: AskMultiValidator([Ask.required, Ask.email]));
+        defaultValue: config.emailaddress,
+        validator: AskValidatorMulti([Ask.required, Ask.email]));
     config.emailaddress = emailaddress;
 
     var smtpServer = ask('SMTP Server:',
-        defaultValue: config.smtpServer, validator: AskMultiValidator([Ask.required, AskFQDNOrLocalhost()]));
+        defaultValue: config.smtpServer,
+        validator: AskValidatorMulti([Ask.required, AskFQDNOrLocalhost()]));
     config.smtpServer = smtpServer;
 
     var smtpServerPort = ask('SMTP Server port:',
         defaultValue: '${config.smtpServerPort}',
-        validator: AskMultiValidator([Ask.required, Ask.integer, AskRange(1, 65535)]));
+        validator: AskValidatorMulti(
+            [Ask.required, Ask.integer, AskValidatorRange(1, 65535)]));
     config.smtpServerPort = int.tryParse(smtpServerPort) ?? 25;
   }
 
@@ -226,14 +237,16 @@ class ConfigCommand extends Command<void> {
     print('');
     print(green('The servers top level domain (e.g. com.au)'));
 
-    var tld = ask('TLD:', defaultValue: config.tld, validator: AskMultiValidator([Ask.required]));
+    var tld = ask('TLD:',
+        defaultValue: config.tld, validator: AskValidatorMulti([Ask.required]));
     config.tld = tld;
   }
 
   void selectFQDN(ConfigYaml config) {
     print('');
     print(green("The server's FQDN (e.g. www.microsoft.com)"));
-    var fqdn = ask('FQDN:', defaultValue: config.fqdn, validator: AskFQDNOrLocalhost());
+    var fqdn = ask('FQDN:',
+        defaultValue: config.fqdn, validator: AskFQDNOrLocalhost());
     config.fqdn = fqdn;
   }
 
@@ -241,7 +254,11 @@ class ConfigCommand extends Command<void> {
     print('');
     print(green('Select the image to utilise.'));
     var latest = 'noojee/nginx-le:latest';
-    var images = Images().images.where((image) => image.repository == 'noojee' && image.name == 'nginx-le').toList();
+    var images = Images()
+        .images
+        .where(
+            (image) => image.repository == 'noojee' && image.name == 'nginx-le')
+        .toList();
     var latestImage = Images().findByFullname(latest);
     var downloadLatest = Image.fromName(latest);
     if (latestImage == null) {
@@ -251,7 +268,8 @@ class ConfigCommand extends Command<void> {
     var image = menu<Image>(
         prompt: 'Image:',
         options: images,
-        format: (image) => '${image.imageid} - ${image.repository}/${image.name}:${image.tag}',
+        format: (image) =>
+            '${image.imageid} - ${image.repository}/${image.name}:${image.tag}',
         defaultOption: config.image);
     config.image = image;
 
@@ -278,6 +296,15 @@ class ConfigCommand extends Command<void> {
       defaultOption: config.mode,
     );
     config.mode = mode;
+  }
+
+  void selectStartMode(ConfigYaml config) {
+    print('');
+    config.startPaused ??= false;
+
+    config.startPaused = confirm(
+        green('Start the container in Paused mode to diagnose problems'),
+        defaultValue: config.startPaused);
   }
 
   void selectStartMethod(ConfigYaml config) {
@@ -309,7 +336,8 @@ class ConfigCommand extends Command<void> {
         prompt: 'Content Provider:',
         options: contentProviders,
         defaultOption: defaultProvider,
-        format: (provider) => '${provider.name.padRight(12)} - ${provider.summary}');
+        format: (provider) =>
+            '${provider.name.padRight(12)} - ${provider.summary}');
 
     config.contentProvider = provider.name;
 
@@ -318,7 +346,10 @@ class ConfigCommand extends Command<void> {
 
   void selectContainer(ConfigYaml config) {
     /// try for the default container name.
-    var containers = Containers().containers().where((container) => container.names == 'nginx-le').toList();
+    var containers = Containers()
+        .containers()
+        .where((container) => container.names == 'nginx-le')
+        .toList();
 
     if (containers.isEmpty) {
       containers = Containers().containers();
@@ -334,7 +365,8 @@ class ConfigCommand extends Command<void> {
           prompt: 'Select Container:',
           options: containers,
           defaultOption: defaultOption,
-          format: (container) => '${container.names.padRight(30)} ${container.image?.fullname}');
+          format: (container) =>
+              '${container.names.padRight(30)} ${container.image?.fullname}');
       config.containerid = container.containerid;
     }
   }

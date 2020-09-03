@@ -20,7 +20,9 @@ class Static extends ContentProvider {
     print(green('Static Web Content'));
     _homePage = ask('Default Page', defaultValue: _homePage);
     _staticRootPath = askForHostPath(
-        prompt: 'Path to wwwroot containing $_homePage', defaultPath: _staticRootPath, autoCreate: false);
+        prompt: 'Path to wwwroot containing $_homePage',
+        defaultPath: _staticRootPath,
+        autoCreate: false);
 
     askForLocationPath('Host path to store generated `.location` file');
   }
@@ -38,11 +40,16 @@ class Static extends ContentProvider {
   String get _locationFile => 'static.location';
   String get _locationPath => join(ConfigYaml().hostIncludePath, _locationFile);
 
-  String get _staticRootPath => ConfigYaml().settings['$name-static-wwwroot'] as String ?? _defaultStaticRootPath;
-  set _staticRootPath(String rootPath) => ConfigYaml().settings['$name-static-wwwroot'] = rootPath;
+  String get _staticRootPath =>
+      ConfigYaml().settings['$name-static-wwwroot'] as String ??
+      _defaultStaticRootPath;
+  set _staticRootPath(String rootPath) =>
+      ConfigYaml().settings['$name-static-wwwroot'] = rootPath;
 
-  String get _homePage => ConfigYaml().settings['$name-home-page'] as String ?? _defaultHomePage;
-  set _homePage(String rootPath) => ConfigYaml().settings['$name-home-page'] = rootPath;
+  String get _homePage =>
+      ConfigYaml().settings['$name-home-page'] as String ?? _defaultHomePage;
+  set _homePage(String rootPath) =>
+      ConfigYaml().settings['$name-home-page'] = rootPath;
 
   /// the default for the host wwwroot path
   String get _defaultStaticRootPath => '/opt/nginx/wwwroot';
@@ -57,21 +64,25 @@ class Static extends ContentProvider {
   @override
   void createLocationFile() {
     _backupLocationContent();
-    find('*.location', root: ConfigYaml().hostIncludePath).forEach((file) => delete(file));
+    find('*.location', root: ConfigYaml().hostIncludePath)
+        .forEach((file) => delete(file));
     _locationPath.write(_locationContent);
   }
 
   @override
   void createUpstreamFile() {
     /// no op as we don't require an upstream file.
-    find('*.upstream', root: ConfigYaml().hostIncludePath).forEach((file) => delete(file));
+    find('*.upstream', root: ConfigYaml().hostIncludePath)
+        .forEach((file) => delete(file));
   }
 
   @override
   List<Volume> getVolumes() {
     var config = ConfigYaml();
     return [
-      Volume(hostPath: config.hostIncludePath, containerPath: Nginx.containerIncludePath),
+      Volume(
+          hostPath: config.hostIncludePath,
+          containerPath: Nginx.containerIncludePath),
       Volume(hostPath: _staticRootPath, containerPath: '/opt/nginx/wwwroot')
     ];
   }
@@ -99,7 +110,8 @@ class Static extends ContentProvider {
         copy(_locationPath, backup);
       }
 
-      print('Your original location file ${_locationPath} has been backed up to $backup');
+      print(
+          'Your original location file ${_locationPath} has been backed up to $backup');
     }
   }
 }

@@ -66,7 +66,8 @@ void setHost(
 
   if (success == false) {
     /// this should never happen as we should have been sent an error.
-    throw DNSProviderException('An error occured sending the host list for $domain with tld: $tld');
+    throw DNSProviderException(
+        'An error occured sending the host list for $domain with tld: $tld');
   }
 
   if (resultDomain != domain) {
@@ -80,7 +81,8 @@ String bulidRecords(List<DNSRecord> records) {
 
   var i = 1;
   for (var record in records) {
-    url += '&HostName$i=${record.name}&RecordType$i=${record.type}&Address$i=${record.address}&TTL$i=${record.ttl}';
+    url +=
+        '&HostName$i=${record.name}&RecordType$i=${record.type}&Address$i=${record.address}&TTL$i=${record.ttl}';
     i++;
   }
   return url;

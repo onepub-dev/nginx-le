@@ -1,5 +1,5 @@
 name: nginx_le
-version: 1.4.11
+version: 2.1.1
 homepage: https://github.com/bsutton/nginx-le
 description: Command line tools for Nginx-LE
 environment: 
@@ -9,7 +9,7 @@ dependencies:
   args: ^1.5.2
   encrypt: ^4.0.2
   cron: ^0.2.3
-  dcli: ^0.22.0
+  dcli: ^0.23.0
   path: ^1.6.4
   pub_semver: ^1.0.0
   xml: ^4.2.0
@@ -22,7 +22,7 @@ dependencies:
   settings_yaml: ^2.0.0
   uuid: ^2.0.4
   validators: ^2.0.0
-  nginx_le_shared: ^1.0.0
+  nginx_le_shared: ^2.0.0
   yaml: ^2.2.1
 dev_dependencies: 
   test: ^1.0.0

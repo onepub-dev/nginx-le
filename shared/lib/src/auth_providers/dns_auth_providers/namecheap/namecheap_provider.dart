@@ -7,38 +7,34 @@ import 'dns_auth_hook.dart';
 import 'dns_cleanup_hook.dart';
 
 class NameCheapAuthProvider extends GenericAuthProvider {
-  /// Name Cheap settings
-  static const AUTH_PROVIDER_TOKEN = 'AUTH_PROVIDER_TOKEN';
-  static const NAMECHEAP_API_USERNAME = 'AUTH_PROVIDER_USERNAME';
-
   @override
   String get name => 'namecheap';
 
   @override
-  String get summary => 'Namecheap DNS';
+  String get summary => 'Namecheap DNS Auth Provider';
 
   @override
   void promptForSettings(ConfigYaml config) {
-    var namecheap_username = ask(
+    configUsername = ask(
       'NameCheap API Username:',
-      defaultValue: apiUsername,
+      defaultValue: configUsername,
       validator: Ask.required,
     );
-    apiUsername = namecheap_username;
 
-    var namecheap_apikey = ask(
+    configToken = ask(
       'NameCheap API Key:',
-      defaultValue: apiKey,
+      defaultValue: configToken,
       hidden: true,
       validator: Ask.required,
     );
-    apiKey = namecheap_apikey;
   }
 
   @override
   void pre_auth() {
-    ArgumentError.checkNotNull(Environment().namecheapApiKey, 'Environment variable: AUTH_PROVIDER_TOKEN missing');
-    ArgumentError.checkNotNull(Environment().namecheapApiUser, 'Environment variable: AUTH_PROVIDER_USERNAME missing');
+    ArgumentError.checkNotNull(
+        envToken, 'Environment variable: AUTH_PROVIDER_TOKEN missing');
+    ArgumentError.checkNotNull(
+        envUsername, 'Environment variable: AUTH_PROVIDER_USERNAME missing');
   }
 
   @override
@@ -55,17 +51,15 @@ class NameCheapAuthProvider extends GenericAuthProvider {
   List<EnvVar> get environment {
     var vars = <EnvVar>[];
 
-    vars.add(EnvVar(AUTH_PROVIDER_TOKEN, apiKey));
-    vars.add(EnvVar(NAMECHEAP_API_USERNAME, apiUsername));
+    vars.add(EnvVar(AuthProvider.AUTH_PROVIDER_TOKEN, configToken));
+    vars.add(EnvVar(AuthProvider.AUTH_PROVIDER_USERNAME, configUsername));
 
     return vars;
   }
 
-  set apiKey(String namecheap_apikey) => ConfigYaml().settings[_apiKeySetting] = namecheap_apikey;
-  String get apiKey => ConfigYaml().settings[_apiKeySetting] as String;
-  set apiUsername(String namecheap_apiusername) => ConfigYaml().settings[_apiUsernameSetting] = namecheap_apiusername;
-  String get apiUsername => ConfigYaml().settings[_apiUsernameSetting] as String;
+  @override
+  bool get supportsPrivateMode => true;
 
-  String get _apiKeySetting => 'namecheap_apikey';
-  String get _apiUsernameSetting => 'namecheap_apiusername';
+  @override
+  bool get supportsWildCards => true;
 }

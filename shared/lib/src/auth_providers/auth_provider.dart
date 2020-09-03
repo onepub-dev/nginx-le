@@ -1,11 +1,20 @@
+import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/src/util/env_var.dart';
 
 import '../../nginx_le_shared.dart';
 import '../config/ConfigYaml.dart';
 
 abstract class AuthProvider {
+  /// Generic AuthProvider environment variables.
+  static const AUTH_PROVIDER_TOKEN = 'AUTH_PROVIDER_TOKEN';
+  static const AUTH_PROVIDER_EMAIL_ADDRESS = 'AUTH_PROVIDER_EMAIL_ADDRESS';
+  static const AUTH_PROVIDER_USERNAME = 'AUTH_PROVIDER_USERNAME';
+  static const AUTH_PROVIDER_PASSWORD = 'AUTH_PROVIDER_PASSWORD';
+
+  /// unique name of the provider used as the key
   String get name;
 
+  /// Description of the provider which we display to the user to help them select the provider.
   String get summary;
 
   /// Provides a list of environment variables that must be passed into
@@ -14,25 +23,7 @@ abstract class AuthProvider {
 
   void promptForSettings(ConfigYaml confi);
 
-  /// Obtains a lets-encrypt certificate for use in a development environment where the
-  /// ngix server doesn't have a public ip address.
-  ///
-  /// In this case we use the DNS Validation api which requires us to publish a DNS record
-  /// to our DNS servers.
-  ///
-  /// This requires access to LastPass to obtain the DNS API keys as such this command needs to be
-  /// run in an intractive terminal as you will need to login to LastPass.
-  ///
-  /// To avoid having to run 2fa with LastPass every time we expect that a Docker persistent volume
-  /// will be mounted to /root/.lastpass.
-  ///
-//const tomcatPath = '$HOME/apps/tomcat vi ./apache-tomcat-9.0.16/conf/server.xml';
-
-  /// The [hostname] and [domain] of the webserver we are obtaining certificates for.
-  /// The [emailaddress] that renewal reminders will be sent to.
-  /// If [mode] is public than a lets-encrypt certificate will be obtained
-  ///  otherwise a staging certificate will be obtained.
-  /// The default [mode] value is private.
+  /// Starts the process to acquire a certificate.
   void acquire();
 
   /// overload this method if your provide needs to to have a manual auth_hook called
@@ -40,4 +31,47 @@ abstract class AuthProvider {
 
   /// overload this method if your provide needs to to have a manual cleanup hook called
   void cleanup_hook();
+
+  /// Overload this method to indicate whether the auth provider can support
+  /// authentication of wildcard certificates.
+  bool get supportsWildCards;
+
+  /// Overload this method to indicate if the auth provider supports a webserver
+  /// operating on a private ip address (with no public access).
+  bool get supportsPrivateMode;
+
+  /// Settings stored in the configuration file
+  String get configToken =>
+      ConfigYaml().settings[AUTH_PROVIDER_TOKEN] as String;
+  set configToken(String token) =>
+      ConfigYaml().settings[AUTH_PROVIDER_TOKEN] = token;
+
+  String get configEmailAddress =>
+      ConfigYaml().settings[AUTH_PROVIDER_EMAIL_ADDRESS] as String;
+  set configEmailAddress(String emailAddress) =>
+      ConfigYaml().settings[AUTH_PROVIDER_EMAIL_ADDRESS] = emailAddress;
+
+  String get configUsername =>
+      ConfigYaml().settings[AUTH_PROVIDER_USERNAME] as String;
+  set configUsername(String username) =>
+      ConfigYaml().settings[AUTH_PROVIDER_USERNAME] = username;
+
+  String get configPassword =>
+      ConfigYaml().settings[AUTH_PROVIDER_PASSWORD] as String;
+  set configPassword(String password) =>
+      ConfigYaml().settings[AUTH_PROVIDER_PASSWORD] = password;
+
+  /// Settings stored in environment variables.
+  String get envToken => env[AUTH_PROVIDER_TOKEN];
+  set envToken(String token) => env[AUTH_PROVIDER_TOKEN] = token;
+
+  String get envEmailAddress => env[AUTH_PROVIDER_EMAIL_ADDRESS];
+  set envEmailAddress(String emailAddress) =>
+      env[AUTH_PROVIDER_EMAIL_ADDRESS] = emailAddress;
+
+  String get envUsername => env[AUTH_PROVIDER_USERNAME];
+  set envUsername(String username) => env[AUTH_PROVIDER_USERNAME] = username;
+
+  String get envPassword => env[AUTH_PROVIDER_PASSWORD];
+  set envPassword(String password) => env[AUTH_PROVIDER_PASSWORD] = password;
 }

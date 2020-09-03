@@ -7,7 +7,8 @@ import 'util.dart';
 
 class RevokeCommand extends Command<void> {
   @override
-  String get description => 'Revokes the active Lets Encrypt certificate and places the server into acquire mode.';
+  String get description =>
+      'Revokes the active Lets Encrypt certificate and places the server into acquire mode.';
 
   @override
   String get name => 'revoke';
@@ -20,7 +21,10 @@ class RevokeCommand extends Command<void> {
     // argParser.addOption('name',
     //     abbr: 'n', help: 'The name of the docker container to attach to');
     argParser.addFlag('debug',
-        abbr: 'd', defaultsTo: false, negatable: false, help: 'Outputs additional logging information');
+        abbr: 'd',
+        defaultsTo: false,
+        negatable: false,
+        help: 'Outputs additional logging information');
   }
 
   @override

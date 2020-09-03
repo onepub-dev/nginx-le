@@ -14,13 +14,17 @@ class StartCommand extends Command<void> {
 
   StartCommand() {
     argParser.addFlag('debug',
-        defaultsTo: false, abbr: 'd', negatable: false, help: 'Outputs additional logging information');
+        defaultsTo: false,
+        abbr: 'd',
+        negatable: false,
+        help: 'Outputs additional logging information');
 
     argParser.addFlag('interactive',
         defaultsTo: false,
         abbr: 'i',
         negatable: false,
-        help: 'Starts the container in the foreground so you can see all output');
+        help:
+            'Starts the container in the foreground so you can see all output');
   }
 
   @override
@@ -35,7 +39,8 @@ class StartCommand extends Command<void> {
 
     var container = Containers().findByContainerId(config.containerid);
     if (container.isRunning) {
-      printerr('The container ${config.containerid} is already running. Consider nginx-le restart');
+      printerr(
+          'The container ${config.containerid} is already running. Consider nginx-le restart');
       showUsage(argParser);
     }
 

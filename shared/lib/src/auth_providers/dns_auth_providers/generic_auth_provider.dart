@@ -19,7 +19,7 @@ abstract class GenericAuthProvider extends AuthProvider {
   ///  var emailaddress = Environment().emailaddress;
   ///  var hostname = Environment().hostname;
   ///  var domain = Environment().domain;
-  ///  var staging = Environment().staging;
+  ///  var production = Environment().production;
   ///
   ///  var auth_hook_path = Environment().certbotDNSAuthHookPath;
   ///  var cleanup_hook_path = Environment().certbotDNSCleanupHookPath;
@@ -36,15 +36,15 @@ abstract class GenericAuthProvider extends AuthProvider {
     var emailaddress = Environment().emailaddress;
     var hostname = Environment().hostname;
     var domain = Environment().domain;
-    var staging = Environment().staging;
+    var production = Environment().production;
 
     var auth_hook_path = Environment().certbotDNSAuthHookPath;
     var cleanup_hook_path = Environment().certbotDNSCleanupHookPath;
 
-    ArgumentError.checkNotNull(
-        auth_hook_path, 'Environment variable: ${Environment().certbotDNSAuthHookPathKey} missing');
-    ArgumentError.checkNotNull(
-        cleanup_hook_path, 'Environment variable: ${Environment().certbotDNSCleanupHookPathKey} missing');
+    ArgumentError.checkNotNull(auth_hook_path,
+        'Environment variable: ${Environment().certbotDNSAuthHookPathKey} missing');
+    ArgumentError.checkNotNull(cleanup_hook_path,
+        'Environment variable: ${Environment().certbotDNSCleanupHookPathKey} missing');
 
     Settings().verbose('Starting cerbot with authProvider: $name');
 
@@ -62,7 +62,7 @@ abstract class GenericAuthProvider extends AuthProvider {
         ' --config-dir=$configDir '
         ' --logs-dir=$logDir ';
 
-    if (staging) certbot += ' --staging ';
+    if (!production) certbot += ' --staging ';
 
     var lines = <String>[];
     var progress = Progress((line) {
@@ -78,7 +78,8 @@ abstract class GenericAuthProvider extends AuthProvider {
     if (progress.exitCode != 0) {
       var system = 'hostname'.firstLine;
 
-      throw CertbotException('certbot failed acquiring a certificate for $hostname.$domain on $system',
+      throw CertbotException(
+          'certbot failed acquiring a certificate for $hostname.$domain on $system',
           details: lines.join('\n'));
     }
   }

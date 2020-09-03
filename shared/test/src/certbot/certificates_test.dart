@@ -26,7 +26,7 @@ void main() {
               '/etc/letsencrypt/config/live/slayer.noojee.org/fullchain.pem'));
       expect(certificate.privateKeyPath,
           equals('/etc/letsencrypt/config/live/slayer.noojee.org/privkey.pem'));
-      expect(certificate.staging, equals(true));
+      expect(certificate.production, equals(true));
       expect(certificate.expiryDate,
           equals(DateTime.parse('2020-10-27 06:10:05+00:00')));
     });

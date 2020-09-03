@@ -16,7 +16,6 @@ export 'src/config/ConfigYaml.dart';
 
 export 'src/auth_providers/auth_providers.dart';
 export 'src/auth_providers/auth_provider.dart';
-export 'src/auth_providers/dns_auth_providers/dns_auth_providers.dart';
 export 'src/auth_providers/dns_auth_providers/generic_auth_provider.dart';
 
 export 'src/auth_providers/http_auth_providers/http_auth.dart';

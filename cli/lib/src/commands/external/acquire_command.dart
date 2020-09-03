@@ -6,7 +6,8 @@ import 'util.dart';
 
 class AcquireCommand extends Command<void> {
   @override
-  String get description => 'Obtains or forces the renewal of a lets encrypt certificate';
+  String get description =>
+      'Obtains or forces the renewal of a lets encrypt certificate';
 
   @override
   String get name => 'acquire';
@@ -36,7 +37,8 @@ class AcquireCommand extends Command<void> {
       var cmd = 'docker exec -it ${config.containerid} /home/bin/acquire ';
 
       print('');
-      print(orange('Please be patient this can take a quite a few minutes to complete'));
+      print(orange(
+          'Please be patient this can take a quite a few minutes to complete'));
 
       if (debug == true) cmd += ' --debug';
       cmd.run;

@@ -10,8 +10,8 @@ void main() {
     var provider = NameCheapAuthProvider();
     var apiKey = ask('Namecheap API Key');
     var apiUsername = ask('Namecheap Username');
-    provider.apiKey = apiKey;
-    provider.apiUsername = apiUsername;
+    provider.envToken = apiKey;
+    provider.envUsername = apiUsername;
     provider.acquire();
   });
 }

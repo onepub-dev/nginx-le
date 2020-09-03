@@ -11,7 +11,7 @@ void main() {
 
   Certbot().sendToStdout();
 
-  var provider = DnsAuthProviders().getByName(NameCheapAuthProvider().name);
+  var provider = AuthProviders().getByName(NameCheapAuthProvider().name);
   provider.auth_hook();
 }
 
@@ -44,8 +44,9 @@ void setNameCheapAuthDetails() {
   var apiKey = ask('Namecheap api key');
   var username = ask('Namecheap api username');
   // pass the security details down to the createDNSChallenge.dart process
-  Environment().namecheapApiUser = username;
-  Environment().namecheapApiKey = apiKey;
+  var provider = AuthProviders().getByName(NameCheapAuthProvider().name);
+  provider.envUsername = username;
+  provider.envToken = apiKey;
 }
 
 String _createDir(String dir) {

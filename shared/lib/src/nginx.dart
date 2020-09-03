@@ -1,8 +1,8 @@
 import '../nginx_le_shared.dart';
 
 class Nginx {
-  static const NGINX_ACCESS_LOG_ENV = 'NGINX_ACCESS_LOG_ENV';
-  static const NGINX_ERROR_LOG_ENV = 'NGINX_ERROR_LOG_ENV';
+  static const NGINX_ACCESS_LOG_PATH = 'NGINX_ACCESS_LOG_PATH';
+  static const NGINX_ERROR_LOG_PATH = 'NGINX_ERROR_LOG_PATH';
   static const NGINX_LOCATION_INCLUDE_PATH = 'NGINX_LOCATION_INCLUDE_PATH';
 
   /// The include path within the container.

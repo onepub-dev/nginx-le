@@ -1,3 +1,19 @@
+# 2.1.2
+Final refactoring and improvements to documentation.
+# 2.1.1
+# 2.1.0
+# 2.1.0
+# 2.0.3
+# 2.0.2
+# 2.0.1
+# 2.0.1
+# 2.0.0
+# 2.0.0
+# 1.4.16
+# 1.4.15
+# 1.4.14
+# 1.4.13
+# 1.4.12
 # 1.4.11
 Fixed wild card cert paths.
 # 1.4.10

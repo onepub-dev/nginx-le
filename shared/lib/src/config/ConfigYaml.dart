@@ -9,14 +9,8 @@ class ConfigYaml {
   static final _self = ConfigYaml._internal();
   static const configDir = '.nginx-le';
   static const configFile = 'settings.yaml';
-
-  // static const CONTENT_SOURCE_PATH = 'Simple wwwroot';
-  // static const CONTENT_SOURCE_LOCATION = 'Locations';
-  // static const CONTENT_SOURCE_TOMCAT = 'Tomcat';
-
   static const MODE_PUBLIC = 'public';
   static const MODE_PRIVATE = 'private';
-
   static const CERTIFICATE_TYPE_PRODUCTION = 'production';
   static const CERTIFICATE_TYPE_STAGING = 'staging';
 
@@ -28,6 +22,7 @@ class ConfigYaml {
 
   /// keys
   static const START_METHOD_KEY = 'start-method';
+  static const START_PAUSED = 'start-paused';
   static const MODE_KEY = 'mode';
   static const HOSTNAME_KEY = 'host';
   static const FQDN_KEY = 'fqdn';
@@ -50,6 +45,7 @@ class ConfigYaml {
 
   String startMethod;
   String mode;
+  bool startPaused;
   String fqdn;
   String tld;
   Image image;
@@ -65,7 +61,7 @@ class ConfigYaml {
   int smtpServerPort = 25;
 
   /// If true we are using a wildcard dns (e.g. *.clouddialer.com.au)
-  bool wildcard = false;
+  bool domainWildcard = false;
 
   // The name of the selected [ContentProvider]
   String contentProvider;
@@ -85,6 +81,7 @@ class ConfigYaml {
     settings = SettingsYaml.load(filePath: configPath);
     startMethod = settings[START_METHOD_KEY] as String;
     mode = settings[MODE_KEY] as String;
+    startPaused = settings[Environment().startPausedKey] as bool;
     fqdn = settings[FQDN_KEY] as String;
     tld = settings[TLD_KEY] as String;
     image = Images().findByImageId(settings[IMAGE] as String);
@@ -95,11 +92,12 @@ class ConfigYaml {
     contentProvider = settings[CONTENT_PROVIDER] as String;
     _hostIncludePath = settings[HOST_INCLUDE_PATH] as String;
 
-    smtpServer = settings[SMTP_SERVER] as String;
-    smtpServerPort = settings[SMTP_SERVER_PORT] as int ?? 25;
+    smtpServer = settings[Environment().smtpServerKey] as String;
+    smtpServerPort = settings[Environment().smtpServerPortKey] as int ?? 25;
 
     /// If true we are using a wildcard dns (e.g. *.clouddialer.com.au)
-    wildcard = ((settings[DOMAIN_WILDCARD] as bool) ?? false);
+    domainWildcard =
+        ((settings[Environment().domainWildcardKey] as bool) ?? false);
   }
 
   ///
@@ -108,7 +106,6 @@ class ConfigYaml {
   bool get isStaging => certificateType == ConfigYaml.CERTIFICATE_TYPE_STAGING;
 
   bool get isModePrivate => mode == MODE_PRIVATE;
-
   String get hostIncludePath {
     _hostIncludePath ??= DEFAULT_HOST_INCLUDE_PATH;
     if (_hostIncludePath.isEmpty) {
@@ -145,6 +142,7 @@ class ConfigYaml {
   void save() {
     settings[START_METHOD_KEY] = startMethod;
     settings[MODE_KEY] = mode;
+    settings[Environment().startPausedKey] = startPaused;
     settings[FQDN_KEY] = fqdn;
     settings[TLD_KEY] = tld;
     settings[IMAGE] = '${image?.imageid}';
@@ -155,9 +153,9 @@ class ConfigYaml {
     settings[CONTENT_PROVIDER] = contentProvider;
     settings[HOST_INCLUDE_PATH] = hostIncludePath;
 
-    settings[SMTP_SERVER] = smtpServer;
-    settings[SMTP_SERVER_PORT] = smtpServerPort;
-    settings[DOMAIN_WILDCARD] = wildcard;
+    settings[Environment().smtpServerKey] = smtpServer;
+    settings[Environment().smtpServerPortKey] = smtpServerPort;
+    settings[Environment().domainWildcardKey] = domainWildcard;
 
     settings.save();
   }

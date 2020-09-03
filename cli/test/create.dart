@@ -12,7 +12,8 @@ void main() {
       --net=host --log-driver=journald -v certificates:/etc/letsencrypt 4bbc656ae28c''';
 
   var lines = <String>[];
-  var progress = Progress((line) => lines.add(line), stderr: (line) => lines.add(line));
+  var progress =
+      Progress((line) => lines.add(line), stderr: (line) => lines.add(line));
 
   cmd.replaceAll('\n', ' ').start(nothrow: true, progress: progress);
 

@@ -9,9 +9,9 @@ class Certificate {
 
   DateTime expiryDate;
 
-  /// If [staging] is true then this is a production certificate
-  /// If [staging] is false then this is a staging/test certificate.
-  bool staging;
+  /// If [production] is true then this is a production certificate
+  /// If [production] is false then this is a staging/test certificate.
+  bool production;
 
   /// If the fqdn starts with a '*' then its a wild card certificate.
   bool wildcard = false;
@@ -40,7 +40,7 @@ class Certificate {
 
     var datePart = expiryDateString.substring(0, 25);
     expiryDate = DateTime.parse(datePart); // 'yyyy-MM-dd hh:mm:ss+');
-    staging = line.contains('TEST_CERT');
+    production = !line.contains('TEST_CERT');
   }
 
   void parseCertificatePath(String line) {

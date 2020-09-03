@@ -2,6 +2,7 @@
 
 import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/namecheap/namecheap_provider.dart';
 
 import 'challenge.dart';
 
@@ -32,14 +33,17 @@ void namecheap_dns_auth_hook() {
   Certbot().log('fqdn: $fqdn');
 
   // ignore: unnecessary_cast
-  var certbotAuthKey = Environment().certbotValidation;
-  Certbot().log('CertbotAuthKey: "$certbotAuthKey"');
-  if (certbotAuthKey == null || certbotAuthKey.isEmpty) {
-    Certbot()
-        .logError('The environment variable ${Environment().certbotValidationKey} was empty dns_auth_hook ABORTED.');
+  var certbotValidation = Environment().certbotValidation;
+  Certbot().log('CertbotAuthKey: "$certbotValidation"');
+
+  if (certbotValidation == null || certbotValidation.isEmpty) {
+    Certbot().logError(
+        'The environment variable ${Environment().certbotValidationKey} was empty dns_auth_hook ABORTED.');
   }
-  ArgumentError.checkNotNull(
-      certbotAuthKey, 'The environment variable ${Environment().certbotValidationKey} was empty');
+  ArgumentError.checkNotNull(certbotValidation,
+      'The environment variable ${Environment().certbotValidationKey} was empty');
+
+  var authProvider = AuthProviders().getByName(NameCheapAuthProvider().name);
 
   /// our own envs.
   var domain = Environment().domain;
@@ -48,9 +52,9 @@ void namecheap_dns_auth_hook() {
   Certbot().log('${Environment().hostnameKey}: $hostname');
   var tld = Environment().tld;
   Certbot().log('tld: $tld');
-  var username = Environment().namecheapApiUser;
+  var username = authProvider.envUsername;
   Certbot().log('username: $username');
-  var apiKey = Environment().namecheapApiKey;
+  var apiKey = authProvider.envToken;
   Certbot().log('apiKey: $apiKey');
 
   /// the number of times we look to see if the DNS challenge is resolving.
@@ -59,7 +63,8 @@ void namecheap_dns_auth_hook() {
 
   if (fqdn == null || fqdn.isEmpty) {
     printerr('Throwing exception: fqdn is empty');
-    throw ArgumentError('No fqdn found in env var ${Environment().certbotDomainKey}');
+    throw ArgumentError(
+        'No fqdn found in env var ${Environment().certbotDomainKey}');
   }
 
   try {
@@ -67,14 +72,19 @@ void namecheap_dns_auth_hook() {
     /// Create the required DNS entry for the Certbot challenge.
     ///
     Settings().verbose('Creating challenge');
-    var challenge = Challenge.simple(apiKey: apiKey, username: username, apiUsername: username);
+    var challenge = Challenge.simple(
+        apiKey: apiKey, username: username, apiUsername: username);
     Settings().verbose('calling challenge.present');
 
     ///
     /// Writes the DNS record and waits for it to be visible.
     ///
     if ((challenge.present(
-        hostname: hostname, domain: domain, tld: tld, certbotAuthKey: certbotAuthKey, retries: retries))) {
+        hostname: hostname,
+        domain: domain,
+        tld: tld,
+        certbotValidationString: certbotValidation,
+        retries: retries))) {
       Certbot().log('createDNSChallenged SUCCESS');
     } else {
       Certbot().log('createDNSChallenged failed');

@@ -29,10 +29,10 @@ class Container {
     }
   }
 
+  /// some comment.
   void start({bool interactive = false}) {
     var option = (interactive ? ' -i ' : '');
     var cmd = 'docker start $option $containerid';
-    print('running $cmd');
     cmd.start(
         progress: Progress((line) => print(line),
             stderr: (line) => printerr(red(line))));
