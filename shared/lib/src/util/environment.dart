@@ -63,25 +63,21 @@ class Environment {
 
   String get smtpServerPortKey => 'SMTP_SERVER_PORT';
   int get smtpServerPort => int.tryParse(env[smtpServerPortKey] ?? '25') ?? 25;
-  set smtpServerPort(int smtpServerPort) =>
-      env[smtpServerPortKey] = '$smtpServerPort';
+  set smtpServerPort(int smtpServerPort) => env[smtpServerPortKey] = '$smtpServerPort';
 
   /// the certbot auth provider.
-  String get certbotAuthProviderKey => 'CERTBOT_AUTH_PROVIDER';
+  String get certbotAuthProviderKey => 'AUTH_PROVIDER';
   String get certbotAuthProvider => env[certbotAuthProviderKey];
-  set certbotAuthProvider(String certbotAuthProvider) =>
-      env[certbotAuthProviderKey] = certbotAuthProvider;
+  set certbotAuthProvider(String certbotAuthProvider) => env[certbotAuthProviderKey] = certbotAuthProvider;
 
   /// Certbot
   String get certbotVerboseKey => 'CERTBOT_VERBOSE';
   bool get certbotVerbose => env[certbotVerboseKey] == 'true';
-  set certbotVerbose(bool certbotVerbose) =>
-      env[certbotVerboseKey] = '$certbotVerbose';
+  set certbotVerbose(bool certbotVerbose) => env[certbotVerboseKey] = '$certbotVerbose';
 
   String get certbotRootKey => Certbot.LETSENCRYPT_ROOT_ENV;
   String get certbotRoot => env[certbotRootKey];
-  set certbotRoot(String letsencryptDir) =>
-      env[certbotRootKey] = letsencryptDir;
+  set certbotRoot(String letsencryptDir) => env[certbotRootKey] = letsencryptDir;
 
   String get certbotDomainKey => 'CERTBOT_DOMAIN';
   String get certbotDomain => env[certbotDomainKey];
@@ -98,13 +94,11 @@ class Environment {
   /// passed in via the docker container
   String get certbotDNSAuthHookPathKey => 'CERTBOT_DNS_AUTH_HOOK_PATH';
   String get certbotDNSAuthHookPath => env[certbotDNSAuthHookPathKey];
-  set certbotDNSAuthHookPath(String certbotDNSAuthHookPath) =>
-      env[certbotDNSAuthHookPathKey];
+  set certbotDNSAuthHookPath(String certbotDNSAuthHookPath) => env[certbotDNSAuthHookPathKey];
 
   String get certbotDNSCleanupHookPathKey => 'CERTBOT_DNS_CLEANUP_HOOK_PATH';
   String get certbotDNSCleanupHookPath => env[certbotDNSCleanupHookPathKey];
-  set certbotDNSCleanupHookPath(String certbotDNSCleanupHookPath) =>
-      env[certbotDNSCleanupHookPathKey];
+  set certbotDNSCleanupHookPath(String certbotDNSCleanupHookPath) => env[certbotDNSCleanupHookPathKey];
 
   /// passed in via the docker container
   String get certbotHTTPAuthHookPathKey => 'CERTBOT_HTTP_AUTH_HOOK_PATH';
@@ -112,25 +106,21 @@ class Environment {
   String get certbotHTTPCleanupHookPath => env[certbotHTTPAuthHookPathKey];
 
   String get certbotDNSRetriesKey => 'DNS_RETRIES';
-  int get certbotDNSRetries =>
-      int.tryParse(env[certbotDNSRetriesKey] ?? '20') ?? 20;
+  int get certbotDNSRetries => int.tryParse(env[certbotDNSRetriesKey] ?? '20') ?? 20;
   set certbotDNSRetries(int retries) => env[certbotDNSRetriesKey] = 'retries';
 
   /// NGINX
   ///
   ///
   String get certbotRootPathOverwrite => env[Certbot.NGINX_CERT_ROOT_OVERWRITE];
-  set certbotRootPathOverwrite(String overwriteDir) =>
-      env[Certbot.NGINX_CERT_ROOT_OVERWRITE] = overwriteDir;
+  set certbotRootPathOverwrite(String overwriteDir) => env[Certbot.NGINX_CERT_ROOT_OVERWRITE] = overwriteDir;
 
   String get nginxAccessLogPath => env[Nginx.NGINX_ACCESS_LOG_PATH];
-  set nginxAccessLogPath(String path) =>
-      env[Nginx.NGINX_ACCESS_LOG_PATH] = path;
+  set nginxAccessLogPath(String path) => env[Nginx.NGINX_ACCESS_LOG_PATH] = path;
 
   String get nginxErrorLogPath => env[Nginx.NGINX_ERROR_LOG_PATH];
   set nginxErrorLogPath(String path) => env[Nginx.NGINX_ERROR_LOG_PATH] = path;
 
   String get nginxLocationIncludePath => env[Nginx.NGINX_LOCATION_INCLUDE_PATH];
-  set nginxLocationIncludePath(String path) =>
-      env[Nginx.NGINX_LOCATION_INCLUDE_PATH] = path;
+  set nginxLocationIncludePath(String path) => env[Nginx.NGINX_LOCATION_INCLUDE_PATH] = path;
 }

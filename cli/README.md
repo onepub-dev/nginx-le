@@ -50,6 +50,12 @@ Nginx-LE leaves your web server fully operational whilst it acquires or renews a
 After acquiring or renewing a certificate Nginx-LE performs an Nginx `reload` command which 
 is close to instantaneous.
 
+# Quick Start
+
+The following guide takes you through building an Nginx-LE server on your local machine.
+
+To complete this process you will need 
+
 # Public Web Server
 
 A Public Web Servers is where the Web Server exposes port 80 and 443 on a public IP address with a public DNS A record (e.g. host.mydomain.com resolves to the web server's IP address).
@@ -320,7 +326,7 @@ ginx-le:
       EMAIL_ADDRESS: support@example.com
       AUTO_ACQUIRE=true
       DEBUG: "true"
-      CERTBOT_AUTH_PROVIDER=cloudflare
+      AUTH_PROVIDER=cloudflare
       AUTH_PROVIDER_TOKEN=XXXXXXX
       AUTH_PROVIDER_EMAIL_ADDRESS=XXX@XXXXX
       SMTP_SERVER=smtp.someserver.com
@@ -532,7 +538,7 @@ If you use `nginx-le config` to create the docker container then it automaticall
 | PRODUCTION | bool | true\|false| True to use a 'production' certbot certificate. False will acquire a Staging (test) certificate. We recommend that you set this to false during testing.
 | DOMAIN_WILDCARD|bool| true \|false| Controls whether we acquire a single FQDN certificate or a domain wildcard certificate. Set to true to obtain a wild card domain. If you use this option on a number of servers which use the same domain then you will quickly hit the Certbot rate limits.
 | AUTO_ACQUIRE | bool| true\|false| Defaults to true. If true Nginx-LE will automatically acquire a certificate.
-| CERTBOT_AUTH_PROVIDER | String |  HTTP01Auth \| cloudflare \| namecheap| Select the Certbot Authentication method. 
+| AUTH_PROVIDER | String |  HTTP01Auth \| cloudflare \| namecheap| Select the Certbot Authentication method. 
 | SMTP_SERVER| String | FQDN or IP| The FQDN or IP of the SMTP server Nginx-LE is to use to send error emails via. Currently we only support email servers that don't require authentication.
 | SMTP_SERVER_PORT| int | Port no.| Defaults to 25, The tcp port no.of the SMTP server Nginx-LE is to use to send error emails via.
 | START_PAUSED | bool | true \|false | If true then the docker container will start but it won't try to start nginx or acquire a certificate. This mode is intended to help diagnose startup problems. Use nginx-le cli to attach to the container.
@@ -583,7 +589,7 @@ HTTP01 Auth does not support wildcard certificates.
 
 Set the following environment variables:
 
-CERTBOT_AUTH_PROVIDER=HTTP01Auth
+AUTH_PROVIDER=HTTP01Auth
 
 DOMAIN_WILDCARD=false
 
@@ -595,7 +601,7 @@ The Namecheap API is very crappy and requires that we update EVERY dns record to
 
 It is also currently limited to domains that have no more than 10 A records. This could be fixed by changing the request from a HTTP GET to a POST but unfortunately Namecheap hasn't documented the POST method.
 
-CERTBOT_AUTH_PROVIDER=namecheap
+AUTH_PROVIDER=namecheap
 
 AUTH_PROVIDER_TOKEN=name cheap Api Key
 
@@ -608,7 +614,7 @@ DOMAIN_WILDCARD=true|false
 
 This is the most versatile auth provider as it supports public and private websites as well as Wildcard and single FQDN certificates.
 
-CERTBOT_AUTH_PROVIDER=cloudflare
+AUTH_PROVIDER=cloudflare
 
 AUTH_PROVIDER_TOKEN=api token for cloudflare
 
