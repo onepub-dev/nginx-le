@@ -49,21 +49,18 @@ class DoctorCommand extends Command<void> {
     _colprint(['ConfigPath', config.configPath]);
     _colprint(['Mode', config.mode]);
     _colprint(['FQDN', config.fqdn]);
-    _colprint(['TLD', config.tld]);
+    _colprint(['${Environment().tldKey}', config.tld]);
     _colprint(['Docker ImageID', config.image?.imageid]);
     _colprint(['Cert Type', config.certificateType]);
     _colprint(['Docker container', config.containerid]);
+    _colprint(['Mode ', config.mode]);
 
-    if (config.isModePrivate) {
-      _colprint(['HTTP AuthProvider', 'true']);
-    } else {
-      _colprint(['DNS Auth Provider', config.certbothAuthProvider]);
+    _colprint(['Auth Provider', config.certbothAuthProvider]);
 
-      var authProvider = DnsAuthProviders().getByName(config.certbothAuthProvider);
-      var envs = authProvider.environment;
-      for (var env in envs) {
-        _colprint([env.name, env.value]);
-      }
+    var authProvider = AuthProviders().getByName(config.certbothAuthProvider);
+    var envs = authProvider.environment;
+    for (var env in envs) {
+      _colprint([env.name, env.value]);
     }
 
     var provider = ContentProviders().getByName(config.contentProvider);
@@ -153,7 +150,7 @@ class _Owner {
   String group;
 
   _Owner(String path) {
-    if (Platform.isWindows) {
+    if (Settings().isWindows) {
       user = 'Unknown';
       group = 'Unknown';
     } else {
