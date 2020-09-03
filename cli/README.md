@@ -553,15 +553,15 @@ You do not normally need to worry about these as the Nginx-LE sets these as nece
 
 | Name | Type | Domain | Description |
 | ----- | ---- | ---- | ---- |
-| LETSENCRYPT_ROOT_ENV | String | Path | Path to the letsencrypt root directory which defaults to: `/etc/letsencrypt`. You don't normally need to alter this. Its primary purpose is for Unit Testing.
 | LOG_FILE | String | Path | The name of the logfile that certbot writes to. We also redirect the auth providers to write to this log file.
-| NGINX_CERT_ROOT_OVERWRITE | String | Path | Only used for Unit Testing. Sets the path where certbot saves certificates to.
+| CERTBOT_ROOT_PATH | String | Path | Path to the letsencrypt root directory which defaults to: `/etc/letsencrypt`. You don't normally need to alter this. Its primary purpose is for Unit Testing.
 | CERTBOT_VERBOSE | String | true \| false | Used by the `acquire` command to control the log level of the Certbot Auth and Cleanup hooks.
 | CERTBOT_DNS_AUTH_HOOK_PATH | String | Path | Path to the DNS auth hook if we are using one of the DNS Auth providers. 
 | CERTBOT_DNS_CLEANUP_HOOK_PATH | String |Path | Path to the DNS auth hook cleanup script.
 | CERTBOT_HTTP_AUTH_HOOK_PATH | String | Path |Path to the HTTP auth hook
 | CERTBOT_HTTP_CLEANUP_HOOK_PATH | String | Path |Path to the HTTP auth hook cleanup script.
 | DNS_RETRIES | int | Integer |The number of times the DNS Auth Hook will check the DNS for the required TXT record.
+| NGINX_CERT_ROOT_OVERWRITE | String | Path | Only used for Unit Testing. Sets the path where certbot saves certificates to.
 | NGINX_ACCESS_LOG_PATH | String |Path | Path to the Nginx access.log file in the container.
 | NGINX_ERROR_LOG_PATH | String | Path |Path to the Nginx error.log file in the container
 | NGINX_LOCATION_INCLUDE_PATH | String |Path | Path of the .location and .upstream files.
