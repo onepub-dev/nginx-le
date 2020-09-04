@@ -25,13 +25,13 @@ void main() {
 
 void prepareCertHooks() {
   var letsencryptDir = '/tmp/letsencrypt';
-  Environment().certbotRoot = letsencryptDir;
+  Environment().certbotRootPath = letsencryptDir;
   Environment().certbotDomain = 'noojee.org';
   Environment().tld = 'org';
   Environment().certbotValidation = 'TEST_TOKEN_ABC134';
   Environment().certbotToken = 'token_file';
 
-  Environment().certbotRootPathOverwrite = '/tmp/nginx/certs';
+  Environment().nginxCertRootPathOverwrite = '/tmp/nginx/certs';
   _createDir(Certbot.nginxCertPath);
 
   _createDir(Certbot.letsEncryptWorkPath);

@@ -109,7 +109,7 @@ class ConfigCommand extends Command<void> {
       volumes += ' -v ${volume.hostPath}:${volume.containerPath}';
     }
 
-    var authProvider = AuthProviders().getByName(config.certbothAuthProvider);
+    var authProvider = AuthProviders().getByName(config.authProvider);
     var environments = authProvider.environment;
 
     var dnsProviderEnvs = '';
@@ -124,7 +124,7 @@ class ConfigCommand extends Command<void> {
         ' --env=${Environment().domainKey}=${config.domain}'
         ' --env=${Environment().tldKey}=${config.tld}'
         ' --env=${Environment().startPausedKey}=${config.startPaused}'
-        ' --env=${Environment().certbotAuthProviderKey}=${config.certbothAuthProvider}'
+        ' --env=${Environment().authProviderKey}=${config.authProvider}'
         ' --env=${Environment().emailaddressKey}=${config.emailaddress}'
         ' --env=${Environment().smtpServerKey}=${config.smtpServer}'
         ' --env=${Environment().smtpServerPortKey}=${config.smtpServerPort}'
@@ -174,7 +174,7 @@ class ConfigCommand extends Command<void> {
     var authProviders = AuthProviders().getValidProviders(config);
 
     var defaultProvider =
-        AuthProviders().getByName(config.certbothAuthProvider);
+        AuthProviders().getByName(config.authProvider);
     print('');
     print(green('Select the Auth Provider'));
     var provider = menu<AuthProvider>(
@@ -183,7 +183,7 @@ class ConfigCommand extends Command<void> {
         defaultOption: defaultProvider,
         format: (provider) => provider.summary);
 
-    config.certbothAuthProvider = provider.name;
+    config.authProvider = provider.name;
 
     provider.promptForSettings(config);
   }

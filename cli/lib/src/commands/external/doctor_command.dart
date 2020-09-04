@@ -55,9 +55,9 @@ class DoctorCommand extends Command<void> {
     _colprint(['Docker ImageID', config.image?.imageid]);
     _colprint(['Cert Type', config.certificateType]);
     _colprint(['Docker container', config.containerid]);
-    _colprint(['Auth Provider', config.certbothAuthProvider]);
+    _colprint(['Auth Provider', config.authProvider]);
 
-    var authProvider = AuthProviders().getByName(config.certbothAuthProvider);
+    var authProvider = AuthProviders().getByName(config.authProvider);
     var envs = authProvider.environment;
     for (var env in envs) {
       _colprint([env.name, env.value]);

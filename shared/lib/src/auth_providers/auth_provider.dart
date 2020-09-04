@@ -41,37 +41,34 @@ abstract class AuthProvider {
   bool get supportsPrivateMode;
 
   /// Settings stored in the configuration file
-  String get configToken =>
-      ConfigYaml().settings[AUTH_PROVIDER_TOKEN] as String;
-  set configToken(String token) =>
-      ConfigYaml().settings[AUTH_PROVIDER_TOKEN] = token;
+  String get configToken => ConfigYaml().settings[AUTH_PROVIDER_TOKEN] as String;
+  set configToken(String token) => ConfigYaml().settings[AUTH_PROVIDER_TOKEN] = token;
 
-  String get configEmailAddress =>
-      ConfigYaml().settings[AUTH_PROVIDER_EMAIL_ADDRESS] as String;
-  set configEmailAddress(String emailAddress) =>
-      ConfigYaml().settings[AUTH_PROVIDER_EMAIL_ADDRESS] = emailAddress;
+  String get configEmailAddress => ConfigYaml().settings[AUTH_PROVIDER_EMAIL_ADDRESS] as String;
+  set configEmailAddress(String emailAddress) => ConfigYaml().settings[AUTH_PROVIDER_EMAIL_ADDRESS] = emailAddress;
 
-  String get configUsername =>
-      ConfigYaml().settings[AUTH_PROVIDER_USERNAME] as String;
-  set configUsername(String username) =>
-      ConfigYaml().settings[AUTH_PROVIDER_USERNAME] = username;
+  String get configUsername => ConfigYaml().settings[AUTH_PROVIDER_USERNAME] as String;
+  set configUsername(String username) => ConfigYaml().settings[AUTH_PROVIDER_USERNAME] = username;
 
-  String get configPassword =>
-      ConfigYaml().settings[AUTH_PROVIDER_PASSWORD] as String;
-  set configPassword(String password) =>
-      ConfigYaml().settings[AUTH_PROVIDER_PASSWORD] = password;
+  String get configPassword => ConfigYaml().settings[AUTH_PROVIDER_PASSWORD] as String;
+  set configPassword(String password) => ConfigYaml().settings[AUTH_PROVIDER_PASSWORD] = password;
 
   /// Settings stored in environment variables.
   String get envToken => env[AUTH_PROVIDER_TOKEN];
   set envToken(String token) => env[AUTH_PROVIDER_TOKEN] = token;
 
   String get envEmailAddress => env[AUTH_PROVIDER_EMAIL_ADDRESS];
-  set envEmailAddress(String emailAddress) =>
-      env[AUTH_PROVIDER_EMAIL_ADDRESS] = emailAddress;
+  set envEmailAddress(String emailAddress) => env[AUTH_PROVIDER_EMAIL_ADDRESS] = emailAddress;
 
   String get envUsername => env[AUTH_PROVIDER_USERNAME];
   set envUsername(String username) => env[AUTH_PROVIDER_USERNAME] = username;
 
   String get envPassword => env[AUTH_PROVIDER_PASSWORD];
   set envPassword(String password) => env[AUTH_PROVIDER_PASSWORD] = password;
+
+  void dumpEnvironmentVariables();
+
+  void printEnv(String key, String value) {
+    print('ENV: $key=$value');
+  }
 }

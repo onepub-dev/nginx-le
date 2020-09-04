@@ -58,7 +58,7 @@ void main() {
 }
 
 void setup() {
-  Environment().certbotRoot = '/tmp/letsencrypt';
+  Environment().certbotRootPath = '/tmp/letsencrypt';
   if (!exists(Certbot.letsEncryptRootPath)) {
     createDir(Certbot.letsEncryptRootPath);
   }

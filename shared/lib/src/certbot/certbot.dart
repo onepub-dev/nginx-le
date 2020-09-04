@@ -9,7 +9,7 @@ import 'package:path/path.dart';
 import '../../nginx_le_shared.dart';
 
 class Certbot {
-  static const LETSENCRYPT_ROOT_ENV = 'LETSENCRYPT_ROOT_ENV';
+  
 
   /// The directory where lets encrypt stores its certificates.
   /// As we need to persist certificates between container restarts
@@ -21,7 +21,7 @@ class Certbot {
 
   /// The directory where nginx loads its certificates from.
   static const NGINX_CERT_ROOT = '/etc/nginx/certs/';
-  static const NGINX_CERT_ROOT_OVERWRITE = 'NGINX_CERT_ROOT_OVERWRITE';
+
 
   /// The file containing the concatenated certs.
   static const CERTIFICATES_FILE = 'fullchain.pem';
@@ -194,7 +194,7 @@ class Certbot {
   static String get letsEncryptRootPath {
     /// allow the root to be over-ridden to make testing easier.
     // ignore: unnecessary_cast
-    var root = Environment().certbotRoot;
+    var root = Environment().certbotRootPath;
     if (root == null) {
       return LETSENCRYPT_ROOT;
     } else {
@@ -339,7 +339,7 @@ class Certbot {
   }
 
   static String get nginxCertPath {
-    var path = Environment().certbotRootPathOverwrite;
+    var path = Environment().nginxCertRootPathOverwrite;
 
     path ??= NGINX_CERT_ROOT;
     return path;

@@ -1,7 +1,4 @@
 import 'package:dcli/dcli.dart';
-import 'package:nginx_le_shared/src/certbot/certbot.dart';
-
-import '../nginx.dart';
 
 class Environment {
   static final _self = Environment._internal();
@@ -66,18 +63,18 @@ class Environment {
   set smtpServerPort(int smtpServerPort) => env[smtpServerPortKey] = '$smtpServerPort';
 
   /// the certbot auth provider.
-  String get certbotAuthProviderKey => 'AUTH_PROVIDER';
-  String get certbotAuthProvider => env[certbotAuthProviderKey];
-  set certbotAuthProvider(String certbotAuthProvider) => env[certbotAuthProviderKey] = certbotAuthProvider;
+  String get authProviderKey => 'AUTH_PROVIDER';
+  String get authProvider => env[authProviderKey];
+  set authProvider(String authProvider) => env[authProviderKey] = authProvider;
 
   /// Certbot
   String get certbotVerboseKey => 'CERTBOT_VERBOSE';
   bool get certbotVerbose => env[certbotVerboseKey] == 'true';
   set certbotVerbose(bool certbotVerbose) => env[certbotVerboseKey] = '$certbotVerbose';
 
-  String get certbotRootKey => Certbot.LETSENCRYPT_ROOT_ENV;
-  String get certbotRoot => env[certbotRootKey];
-  set certbotRoot(String letsencryptDir) => env[certbotRootKey] = letsencryptDir;
+  String get certbotRootPathKey => 'CERTBOT_ROOT_PATH';
+  String get certbotRootPath => env[certbotRootPathKey];
+  set certbotRootPath(String certbotRootPath) => env[certbotRootPathKey] = certbotRootPath;
 
   String get certbotDomainKey => 'CERTBOT_DOMAIN';
   String get certbotDomain => env[certbotDomainKey];
@@ -112,15 +109,19 @@ class Environment {
   /// NGINX
   ///
   ///
-  String get certbotRootPathOverwrite => env[Certbot.NGINX_CERT_ROOT_OVERWRITE];
-  set certbotRootPathOverwrite(String overwriteDir) => env[Certbot.NGINX_CERT_ROOT_OVERWRITE] = overwriteDir;
+  String get nginxCertRootPathOverwriteKey => 'NGINX_CERT_ROOT_OVERWRITE';
+  String get nginxCertRootPathOverwrite => env[nginxCertRootPathOverwriteKey];
+  set nginxCertRootPathOverwrite(String overwriteDir) => env[nginxCertRootPathOverwriteKey] = overwriteDir;
 
-  String get nginxAccessLogPath => env[Nginx.NGINX_ACCESS_LOG_PATH];
-  set nginxAccessLogPath(String path) => env[Nginx.NGINX_ACCESS_LOG_PATH] = path;
+  String get nginxAccessLogPathKey => 'NGINX_ACCESS_LOG_PATH';
+  String get nginxAccessLogPath => env[nginxAccessLogPathKey];
+  set nginxAccessLogPath(String path) => env[nginxAccessLogPathKey] = path;
 
-  String get nginxErrorLogPath => env[Nginx.NGINX_ERROR_LOG_PATH];
-  set nginxErrorLogPath(String path) => env[Nginx.NGINX_ERROR_LOG_PATH] = path;
+  String get nginxErrorLogPathKey => 'NGINX_ERROR_LOG_PATH';
+  String get nginxErrorLogPath => env[nginxErrorLogPathKey];
+  set nginxErrorLogPath(String path) => env[nginxErrorLogPathKey] = path;
 
-  String get nginxLocationIncludePath => env[Nginx.NGINX_LOCATION_INCLUDE_PATH];
-  set nginxLocationIncludePath(String path) => env[Nginx.NGINX_LOCATION_INCLUDE_PATH] = path;
+  String get nginxLocationIncludePathKey => 'NGINX_LOCATION_INCLUDE_PATH';
+  String get nginxLocationIncludePath => env[nginxLocationIncludePathKey];
+  set nginxLocationIncludePath(String path) => env[nginxLocationIncludePathKey] = path;
 }

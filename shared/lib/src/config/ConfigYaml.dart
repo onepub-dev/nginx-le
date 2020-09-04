@@ -30,10 +30,10 @@ class ConfigYaml {
   static const IMAGE = 'image';
   static const CONTAINERID = 'containerid';
   static const EMAILADDRESS = 'emailaddress';
-  static const DNS_AUTH_PROVIDER = 'dns_auth_provider';
   static const CERTIFICATE_TYPE = 'certificate_type';
   static const HOST_INCLUDE_PATH = 'host_include_path';
   static const CONTENT_PROVIDER = 'content_provider';
+  static const AUTH_PROVIDER = 'auth_provider';
   static const WWW_ROOT = 'www_root';
 
   static const SMTP_SERVER = 'smtp_server';
@@ -69,7 +69,8 @@ class ConfigYaml {
   /// host path which is mounted into ngix and contains .location and .upstream files from.
   String _hostIncludePath;
 
-  String certbothAuthProvider;
+  /// the DNS authentication provider to be used by certbot
+  String authProvider;
 
   factory ConfigYaml() => _self;
 
@@ -88,7 +89,7 @@ class ConfigYaml {
     certificateType = settings[CERTIFICATE_TYPE] as String;
     emailaddress = settings[EMAILADDRESS] as String;
     containerid = settings[CONTAINERID] as String;
-    certbothAuthProvider = settings[DNS_AUTH_PROVIDER] as String;
+    authProvider = settings[AUTH_PROVIDER] as String;
     contentProvider = settings[CONTENT_PROVIDER] as String;
     _hostIncludePath = settings[HOST_INCLUDE_PATH] as String;
 
@@ -96,8 +97,7 @@ class ConfigYaml {
     smtpServerPort = settings[Environment().smtpServerPortKey] as int ?? 25;
 
     /// If true we are using a wildcard dns (e.g. *.clouddialer.com.au)
-    domainWildcard =
-        ((settings[Environment().domainWildcardKey] as bool) ?? false);
+    domainWildcard = ((settings[Environment().domainWildcardKey] as bool) ?? false);
   }
 
   ///
@@ -149,7 +149,7 @@ class ConfigYaml {
     settings[CERTIFICATE_TYPE] = certificateType;
     settings[EMAILADDRESS] = emailaddress;
     settings[CONTAINERID] = containerid;
-    settings[DNS_AUTH_PROVIDER] = certbothAuthProvider;
+    settings[AUTH_PROVIDER] = authProvider;
     settings[CONTENT_PROVIDER] = contentProvider;
     settings[HOST_INCLUDE_PATH] = hostIncludePath;
 
@@ -166,14 +166,12 @@ class ConfigYaml {
 
   void validate(void Function() showUsage) {
     if (!isConfigured) {
-      printerr(red(
-          "A saved configuration doesn't exist. You must use first run 'nginx-le config."));
+      printerr(red("A saved configuration doesn't exist. You must use first run 'nginx-le config."));
       showUsage();
     }
 
     if (image == null) {
-      printerr(red(
-          "Your configuration is in an inconsistent state. (image is null). Run 'nginx-le config'."));
+      printerr(red("Your configuration is in an inconsistent state. (image is null). Run 'nginx-le config'."));
       showUsage();
     }
 

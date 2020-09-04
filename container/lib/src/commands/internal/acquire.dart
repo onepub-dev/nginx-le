@@ -22,10 +22,10 @@ void acquire(List<String> args) {
   Settings().verbose(
       '${Environment().domainWildcardKey}:${Environment().domainWildcard}');
   Settings().verbose(
-      '${Environment().certbotAuthProviderKey}:${Environment().certbotAuthProvider}');
+      '${Environment().authProviderKey}:${Environment().authProvider}');
 
   var authProvider =
-      AuthProviders().getByName(Environment().certbotAuthProvider);
+      AuthProviders().getByName(Environment().authProvider);
   authProvider.acquire();
 
   Certbot().deployCertificates(

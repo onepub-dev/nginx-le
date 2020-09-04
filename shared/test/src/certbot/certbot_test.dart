@@ -47,7 +47,7 @@ void main() {
   test('parse', () {
     var path = Directory('/tmp').createTempSync().path;
 
-    Environment().certbotRoot = path;
+    Environment().certbotRootPath = path;
     createDir(
         join(Certbot.letsEncryptConfigPath, 'live',
             'robtest18-new.clouddialer.com.au'),
