@@ -66,6 +66,6 @@ class NameCheapAuthProvider extends GenericAuthProvider {
   @override
   void dumpEnvironmentVariables() {
     printEnv(AuthProvider.AUTH_PROVIDER_TOKEN, envToken);
-    printEnv(AuthProvider.AUTH_PROVIDER_USERNAME, configUsername);
+    printEnv(AuthProvider.AUTH_PROVIDER_USERNAME, envUsername);
   }
 }
