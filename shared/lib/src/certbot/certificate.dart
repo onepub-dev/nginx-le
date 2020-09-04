@@ -113,6 +113,7 @@ class Certificate {
     var offset = DateTime.now().timeZoneOffset;
     var hours = offset.inHours + offset.inMinutes / 60;
     return '''Name: $fqdn 
+    Production: $production
     Wildcard: $wildcard
     Domains: $domains 
     Expiry: ${dateTimeToOffset(datetime: expiryDate, offset: hours)}
