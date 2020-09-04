@@ -87,7 +87,7 @@ void makeRelative(String pathToPubSpec) {
     pathToPubSpec.append('    path:');
     pathToPubSpec.append('      ../shared');
 
-    print(green('nginx_le_shared is no a relative dependency'));
+    print(green('nginx_le_shared is now a relative dependency'));
   }
 }
 
