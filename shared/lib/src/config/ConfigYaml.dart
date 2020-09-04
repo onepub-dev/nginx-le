@@ -97,14 +97,13 @@ class ConfigYaml {
     smtpServerPort = settings[Environment().smtpServerPortKey] as int ?? 25;
 
     /// If true we are using a wildcard dns (e.g. *.clouddialer.com.au)
-    domainWildcard =
-        ((settings[Environment().domainWildcardKey] as bool) ?? false);
+    domainWildcard = ((settings[Environment().domainWildcardKey] as bool) ?? false);
   }
 
   ///
   bool get isConfigured => d.exists(configPath) && fqdn != null;
 
-  bool get isStaging => certificateType == ConfigYaml.CERTIFICATE_TYPE_STAGING;
+  bool get isProduction => certificateType == ConfigYaml.CERTIFICATE_TYPE_PRODUCTION;
 
   bool get isModePrivate => mode == MODE_PRIVATE;
   String get hostIncludePath {
@@ -167,14 +166,12 @@ class ConfigYaml {
 
   void validate(void Function() showUsage) {
     if (!isConfigured) {
-      printerr(red(
-          "A saved configuration doesn't exist. You must use first run 'nginx-le config."));
+      printerr(red("A saved configuration doesn't exist. You must use first run 'nginx-le config."));
       showUsage();
     }
 
     if (image == null) {
-      printerr(red(
-          "Your configuration is in an inconsistent state. (image is null). Run 'nginx-le config'."));
+      printerr(red("Your configuration is in an inconsistent state. (image is null). Run 'nginx-le config'."));
       showUsage();
     }
 
