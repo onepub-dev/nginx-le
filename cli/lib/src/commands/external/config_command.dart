@@ -123,6 +123,7 @@ class ConfigCommand extends Command<void> {
         ' --env=${Environment().hostnameKey}=${config.hostname}'
         ' --env=${Environment().domainKey}=${config.domain}'
         ' --env=${Environment().tldKey}=${config.tld}'
+        ' --env=${Environment().productionKey}=${config.isProduction.toString()}'
         ' --env=${Environment().startPausedKey}=${config.startPaused}'
         ' --env=${Environment().authProviderKey}=${config.authProvider}'
         ' --env=${Environment().emailaddressKey}=${config.emailaddress}'
