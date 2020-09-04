@@ -614,6 +614,9 @@ DOMAIN_WILDCARD=true|false
 
 This is the most versatile auth provider as it supports public and private websites as well as Wildcard and single FQDN certificates.
 
+NOTE: currently we only support using a cloudflare global access token.  A restricted API token will NOT WORK.
+This is due to ubuntu 20.04 using an old version of certbot. When a newer version is available we will upgrade to support the restricted access token.
+
 AUTH_PROVIDER=cloudflare
 
 AUTH_PROVIDER_TOKEN=api token for cloudflare

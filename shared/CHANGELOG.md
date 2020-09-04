@@ -1,3 +1,4 @@
+# 2.3.0
 # 2.1.2
 Final refactoring and improvements to documentation.
 # 2.1.1

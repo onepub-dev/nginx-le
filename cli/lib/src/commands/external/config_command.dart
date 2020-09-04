@@ -173,8 +173,7 @@ class ConfigCommand extends Command<void> {
   void selectAuthProvider(ConfigYaml config) {
     var authProviders = AuthProviders().getValidProviders(config);
 
-    var defaultProvider =
-        AuthProviders().getByName(config.authProvider);
+    var defaultProvider = AuthProviders().getByName(config.authProvider);
     print('');
     print(green('Select the Auth Provider'));
     var provider = menu<AuthProvider>(

@@ -1,7 +1,7 @@
-name: nginx_le_shared
-version: 2.3.0
-homepage: https://github.com/bsutton/nginx-le
-description: shared library used by Nginx-LE
+name: nginx_le_container
+version: 2.1.1
+description: Commands that live in the nginx-le docker container.
+repository: https://github.com/bsutton/nginx-le
 environment: 
   sdk: '>=2.8.0 <3.0.0'
 dependencies: 
@@ -10,17 +10,21 @@ dependencies:
   path: ^1.6.4
   cron: ^0.2.3
   dcli: ^0.24.0
-  instant: ^0.3.2
+  xml: ^4.2.0
   http: ^0.12.1
   intl: ^0.16.1
   isolate: ^2.0.3
-  mailer: ^3.0.4
   meta: ^1.0.0
   pedantic: ^1.0.0
   public_suffix: ^1.0.0
-  settings_yaml: ^2.0.0
   uuid: ^2.0.4
-  xml: ^4.2.0
-  yaml: ^2.2.1
+  nginx_le_shared: ^2.0.0
 dev_dependencies: 
   test: ^1.0.0
+
+
+
+dependency_overrides:
+  nginx_le_shared:
+    path:
+      ../shared

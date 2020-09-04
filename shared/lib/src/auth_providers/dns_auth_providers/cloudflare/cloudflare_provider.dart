@@ -59,10 +59,11 @@ class CloudFlareProvider extends GenericAuthProvider {
     var workDir = _createDir(Certbot.letsEncryptWorkPath);
     var logDir = _createDir(Certbot.letsEncryptLogPath);
     var configDir = _createDir(Certbot.letsEncryptConfigPath);
-    _createSettings();
 
     /// Pass environment vars down to the auth hook.
     Environment().logfile = join(logDir, 'letsencrypt.log');
+
+    _createSettings();
 
     var hostname = Environment().hostname;
     var domain = Environment().domain;
@@ -127,10 +128,16 @@ class CloudFlareProvider extends GenericAuthProvider {
   void _createSettings() {
     _createDir(dirname(_settings));
 
-    _settings.append('dns_cloudflare_api_key = ${envToken}');
-    _settings.write('dns_cloudflare_email = ${envEmailAddress}');
+    // Only works with a cloudflare global api token.
+    _settings.write('dns_cloudflare_api_key=${envToken}');
+    _settings.append('dns_cloudflare_email=${envEmailAddress}');
 
     'chmod 600 $_settings'.run;
+
+    var logfile = Environment().logfile;
+
+    logfile.append('Created certbot settings.ini: ');
+    logfile.append(read(_settings).toList().join('\n'));
   }
 
   void deleteSettings() {
@@ -142,4 +149,10 @@ class CloudFlareProvider extends GenericAuthProvider {
 
   @override
   bool get supportsWildCards => true;
+
+  @override
+  void dumpEnvironmentVariables() {
+    printEnv(AuthProvider.AUTH_PROVIDER_TOKEN, envToken);
+    printEnv(AuthProvider.AUTH_PROVIDER_EMAIL_ADDRESS, envEmailAddress);
+  }
 }

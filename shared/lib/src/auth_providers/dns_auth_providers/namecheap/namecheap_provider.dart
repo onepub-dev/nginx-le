@@ -31,8 +31,10 @@ class NameCheapAuthProvider extends GenericAuthProvider {
 
   @override
   void pre_auth() {
-    ArgumentError.checkNotNull(envToken, 'Environment variable: AUTH_PROVIDER_TOKEN missing');
-    ArgumentError.checkNotNull(envUsername, 'Environment variable: AUTH_PROVIDER_USERNAME missing');
+    ArgumentError.checkNotNull(
+        envToken, 'Environment variable: AUTH_PROVIDER_TOKEN missing');
+    ArgumentError.checkNotNull(
+        envUsername, 'Environment variable: AUTH_PROVIDER_USERNAME missing');
   }
 
   @override

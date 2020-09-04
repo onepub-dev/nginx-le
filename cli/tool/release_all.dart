@@ -16,6 +16,8 @@ void main() {
   /// release shared
   print('Releasing code to pub.dev.');
 
+  './toggle_shared_location.dart published'.start(workingDirectory: join(projectRootPath, 'tool'));
+
   var newVersion = askForVersion(currentVersion);
 
   /// release shared

@@ -62,16 +62,15 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt  update && apt install --no-install-recommends -y \
     ca-certificates \
-    certbot \
     dnsutils \
     gnupg \
     nginx \
     openssl \
-    python3-certbot-dns-cloudflare \
-    python3-certbot-nginx \
     software-properties-common \
     tzdata \
-    vim
+    vim \
+    certbot \
+    python3-certbot-dns-cloudflare 
 
 
 # config nginx 
@@ -109,7 +108,8 @@ ENV LETS_ENCRYPT_ROOT_PATH=/etc/letsencrypt
 RUN mkdir -p /etc/letsencrypt
 
 # create the log file so the logs command doesn't get upset.
-RUN touch /etc/letsencrypt/letsencrypt.log
+RUN mkdir -p /etc/letsencrypt/logs
+RUN touch /etc/letsencrypt/logs/letsencrypt.log
 
 # per generate diffie helman key exchange parameters
 RUN mkdir -p /etc/nginx/ssl/

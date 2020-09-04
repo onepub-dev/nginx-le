@@ -9,8 +9,6 @@ import 'package:path/path.dart';
 import '../../nginx_le_shared.dart';
 
 class Certbot {
-  
-
   /// The directory where lets encrypt stores its certificates.
   /// As we need to persist certificates between container restarts
   /// the LETSENCRYPT_ROOT path is mounted to a persistent volume on start up.
@@ -21,7 +19,6 @@ class Certbot {
 
   /// The directory where nginx loads its certificates from.
   static const NGINX_CERT_ROOT = '/etc/nginx/certs/';
-
 
   /// The file containing the concatenated certs.
   static const CERTIFICATES_FILE = 'fullchain.pem';

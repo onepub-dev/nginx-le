@@ -17,7 +17,8 @@ void start_service() {
   var startPaused = Environment().startPaused;
 
   if (startPaused) {
-    print(orange('Nginx-LE is paused. Run "nginx-le cli" to attached and explore the Nginx-LE container'));
+    print(orange(
+        'Nginx-LE is paused. Run "nginx-le cli" to attached and explore the Nginx-LE container'));
     while (true) {
       sleep(10);
     }
@@ -63,7 +64,7 @@ void _start() {
       wildcard: wildcard,
       autoAcquireMode: autoAcquire);
 
-  startRenewalThread(debug: true);
+  startRenewalThread(debug: debug);
 
   if (autoAcquire) {
     var certificates = Certificate.load();
@@ -99,10 +100,12 @@ void dumpEnvironmentVariables() {
   printEnv(Environment().tldKey, Environment().tld);
   printEnv(Environment().emailaddressKey, Environment().emailaddress);
   printEnv(Environment().productionKey, Environment().production.toString());
-  printEnv(Environment().domainWildcardKey, Environment().domainWildcard.toString());
+  printEnv(
+      Environment().domainWildcardKey, Environment().domainWildcard.toString());
   printEnv(Environment().autoAcquireKey, Environment().autoAcquire.toString());
   printEnv(Environment().smtpServerKey, Environment().smtpServer);
-  printEnv(Environment().smtpServerPortKey, Environment().smtpServerPort.toString());
+  printEnv(
+      Environment().smtpServerPortKey, Environment().smtpServerPort.toString());
   printEnv(Environment().startPausedKey, Environment().startPaused.toString());
   printEnv(Environment().authProviderKey, Environment().authProvider);
 
@@ -112,7 +115,8 @@ void dumpEnvironmentVariables() {
   print('Internal environment variables');
   printEnv(Environment().certbotRootPathKey, Environment().certbotRootPath);
   printEnv(Environment().logfileKey, Environment().logfile);
-  printEnv(Environment().nginxCertRootPathOverwriteKey, Environment().nginxCertRootPathOverwrite);
+  printEnv(Environment().nginxCertRootPathOverwriteKey,
+      Environment().nginxCertRootPathOverwrite);
 }
 
 void printEnv(String key, String value) {
@@ -136,9 +140,7 @@ void startRenewalThread({bool debug = false}) {
 
 /// Isolate callback must be a top level function.
 void startScheduler(String debug) {
-  if (debug == 'debug') {
-    Settings().setVerbose(enabled: true);
-  }
+  Settings().setVerbose(enabled: debug == 'debug');
   // ngix is running we now need to start the certbot renew scheduler.
   Certbot().scheduleRenews();
 
@@ -165,9 +167,7 @@ void startAcquireThread({bool debug = false}) {
 }
 
 void acquireThread(String debug) {
-  if (debug == 'debug') {
-    Settings().setVerbose(enabled: true);
-  }
+  Settings().setVerbose(enabled: debug == 'debug');
   try {
     var authProvider = AuthProviders().getByName(Environment().authProvider);
     authProvider.acquire();
@@ -175,7 +175,8 @@ void acquireThread(String debug) {
     Certbot().deployCertificates(
         hostname: Environment().hostname,
         domain: Environment().domain,
-        reload: true, // don't try to reload nginx as it won't be running as yet.
+        reload:
+            true, // don't try to reload nginx as it won't be running as yet.
         wildcard: Environment().domainWildcard,
         autoAcquireMode: Environment().autoAcquire);
   } on CertbotException catch (e, st) {
@@ -184,7 +185,8 @@ void acquireThread(String debug) {
     printerr(e.details);
     printerr('Cerbot Error details end: ${'*' * 20}');
     printerr(st.toString());
-    Email.sendError(subject: e.message, body: '${e.details}\n ${st.toString()}');
+    Email.sendError(
+        subject: e.message, body: '${e.details}\n ${st.toString()}');
   } catch (e, st) {
     /// we don't rethrow as we don't want to shutdown the scheduler.
     /// as this may be a temporary error.

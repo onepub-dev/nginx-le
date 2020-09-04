@@ -18,14 +18,14 @@ void acquire(List<String> args) {
   Settings().verbose('${Environment().hostnameKey}:${Environment().hostname}');
 
   Settings().verbose('${Environment().domainKey}:${Environment().domain}');
-  Settings().verbose('${Environment().productionKey}:${Environment().production}');
+  Settings()
+      .verbose('${Environment().productionKey}:${Environment().production}');
   Settings().verbose(
       '${Environment().domainWildcardKey}:${Environment().domainWildcard}');
   Settings().verbose(
       '${Environment().authProviderKey}:${Environment().authProvider}');
 
-  var authProvider =
-      AuthProviders().getByName(Environment().authProvider);
+  var authProvider = AuthProviders().getByName(Environment().authProvider);
   authProvider.acquire();
 
   Certbot().deployCertificates(
