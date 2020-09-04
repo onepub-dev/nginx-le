@@ -136,7 +136,7 @@ COPY container/nginx_config/etc/nginx/acquire/ /etc/nginx/acquire
 
 # copy in the nginx-le compiled tools
 RUN mkdir -p /home/bin
-COPY --from=builder /home/build/container/bin/start /home/bin/start
+COPY --from=builder /home/build/container/bin/service /home/bin/service
 COPY --from=builder /home/build/container/bin/acquire /home/bin/acquire
 COPY --from=builder /home/build/container/bin/revoke /home/bin/revoke
 COPY --from=builder /home/build/container/bin/renew /home/bin/renew
@@ -159,5 +159,5 @@ ENV CERTBOT_HTTP_CLEANUP_HOOK_PATH="/home/bin/certbot_hooks/http_cleanup"
 
 EXPOSE 80 443
 
-CMD ["/home/bin/start"]
+CMD ["/home/bin/service"]
 

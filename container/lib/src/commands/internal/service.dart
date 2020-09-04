@@ -2,14 +2,16 @@ import 'package:dcli/dcli.dart';
 import 'package:isolate/isolate_runner.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
-void start() {
+/// The main service thread that runs within the docker container.
+void start_service() {
   print('Nginx-LE starting Version:$packageVersion');
 
-  /// These environment variables are set when the contianer is
+  /// These environment variables are set when the container is
   /// created via nginx-le config or by docker-compose.
   ///
   /// NOTE: you can NOT change these by setting an environment var before you call nginx-le start
   /// They can only be changed by re-running nginx-le config and recreating the container.
+  ///
   ///
 
   var startPaused = Environment().startPaused;
@@ -27,6 +29,8 @@ void start() {
 void _start() {
   var debug = Environment().debug;
   Settings().setVerbose(enabled: debug);
+
+  dumpEnvironmentVariables();
 
   var hostname = Environment().hostname;
   Settings().verbose('${Environment().hostnameKey}=$hostname');
@@ -47,8 +51,8 @@ void _start() {
   var autoAcquire = Environment().autoAcquire;
   Settings().verbose('${Environment().autoAcquireKey}=$autoAcquire');
 
-  var certbotAuthProvider = Environment().certbotAuthProvider;
-  Settings().verbose('${Environment().certbotAuthProviderKey}=$certbotAuthProvider');
+  var certbotAuthProvider = Environment().authProvider;
+  Settings().verbose('${Environment().authProviderKey}=$certbotAuthProvider');
 
   /// Places the server into acquire mode if certificates are not valid.
   ///
@@ -86,6 +90,33 @@ void _start() {
 
   /// run the command passed in on the command line.
   'nginx'.start();
+}
+
+void dumpEnvironmentVariables() {
+  printEnv(Environment().debugKey, Environment().debug.toString());
+  printEnv(Environment().hostnameKey, Environment().hostname);
+  printEnv(Environment().domainKey, Environment().domain);
+  printEnv(Environment().tldKey, Environment().tld);
+  printEnv(Environment().emailaddressKey, Environment().emailaddress);
+  printEnv(Environment().productionKey, Environment().production.toString());
+  printEnv(Environment().domainWildcardKey, Environment().domainWildcard.toString());
+  printEnv(Environment().autoAcquireKey, Environment().autoAcquire.toString());
+  printEnv(Environment().smtpServerKey, Environment().smtpServer);
+  printEnv(Environment().smtpServerPortKey, Environment().smtpServerPort.toString());
+  printEnv(Environment().startPausedKey, Environment().startPaused.toString());
+  printEnv(Environment().authProviderKey, Environment().authProvider);
+
+  var authProvider = AuthProviders().getByName(Environment().authProvider);
+  authProvider.dumpEnvironmentVariables();
+
+  print('Internal environment variables');
+  printEnv(Environment().certbotRootPathKey, Environment().certbotRootPath);
+  printEnv(Environment().logfileKey, Environment().logfile);
+  printEnv(Environment().nginxCertRootPathOverwriteKey, Environment().nginxCertRootPathOverwrite);
+}
+
+void printEnv(String key, String value) {
+  print('ENV: $key=$value');
 }
 
 ////////////////////////////////////////////
@@ -138,7 +169,7 @@ void acquireThread(String debug) {
     Settings().setVerbose(enabled: true);
   }
   try {
-    var authProvider = AuthProviders().getByName(Environment().certbotAuthProvider);
+    var authProvider = AuthProviders().getByName(Environment().authProvider);
     authProvider.acquire();
 
     Certbot().deployCertificates(
