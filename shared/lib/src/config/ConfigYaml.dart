@@ -79,7 +79,7 @@ class ConfigYaml {
       d.createDir(d.dirname(configPath), recursive: true);
     }
 
-    settings = SettingsYaml.load(filePath: configPath);
+    settings = SettingsYaml.load(pathToSettings: configPath);
     startMethod = settings[START_METHOD_KEY] as String;
     mode = settings[MODE_KEY] as String;
     startPaused = settings[Environment().startPausedKey] as bool;
