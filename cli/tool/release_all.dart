@@ -16,25 +16,32 @@ void main() {
   /// release shared
   print('Releasing code to pub.dev.');
 
-  './toggle_shared_location.dart published'.start(workingDirectory: join(projectRootPath, 'tool'));
+  './toggle_shared_location.dart published'
+      .start(workingDirectory: join(projectRootPath, 'tool'));
 
   var newVersion = askForVersion(currentVersion);
 
   /// release shared
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../shared'));
-  'pub_release --setVersion=${newVersion.toString()}'.start(workingDirectory: join(projectRootPath, '../shared'));
+  'pub_release --setVersion=${newVersion.toString()}'
+      .start(workingDirectory: join(projectRootPath, '../shared'));
 
   /// release container
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../container'));
-  'pub_release --setVersion=${newVersion.toString()}'.start(workingDirectory: join(projectRootPath, '../container'));
+  'pub_release --setVersion=${newVersion.toString()}'
+      .start(workingDirectory: join(projectRootPath, '../container'));
 
   /// release cli
   'pub upgrade'.start(workingDirectory: projectRootPath);
-  'pub_release --setVersion=${newVersion.toString()}'.start(workingDirectory: projectRootPath);
+  'pub_release --setVersion=${newVersion.toString()}'
+      .start(workingDirectory: projectRootPath);
 
+  print('Activate the just published version');
+  'pub global activate nginx_le'.run;
   var name = 'noojee/nginx-le';
   var imageTag = '$name:${newVersion.toString()}';
-  'nginx-le build --image=$imageTag'.start(workingDirectory: join(projectRootPath, '..'));
+  'nginx-le build --image=$imageTag'
+      .start(workingDirectory: join(projectRootPath, '..'));
   var latestTag = '$name:latest';
   'docker image tag $imageTag $latestTag'.run;
 
