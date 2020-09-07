@@ -3,8 +3,7 @@
 import 'dart:io';
 
 import 'package:dcli/dcli.dart';
-
-import 'version.dart';
+import 'package:pub_release/pub_release.dart';
 
 void main() {
   // climb the path searching for the pubspec
@@ -19,6 +18,7 @@ void main() {
   './toggle_shared_location.dart published'
       .start(workingDirectory: join(projectRootPath, 'tool'));
 
+  print(orange('Current version is: $currentVersion'));
   var newVersion = askForVersion(currentVersion);
 
   /// release shared
