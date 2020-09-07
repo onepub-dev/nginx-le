@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dcli/dcli.dart';
 import 'package:isolate/isolate_runner.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
@@ -110,6 +112,11 @@ void dumpEnvironmentVariables() {
   printEnv(Environment().authProviderKey, Environment().authProvider);
 
   var authProvider = AuthProviders().getByName(Environment().authProvider);
+  if (authProvider == null) {
+    printerr(red(
+        'No Auth Provider has been set. Check ${Environment().authProviderKey} as been set'));
+    exit(1);
+  }
   authProvider.dumpEnvironmentVariables();
 
   print('Internal environment variables');
