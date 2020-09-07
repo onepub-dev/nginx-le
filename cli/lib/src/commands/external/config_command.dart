@@ -357,7 +357,17 @@ class ConfigCommand extends Command<void> {
 
     var defaultOption = Containers().findByContainerId(config.containerid);
 
-    if (containers.length == 1) {
+    if (containers.isEmpty) {
+      if (config.startMethod == ConfigYaml.START_METHOD_DOCKER_COMPOSE) {
+        printerr(
+            red('Please run docker-compose up before running nginx-le config'));
+        exit(-1);
+      } else {
+        printerr(red(
+            "ERROR: something went wrong as we couldn't find the nginx-le docker container"));
+        exit(-1);
+      }
+    } else if (containers.length == 1) {
       config.containerid = containers[0].containerid;
     } else {
       print(green('Select the docker container running nginx-le'));
