@@ -9,7 +9,7 @@ dependencies:
   args: ^1.5.2
   encrypt: ^4.0.2
   cron: ^0.2.3
-  dcli: ^0.24.0
+  dcli: ^0.27.1
   path: ^1.6.4
   pub_semver: ^1.0.0
   xml: ^4.2.0

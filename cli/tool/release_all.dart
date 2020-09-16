@@ -76,7 +76,7 @@ String findPubSpec() {
 }
 
 /// Read the pubspec.yaml file.
-PubSpecFile getPubSpec(String pubspecPath) {
-  var pubspec = PubSpecFile.fromFile(pubspecPath);
+PubSpec getPubSpec(String pubspecPath) {
+  var pubspec = PubSpec.fromFile(pubspecPath);
   return pubspec;
 }

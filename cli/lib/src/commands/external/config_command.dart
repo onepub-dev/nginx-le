@@ -218,18 +218,18 @@ class ConfigCommand extends Command<void> {
     print(green('Errors are notified via email'));
     var emailaddress = ask('Email Address:',
         defaultValue: config.emailaddress,
-        validator: AskValidatorMulti([Ask.required, Ask.email]));
+        validator: Ask.all([Ask.required, Ask.email]));
     config.emailaddress = emailaddress;
 
     var smtpServer = ask('SMTP Server:',
         defaultValue: config.smtpServer,
-        validator: AskValidatorMulti([Ask.required, AskFQDNOrLocalhost()]));
+        validator: Ask.all([Ask.required, AskFQDNOrLocalhost()]));
     config.smtpServer = smtpServer;
 
     var smtpServerPort = ask('SMTP Server port:',
         defaultValue: '${config.smtpServerPort}',
-        validator: AskValidatorMulti(
-            [Ask.required, Ask.integer, AskValidatorRange(1, 65535)]));
+        validator:
+            Ask.all([Ask.required, Ask.integer, Ask.valueRange(1, 65535)]));
     config.smtpServerPort = int.tryParse(smtpServerPort) ?? 25;
   }
 
@@ -237,8 +237,7 @@ class ConfigCommand extends Command<void> {
     print('');
     print(green('The servers top level domain (e.g. com.au)'));
 
-    var tld = ask('TLD:',
-        defaultValue: config.tld, validator: AskValidatorMulti([Ask.required]));
+    var tld = ask('TLD:', defaultValue: config.tld, validator: Ask.required);
     config.tld = tld;
   }
 

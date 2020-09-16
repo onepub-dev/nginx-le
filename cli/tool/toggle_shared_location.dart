@@ -33,14 +33,16 @@ void main(List<String> args) {
   var command = parsed.rest[0];
 
   var cliPubspec = Script.current.pathToPubSpec;
-  var containerPubspec = join(Script.current.pathToProjectRoot, '..', 'container', 'pubspec.yaml');
+  var containerPubspec =
+      join(Script.current.pathToProjectRoot, '..', 'container', 'pubspec.yaml');
 
   if (command == 'local') {
     makeLocal(cliPubspec, containerPubspec);
   } else if (command == 'published') {
     makePublished(cliPubspec, containerPubspec);
   } else {
-    printerr(red('Invalid command passed. Expected local | published. Found $command'));
+    printerr(red(
+        'Invalid command passed. Expected local | published. Found $command'));
     showUsage(parser);
   }
 
@@ -68,7 +70,7 @@ void makeLocal(String cliPubspec, String containerPubspec) {
 }
 
 void makeRelative(String pathToPubSpec) {
-  var pubspec = PubSpecFile.fromFile(pathToPubSpec);
+  var pubspec = PubSpec.fromFile(pathToPubSpec);
 
   var found = false;
   for (var dep in pubspec.dependencyOverrides) {
@@ -92,7 +94,7 @@ void makeRelative(String pathToPubSpec) {
 }
 
 void makePubDev(String pathToPubSpec) {
-  var pubspec = PubSpecFile.fromFile(pathToPubSpec);
+  var pubspec = PubSpec.fromFile(pathToPubSpec);
 
   var found = false;
   for (var dep in pubspec.dependencyOverrides) {
@@ -137,8 +139,10 @@ void makePubDev(String pathToPubSpec) {
 void showUsage(ArgParser parser) {
   print('Toggles how cli and container depend on the shared library.');
   print('Usage: toggle_shared_location.dart -v local | published');
-  print('local - addes a dependency override so the local copy of shared is used');
-  print('publish - removes any dependency override so the pub.dev version of shared is used');
+  print(
+      'local - addes a dependency override so the local copy of shared is used');
+  print(
+      'publish - removes any dependency override so the pub.dev version of shared is used');
   print(parser.usage);
   exit(1);
 }

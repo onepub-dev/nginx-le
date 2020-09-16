@@ -17,14 +17,14 @@ class GenericProxy extends ContentProvider {
 
     fqdn = ask('FQDN of web application server:',
         defaultValue: fqdn,
-        validator: AskValidatorMulti([Ask.required, AskFQDNOrLocalhost()]));
+        validator: Ask.all([Ask.required, AskFQDNOrLocalhost()]));
 
     var port = config.settings[portKey] as int;
     port ??= 8080;
 
     port = int.parse(ask('TCP Port of web application server:',
         defaultValue: '$port',
-        validator: AskValidatorMulti([Ask.required, Ask.integer])));
+        validator: Ask.all([Ask.required, Ask.integer])));
 
     config.settings[fqdnKey] = fqdn;
     config.settings[portKey] = port;
