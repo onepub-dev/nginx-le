@@ -136,6 +136,12 @@ The Nginx-LE cli exposes the following commands:
 | cli | Attaches you to the Docker container in a bash shell. | Play inside the nginx-le docker container.
 | logs | Tails various logs in the container | 
 
+Example of running Nginx-LE command
+
+```bash
+nginx-le config
+```
+
 
 # Building Nginx-LE
 
