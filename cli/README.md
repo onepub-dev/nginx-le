@@ -274,7 +274,7 @@ upstream tomcat {
     server 127.0.0.1:8080 fail_timeout=0;
 }
 ```
-## Auth ProviderS
+## Auth Providers
 To acquire a LetsEncrypt certificate you must be able to prove that you own the domain for which the certificate is being issued.
 
 Nginx-LE supports a number of Certbot Authentication methods.
