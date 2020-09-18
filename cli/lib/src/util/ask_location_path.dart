@@ -10,8 +10,7 @@ void askForLocationPath(String prompt) {
   ConfigYaml().hostIncludePath = hostIncludePath;
 }
 
-String askForHostPath(
-    {String title, String prompt, String defaultPath, bool autoCreate = true}) {
+String askForHostPath({String title, String prompt, String defaultPath}) {
   var valid = false;
   String hostPath;
   do {
@@ -19,23 +18,18 @@ String askForHostPath(
     hostPath =
         ask('$prompt:', defaultValue: defaultPath, validator: Ask.required);
 
-    if (autoCreate) {
-      createPath(hostPath);
-      valid = true;
-    } else {
-      if (!exists(hostPath)) {
-        print(red('The path $hostPath does not exist.'));
-        if (confirm('Create $hostPath?')) {
-          if (isWritable(findParent(hostPath))) {
-            createDir(hostPath, recursive: true);
-          } else {
-            'mkdir -p $hostPath'.start(privileged: true);
-          }
-          valid = true;
+    if (!exists(hostPath)) {
+      print(red('The path $hostPath does not exist.'));
+      if (confirm('Create $hostPath?')) {
+        if (isWritable(findParent(hostPath))) {
+          createDir(hostPath, recursive: true);
+        } else {
+          'mkdir -p $hostPath'.start(privileged: true);
         }
-      } else {
         valid = true;
       }
+    } else {
+      valid = true;
     }
 
     valid = true;

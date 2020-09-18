@@ -20,9 +20,9 @@ class Static extends ContentProvider {
     print(green('Static Web Content'));
     _homePage = ask('Default Page', defaultValue: _homePage);
     _staticRootPath = askForHostPath(
-        prompt: 'Path to wwwroot containing $_homePage',
-        defaultPath: _staticRootPath,
-        autoCreate: false);
+      prompt: 'Path to wwwroot containing $_homePage',
+      defaultPath: _staticRootPath,
+    );
 
     askForLocationPath('Host path to store generated `.location` file');
   }
