@@ -236,15 +236,21 @@ Designed to work with the java based Tomcat Web application Server. In reality t
 The Customer Content Provider allows you to configure your own Location and Upstream files as described below:
 
 #### Locations
-Nginx defines a location as a content source. Nginx-le allows you to create your own custom location files.
+Nginx defines a location as a provider of content (web pages or a http/https endpoint). 
 
-Each of the other Content Providers simply create default Location and Upstream files. With a Custom Content Provider you get to create your own Location and Upstream files.
+Nginx-le provides a number of default providers and also allows you to create your own custom location files.
 
-Nginx-LE configures nginx to include location files from the host system at `/opt/nginx/include/*.location`. This directory is mounted into the container at the same location.
+By default Nginx-LE:
+* configures Nginx to look for the location files (within the container) in: `/etc/nginx/include`.
+* mounts the host path `/opt/nginx/include` into the container path `/etc/nginx/include`.
 
-You can place any number of nginx location files in this directory and they will be mounted the next time that the Nginx-LE container is started or nginx is reloaded.
+If you use a Custom Content Provider you get to create your own Location and Upstream files and choose the host mount point.
+
+You can place any number of nginx location files in the host directory and they will be mounted the next time that the Nginx-LE container is started or nginx is reloaded.
 
 This is an example location file for proxying the java Tomcat server.
+
+This location file requires an upstream file (see the example below) to be functional.
 
 ```
 location / {
@@ -260,11 +266,17 @@ location / {
 
 #### Upstream servers
 
-If you provide a custom Location file then you may need to also provide a customer Upstream file.
-
 If you are using Nginx-LE as a proxy server for an application server then you will need to provide one or more `.upstream` files to configure the connection to those servers.
 
-Nginx-LE will  include the upstream files from the host system at `/opt/nginx/include/*.upstream`. This directory is mounted into the container at the same location.
+Nginx-LE supports a number of common application server configurations (see Content Providers) and for the supported application servers will automatically create the necessary `.upstream` files.
+
+
+By default Nginx-LE:
+* configures Nginx to look for the upstream files (within the container) in: `/etc/nginx/include`.
+* mounts the host path `/opt/nginx/include` into the container path `/etc/nginx/include`.
+
+
+Nginx-LE will include any `*.upstream` files from the host system.
 
 You can place any number of nginx upstream files in this directory and they will be mounted the next time that the Nginx-LE container is started or nginx is reloaded.
 
@@ -274,6 +286,7 @@ upstream tomcat {
     server 127.0.0.1:8080 fail_timeout=0;
 }
 ```
+
 ## Auth Providers
 To acquire a LetsEncrypt certificate you must be able to prove that you own the domain for which the certificate is being issued.
 
