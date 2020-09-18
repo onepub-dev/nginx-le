@@ -162,9 +162,14 @@ class ConfigCommand extends Command<void> {
 
     var startMethod = ConfigYaml().startMethod;
     if (startMethod == ConfigYaml.START_METHOD_NGINX_LE) {
-      print(blue('Use nginx-le start to start the container'));
+      if (confirm('Would you like to start the container:',
+          defaultValue: true)) {
+        'docker start nginx-le'.run;
+      } else {
+        print(blue('Use ${orange('nginx-le start')} to start the container.'));
+      }
     } else if (startMethod == ConfigYaml.START_METHOD_DOCKER_START) {
-      print(blue('Use your Dockerfile to start nginx-le'));
+      print(blue('Use your Dockerfile to start nginx-le.'));
     } else {
       // ConfigYaml.START_METHOD_DOCKER_COMPOSE
       print(blue('Use your docker-compose file to start nginx-le.'));
