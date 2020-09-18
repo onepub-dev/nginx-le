@@ -131,7 +131,7 @@ class ConfigCommand extends Command<void> {
         ' --env=${Environment().smtpServerPortKey}=${config.smtpServerPort}'
         ' --env=${Environment().debugKey}=$debug'
         ' --env=${Environment().domainWildcardKey}=${config.domainWildcard}'
-        ' --env=${Environment().autoAcquireKey}=false' // be default try to auto acquire a certificate.
+        ' --env=${Environment().autoAcquireKey}=true' // be default try to auto acquire a certificate.
         '$dnsProviderEnvs'
         ' --net=host'
         ' --log-driver=journald'
