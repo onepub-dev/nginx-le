@@ -28,7 +28,31 @@ class Image {
     tag = _fullname.tag;
   }
 
-  String get fullname => '$repository/$name:$tag';
+  String get fullname {
+    var _full = '';
+
+    if (repository != null && repository.isNotEmpty) {
+      _full += repository;
+    }
+
+    if (name != null && name.isNotEmpty) {
+      if (_full.isEmpty) {
+        _full += name;
+      } else {
+        _full += '/$name';
+      }
+    }
+
+    if (tag != null && tag.isNotEmpty) {
+      if (_full.isEmpty) {
+        _full += tag;
+      } else {
+        _full += ':$tag';
+      }
+    }
+
+    return _full;
+  }
 
   /// Takes a docker repo/name:tag string and splits it into
   /// three components.
@@ -77,7 +101,7 @@ class Image {
   }
 
   void pull() {
-    'docker pull $imageid'.run;
+    'docker pull $fullname'.run;
   }
 
   @override
