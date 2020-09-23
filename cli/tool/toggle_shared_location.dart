@@ -73,7 +73,7 @@ void makeRelative(String pathToPubSpec) {
   var pubspec = PubSpec.fromFile(pathToPubSpec);
 
   var found = false;
-  for (var dep in pubspec.dependencyOverrides) {
+  for (var dep in pubspec.dependencyOverrides.values) {
     if (dep.name == 'nginx_le_shared') {
       found = true;
       break;
@@ -97,7 +97,7 @@ void makePubDev(String pathToPubSpec) {
   var pubspec = PubSpec.fromFile(pathToPubSpec);
 
   var found = false;
-  for (var dep in pubspec.dependencyOverrides) {
+  for (var dep in pubspec.dependencyOverrides.values) {
     if (dep.name == 'nginx_le_shared') {
       found = true;
       break;
