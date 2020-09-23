@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:dcli/dcli.dart';
-import 'package:isolate/isolate_runner.dart';
+import 'package:isolate/isolate.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+
+import 'logrotate.dart';
 
 /// The main service thread that runs within the docker container.
 void start_service() {
@@ -65,6 +67,8 @@ void _start() {
       reload: false, // don't try to reload nginx as it won't be running as yet.
       wildcard: wildcard,
       autoAcquireMode: autoAcquire);
+
+  startLogRotateThread(debug: debug);
 
   startRenewalThread(debug: debug);
 

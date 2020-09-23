@@ -70,7 +70,9 @@ RUN apt  update && apt install --no-install-recommends -y \
     tzdata \
     vim \
     certbot \
-    python3-certbot-dns-cloudflare 
+    python3-certbot-dns-cloudflare \
+    logrotate \
+    gzip
 
 
 # config nginx 
@@ -130,8 +132,12 @@ RUN mkdir -p /etc/nginx-le
 
 # copy the default nginx-le config in
 COPY container/nginx_config/etc/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY container/nginx_config/etc/nginx/logrotate.conf /etc/nginx/logrotate.conf
 COPY container/nginx_config/etc/nginx/custom/ /etc/nginx/custom
 COPY container/nginx_config/etc/nginx/acquire/ /etc/nginx/acquire
+
+# lograte requires group and other to not have write access.
+RUN chmod 400  /etc/nginx/logrotate.conf
 
 
 # copy in the nginx-le compiled tools
