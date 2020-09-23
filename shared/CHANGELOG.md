@@ -1,3 +1,10 @@
+# 2.5.0
+# 2.4.8
+Upgraded to dcli 0.29.2
+# 2.4.7
+upgraded to dcli 0.29.0
+# 2.4.6
+Updated to dcli 0.28.0
 # 2.4.5
 # 2.4.4
 # 2.4.3
