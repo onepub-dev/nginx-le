@@ -39,6 +39,8 @@ class BuildCommand extends Command<void> {
   void run() {
     var results = argResults;
 
+    print(red(pwd));
+
     var debug = argResults['debug'] as bool;
     Settings().setVerbose(enabled: debug);
 
@@ -52,8 +54,11 @@ class BuildCommand extends Command<void> {
     var imageName = argResults['image'] as String;
 
     if (imageName == null) {
-      print('You must pass a image --image=repo/image:version');
-      showUsage(argParser);
+      var repo = ask('ImageName:', defaultValue: 'noojee/nginx-le');
+      print('Current version: $packageVersion');
+      var version = ask('Version:',
+          defaultValue: packageVersion, validator: Ask.required);
+      imageName = '$repo:$version';
     }
 
     // check for an existing image.
