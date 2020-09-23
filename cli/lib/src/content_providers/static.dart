@@ -66,6 +66,7 @@ class Static extends ContentProvider {
     _backupLocationContent();
     find('*.location', root: ConfigYaml().hostIncludePath)
         .forEach((file) => delete(file));
+
     _locationPath.write(_locationContent);
   }
 
@@ -98,14 +99,22 @@ class Static extends ContentProvider {
       if (exists(backup)) {
         var target = '$backup.${Uuid().v4()}';
         if (!isWritable(backup)) {
-          'sudo mv $backup $target'.run;
+          'mv $backup $target'.start(privileged: true);
+
+          if (isGroupExists('docker')) {
+            'chown docker:docker $target'.start(privileged: true);
+          }
         } else {
           move(backup, '$backup.${Uuid().v4()}');
         }
       }
 
       if (!isWritable(dirname(backup))) {
-        'sudo cp ${_locationPath} $backup'.run;
+        'cp ${_locationPath} $backup'.start(privileged: true);
+
+        if (isGroupExists('docker')) {
+          'chown docker:docker $backup'.start(privileged: true);
+        }
       } else {
         copy(_locationPath, backup);
       }
@@ -113,5 +122,13 @@ class Static extends ContentProvider {
       print(
           'Your original location file ${_locationPath} has been backed up to $backup');
     }
+  }
+
+  bool isGroupExists(String group) {
+    var lines = read('/etc/group').toList();
+    for (var line in lines) {
+      if (line.startsWith('$group:')) return true;
+    }
+    return false;
   }
 }
