@@ -1,15 +1,13 @@
 #! /bin/env dcli
 
-import 'dart:io';
-
 import 'package:dcli/dcli.dart';
 import 'package:pub_release/pub_release.dart';
 
 void main() {
-  // climb the path searching for the pubspec
-  var pubspecPath = findPubSpec();
-  var projectRootPath = dirname(pubspecPath);
-  var pubspec = getPubSpec(pubspecPath);
+  var project = DartProject.fromPath('.', search: true);
+
+  var projectRootPath = project.pathToProjectRoot;
+  var pubspec = project.pubSpec;
   var currentVersion = pubspec.version;
 
   /// release shared
@@ -47,36 +45,4 @@ void main() {
 
   'docker push $imageTag'.run;
   'docker push $latestTag'.run;
-}
-
-/// Returns the path to the pubspec.yaml.
-String findPubSpec() {
-  var pubspecName = 'pubspec.yaml';
-  var cwd = pwd;
-  var found = true;
-
-  var pubspecPath = join(cwd, pubspecName);
-  // climb the path searching for the pubspec
-  while (!exists(pubspecPath)) {
-    cwd = dirname(cwd);
-    // Have we found the root?
-    if (cwd == rootPath) {
-      found = false;
-      break;
-    }
-    pubspecPath = join(cwd, pubspecName);
-  }
-
-  if (!found) {
-    print('Unable to find pubspec.yaml, run release from the '
-        "package's root directory.");
-    exit(-1);
-  }
-  return truepath(pubspecPath);
-}
-
-/// Read the pubspec.yaml file.
-PubSpec getPubSpec(String pubspecPath) {
-  var pubspec = PubSpec.fromFile(pubspecPath);
-  return pubspec;
 }
