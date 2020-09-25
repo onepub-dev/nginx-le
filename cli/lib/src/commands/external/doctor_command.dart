@@ -36,7 +36,7 @@ class DoctorCommand extends Command<void> {
 
     print('');
     print('Dart location(s)');
-    which('dart').forEach((line) => _colprint(['', line]));
+    which('dart').paths.forEach((line) => _colprint(['', line]));
 
     print('');
     print('Permissions');
