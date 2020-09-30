@@ -8,6 +8,9 @@ import 'package:dcli/dcli.dart';
 ///
 /// In 'local' mode the shared package is added as a dependency override.
 /// In 'published' mode the shared package is referenced via pub.dev.
+///
+/// You want to run nginx_le_shared in local mode when doing development
+/// but you MUST toggle it to 'published' mode to do a release to pub.dev.
 
 void main(List<String> args) {
   var parser = ArgParser();
