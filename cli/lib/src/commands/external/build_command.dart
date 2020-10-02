@@ -95,6 +95,7 @@ class BuildCommand extends Command<void> {
         "Build Complete. You should now run 'nginx-le config' to reconfigure your system to use the new image"));
   }
 
+  // ignore: missing_return
   String findDockerfile() {
     var projectPath = DartProject.current.pathToProjectRoot;
     if (exists(join(projectPath, 'Dockerfile'))) return projectPath;
@@ -129,7 +130,7 @@ class BuildCommand extends Command<void> {
     image.delete(force: true);
   }
 
-  Never showUsage(ArgParser parser) {
+  void showUsage(ArgParser parser) {
     print(parser.usage);
     exit(-1);
   }
