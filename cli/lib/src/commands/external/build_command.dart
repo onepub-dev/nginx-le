@@ -44,11 +44,8 @@ class BuildCommand extends Command<void> {
 
     var overwrite = results['overwrite'] as bool;
 
-    if (!exists('Dockerfile')) {
-      printerr(
-          'The Dockerfile must be present in your current working directory.');
-      showUsage(argParser);
-    }
+    var dockerPath = findDockerfile();
+
     var imageName = argResults['image'] as String;
 
     if (imageName == null) {
@@ -85,7 +82,7 @@ class BuildCommand extends Command<void> {
     unbuntuImage.pull();
 
     /// required to give docker access to our ssh keys.
-    'docker build -t $imageName .'.run;
+    'docker build -t $imageName .'.start(workingDirectory: dockerPath);
 
     /// get the new image.
     Images().flushCache();
@@ -98,7 +95,20 @@ class BuildCommand extends Command<void> {
         "Build Complete. You should now run 'nginx-le config' to reconfigure your system to use the new image"));
   }
 
-  /// delete an [image] an all its associated containers.
+  String findDockerfile() {
+    var projectPath = DartProject.current.pathToProjectRoot;
+    if (exists(join(projectPath, 'Dockerfile'))) return projectPath;
+
+    if (exists(join(projectPath, '..', 'Dockerfile'))) {
+      return join(projectPath, '..');
+    } else {
+      printerr(
+          'The Dockerfile must be present in the project root at ${truepath(projectPath)}.');
+      showUsage(argParser);
+    }
+  }
+
+  /// delete an [image] and all its associated containers.
   void deleteImage(Image image) {
     var containers = Containers().findByImage(image);
     for (var container in containers) {
@@ -116,10 +126,10 @@ class BuildCommand extends Command<void> {
       }
       container.delete();
     }
-    image.delete();
+    image.delete(force: true);
   }
 
-  void showUsage(ArgParser parser) {
+  Never showUsage(ArgParser parser) {
     print(parser.usage);
     exit(-1);
   }
