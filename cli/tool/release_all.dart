@@ -1,5 +1,7 @@
 #! /bin/env dcli
 
+import 'dart:io';
+
 import 'package:dcli/dcli.dart';
 import 'package:pub_release/pub_release.dart';
 
@@ -39,10 +41,23 @@ void main() {
   var name = 'noojee/nginx-le';
   var imageTag = '$name:${newVersion.toString()}';
   'nginx-le build --image=$imageTag'
-      .start(workingDirectory: join(projectRootPath, '..'));
+      .start(workingDirectory: findDockerFilePath());
   var latestTag = '$name:latest';
   'docker image tag $imageTag $latestTag'.run;
 
   'docker push $imageTag'.run;
   'docker push $latestTag'.run;
+}
+
+String findDockerFilePath() {
+  var current = pwd;
+
+  while (current != rootPath) {
+    if (exists(join(current, 'Dockerfile'))) {
+      return current;
+    }
+
+    current = dirname(current);
+  }
+  return '.';
 }
