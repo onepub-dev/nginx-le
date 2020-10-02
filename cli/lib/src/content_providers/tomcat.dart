@@ -18,6 +18,12 @@ class Tomcat extends ContentProvider {
     print('');
     print('${green('Tomcat server details')}');
 
+    var context = config.settings['context'] as String;
+    context ??= '';
+
+    context = ask('webapp context (blank for the ROOT context):',
+        defaultValue: context);
+
     fqdn = config.settings[fqdnKey] as String;
     fqdn ??= 'localhost';
 
@@ -45,20 +51,38 @@ class Tomcat extends ContentProvider {
 
   @override
   void createLocationFile() {
-    find('*.location', root: ConfigYaml().hostIncludePath)
+    var config = ConfigYaml();
+
+    find('*.location', root: config.hostIncludePath)
         .forEach((file) => delete(file));
-    var location = join(ConfigYaml().hostIncludePath, 'tomcat.location');
+    var location = join(config.hostIncludePath, 'tomcat.location');
 
-    location.write(r'''location / {
-      	#try_files $uri $uri/ =404;
+    var context = config.settings['context'] as String;
 
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
+    location.write('''location / {
+      	#try_files \$uri \$uri/ =404;
+
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-Proto https;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_redirect off;
         proxy_max_temp_file_size 0;
-        proxy_pass http://tomcat/;
+        proxy_pass http://tomcat/$context/;
+        proxy_read_timeout 300;
+}
+''');
+
+    location.append('''location /$context {
+      	#try_files \$uri \$uri/ =404;
+
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_redirect off;
+        proxy_max_temp_file_size 0;
+        proxy_pass http://tomcat/$context/;
         proxy_read_timeout 300;
 }
 ''');
