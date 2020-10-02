@@ -96,8 +96,12 @@ class Image {
     return _RepoAndName(parts[0], parts[1]);
   }
 
-  void delete() {
-    'docker image rm $imageid'.run;
+  void delete({bool force = false}) {
+    if (force) {
+      'docker image rm -f $imageid'.run;
+    } else {
+      'docker image rm $imageid'.run;
+    }
   }
 
   void pull() {
