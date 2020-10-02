@@ -227,10 +227,12 @@ The Generic proxy Content Provider allows you to proxy requests through to a web
 
 The Nginx-LE container exposes the secure HTTPS connection and then passes all requests through to your web application server via HTTP.
 
-Please note that normally you need to select a port other than 80 as Nginx-LE needs to accept requests on port 80 to all for certificate renewal.
+Please note that normally you need to select a port other than 80 as Nginx-LE needs to accept requests on port 80 for certificate acquisition and renewals.
 
 ### Tomcat Proxy Content Provider
-Designed to work with the java based Tomcat Web application Server. In reality this is just a generic proxy that passes requests through to port 8080 which is the standard Tomcat port.
+Designed to work with the java based Tomcat Web application Server.
+
+The Tomcat proxy allows you to configure the port and context the Tomcat server operates on.
 
 ### Custom Content Provider
 The Customer Content Provider allows you to configure your own Location and Upstream files as described below:
@@ -244,7 +246,7 @@ By default Nginx-LE:
 * configures Nginx to look for the location files (within the container) in: `/etc/nginx/include`.
 * mounts the host path `/opt/nginx/include` into the container path `/etc/nginx/include`.
 
-If you use a Custom Content Provider you get to create your own Location and Upstream files and choose the host mount point.
+If you use a Custom Content Provider you get to create your own Location and Upstream files and choose the path to the host directory where the location and upstream files are stored.
 
 You can place any number of nginx location files in the host directory and they will be mounted the next time that the Nginx-LE container is started or nginx is reloaded.
 
@@ -254,14 +256,30 @@ This location file requires an upstream file (see the example below) to be funct
 
 ```
 location / {
+        #try_files $uri $uri/ =404;
+
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-Proto https;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_redirect off;
         proxy_max_temp_file_size 0;
-        proxy_pass http://tomcat/;
-    }
+        proxy_pass http://tomcat/mycontext/;
+        proxy_read_timeout 300;
+}
+
+location /mycontext {
+        #try_files $uri $uri/ =404;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_redirect off;
+        proxy_max_temp_file_size 0;
+        proxy_pass http://tomcat/mycontext/;
+        proxy_read_timeout 300;
+}
 ```
 
 #### Upstream servers
