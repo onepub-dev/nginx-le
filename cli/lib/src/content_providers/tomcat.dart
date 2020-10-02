@@ -62,6 +62,16 @@ class Tomcat extends ContentProvider {
 
     var context = config.settings[contextKey] as String;
 
+    // avoid double slashes.
+    if (context == '/') {
+      context = '';
+    }
+
+    /// add trailing slash.
+    if (context.isNotEmpty) {
+      context += '/';
+    }
+
     location.write('''location / {
       	#try_files \$uri \$uri/ =404;
 
@@ -71,7 +81,7 @@ class Tomcat extends ContentProvider {
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_redirect off;
         proxy_max_temp_file_size 0;
-        proxy_pass http://tomcat/$context/;
+        proxy_pass http://tomcat/$context;
         proxy_read_timeout 300;
 }
 ''');
@@ -85,7 +95,7 @@ class Tomcat extends ContentProvider {
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_redirect off;
         proxy_max_temp_file_size 0;
-        proxy_pass http://tomcat/$context/;
+        proxy_pass http://tomcat/$context;
         proxy_read_timeout 300;
 }
 ''');
