@@ -9,7 +9,11 @@ void logrotate() {
     printerr(
         red('The logrotate configuration file was not found at: $CONFIG_FILE'));
   }
-  'logrotate $CONFIG_FILE'.run;
+  if (start('logrotate $CONFIG_FILE', nothrow: true, progress: Progress.print())
+          .exitCode !=
+      0) {
+    print(red('Logrotate exited with a non-zero exit code.'));
+  }
 }
 
 ////////////////////////////////////////////
