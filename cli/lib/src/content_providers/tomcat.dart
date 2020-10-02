@@ -18,7 +18,7 @@ class Tomcat extends ContentProvider {
     print('');
     print('${green('Tomcat server details')}');
 
-    var context = config.settings['context'] as String;
+    var context = config.settings[contextKey] as String;
     context ??= '';
 
     context = ask('webapp context (blank for the ROOT context):',
@@ -40,6 +40,7 @@ class Tomcat extends ContentProvider {
 
     config.settings[fqdnKey] = fqdn;
     config.settings[portKey] = port;
+    config.settings[contextKey] = context;
 
     askForLocationPath(
         'Host directory for generated tomcat `.location` and `.upstream` files');
@@ -49,6 +50,8 @@ class Tomcat extends ContentProvider {
 
   String get fqdnKey => '$name-fqdn';
 
+  String get contextKey => '$name-context';
+
   @override
   void createLocationFile() {
     var config = ConfigYaml();
@@ -57,7 +60,7 @@ class Tomcat extends ContentProvider {
         .forEach((file) => delete(file));
     var location = join(config.hostIncludePath, 'tomcat.location');
 
-    var context = config.settings['context'] as String;
+    var context = config.settings[contextKey] as String;
 
     location.write('''location / {
       	#try_files \$uri \$uri/ =404;
