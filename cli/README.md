@@ -195,8 +195,8 @@ When you run config, Nginx-LE will destroy and create a new container with the n
 
 ## Start Method
 Select the method by which you are going to start Nginx-LE
-| Method&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Description |
-| :---------------- | ---|
+| Method| Description |
+| ---------------- | --- |
 | nginx-le start| The simplest method. `nginx-le config` will create a container. Use `nginx-le start` and `nginx-le stop` to start/stop the container.
 | docker start | `nginx-le config` will create a container. Use `docker start` and `docker stop` to start/stop the container.
 | docker-compose up | `docker-compose up` will create and start the container. You must specify a number of environment variables and volumes in the docker-compose.yaml file to configure Nginx-LE. You must have started the container with `docker-compose` at least once before running `nginx-le config`. Use `docker-compose up` and `docker-compose down` to start/stop the container. Technically you don't need to run `nginx-le config` if you are using docker-compose. Running the config command is required if you want to use the other nginx-le commands but for many users this won't be necessary.
@@ -209,7 +209,7 @@ The configure command lets you set how the content is to be served.
 Nginx-LE supports four types of Content Providers
 
 | Provider | Description  |
-| ----| ----- | ----- |
+| ---- | ----- | ----- |
 | Static | Serve static web content from a local folder.  |
 | Generic Proxy | Pass requests through to a Web Application server that can respond to HTTP requests. This is normally on the same host as the Nginx-LE server as the connection is not encrypted.
 | Tomcat Proxy | Pass requests to a local Tomcat web application server on port 8080.
