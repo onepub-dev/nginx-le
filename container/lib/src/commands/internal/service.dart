@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dcli/dcli.dart';
@@ -21,13 +22,18 @@ void start_service() {
   var startPaused = Environment().startPaused;
 
   if (startPaused) {
-    print(orange(
-        'Nginx-LE is paused. Run "nginx-le cli" to attached and explore the Nginx-LE container'));
+    print(orange('Nginx-LE is paused. Run "nginx-le cli" to attached and explore the Nginx-LE container'));
     while (true) {
       sleep(10);
     }
   } else {
-    _start();
+    try {
+      _start();
+    } catch (e, s) {
+      print('Nginx-LE encounted an unexpected problem and is shutting down.');
+      print('Exception: ${e.runtimeType} ${e.toString()}');
+      print('Stacktrace: ${s.toString()}');
+    }
   }
 }
 
@@ -68,16 +74,16 @@ void _start() {
       wildcard: wildcard,
       autoAcquireMode: autoAcquire);
 
-  startLogRotateThread(debug: debug);
+  LogManager().start();
 
-  startRenewalThread(debug: debug);
+  startRenewalScheduler();
 
   if (autoAcquire) {
     var certificates = Certificate.load();
 
     /// expired certs are handled by the renew scheduler
     if (certificates.isEmpty) {
-      startAcquireThread(debug: debug);
+      startAcquireThread();
     } else {
       var certificate = certificates[0];
 
@@ -88,7 +94,7 @@ void _start() {
           '$hostname.$domain' != certificate.fqdn ||
           wildcard != certificate.wildcard) {
         Certbot.revokeAll();
-        startAcquireThread(debug: debug);
+        startAcquireThread();
       }
     }
   }
@@ -106,19 +112,16 @@ void dumpEnvironmentVariables() {
   printEnv(Environment().tldKey, Environment().tld);
   printEnv(Environment().emailaddressKey, Environment().emailaddress);
   printEnv(Environment().productionKey, Environment().production.toString());
-  printEnv(
-      Environment().domainWildcardKey, Environment().domainWildcard.toString());
+  printEnv(Environment().domainWildcardKey, Environment().domainWildcard.toString());
   printEnv(Environment().autoAcquireKey, Environment().autoAcquire.toString());
   printEnv(Environment().smtpServerKey, Environment().smtpServer);
-  printEnv(
-      Environment().smtpServerPortKey, Environment().smtpServerPort.toString());
+  printEnv(Environment().smtpServerPortKey, Environment().smtpServerPort.toString());
   printEnv(Environment().startPausedKey, Environment().startPaused.toString());
   printEnv(Environment().authProviderKey, Environment().authProvider);
 
   var authProvider = AuthProviders().getByName(Environment().authProvider);
   if (authProvider == null) {
-    printerr(red(
-        'No Auth Provider has been set. Check ${Environment().authProviderKey} as been set'));
+    printerr(red('No Auth Provider has been set. Check ${Environment().authProviderKey} as been set'));
     exit(1);
   }
   authProvider.dumpEnvironmentVariables();
@@ -126,8 +129,7 @@ void dumpEnvironmentVariables() {
   print('Internal environment variables');
   printEnv(Environment().certbotRootPathKey, Environment().certbotRootPath);
   printEnv(Environment().logfileKey, Environment().logfile);
-  printEnv(Environment().nginxCertRootPathOverwriteKey,
-      Environment().nginxCertRootPathOverwrite);
+  printEnv(Environment().nginxCertRootPathOverwriteKey, Environment().nginxCertRootPathOverwrite);
 }
 
 void printEnv(String key, String value) {
@@ -137,21 +139,39 @@ void printEnv(String key, String value) {
 ////////////////////////////////////////////
 /// Renewal thread
 ////////////////////////////////////////////
-void startRenewalThread({bool debug = false}) {
+void startRenewalScheduler() {
   print('Starting the certificate renewal scheduler.');
 
   var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
   try {
-    iso.run(startScheduler, debug ? 'debug' : 'nodebug');
+    iso.run(startScheduler, encodeEnviroment());
   } finally {
     waitForEx(iso.close());
   }
 }
 
+String encodeEnviroment() {
+  var envMap = <String, String>{};
+  envMap.addEntries(env.entries.toSet());
+  return JsonEncoder(_toEncodable).convert(envMap);
+}
+
+void restoreEnvironment(String environment) {
+  env.addAll(Map<String, String>.from(JsonDecoder().convert(environment) as Map<dynamic, dynamic>));
+}
+
+String _toEncodable(Object object) {
+  return object.toString();
+  // if (object is Map && !(object.keys.every((key) => key is String))) {
+  //   return 'simpleString';
+  // }
+  // return object;
+}
+
 /// Isolate callback must be a top level function.
-void startScheduler(String debug) {
-  Settings().setVerbose(enabled: debug == 'debug');
+void startScheduler(String environment) {
+  Settings().setVerbose(enabled: Environment().debug);
   // ngix is running we now need to start the certbot renew scheduler.
   Certbot().scheduleRenews();
 
@@ -165,20 +185,22 @@ void startScheduler(String debug) {
 /// Acquire thread
 /////////////////////////////////////////////
 
-void startAcquireThread({bool debug = false}) {
+void startAcquireThread() {
   print('Starting the certificate acquire thread.');
 
   var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
   try {
-    iso.run(acquireThread, debug ? 'debug' : 'nodebug');
+    iso.run(acquireThread, encodeEnviroment());
   } finally {
     waitForEx(iso.close());
   }
 }
 
-void acquireThread(String debug) {
-  Settings().setVerbose(enabled: debug == 'debug');
+void acquireThread(String environment) {
+  restoreEnvironment(environment);
+
+  Settings().setVerbose(enabled: Environment().debug);
   try {
     var authProvider = AuthProviders().getByName(Environment().authProvider);
     authProvider.acquire();
@@ -186,8 +208,7 @@ void acquireThread(String debug) {
     Certbot().deployCertificates(
         hostname: Environment().hostname,
         domain: Environment().domain,
-        reload:
-            true, // don't try to reload nginx as it won't be running as yet.
+        reload: true, // don't try to reload nginx as it won't be running as yet.
         wildcard: Environment().domainWildcard,
         autoAcquireMode: Environment().autoAcquire);
   } on CertbotException catch (e, st) {
@@ -196,8 +217,7 @@ void acquireThread(String debug) {
     printerr(e.details);
     printerr('Cerbot Error details end: ${'*' * 20}');
     printerr(st.toString());
-    Email.sendError(
-        subject: e.message, body: '${e.details}\n ${st.toString()}');
+    Email.sendError(subject: e.message, body: '${e.details}\n ${st.toString()}');
   } catch (e, st) {
     /// we don't rethrow as we don't want to shutdown the scheduler.
     /// as this may be a temporary error.
