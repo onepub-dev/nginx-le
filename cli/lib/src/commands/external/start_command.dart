@@ -4,7 +4,7 @@ import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
-/// Starts nginx and the certbot scheduler.
+/// Starts the nginx-le container.
 class StartCommand extends Command<void> {
   @override
   String get description => 'starts the ngix server';
