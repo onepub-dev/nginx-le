@@ -1,5 +1,5 @@
 name: nginx_le
-version: 2.7.8
+version: 2.7.10
 homepage: https://github.com/bsutton/nginx-le
 description: Nginx-LE provides a docker container and tools to create an Nginx web server that automatically acquires and renews HTTPS certificates.
 environment: 
@@ -9,8 +9,7 @@ dependencies:
   args: ^1.5.2
   encrypt: ^4.0.2
   cron: ^0.2.3
-  dcli: ^0.33.8
-    #path: ../../dcli
+  dcli: ^0.34.0
   path: ^1.6.4
   pub_semver: ^1.0.0
   xml: ^4.2.0
@@ -19,7 +18,7 @@ dependencies:
   isolate: ^2.0.3
   meta: ^1.0.0
   pedantic: ^1.0.0
-  pub_release: ^2.1.11
+  pub_release: ^2.1.12
   public_suffix: ^1.0.0
   settings_yaml: ^2.0.0
   uuid: ^2.0.4
@@ -30,6 +29,7 @@ dev_dependencies:
   test: ^1.0.0
 executables: 
   nginx-le: nginx-le
+
 
 dependency_overrides:
   nginx_le_shared:

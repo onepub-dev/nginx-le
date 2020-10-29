@@ -388,6 +388,26 @@ class Certbot {
     }
     print('');
   }
+
+  /// After an unexpected error occurs we block futher acquistion attempts
+  /// so we don't hit lets encrypt rate limits.
+  /// Once a block is in place the user must use the cli 'acquire' command
+  /// or pass in the CERTBOT_IGNORE_BLOCK=true environment variable.
+  void blockAcquisitions() {
+    touch(_pathToBlockFlag);
+  }
+
+  bool isBlocked() {
+    return exists(_pathToBlockFlag) && !Environment().certbotIgnoreBlock; 
+  }
+
+  void clearBlockFlag() {
+    if (isBlocked()) {
+      delete(_pathToBlockFlag);
+    }
+  }
+
+  String get _pathToBlockFlag => join(LETSENCRYPT_ROOT, 'block_acquisitions.flag');
 }
 
 class CertbotException implements Exception {

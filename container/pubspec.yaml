@@ -9,7 +9,7 @@ dependencies:
   args: ^1.5.2
   path: ^1.6.4
   cron: ^0.2.3
-  dcli: ^0.33.8
+  dcli: ^0.34.0
   xml: ^4.2.0
   http: ^0.12.1
   intl: ^0.16.1
@@ -21,3 +21,5 @@ dependencies:
   nginx_le_shared: ^2.0.0
 dev_dependencies: 
   test: ^1.0.0
+
+

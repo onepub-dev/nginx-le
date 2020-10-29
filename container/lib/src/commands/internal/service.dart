@@ -1,11 +1,11 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dcli/dcli.dart';
-import 'package:isolate/isolate.dart';
+import 'package:nginx_le_container/src/util/acquisition_manager.dart';
+import 'package:nginx_le_container/src/util/renewal_manager.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
-import 'logrotate.dart';
+import '../../util/log_manager.dart';
 
 /// The main service thread that runs within the docker container.
 void start_service() {
@@ -33,6 +33,8 @@ void start_service() {
       print('Nginx-LE encounted an unexpected problem and is shutting down.');
       print('Exception: ${e.runtimeType} ${e.toString()}');
       print('Stacktrace: ${s.toString()}');
+    } finally {
+      print(orange('Nginx-le has shutdown'));
     }
   }
 }
@@ -76,14 +78,14 @@ void _start() {
 
   LogManager().start();
 
-  startRenewalScheduler();
+  RenewalManager().start();
 
-  if (autoAcquire) {
+  if (autoAcquire && !Certbot().isBlocked()) {
     var certificates = Certificate.load();
 
     /// expired certs are handled by the renew scheduler
     if (certificates.isEmpty) {
-      startAcquireThread();
+      AcquisitionManager().start();
     } else {
       var certificate = certificates[0];
 
@@ -94,7 +96,7 @@ void _start() {
           '$hostname.$domain' != certificate.fqdn ||
           wildcard != certificate.wildcard) {
         Certbot.revokeAll();
-        startAcquireThread();
+        AcquisitionManager().start();
       }
     }
   }
@@ -102,7 +104,7 @@ void _start() {
   print('Starting nginx');
 
   /// run the command passed in on the command line.
-  'nginx'.start();
+  "nginx -g 'daemon off;'".start();
 }
 
 void dumpEnvironmentVariables() {
@@ -118,6 +120,7 @@ void dumpEnvironmentVariables() {
   printEnv(Environment().smtpServerPortKey, Environment().smtpServerPort.toString());
   printEnv(Environment().startPausedKey, Environment().startPaused.toString());
   printEnv(Environment().authProviderKey, Environment().authProvider);
+  printEnv(Environment().certbotIgnoreBlockKey, Environment().certbotIgnoreBlock.toString());
 
   var authProvider = AuthProviders().getByName(Environment().authProvider);
   if (authProvider == null) {
@@ -134,96 +137,4 @@ void dumpEnvironmentVariables() {
 
 void printEnv(String key, String value) {
   print('ENV: $key=$value');
-}
-
-////////////////////////////////////////////
-/// Renewal thread
-////////////////////////////////////////////
-void startRenewalScheduler() {
-  print('Starting the certificate renewal scheduler.');
-
-  var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
-
-  try {
-    iso.run(startScheduler, encodeEnviroment());
-  } finally {
-    waitForEx(iso.close());
-  }
-}
-
-String encodeEnviroment() {
-  var envMap = <String, String>{};
-  envMap.addEntries(env.entries.toSet());
-  return JsonEncoder(_toEncodable).convert(envMap);
-}
-
-void restoreEnvironment(String environment) {
-  env.addAll(Map<String, String>.from(JsonDecoder().convert(environment) as Map<dynamic, dynamic>));
-}
-
-String _toEncodable(Object object) {
-  return object.toString();
-  // if (object is Map && !(object.keys.every((key) => key is String))) {
-  //   return 'simpleString';
-  // }
-  // return object;
-}
-
-/// Isolate callback must be a top level function.
-void startScheduler(String environment) {
-  Settings().setVerbose(enabled: Environment().debug);
-  // ngix is running we now need to start the certbot renew scheduler.
-  Certbot().scheduleRenews();
-
-  /// keep the isolate running forever.
-  while (true) {
-    sleep(10);
-  }
-}
-
-/////////////////////////////////////////////
-/// Acquire thread
-/////////////////////////////////////////////
-
-void startAcquireThread() {
-  print('Starting the certificate acquire thread.');
-
-  var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
-
-  try {
-    iso.run(acquireThread, encodeEnviroment());
-  } finally {
-    waitForEx(iso.close());
-  }
-}
-
-void acquireThread(String environment) {
-  restoreEnvironment(environment);
-
-  Settings().setVerbose(enabled: Environment().debug);
-  try {
-    var authProvider = AuthProviders().getByName(Environment().authProvider);
-    authProvider.acquire();
-
-    Certbot().deployCertificates(
-        hostname: Environment().hostname,
-        domain: Environment().domain,
-        reload: true, // don't try to reload nginx as it won't be running as yet.
-        wildcard: Environment().domainWildcard,
-        autoAcquireMode: Environment().autoAcquire);
-  } on CertbotException catch (e, st) {
-    printerr(e.message);
-    printerr('Cerbot Error details begin: ${'*' * 20}');
-    printerr(e.details);
-    printerr('Cerbot Error details end: ${'*' * 20}');
-    printerr(st.toString());
-    Email.sendError(subject: e.message, body: '${e.details}\n ${st.toString()}');
-  } catch (e, st) {
-    /// we don't rethrow as we don't want to shutdown the scheduler.
-    /// as this may be a temporary error.
-    printerr(e.toString());
-    printerr(st.toString());
-
-    Email.sendError(subject: e.toString(), body: st.toString());
-  }
 }

@@ -1,7 +1,6 @@
-import 'dart:isolate';
-
 import 'package:dcli/dcli.dart';
 import 'package:isolate/isolate_runner.dart';
+import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 const CONFIG_FILE = '/etc/nginx/logrotate.conf';
 
@@ -11,15 +10,14 @@ const CONFIG_FILE = '/etc/nginx/logrotate.conf';
 
 class LogManager {
   IsolateRunner isoLogRotate;
-  
+
   void start({bool debug = false}) {
     print('Starting the logrotate  scheduler.');
 
     isoLogRotate = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
     try {
-      isoLogRotate.run(_startScheduler, debug ? 'debug' : 'nodebug');
-      
+      isoLogRotate.run(_startScheduler, Env().toJson());
     } finally {
       waitForEx(isoLogRotate.close());
     }
@@ -27,15 +25,27 @@ class LogManager {
 }
 
 /// Isolate callback must be a top level function.
-void _startScheduler(String debug) {
-  Settings().setVerbose(enabled: debug == 'debug');
+void _startScheduler(String environment) {
+  try {
+    print(orange('LogManager is starting'));
+    Env().fromJson(environment);
 
-  /// keep the isolate running forever.
-  while (true) {
-    /// we do a log rotation every 20 minutes.
-    sleep(1200, interval: Interval.seconds);
+    Settings().setVerbose(enabled: Environment().debug);
 
-    _logrotate();
+    /// keep the isolate running forever.
+    while (true) {
+      /// we do a log rotation every 20 minutes.
+      sleep(1200, interval: Interval.seconds);
+
+      _logrotate();
+    }
+  } catch (e, st) {
+    printerr(red('LogManager has shutdown due to an unexpected error: ${e.runtimeType}'));
+    printerr(e.toString());
+    printerr(st.toString());
+    Email.sendError(subject: e.toString(), body: st.toString());
+  } finally {
+    print(orange('LogManager has shutting down.'));
   }
 }
 
