@@ -22,7 +22,8 @@ void start_service() {
   var startPaused = Environment().startPaused;
 
   if (startPaused) {
-    print(orange('Nginx-LE is paused. Run "nginx-le cli" to attached and explore the Nginx-LE container'));
+    print(orange(
+        'Nginx-LE is paused. Run "nginx-le cli" to attached and explore the Nginx-LE container'));
     while (true) {
       sleep(10);
     }
@@ -114,17 +115,21 @@ void dumpEnvironmentVariables() {
   printEnv(Environment().tldKey, Environment().tld);
   printEnv(Environment().emailaddressKey, Environment().emailaddress);
   printEnv(Environment().productionKey, Environment().production.toString());
-  printEnv(Environment().domainWildcardKey, Environment().domainWildcard.toString());
+  printEnv(
+      Environment().domainWildcardKey, Environment().domainWildcard.toString());
   printEnv(Environment().autoAcquireKey, Environment().autoAcquire.toString());
   printEnv(Environment().smtpServerKey, Environment().smtpServer);
-  printEnv(Environment().smtpServerPortKey, Environment().smtpServerPort.toString());
+  printEnv(
+      Environment().smtpServerPortKey, Environment().smtpServerPort.toString());
   printEnv(Environment().startPausedKey, Environment().startPaused.toString());
   printEnv(Environment().authProviderKey, Environment().authProvider);
-  printEnv(Environment().certbotIgnoreBlockKey, Environment().certbotIgnoreBlock.toString());
+  printEnv(Environment().certbotIgnoreBlockKey,
+      Environment().certbotIgnoreBlock.toString());
 
   var authProvider = AuthProviders().getByName(Environment().authProvider);
   if (authProvider == null) {
-    printerr(red('No Auth Provider has been set. Check ${Environment().authProviderKey} as been set'));
+    printerr(red(
+        'No Auth Provider has been set. Check ${Environment().authProviderKey} as been set'));
     exit(1);
   }
   authProvider.dumpEnvironmentVariables();
@@ -132,7 +137,8 @@ void dumpEnvironmentVariables() {
   print('Internal environment variables');
   printEnv(Environment().certbotRootPathKey, Environment().certbotRootPath);
   printEnv(Environment().logfileKey, Environment().logfile);
-  printEnv(Environment().nginxCertRootPathOverwriteKey, Environment().nginxCertRootPathOverwrite);
+  printEnv(Environment().nginxCertRootPathOverwriteKey,
+      Environment().nginxCertRootPathOverwrite);
 }
 
 void printEnv(String key, String value) {

@@ -19,8 +19,10 @@ void main() {
   env['START_PAUSED'] = 'false';
   env['AUTH_PROVIDER'] = 'HTTP01Auth';
 
-  env['CERTBOT_HTTP_AUTH_HOOK_PATH'] = '/home/bsutton/git/nginx-le/container/bin/certbot_hooks/http_auth.dart';
-  env['CERTBOT_HTTP_CLEANUP_HOOK_PATH'] = '/home/bsutton/git/nginx-le/container/bin/certbot_hooks/http_cleanup.dart';
+  env['CERTBOT_HTTP_AUTH_HOOK_PATH'] =
+      '/home/bsutton/git/nginx-le/container/bin/certbot_hooks/http_auth.dart';
+  env['CERTBOT_HTTP_CLEANUP_HOOK_PATH'] =
+      '/home/bsutton/git/nginx-le/container/bin/certbot_hooks/http_cleanup.dart';
 
   print('email: ${Environment().emailaddress}');
 

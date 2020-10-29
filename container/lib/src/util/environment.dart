@@ -13,7 +13,8 @@ class IsolateEnvironment {
   }
 
   void restoreEnvironment(String environment) {
-    env.addAll(Map<String, String>.from(JsonDecoder().convert(environment) as Map<dynamic, dynamic>));
+    env.addAll(Map<String, String>.from(
+        JsonDecoder().convert(environment) as Map<dynamic, dynamic>));
   }
 
   String _toEncodable(Object object) {

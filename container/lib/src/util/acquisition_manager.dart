@@ -32,7 +32,8 @@ void _acquireThread(String environment) {
     Certbot().deployCertificates(
         hostname: Environment().hostname,
         domain: Environment().domain,
-        reload: true, // don't try to reload nginx as it won't be running as yet.
+        reload:
+            true, // don't try to reload nginx as it won't be running as yet.
         wildcard: Environment().domainWildcard,
         autoAcquireMode: Environment().autoAcquire);
   } on CertbotException catch (e, st) {
@@ -42,10 +43,12 @@ void _acquireThread(String environment) {
     printerr(e.details);
     printerr('Cerbot Error details end: ${'*' * 20}');
     printerr(st.toString());
-    Email.sendError(subject: e.message, body: '${e.details}\n ${st.toString()}');
+    Email.sendError(
+        subject: e.message, body: '${e.details}\n ${st.toString()}');
   } catch (e, st) {
     Certbot().blockAcquisitions();
-    printerr(red('LogManager has shutdown due to an unexpected error: ${e.runtimeType}'));
+    printerr(red(
+        'LogManager has shutdown due to an unexpected error: ${e.runtimeType}'));
     printerr(e.toString());
     printerr(st.toString());
     Email.sendError(subject: e.toString(), body: st.toString());

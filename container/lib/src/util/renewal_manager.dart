@@ -33,7 +33,8 @@ void startScheduler(String environment) {
       sleep(10);
     }
   } catch (e, st) {
-    printerr(red('RenewalManager has shutdown due to an unexpected error: ${e.runtimeType}'));
+    printerr(red(
+        'RenewalManager has shutdown due to an unexpected error: ${e.runtimeType}'));
     printerr(e.toString());
     printerr(st.toString());
     Email.sendError(subject: e.toString(), body: st.toString());

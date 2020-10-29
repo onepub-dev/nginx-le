@@ -40,7 +40,8 @@ void _startScheduler(String environment) {
       _logrotate();
     }
   } catch (e, st) {
-    printerr(red('LogManager has shutdown due to an unexpected error: ${e.runtimeType}'));
+    printerr(red(
+        'LogManager has shutdown due to an unexpected error: ${e.runtimeType}'));
     printerr(e.toString());
     printerr(st.toString());
     Email.sendError(subject: e.toString(), body: st.toString());
@@ -53,9 +54,12 @@ void _logrotate() {
   print('Running logrotate');
 
   if (!exists(CONFIG_FILE)) {
-    printerr(red('The logrotate configuration file was not found at: $CONFIG_FILE'));
+    printerr(
+        red('The logrotate configuration file was not found at: $CONFIG_FILE'));
   }
-  if (start('logrotate $CONFIG_FILE', nothrow: true, progress: Progress.print()).exitCode != 0) {
+  if (start('logrotate $CONFIG_FILE', nothrow: true, progress: Progress.print())
+          .exitCode !=
+      0) {
     print(red('Logrotate exited with a non-zero exit code.'));
   }
 }

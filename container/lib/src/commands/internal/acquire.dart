@@ -18,9 +18,12 @@ void acquire(List<String> args) {
   Settings().verbose('${Environment().hostnameKey}:${Environment().hostname}');
 
   Settings().verbose('${Environment().domainKey}:${Environment().domain}');
-  Settings().verbose('${Environment().productionKey}:${Environment().production}');
-  Settings().verbose('${Environment().domainWildcardKey}:${Environment().domainWildcard}');
-  Settings().verbose('${Environment().authProviderKey}:${Environment().authProvider}');
+  Settings()
+      .verbose('${Environment().productionKey}:${Environment().production}');
+  Settings().verbose(
+      '${Environment().domainWildcardKey}:${Environment().domainWildcard}');
+  Settings().verbose(
+      '${Environment().authProviderKey}:${Environment().authProvider}');
 
   /// if auto acquisition has been block an manual call to acquistion will clear the flag.
   Certbot().clearBlockFlag;
