@@ -1,3 +1,6 @@
+# 3.0.2
+Reduced dart sdk to 2.7. so we can run on a raspberry pi.
+
 # 3.0.1
 # 3.0.0
 # 2.7.10

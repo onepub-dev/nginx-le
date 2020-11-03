@@ -1,9 +1,9 @@
 name: nginx_le_shared
-version: 3.0.1
+version: 3.0.2
 homepage: https://github.com/bsutton/nginx-le
 description: shared library used by Nginx-LE
 environment: 
-  sdk: '>=2.8.0 <3.0.0'
+  sdk: '>=2.7.0 <3.0.0'
 dependencies: 
   async: ^2.4.2
   args: ^1.5.2
