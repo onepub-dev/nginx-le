@@ -112,7 +112,7 @@ class Certbot {
     }
 
     if (reload) {
-      reloadNginx();
+      _reloadNginx();
     }
   }
 
@@ -268,6 +268,7 @@ class Certbot {
 
   void renew() {
     var certbot = 'certbot renew '
+        ' --force-renewal' // for testing only!!! - TODO: REMOVE.
         ' --work-dir=${Certbot.letsEncryptWorkPath}'
         ' --config-dir=${Certbot.letsEncryptConfigPath}'
         ' --logs-dir=${Certbot.letsEncryptLogPath}';
@@ -318,7 +319,7 @@ class Certbot {
     copy(join(certpath, 'privkey.pem'), '/tmp/privkey.pem', overwrite: true);
 
     /// but we need to move them in place using move so that
-    /// the replace is essentially atomic so that nginx does see partially
+    /// the replace is essentially atomic so that nginx doesn't see partially
     /// created certificates.
     move('/tmp/fullchain.pem', join(nginxCertPath, 'fullchain.pem'),
         overwrite: true);
@@ -326,7 +327,7 @@ class Certbot {
         overwrite: true);
   }
 
-  void reloadNginx() {
+  void _reloadNginx() {
     if (exists('/var/run/nginx.pid')) {
       /// force nginx to reload its config.
       'nginx -s reload'.run;
