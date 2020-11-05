@@ -99,17 +99,18 @@ class Environment {
   String get certbotDNSAuthHookPathKey => 'CERTBOT_DNS_AUTH_HOOK_PATH';
   String get certbotDNSAuthHookPath => env[certbotDNSAuthHookPathKey];
   set certbotDNSAuthHookPath(String certbotDNSAuthHookPath) =>
-      env[certbotDNSAuthHookPathKey];
+      env[certbotDNSAuthHookPathKey] = certbotDNSAuthHookPath;
 
   String get certbotDNSCleanupHookPathKey => 'CERTBOT_DNS_CLEANUP_HOOK_PATH';
   String get certbotDNSCleanupHookPath => env[certbotDNSCleanupHookPathKey];
   set certbotDNSCleanupHookPath(String certbotDNSCleanupHookPath) =>
-      env[certbotDNSCleanupHookPathKey];
+      env[certbotDNSCleanupHookPathKey] = certbotDNSCleanupHookPath;
 
   /// passed in via the docker container
   String get certbotHTTPAuthHookPathKey => 'CERTBOT_HTTP_AUTH_HOOK_PATH';
   String get certbotHTTPAuthHookPath => env[certbotHTTPAuthHookPathKey];
-  String get certbotHTTPCleanupHookPath => env[certbotHTTPAuthHookPathKey];
+  String get certbotHTTPCleanupHookPathKey => 'CERTBOT_HTTP_CLEANUP_HOOK_PATH';
+  String get certbotHTTPCleanupHookPath => env[certbotHTTPCleanupHookPathKey];
 
   String get certbotDNSRetriesKey => 'DNS_RETRIES';
   int get certbotDNSRetries =>
