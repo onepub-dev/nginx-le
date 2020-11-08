@@ -39,7 +39,8 @@ void namncheap_dns_cleanup() {
 
   if (fqdn == null || fqdn.isEmpty) {
     printerr('Throwing exception: fqdn is empty');
-    throw ArgumentError('No fqdn found in env var ${Environment().certbotDomainKey}');
+    throw ArgumentError(
+        'No fqdn found in env var ${Environment().certbotDomainKey}');
   }
 
   try {
@@ -47,13 +48,18 @@ void namncheap_dns_cleanup() {
     /// Create the required DNS entry for the Certbot challenge.
     ///
     Settings().verbose('Creating challenge');
-    var challenge = Challenge.simple(apiKey: apiKey, username: username, apiUsername: username);
+    var challenge = Challenge.simple(
+        apiKey: apiKey, username: username, apiUsername: username);
     Settings().verbose('calling challenge.present');
 
     ///
     /// Writes the DNS record and waits for it to be visible.
     ///
-    challenge.cleanUp(hostname: hostname, domain: domain, tld: tld, certbotValidationString: certbotAuthKey);
+    challenge.cleanUp(
+        hostname: hostname,
+        domain: domain,
+        tld: tld,
+        certbotValidationString: certbotAuthKey);
   } catch (e) {
     printerr(e.toString());
   }

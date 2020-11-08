@@ -19,7 +19,8 @@ enum Mode { public, private }
 
 /// Starts the ngix docker instance
 void main(List<String> args) {
-  var runner = CommandRunner<void>('nginx-le', 'Cli tools to manage your nginx-le server. Version: $packageVersion');
+  var runner = CommandRunner<void>('nginx-le',
+      'Cli tools to manage your nginx-le server. Version: $packageVersion');
 
   runner.addCommand(BuildCommand());
   runner.addCommand(ConfigCommand());

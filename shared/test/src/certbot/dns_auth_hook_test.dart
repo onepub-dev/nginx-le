@@ -28,8 +28,6 @@ void prepareCertHooks() {
   Environment().nginxCertRootPathOverwrite = '/tmp/nginx/certs';
   Environment().authProvider = NameCheapAuthProvider().name;
 
-    
-
   _createDir(Certbot.nginxCertPath);
 
   _createDir(Certbot.letsEncryptWorkPath);

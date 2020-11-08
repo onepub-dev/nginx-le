@@ -19,6 +19,8 @@ void main() {
   print('deploy_hook: domain: ${Environment().domain}');
   print('deploy_hook: domainWildcard: ${Environment().domainWildcard}');
   print('deploy_hook: autoAcquire: ${Environment().autoAcquire}');
-  print('deploy_hook: renewedLinagePath: ${Environment().certbotDeployHookRenewedLineagePath}');
-  Certbot().deployCertificatesDirect(Environment().certbotDeployHookRenewedLineagePath);
+  print(
+      'deploy_hook: renewedLinagePath: ${Environment().certbotDeployHookRenewedLineagePath}');
+  Certbot().deployCertificatesDirect(
+      Environment().certbotDeployHookRenewedLineagePath);
 }

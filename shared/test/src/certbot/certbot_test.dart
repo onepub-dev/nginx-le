@@ -13,7 +13,8 @@ void main() {
   group('certbot', () {
     setUpAll(() {
       if (which('dns_auth').notfound) {
-        printerr(red('Compile and install dns_auth and dns_cleanup before running this test'));
+        printerr(red(
+            'Compile and install dns_auth and dns_cleanup before running this test'));
         exit(1);
       }
       print('setupall called');
@@ -31,7 +32,8 @@ void main() {
     test('acquire', () {
       prepareCertHooks();
 
-      var authProvider = AuthProviders().getByName(NameCheapAuthProvider().name);
+      var authProvider =
+          AuthProviders().getByName(NameCheapAuthProvider().name);
       print('acquire me');
 
       print('env ${env['CERTBOT_DNS_AUTH_HOOK_PATH']}');
@@ -77,7 +79,8 @@ void main() {
         print(cert.toString());
       }
 
-      var authProvider = AuthProviders().getByName(NameCheapAuthProvider().name);
+      var authProvider =
+          AuthProviders().getByName(NameCheapAuthProvider().name);
 
       print('renew');
       authProvider.promptForSettings(ConfigYaml());
@@ -115,14 +118,20 @@ void main() {
       var path = Directory('/tmp').createTempSync().path;
 
       Environment().certbotRootPath = path;
-      createDir(join(Certbot.letsEncryptConfigPath, 'live', 'robtest18-new.clouddialer.com.au'), recursive: true);
-      var fqnd001 = join(Certbot.letsEncryptConfigPath, 'live', 'robtest18-new.clouddialer.com.au-0001');
+      createDir(
+          join(Certbot.letsEncryptConfigPath, 'live',
+              'robtest18-new.clouddialer.com.au'),
+          recursive: true);
+      var fqnd001 = join(Certbot.letsEncryptConfigPath, 'live',
+          'robtest18-new.clouddialer.com.au-0001');
       createDir(fqnd001, recursive: true);
 
       // noojee.org-0001
       // noojee.org-new
       // noojee.org-new-0001
-      var latest = CertificatePaths.latestCertificatePath('robtest18-new', 'clouddialer.com.au', wildcard: false);
+      var latest = CertificatePaths.latestCertificatePath(
+          'robtest18-new', 'clouddialer.com.au',
+          wildcard: false);
       expect(latest, equals(fqnd001));
 
       // createDir(join(path, 'robtest18.clouddialer.com.au'));

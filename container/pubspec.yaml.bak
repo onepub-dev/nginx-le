@@ -1,9 +1,9 @@
 name: nginx_le_container
-version: 2.7.10
+version: 3.0.2
 description: Commands that live in the nginx-le docker container.
 repository: https://github.com/bsutton/nginx-le
 environment: 
-  sdk: '>=2.8.0 <3.0.0'
+  sdk: '>=2.7.0 <3.0.0'
 dependencies: 
   async: ^2.4.2
   args: ^1.5.2
@@ -18,10 +18,9 @@ dependencies:
   pedantic: ^1.0.0
   public_suffix: ^1.0.0
   uuid: ^2.0.4
-  nginx_le_shared: ^2.0.0
+  nginx_le_shared: ^3.0.0
 dev_dependencies: 
   test: ^1.0.0
-
 
 dependency_overrides:
   nginx_le_shared:

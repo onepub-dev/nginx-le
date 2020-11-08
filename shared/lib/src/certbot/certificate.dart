@@ -57,7 +57,9 @@ class Certificate {
     print('Loading certificates from ${Certbot.letsEncryptConfigPath}');
 
     print('directory tree of certs');
-    find('*', root: Certbot.letsEncryptConfigPath, types: [Find.directory, Find.file, Find.link])
+    find('*',
+            root: Certbot.letsEncryptConfigPath,
+            types: [Find.directory, Find.file, Find.link])
         .forEach((file) => print(file));
     var cmd = 'certbot certificates '
         ' --config-dir=${Certbot.letsEncryptConfigPath}'
@@ -74,8 +76,6 @@ class Certificate {
 
     return parse(lines);
   }
-
-
 
   /// When certs exist we get
   ///

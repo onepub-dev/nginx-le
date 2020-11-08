@@ -1,5 +1,5 @@
 name: nginx_le_shared
-version: 3.0.2
+version: 4.0.1
 homepage: https://github.com/bsutton/nginx-le
 description: shared library used by Nginx-LE
 environment: 

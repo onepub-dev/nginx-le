@@ -1,3 +1,5 @@
+# 4.0.1
+Fixed the renewal logic as it was failing to deploy the renewed certificates
 # 3.0.2
 # 3.0.1
 # 2.7.10

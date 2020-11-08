@@ -5,8 +5,8 @@ import 'package:test/test.dart';
 
 void main() {
   test('auth provider ...', () async {
-    Environment().certbotAuthHookPath =
-        join(HOME, 'git', 'nginx-le', 'container', 'bin', 'certbot_hooks', 'auth_hook_path');
+    Environment().certbotAuthHookPath = join(HOME, 'git', 'nginx-le',
+        'container', 'bin', 'certbot_hooks', 'auth_hook_path');
     var provider = NameCheapAuthProvider();
     var apiKey = ask('Namecheap API Key');
     var apiUsername = ask('Namecheap Username');

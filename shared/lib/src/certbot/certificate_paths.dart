@@ -38,14 +38,17 @@ class CertificatePaths {
   /// conifg/live/<fqdn-001>
   /// conifg/live/<fqdn-002>
   @visibleForTesting
-  static String latestCertificatePath(String hostname, String domain, {@required bool wildcard}) {
+  static String latestCertificatePath(String hostname, String domain,
+      {@required bool wildcard}) {
     var livepath = join(Certbot.letsEncryptConfigPath, 'live');
     // if no paths contain '-' then the base fqdn path is correct.
 
-    var defaultPath = _liveDefaultPathForFQDN(hostname, domain, wildcard: wildcard);
+    var defaultPath =
+        _liveDefaultPathForFQDN(hostname, domain, wildcard: wildcard);
 
     /// find all the dirs that begin with <fqdn> in the live directory.
-    var paths = find('$hostname.$domain*', root: livepath, types: [FileSystemEntityType.directory]).toList();
+    var paths = find('$hostname.$domain*',
+        root: livepath, types: [FileSystemEntityType.directory]).toList();
 
     var max = 0;
     for (var path in paths) {
@@ -75,13 +78,15 @@ class CertificatePaths {
   /// encrypt adds a number designator when new certificates are aquired.
   ///
   /// See: [lastestCertificatePath] for details.
-  static String _liveDefaultPathForFQDN(String hostname, String domain, {@required bool wildcard}) {
+  static String _liveDefaultPathForFQDN(String hostname, String domain,
+      {@required bool wildcard}) {
     var fqdn = wildcard ? domain : '$hostname.$domain';
     return join(Certbot.letsEncryptRootPath, LIVE_PATH, fqdn);
   }
 
   /// The root directory for the certificate files of the given [hostname] and [domain].
-  static String certificatePathRoot(String hostname, String domain, {@required bool wildcard}) {
+  static String certificatePathRoot(String hostname, String domain,
+      {@required bool wildcard}) {
     return latestCertificatePath(hostname, domain, wildcard: wildcard);
   }
 
