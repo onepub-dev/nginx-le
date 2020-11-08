@@ -1,7 +1,7 @@
 @Timeout(Duration(minutes: 60))
 import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
-import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/namecheap/namecheap_provider.dart';
+import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/namecheap/namecheap_auth_provider.dart';
 import 'package:test/test.dart';
 
 /// You must run this command with the console option.
@@ -18,6 +18,7 @@ void main() {
 void prepareCertHooks() {
   var letsencryptDir = '/tmp/letsencrypt';
 
+  Environment().production = false;
   Environment().certbotRootPath = letsencryptDir;
   Environment().certbotDomain = 'noojee.org';
   Environment().hostname = 'slayer';
@@ -25,6 +26,9 @@ void prepareCertHooks() {
   Environment().tld = 'org';
   Environment().certbotValidation = 'TEST_TOKEN_ABC134';
   Environment().nginxCertRootPathOverwrite = '/tmp/nginx/certs';
+  Environment().authProvider = NameCheapAuthProvider().name;
+
+    
 
   _createDir(Certbot.nginxCertPath);
 
@@ -34,19 +38,6 @@ void prepareCertHooks() {
   _createDir(join(Certbot.letsEncryptConfigPath, 'live'));
 
   print(pwd);
-  Environment().certbotDNSAuthHookPath = 'dns_auth';
-  Environment().certbotDNSCleanupHookPath = 'dns_cleanup';
-
-  setNameCheapAuthDetails();
-}
-
-void setNameCheapAuthDetails() {
-  var apiKey = ask('Namecheap api key');
-  var username = ask('Namecheap api username');
-  // pass the security details down to the createDNSChallenge.dart process
-  var provider = AuthProviders().getByName(NameCheapAuthProvider().name);
-  provider.envUsername = username;
-  provider.envToken = apiKey;
 }
 
 String _createDir(String dir) {

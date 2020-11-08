@@ -40,8 +40,6 @@ void prepareCertHooks() {
   _createDir(join(Certbot.letsEncryptConfigPath, 'live'));
 
   print(pwd);
-  Environment().certbotDNSAuthHookPath = 'http_auth';
-  Environment().certbotDNSCleanupHookPath = 'http_cleanup';
 }
 
 String _createDir(String dir) {

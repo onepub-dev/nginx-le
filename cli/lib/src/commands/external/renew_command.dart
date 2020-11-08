@@ -4,7 +4,7 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 import 'util.dart';
 
-class RevokeCommand extends Command<void> {
+class RenewCommand extends Command<void> {
   @override
   String get description =>
       'Runs a renew on the certificate. This should normally be necessary as renewal checks a schedule every 13 hours';
@@ -12,7 +12,7 @@ class RevokeCommand extends Command<void> {
   @override
   String get name => 'renew';
 
-  RevokeCommand() {
+  RenewCommand() {
     // argParser.addOption('containerid',
     //     abbr: 'c',
     //     help:
@@ -20,10 +20,7 @@ class RevokeCommand extends Command<void> {
     // argParser.addOption('name',
     //     abbr: 'n', help: 'The name of the docker container to attach to');
     argParser.addFlag('debug',
-        abbr: 'd',
-        defaultsTo: false,
-        negatable: false,
-        help: 'Outputs additional logging information');
+        abbr: 'd', defaultsTo: false, negatable: false, help: 'Outputs additional logging information');
   }
 
   @override

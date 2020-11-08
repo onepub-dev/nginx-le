@@ -38,13 +38,13 @@ abstract class GenericAuthProvider extends AuthProvider {
     var domain = Environment().domain;
     var production = Environment().production;
 
-    var auth_hook_path = Environment().certbotDNSAuthHookPath;
-    var cleanup_hook_path = Environment().certbotDNSCleanupHookPath;
+    var auth_hook_path = Environment().certbotAuthHookPath;
+    var cleanup_hook_path = Environment().certbotCleanupHookPath;
 
     ArgumentError.checkNotNull(auth_hook_path,
-        'Environment variable: ${Environment().certbotDNSAuthHookPathKey} missing');
+        'Environment variable: ${Environment().certbotAuthHookPathKey} missing');
     ArgumentError.checkNotNull(cleanup_hook_path,
-        'Environment variable: ${Environment().certbotDNSCleanupHookPathKey} missing');
+        'Environment variable: ${Environment().certbotCleanupHookPathKey} missing');
 
     Settings().verbose('Starting cerbot with authProvider: $name');
 

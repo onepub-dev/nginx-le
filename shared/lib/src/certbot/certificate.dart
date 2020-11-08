@@ -54,13 +54,28 @@ class Certificate {
   }
 
   static List<Certificate> load() {
+    print('Loading certificates from ${Certbot.letsEncryptConfigPath}');
+
+    print('directory tree of certs');
+    find('*', root: Certbot.letsEncryptConfigPath, types: [Find.directory, Find.file, Find.link])
+        .forEach((file) => print(file));
     var cmd = 'certbot certificates '
-        ' --config-dir=${Certbot.letsEncryptConfigPath}';
+        ' --config-dir=${Certbot.letsEncryptConfigPath}'
+        ' --work-dir=${Certbot.letsEncryptWorkPath}'
+        ' --work-dir=${Certbot.letsEncryptLogPath}';
 
     var lines = cmd.toList(nothrow: true);
 
+    print('output from certbot certificates');
+
+    for (var line in lines) {
+      print('OUTPUT: $line');
+    }
+
     return parse(lines);
   }
+
+
 
   /// When certs exist we get
   ///
@@ -105,7 +120,11 @@ class Certificate {
   }
 
   bool hasExpired() {
-    return (expiryDate.isBefore(DateTime.now()));
+    print('expiry date $expiryDate');
+    var expired = (expiryDate.isBefore(DateTime.now()));
+
+    print('expired=$expired');
+    return expired;
   }
 
   @override

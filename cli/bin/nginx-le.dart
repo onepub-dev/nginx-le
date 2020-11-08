@@ -9,6 +9,7 @@ import 'package:nginx_le/src/commands/external/certificates_command.dart';
 import 'package:nginx_le/src/commands/external/config_command.dart';
 import 'package:nginx_le/src/commands/external/doctor_command.dart';
 import 'package:nginx_le/src/commands/external/logs_command.dart';
+import 'package:nginx_le/src/commands/external/renew_command.dart';
 import 'package:nginx_le/src/commands/external/restart_command.dart';
 import 'package:nginx_le/src/commands/external/revoke_command.dart';
 import 'package:nginx_le/src/commands/external/stop_command.dart';
@@ -18,8 +19,7 @@ enum Mode { public, private }
 
 /// Starts the ngix docker instance
 void main(List<String> args) {
-  var runner = CommandRunner<void>('nginx-le',
-      'Cli tools to manage your nginx-le server. Version: $packageVersion');
+  var runner = CommandRunner<void>('nginx-le', 'Cli tools to manage your nginx-le server. Version: $packageVersion');
 
   runner.addCommand(BuildCommand());
   runner.addCommand(ConfigCommand());
@@ -27,6 +27,7 @@ void main(List<String> args) {
   runner.addCommand(RestartCommand());
   runner.addCommand(AcquireCommand());
   runner.addCommand(RevokeCommand());
+  runner.addCommand(RenewCommand());
   runner.addCommand(CliCommand());
   runner.addCommand(StopCommand());
   runner.addCommand(LogsCommand());

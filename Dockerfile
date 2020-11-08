@@ -148,19 +148,16 @@ COPY --from=builder /home/build/container/bin/revoke /home/bin/revoke
 COPY --from=builder /home/build/container/bin/renew /home/bin/renew
 COPY --from=builder /home/build/container/bin/logs /home/bin/logs
 COPY --from=builder /home/build/container/bin/certificates /home/bin/certificates
-COPY --from=builder /home/build/container/bin/certbot_hooks/dns_auth /home/bin/certbot_hooks/dns_auth
-COPY --from=builder /home/build/container/bin/certbot_hooks/dns_cleanup /home/bin/certbot_hooks/dns_cleanup
-COPY --from=builder /home/build/container/bin/certbot_hooks/http_auth /home/bin/certbot_hooks/http_auth
-COPY --from=builder /home/build/container/bin/certbot_hooks/http_cleanup /home/bin/certbot_hooks/http_cleanup
+COPY --from=builder /home/build/container/bin/certbot_hooks/auth_hook /home/bin/certbot_hooks/auth_hook
+COPY --from=builder /home/build/container/bin/certbot_hooks/cleanup_hook /home/bin/certbot_hooks/cleanup_hook
+COPY --from=builder /home/build/container/bin/certbot_hooks/deploy_hook /home/bin/certbot_hooks/deploy_hook
 
 
 
-# define the location of the Certbot dns auth hooks
-ENV CERTBOT_DNS_AUTH_HOOK_PATH="/home/bin/certbot_hooks/dns_auth"
-ENV CERTBOT_DNS_CLEANUP_HOOK_PATH="/home/bin/certbot_hooks/dns_cleanup"
-
-ENV CERTBOT_HTTP_AUTH_HOOK_PATH="/home/bin/certbot_hooks/http_auth"
-ENV CERTBOT_HTTP_CLEANUP_HOOK_PATH="/home/bin/certbot_hooks/http_cleanup"
+# define the location of the Certbot hooks
+ENV CERTBOT_AUTH_HOOK_PATH="/home/bin/certbot_hooks/auth_hook"
+ENV CERTBOT_CLEANUP_HOOK_PATH="/home/bin/certbot_hooks/cleanup_hook"
+ENV CERTBOT_DEPLOY_HOOK_PATH="/home/bin/certbot_hooks/deploy_hook"
 
 
 EXPOSE 80 443

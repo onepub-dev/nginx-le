@@ -587,17 +587,16 @@ If you use `nginx-le config` to create the docker container then it automaticall
 
 ## Internal environment variables
 Nginx-LE uses a no. of internal environment variables primarily to communicate with Auth providers.
-You do not normally need to worry about these as the Nginx-LE sets these as necessary based on the select Auth Provider.
+You do not normally need to worry about these as the Nginx-LE sets these as necessary based on the selected Auth Provider.
 
 | Name | Type | Domain | Description |
 | ----- | ---- | ---- | ---- |
 | LOG_FILE | String | Path | The name of the logfile that certbot writes to. We also redirect the auth providers to write to this log file.
 | CERTBOT_ROOT_PATH | String | Path | Path to the letsencrypt root directory which defaults to: `/etc/letsencrypt`. You don't normally need to alter this. Its primary purpose is for Unit Testing.
 | CERTBOT_VERBOSE | String | true \| false | Used by the `acquire` command to control the log level of the Certbot Auth and Cleanup hooks.
-| CERTBOT_DNS_AUTH_HOOK_PATH | String | Path | Path to the DNS auth hook if we are using one of the DNS Auth providers. 
-| CERTBOT_DNS_CLEANUP_HOOK_PATH | String |Path | Path to the DNS auth hook cleanup script.
-| CERTBOT_HTTP_AUTH_HOOK_PATH | String | Path |Path to the HTTP auth hook
-| CERTBOT_HTTP_CLEANUP_HOOK_PATH | String | Path |Path to the HTTP auth hook cleanup script.
+| CERTBOT_AUTH_HOOK_PATH | String | Path | Path to the auth_hook script provided as part of nginx-le. The auth hook is called by certbot at the start of an attempt to acquire or renew a certificate.
+| CERTBOT_CLEANUP_HOOK_PATH | String |Path | Path to the cleanup_hook script provided as part of nginx-le. The cleanup hook is called by certbot when completing an attempt to acquire or renew a certificate.
+| CERTBOT_DEPLOY_HOOK| String | Path to the deploy_hook script provided as part of nginx-le. The deploy hook is called by certbot to deploy certificates into nginx. Its is only called when a certificate is sucessfully renewed or acquired.
 | DNS_RETRIES | int | Integer |The number of times the DNS Auth Hook will check the DNS for the required TXT record.
 | NGINX_CERT_ROOT_OVERWRITE | String | Path | Only used for Unit Testing. Sets the path where certbot saves certificates to.
 | NGINX_ACCESS_LOG_PATH | String |Path | Path to the Nginx access.log file in the container.

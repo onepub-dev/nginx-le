@@ -1,3 +1,4 @@
+@Timeout(Duration(minutes: 60))
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:test/test.dart';
 

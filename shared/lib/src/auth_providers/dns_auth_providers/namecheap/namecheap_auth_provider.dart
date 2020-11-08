@@ -3,8 +3,8 @@ import 'package:nginx_le_shared/src/util/env_var.dart';
 
 import '../../../../nginx_le_shared.dart';
 import '../generic_auth_provider.dart';
-import 'dns_auth_hook.dart';
-import 'dns_cleanup_hook.dart';
+import 'dns_auth.dart';
+import 'dns_cleanup.dart';
 
 class NameCheapAuthProvider extends GenericAuthProvider {
   @override
@@ -31,20 +31,18 @@ class NameCheapAuthProvider extends GenericAuthProvider {
 
   @override
   void pre_auth() {
-    ArgumentError.checkNotNull(
-        envToken, 'Environment variable: AUTH_PROVIDER_TOKEN missing');
-    ArgumentError.checkNotNull(
-        envUsername, 'Environment variable: AUTH_PROVIDER_USERNAME missing');
+    ArgumentError.checkNotNull(envToken, 'Environment variable: AUTH_PROVIDER_TOKEN missing');
+    ArgumentError.checkNotNull(envUsername, 'Environment variable: AUTH_PROVIDER_USERNAME missing');
   }
 
   @override
   void auth_hook() {
-    namecheap_dns_auth_hook();
+    namecheap_dns_auth();
   }
 
   @override
   void cleanup_hook() {
-    namncheap_dns_cleanup_hook();
+    namncheap_dns_cleanup();
   }
 
   @override

@@ -1,20 +1,16 @@
-import 'package:nginx_le_shared/src/auth_providers/http_auth_providers/http_auth.dart';
+import 'package:nginx_le_shared/src/auth_providers/http_auth_providers/http_auth_provider.dart';
 
 import '../../nginx_le_shared.dart';
 import 'auth_provider.dart';
 import 'dns_auth_providers/cloudflare/cloudflare_provider.dart';
-import 'dns_auth_providers/namecheap/namecheap_provider.dart';
+import 'dns_auth_providers/namecheap/namecheap_auth_provider.dart';
 
 /// Each [AuthProviders] must be registered with this class.
 class AuthProviders {
   static final AuthProviders _self = AuthProviders._init();
 
   /// Add new auth providers to this list.
-  var providers = <AuthProvider>[
-    HTTPAuthProvider(),
-    NameCheapAuthProvider(),
-    CloudFlareProvider()
-  ];
+  var providers = <AuthProvider>[HTTPAuthProvider(), NameCheapAuthProvider(), CloudFlareProvider()];
 
   factory AuthProviders() => _self;
   AuthProviders._init() {
@@ -22,8 +18,7 @@ class AuthProviders {
 
     for (var provider in providers) {
       if (names.containsKey(provider.name)) {
-        throw ArgumentError(
-            'The AuthProvider name ${provider.name} is already used.');
+        throw ArgumentError('The AuthProvider name ${provider.name} is already used.');
       }
     }
 
@@ -50,9 +45,7 @@ class AuthProviders {
 
     for (var provider in providers) {
       if ((!wildcard || (wildcard && provider.supportsWildCards)) &&
-          (mode == ConfigYaml.MODE_PUBLIC ||
-              (mode == ConfigYaml.MODE_PRIVATE &&
-                  provider.supportsPrivateMode))) {
+          (mode == ConfigYaml.MODE_PUBLIC || (mode == ConfigYaml.MODE_PRIVATE && provider.supportsPrivateMode))) {
         valid.add(provider);
       }
     }
