@@ -34,10 +34,10 @@ void prepareCertHooks() {
   Environment().nginxCertRootPathOverwrite = '/tmp/nginx/certs';
   _createDir(Certbot.nginxCertPath);
 
-  _createDir(Certbot.letsEncryptWorkPath);
-  _createDir(Certbot.letsEncryptLogPath);
-  _createDir(Certbot.letsEncryptConfigPath);
-  _createDir(join(Certbot.letsEncryptConfigPath, 'live'));
+  _createDir(CertbotPaths.letsEncryptWorkPath);
+  _createDir(CertbotPaths.letsEncryptLogPath);
+  _createDir(CertbotPaths.letsEncryptConfigPath);
+  _createDir(join(CertbotPaths.letsEncryptLivePath));
 
   print(pwd);
 }

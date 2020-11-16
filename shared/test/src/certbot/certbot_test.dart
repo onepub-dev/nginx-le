@@ -4,7 +4,6 @@ import 'package:dcli/dcli.dart' hide equals;
 
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/namecheap/namecheap_auth_provider.dart';
-import 'package:nginx_le_shared/src/certbot/certificate_paths.dart';
 import 'package:test/test.dart';
 
 import 'dns_auth_hook_test.dart';
@@ -119,17 +118,17 @@ void main() {
 
       Environment().certbotRootPath = path;
       createDir(
-          join(Certbot.letsEncryptConfigPath, 'live',
+          join(CertbotPaths.letsEncryptLivePath,
               'robtest18-new.clouddialer.com.au'),
           recursive: true);
-      var fqnd001 = join(Certbot.letsEncryptConfigPath, 'live',
+      var fqnd001 = join(CertbotPaths.letsEncryptLivePath,
           'robtest18-new.clouddialer.com.au-0001');
       createDir(fqnd001, recursive: true);
 
       // noojee.org-0001
       // noojee.org-new
       // noojee.org-new-0001
-      var latest = CertificatePaths.latestCertificatePath(
+      var latest = CertbotPaths.latestCertificatePath(
           'robtest18-new', 'clouddialer.com.au',
           wildcard: false);
       expect(latest, equals(fqnd001));

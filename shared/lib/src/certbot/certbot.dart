@@ -5,7 +5,6 @@ import 'package:nginx_le_shared/src/util/email.dart';
 import 'package:path/path.dart';
 
 import '../../nginx_le_shared.dart';
-import 'certificate_paths.dart';
 
 class Certbot {
   /// The directory where lets encrypt stores its certificates.
@@ -25,20 +24,20 @@ class Certbot {
   factory Certbot() => _self;
 
   /// The certbot log file
-  String get logfile => join(letsEncryptLogPath, LOG_FILE_NAME);
+  String get logfile => join(CertbotPaths.letsEncryptLogPath, LOG_FILE_NAME);
   Certbot._internal() {
     Settings().verbose('Logging to $logfile');
 
-    if (!exists(letsEncryptLogPath)) {
-      createDir(letsEncryptLogPath, recursive: true);
+    if (!exists(CertbotPaths.letsEncryptLogPath)) {
+      createDir(CertbotPaths.letsEncryptLogPath, recursive: true);
     }
 
-    if (!exists(letsEncryptWorkPath)) {
-      createDir(letsEncryptWorkPath, recursive: true);
+    if (!exists(CertbotPaths.letsEncryptWorkPath)) {
+      createDir(CertbotPaths.letsEncryptWorkPath, recursive: true);
     }
 
-    if (!exists(letsEncryptConfigPath)) {
-      createDir(letsEncryptConfigPath, recursive: true);
+    if (!exists(CertbotPaths.letsEncryptConfigPath)) {
+      createDir(CertbotPaths.letsEncryptConfigPath, recursive: true);
     }
   }
 
@@ -68,22 +67,18 @@ class Certbot {
     }
 
     if (!revoking) {
-      var path = CertificatePaths.fullChainPath(
-          CertificatePaths.certificatePathRoot(hostname, domain,
-              wildcard: wildcard));
+      var path = CertbotPaths.fullChainPath(CertbotPaths.certificatePathRoot(hostname, domain, wildcard: wildcard));
       if (exists(path)) {
         print('Found fullchain in: $path');
 
         if (hasExpired(hostname, domain)) {
-          printerr(
-              "ERROR The Certificate for $hostname.$domain has expired. Please run 'nginx-le acquire.");
+          printerr("ERROR The Certificate for $hostname.$domain has expired. Please run 'nginx-le acquire.");
         } else {
           hasValidCerts = true;
         }
       } else {
         if (!autoAcquireMode) {
-          printerr(
-              "No Certificates found for $hostname.$domain. You may need to run 'nginx-le acquire");
+          printerr("No Certificates found for $hostname.$domain. You may need to run 'nginx-le acquire");
         }
       }
     }
@@ -97,8 +92,7 @@ class Certbot {
 
       /// symlink the user's custom content.
       symlink('/etc/nginx/custom', LIVE_WWW_PATH);
-      _deploy(CertificatePaths.certificatePathRoot(hostname, domain,
-          wildcard: wildcard));
+      _deploy(CertbotPaths.certificatePathRoot(hostname, domain, wildcard: wildcard));
       printerr(green('*') * 120);
       printerr(green('* Nginx-LE is running with an active Certificate.'));
       printerr(green('*') * 120);
@@ -118,8 +112,7 @@ class Certbot {
     }
   }
 
-  void deployCertificatesDirect(String certificateRootPath,
-      {bool revoking = false}) {
+  void deployCertificatesDirect(String certificateRootPath, {bool revoking = false}) {
     if (exists(LIVE_WWW_PATH, followLinks: false)) {
       deleteSymlink(LIVE_WWW_PATH);
     }
@@ -151,20 +144,14 @@ class Certbot {
   void _deploy(String certificateRootPath) {
     /// we need to leave the original files in place as they form part
     /// of the letsencrypt archive
-    copy(CertificatePaths.fullChainPath(certificateRootPath),
-        '/tmp/fullchain.pem',
-        overwrite: true);
-    copy(CertificatePaths.privateKeyPath(certificateRootPath),
-        '/tmp/privkey.pem',
-        overwrite: true);
+    copy(CertbotPaths.fullChainPath(certificateRootPath), '/tmp/fullchain.pem', overwrite: true);
+    copy(CertbotPaths.privateKeyPath(certificateRootPath), '/tmp/privkey.pem', overwrite: true);
 
     /// but we need to move them in place using move so that
     /// the replace is essentially atomic so that nginx doesn't see partially
     /// created certificates.
-    move('/tmp/fullchain.pem', join(nginxCertPath, 'fullchain.pem'),
-        overwrite: true);
-    move('/tmp/privkey.pem', join(nginxCertPath, 'privkey.pem'),
-        overwrite: true);
+    move('/tmp/fullchain.pem', join(nginxCertPath, 'fullchain.pem'), overwrite: true);
+    move('/tmp/privkey.pem', join(nginxCertPath, 'privkey.pem'), overwrite: true);
   }
 
   /// Used more for testing, but essentially deletes any existing certificates
@@ -176,12 +163,12 @@ class Certbot {
       bool production = false,
       @required bool wildcard,
       @required String emailaddress}) {
-    var workDir = _createDir(Certbot.letsEncryptWorkPath);
-    var logDir = _createDir(Certbot.letsEncryptLogPath);
-    var configDir = _createDir(Certbot.letsEncryptConfigPath);
+    var workDir = _createDir(CertbotPaths.letsEncryptWorkPath);
+    var logDir = _createDir(CertbotPaths.letsEncryptLogPath);
+    var configDir = _createDir(CertbotPaths.letsEncryptConfigPath);
 
     var cmd = 'certbot revoke'
-        ' --cert-path ${CertificatePaths.certificatePathRoot(hostname, domain, wildcard: wildcard)}'
+        ' --cert-path ${CertbotPaths.certificatePathRoot(hostname, domain, wildcard: wildcard)}'
         ' --non-interactive '
         ' -m $emailaddress  '
         ' --agree-tos '
@@ -210,11 +197,10 @@ class Certbot {
 
   /// used by revoke to delete certificates after they have been revoked
   /// If we don't do this then the revoked certificates will still be renewed.
-  void _delete(String hostname, String domain,
-      {@required String emailaddress}) {
-    var workDir = _createDir(Certbot.letsEncryptWorkPath);
-    var logDir = _createDir(Certbot.letsEncryptLogPath);
-    var configDir = _createDir(Certbot.letsEncryptConfigPath);
+  void _delete(String hostname, String domain, {@required String emailaddress}) {
+    var workDir = _createDir(CertbotPaths.letsEncryptWorkPath);
+    var logDir = _createDir(CertbotPaths.letsEncryptLogPath);
+    var configDir = _createDir(CertbotPaths.letsEncryptConfigPath);
 
     var cmd = 'certbot delete'
         ' --cert-name $hostname.$domain'
@@ -229,28 +215,10 @@ class Certbot {
         runInShell: true,
         nothrow: true,
         progress: Progress((line) {
-          if (!line.startsWith('- - - -') &&
-              !line.startsWith('Saving debug ')) {
+          if (!line.startsWith('- - - -') && !line.startsWith('Saving debug ')) {
             print(line);
           }
         }, stderr: (line) => printerr(line)));
-  }
-
-  static String get letsEncryptRootPath {
-    /// allows the root to be over-ridden to make testing easier.
-    return Environment().certbotRootPath;
-  }
-
-  static String get letsEncryptWorkPath {
-    return join(letsEncryptRootPath, 'work');
-  }
-
-  static String get letsEncryptLogPath {
-    return join(letsEncryptRootPath, 'logs');
-  }
-
-  static String get letsEncryptConfigPath {
-    return join(letsEncryptRootPath, 'config');
   }
 
   /// Checks if the certificate for the given hostname.domain
@@ -287,8 +255,7 @@ class Certbot {
         printerr(e.message);
         printerr(e.details);
         printerr(st.toString());
-        Email.sendError(
-            subject: e.message, body: '${e.details}\n ${st.toString()}');
+        Email.sendError(subject: e.message, body: '${e.details}\n ${st.toString()}');
       } catch (e, st) {
         /// we don't rethrow as we don't want to shutdown the scheduler.
         /// as this may be a temporary error.
@@ -305,9 +272,9 @@ class Certbot {
         ' --force-renewal' // for testing only!!! - TODO: REMOVE.
         ' --agree-tos '
         ' --deploy-hook=${Environment().certbotDeployHook}'
-        ' --work-dir=${Certbot.letsEncryptWorkPath}'
-        ' --config-dir=${Certbot.letsEncryptConfigPath}'
-        ' --logs-dir=${Certbot.letsEncryptLogPath}';
+        ' --work-dir=${CertbotPaths.letsEncryptWorkPath}'
+        ' --config-dir=${CertbotPaths.letsEncryptConfigPath}'
+        ' --logs-dir=${CertbotPaths.letsEncryptLogPath}';
 
     var lines = <String>[];
     var progress = Progress((line) {
@@ -323,8 +290,7 @@ class Certbot {
     if (progress.exitCode != 0) {
       var system = 'hostname'.firstLine;
 
-      throw CertbotException(
-          'certbot failed renewing a certificate for ${Environment().fqdn}on $system',
+      throw CertbotException('certbot failed renewing a certificate for ${Environment().fqdn}on $system',
           details: lines.join('\n'));
     }
   }
@@ -357,7 +323,7 @@ class Certbot {
   static String get nginxCertPath {
     var path = Environment().nginxCertRootPathOverwrite;
 
-    path ??= CertificatePaths.NGINX_CERT_ROOT;
+    path ??= CertbotPaths.NGINX_CERT_ROOT;
     return path;
   }
 
@@ -396,7 +362,7 @@ class Certbot {
   /// Once a block is in place the user must use the cli 'acquire' command
   /// or pass in the CERTBOT_IGNORE_BLOCK=true environment variable.
   void blockAcquisitions() {
-    touch(_pathToBlockFlag);
+    touch(_pathToBlockFlag, create: true);
   }
 
   bool isBlocked() {
@@ -409,10 +375,7 @@ class Certbot {
   bool get _hasValidBlockFlag {
     var valid = false;
     if (exists(_pathToBlockFlag)) {
-      valid = stat(_pathToBlockFlag)
-          .changed
-          .add(Duration(minutes: 15))
-          .isBefore(DateTime.now());
+      valid = stat(_pathToBlockFlag).changed.add(Duration(minutes: 15)).isBefore(DateTime.now());
     }
     return valid;
   }
@@ -423,8 +386,7 @@ class Certbot {
     }
   }
 
-  String get _pathToBlockFlag =>
-      join(Environment().certbotRootPath, 'block_acquisitions.flag');
+  String get _pathToBlockFlag => join(Environment().certbotRootPath, 'block_acquisitions.flag');
 }
 
 class CertbotException implements Exception {

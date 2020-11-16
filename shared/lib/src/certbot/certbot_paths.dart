@@ -5,17 +5,17 @@ import 'package:meta/meta.dart';
 
 import '../../nginx_le_shared.dart';
 
-class CertificatePaths {
+class CertbotPaths {
   /// The directory where lets encrypt stores its certificates.
   /// As we need to persist certificates between container restarts
   /// [LIVE_PATH] lives under [CERTBOT_ROOT_PATH] and
   /// MUST be on a persistent volume so we don't loose the
   /// certificates each time we restart nginx.
-
-  static const LIVE_PATH = 'config/live';
+  /// The full path is /etc/letsencrypt/config/live
+  static const _LIVE_PATH = 'live';
 
   /// The directory where nginx loads its certificates from
-  /// The deploy proces copies certificates from the lets encrypt
+  /// The deploy process copies certificates from the lets encrypt
   /// [LIVE_PATH] to the [NGINX_CERT_ROOT].
   static const NGINX_CERT_ROOT = '/etc/nginx/certs/';
 
@@ -40,7 +40,7 @@ class CertificatePaths {
   @visibleForTesting
   static String latestCertificatePath(String hostname, String domain,
       {@required bool wildcard}) {
-    var livepath = join(Certbot.letsEncryptConfigPath, 'live');
+    var livepath = join(CertbotPaths.letsEncryptLivePath);
     // if no paths contain '-' then the base fqdn path is correct.
 
     var defaultPath =
@@ -81,7 +81,7 @@ class CertificatePaths {
   static String _liveDefaultPathForFQDN(String hostname, String domain,
       {@required bool wildcard}) {
     var fqdn = wildcard ? domain : '$hostname.$domain';
-    return join(Certbot.letsEncryptRootPath, LIVE_PATH, fqdn);
+    return join(letsEncryptLivePath, fqdn);
   }
 
   /// The root directory for the certificate files of the given [hostname] and [domain].
@@ -104,5 +104,28 @@ class CertificatePaths {
   /// path to the active certificate in the live directory
   static String certificatePath(String certificateRootPath) {
     return join(certificateRootPath, CERTIFICATE_FILE);
+  }
+
+  static String get letsEncryptRootPath {
+    /// allows the root to be over-ridden to make testing easier.
+    return Environment().certbotRootPath;
+  }
+
+  static String get letsEncryptWorkPath {
+    return join(letsEncryptRootPath, 'work');
+  }
+
+  static String get letsEncryptLogPath {
+    return join(letsEncryptRootPath, 'logs');
+  }
+
+  static String get letsEncryptConfigPath {
+    return join(letsEncryptRootPath, 'config');
+  }
+
+  /// path to the directory where the active certificates
+  /// are stored.
+  static String get letsEncryptLivePath {
+    return join(letsEncryptRootPath, 'config', _LIVE_PATH);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:dcli/dcli.dart';
 import 'package:instant/instant.dart';
-import 'package:nginx_le_shared/src/certbot/certbot.dart';
+
+import '../../nginx_le_shared.dart';
 
 class Certificate {
   String fqdn;
@@ -54,17 +55,17 @@ class Certificate {
   }
 
   static List<Certificate> load() {
-    print('Loading certificates from ${Certbot.letsEncryptConfigPath}');
+    print('Loading certificates from ${CertbotPaths.letsEncryptConfigPath}');
 
     print('directory tree of certs');
     find('*',
-            root: Certbot.letsEncryptConfigPath,
+            root: CertbotPaths.letsEncryptConfigPath,
             types: [Find.directory, Find.file, Find.link])
         .forEach((file) => print(file));
     var cmd = 'certbot certificates '
-        ' --config-dir=${Certbot.letsEncryptConfigPath}'
-        ' --work-dir=${Certbot.letsEncryptWorkPath}'
-        ' --work-dir=${Certbot.letsEncryptLogPath}';
+        ' --config-dir=${CertbotPaths.letsEncryptConfigPath}'
+        ' --work-dir=${CertbotPaths.letsEncryptWorkPath}'
+        ' --work-dir=${CertbotPaths.letsEncryptLogPath}';
 
     var lines = cmd.toList(nothrow: true);
 

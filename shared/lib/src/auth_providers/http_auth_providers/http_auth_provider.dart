@@ -109,9 +109,9 @@ class HTTPAuthProvider extends AuthProvider {
 
   @override
   void acquire() {
-    var workDir = _createDir(Certbot.letsEncryptWorkPath);
-    var logDir = _createDir(Certbot.letsEncryptLogPath);
-    var configDir = _createDir(Certbot.letsEncryptConfigPath);
+    var workDir = _createDir(CertbotPaths.letsEncryptWorkPath);
+    var logDir = _createDir(CertbotPaths.letsEncryptLogPath);
+    var configDir = _createDir(CertbotPaths.letsEncryptConfigPath);
 
     var emailaddress = Environment().emailaddress;
     var hostname = Environment().hostname;
