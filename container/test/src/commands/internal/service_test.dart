@@ -4,8 +4,11 @@ import 'package:dcli/dcli.dart';
 import 'package:nginx_le_container/src/commands/internal/service.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
+import '../../util/prepare.dart';
+
 /// Starts the ngix docker instance using the host subdirectory 'certs' to store acquired certificates.
 void main() {
+  prepareEnvironment();
   env['DEBUG'] = 'false';
   env['HOSTNAME'] = 'auditor';
   env['DOMAIN'] = 'noojee.com.au';
