@@ -526,7 +526,7 @@ The nginx-le container REQUIRES that you have a default.conf file in:
 
 If you need complete control over nginx then you can also replace the `nginx-conf` file.
 
-If you modify the `nginx.conf` it must meet a small number of requirements.
+If you modify the `nginx.conf` it must include the following lines:
 
 * daemon off;
 * user nginx;
