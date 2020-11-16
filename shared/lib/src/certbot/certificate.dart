@@ -72,7 +72,7 @@ class Certificate {
     print('output from certbot certificates');
 
     for (var line in lines) {
-      print('OUTPUT: $line');
+      print('Certificate Load: $line');
     }
 
     return parse(lines);
