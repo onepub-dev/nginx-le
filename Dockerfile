@@ -104,10 +104,12 @@ RUN mkdir /etc/nginx/include
 
 ENV LETS_ENCRYPT_ROOT_PATH=/etc/letsencrypt
 
-# location for storing lets-encrypt certificates
+# root path for storing lets-encrypt certificates
 # This needs to be mapped to a persistent volume
 # so the certificates persist across sessions.
 RUN mkdir -p /etc/letsencrypt
+
+RUN mkdir -p /etc/letsencrypt/config/live
 
 # create the log file so the logs command doesn't get upset.
 RUN mkdir -p /etc/letsencrypt/logs
