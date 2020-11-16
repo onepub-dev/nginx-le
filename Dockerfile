@@ -109,7 +109,6 @@ ENV LETS_ENCRYPT_ROOT_PATH=/etc/letsencrypt
 # so the certificates persist across sessions.
 RUN mkdir -p /etc/letsencrypt
 
-RUN mkdir -p /etc/letsencrypt/config/live
 
 # create the log file so the logs command doesn't get upset.
 RUN mkdir -p /etc/letsencrypt/logs
