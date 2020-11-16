@@ -48,7 +48,7 @@ void _acquireThread(String environment) {
   } catch (e, st) {
     Certbot().blockAcquisitions();
     printerr(red(
-        'LogManager has shutdown due to an unexpected error: ${e.runtimeType}'));
+        'AcquisitionManager has shutdown due to an unexpected error: ${e.runtimeType}'));
     printerr(e.toString());
     printerr(st.toString());
     Email.sendError(subject: e.toString(), body: st.toString());
