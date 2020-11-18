@@ -62,8 +62,7 @@ class Environment {
 
   String get smtpServerPortKey => 'SMTP_SERVER_PORT';
   int get smtpServerPort => int.tryParse(env[smtpServerPortKey] ?? '25') ?? 25;
-  set smtpServerPort(int smtpServerPort) =>
-      env[smtpServerPortKey] = '$smtpServerPort';
+  set smtpServerPort(int smtpServerPort) => env[smtpServerPortKey] = '$smtpServerPort';
 
   /// the certbot auth provider.
   String get authProviderKey => 'AUTH_PROVIDER';
@@ -73,14 +72,11 @@ class Environment {
   /// Certbot
   String get certbotVerboseKey => 'CERTBOT_VERBOSE';
   bool get certbotVerbose => env[certbotVerboseKey] == 'true';
-  set certbotVerbose(bool certbotVerbose) =>
-      env[certbotVerboseKey] = '$certbotVerbose';
+  set certbotVerbose(bool certbotVerbose) => env[certbotVerboseKey] = '$certbotVerbose';
 
   String get certbotRootPathKey => 'CERTBOT_ROOT_PATH';
-  String get certbotRootPath =>
-      env[certbotRootPathKey] ?? Certbot.CERTBOT_ROOT_DEFAULT_PATH;
-  set certbotRootPath(String certbotRootPath) =>
-      env[certbotRootPathKey] = certbotRootPath;
+  String get certbotRootPath => env[certbotRootPathKey] ?? Certbot.CERTBOT_ROOT_DEFAULT_PATH;
+  set certbotRootPath(String certbotRootPath) => env[certbotRootPathKey] = certbotRootPath;
 
   String get certbotDomainKey => 'CERTBOT_DOMAIN';
   String get certbotDomain => env[certbotDomainKey];
@@ -100,33 +96,25 @@ class Environment {
 
   String get certbotAuthHookPathKey => 'CERTBOT_AUTH_HOOK_PATH';
   String get certbotAuthHookPath => env[certbotAuthHookPathKey] ?? 'auth_hook';
-  set certbotAuthHookPath(String certbotAuthHookPath) =>
-      env[certbotAuthHookPathKey] = certbotAuthHookPath;
+  set certbotAuthHookPath(String certbotAuthHookPath) => env[certbotAuthHookPathKey] = certbotAuthHookPath;
 
   String get certbotCleanupHookPathKey => 'CERTBOT_CLEANUP_HOOK_PATH';
-  String get certbotCleanupHookPath =>
-      env[certbotCleanupHookPathKey] ?? 'cleanup_hook';
-  set certbotCleanupHookPath(String certbotCleanupHookPath) =>
-      env[certbotCleanupHookPathKey] = certbotCleanupHookPath;
+  String get certbotCleanupHookPath => env[certbotCleanupHookPathKey] ?? 'cleanup_hook';
+  set certbotCleanupHookPath(String certbotCleanupHookPath) => env[certbotCleanupHookPathKey] = certbotCleanupHookPath;
 
-  String get certbotDeployHookKey => 'CERTBOT_DEPLOY_HOOK';
-  String get certbotDeployHook => env[certbotDeployHookKey] ?? 'deploy_hook';
-  set certbotDeployHook(String certbotDeployHook) =>
-      env[certbotDeployHookKey] = certbotDeployHook;
+  String get certbotDeployHookPathKey => 'CERTBOT_DEPLOY_HOOK_PATH';
+  String get certbotDeployHookPath => env[certbotDeployHookPathKey] ?? 'deploy_hook';
+  set certbotDeployHookPath(String certbotDeployHookPath) => env[certbotDeployHookPathKey] = certbotDeployHookPath;
 
   /// when the deploy_hook is called as part of a renewal certbot passed
   /// the path to the directory containing the new certificate files.
   String get certbotDeployHookRenewedLineageKey => 'RENEWED_LINEAGE';
-  String get certbotDeployHookRenewedLineagePath =>
-      env[certbotDeployHookRenewedLineageKey];
-  set certbotDeployHookRenewedLineagePath(
-          String certbotDeployHookRenewedLineagePath) =>
-      env[certbotDeployHookRenewedLineageKey] =
-          certbotDeployHookRenewedLineagePath;
+  String get certbotDeployHookRenewedLineagePath => env[certbotDeployHookRenewedLineageKey];
+  set certbotDeployHookRenewedLineagePath(String certbotDeployHookRenewedLineagePath) =>
+      env[certbotDeployHookRenewedLineageKey] = certbotDeployHookRenewedLineagePath;
 
   String get certbotDNSRetriesKey => 'DNS_RETRIES';
-  int get certbotDNSRetries =>
-      int.tryParse(env[certbotDNSRetriesKey] ?? '20') ?? 20;
+  int get certbotDNSRetries => int.tryParse(env[certbotDNSRetriesKey] ?? '20') ?? 20;
   set certbotDNSRetries(int retries) => env[certbotDNSRetriesKey] = 'retries';
 
   /// NGINX
@@ -134,8 +122,7 @@ class Environment {
   ///
   String get nginxCertRootPathOverwriteKey => 'NGINX_CERT_ROOT_OVERWRITE';
   String get nginxCertRootPathOverwrite => env[nginxCertRootPathOverwriteKey];
-  set nginxCertRootPathOverwrite(String overwriteDir) =>
-      env[nginxCertRootPathOverwriteKey] = overwriteDir;
+  set nginxCertRootPathOverwrite(String overwriteDir) => env[nginxCertRootPathOverwriteKey] = overwriteDir;
 
   String get nginxAccessLogPathKey => 'NGINX_ACCESS_LOG_PATH';
   String get nginxAccessLogPath => env[nginxAccessLogPathKey];
@@ -147,6 +134,5 @@ class Environment {
 
   String get nginxLocationIncludePathKey => 'NGINX_LOCATION_INCLUDE_PATH';
   String get nginxLocationIncludePath => env[nginxLocationIncludePathKey];
-  set nginxLocationIncludePath(String path) =>
-      env[nginxLocationIncludePathKey] = path;
+  set nginxLocationIncludePath(String path) => env[nginxLocationIncludePathKey] = path;
 }
