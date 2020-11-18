@@ -1,5 +1,5 @@
 name: nginx_le
-version: 4.0.9
+version: 4.0.11
 homepage: https://github.com/bsutton/nginx-le
 description: Nginx-LE provides a docker container and tools to create an Nginx web server that automatically acquires and renews HTTPS certificates.
 environment: 

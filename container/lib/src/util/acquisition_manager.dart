@@ -36,6 +36,7 @@ void _acquireThread(String environment) {
             true, // don't try to reload nginx as it won't be running as yet.
         wildcard: Environment().domainWildcard,
         autoAcquireMode: Environment().autoAcquire);
+    print(orange('AcquisitionManager completed successfully.'));
   } on CertbotException catch (e, st) {
     Certbot().blockAcquisitions();
     printerr(e.message);
@@ -53,6 +54,6 @@ void _acquireThread(String environment) {
     printerr(st.toString());
     Email.sendError(subject: e.toString(), body: st.toString());
   } finally {
-    print(orange('AcquisitionManager has shutting down.'));
+    print(orange('AcquisitionManager has shut down.'));
   }
 }
