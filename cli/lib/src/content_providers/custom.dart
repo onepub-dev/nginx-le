@@ -1,4 +1,3 @@
-import 'package:dcli/dcli.dart';
 import 'package:nginx_le/src/content_providers/content_provider.dart';
 import 'package:nginx_le/src/util/ask_location_path.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
@@ -28,14 +27,10 @@ class Custom extends ContentProvider {
   @override
   void createLocationFile() {
     // no-op user must provide
-    find('*.location', root: ConfigYaml().hostIncludePath)
-        .forEach((file) => delete(file));
   }
 
   @override
   void createUpstreamFile() {
     // no-op user must provide
-    find('*.upstream', root: ConfigYaml().hostIncludePath)
-        .forEach((file) => delete(file));
   }
 }
