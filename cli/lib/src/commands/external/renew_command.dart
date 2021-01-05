@@ -7,7 +7,7 @@ import 'util.dart';
 class RenewCommand extends Command<void> {
   @override
   String get description =>
-      'Runs a renew on the certificate. This should normally be necessary as renewal checks a schedule every 13 hours';
+      'Runs a renew on the certificate. This should normally be unnecessary as renewal checks a schedule every 13 hours';
 
   @override
   String get name => 'renew';
