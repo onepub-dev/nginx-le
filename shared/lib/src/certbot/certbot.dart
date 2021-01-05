@@ -88,10 +88,11 @@ class Certbot {
           }
         }
       }
+    }
 
-      if (exists(LIVE_WWW_PATH, followLinks: false)) {
-        deleteSymlink(LIVE_WWW_PATH);
-      }
+    // we are about to recreate the symlink to the appropriate path
+    if (exists(LIVE_WWW_PATH, followLinks: false)) {
+      deleteSymlink(LIVE_WWW_PATH);
     }
 
     if (hasValidCerts) {
@@ -99,6 +100,7 @@ class Certbot {
 
       /// symlink the user's custom content.
       print('symlinking /etc/nginx/custom');
+
       symlink('/etc/nginx/custom', LIVE_WWW_PATH);
       _deploy(CertbotPaths.certificatePathRoot(hostname, domain,
           wildcard: wildcard));
