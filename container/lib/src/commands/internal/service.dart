@@ -70,7 +70,7 @@ void _start() {
 
   /// Places the server into acquire mode if certificates are not valid.
   ///
-  Certbot().deployCertificates(
+  final hasValidCert = Certbot().deployCertificates(
       hostname: hostname,
       domain: domain,
       reload: false, // don't try to reload nginx as it won't be running as yet.
@@ -81,25 +81,33 @@ void _start() {
 
   RenewalManager().start();
 
-  if (autoAcquire && !Certbot().isBlocked()) {
-    var certificates = Certificate.load();
+  if (autoAcquire) {
+    if (!Certbot().isBlocked()) {
+      var certificates = Certificate.load();
 
-    /// expired certs are handled by the renew scheduler
-    if (certificates.isEmpty) {
-      AcquisitionManager().start();
-    } else {
-      var certificate = certificates[0];
-
-      /// If the certificate type has changed then we must acquire a new one.
-      /// If we have more then one certificate then somethings wrong so start again by revoke all of them.
-      if (certificates.length > 1 ||
-          production != certificate.production ||
-          '$hostname.$domain' != certificate.fqdn ||
-          wildcard != certificate.wildcard) {
-        Certbot.revokeAll();
+      /// expired certs are handled by the renew scheduler
+      if (!hasValidCert) {
         AcquisitionManager().start();
+      } else {
+        var certificate = certificates[0];
+
+        /// If the certificate type has changed then we must acquire a new one.
+        /// If we have more then one certificate then somethings wrong so start again by revoke all of them.
+        if (certificates.length > 1 ||
+            production != certificate.production ||
+            '$hostname.$domain' != certificate.fqdn ||
+            wildcard != certificate.wildcard) {
+          Certbot.revokeAll();
+          AcquisitionManager().start();
+        }
       }
+    } else {
+      print(
+          'Acquistion is blocked due to an earlier failure. Fix the problem and delete ${Certbot().pathToBlockFlag} or wait 15 minutes');
     }
+  } else {
+    print(
+        "AUTO_ACQUIRE=false please use 'nginx-le acquire' to acquire a certificate");
   }
 
   print('Starting nginx');

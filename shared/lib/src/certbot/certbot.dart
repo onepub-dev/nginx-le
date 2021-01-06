@@ -49,7 +49,8 @@ class Certbot {
   /// and we need to copy them into /etc/nginx/certs on each start
   /// so that nginx has access to them.
   ///
-  void deployCertificates(
+  /// returns true if it deployed a valid certificate
+  bool deployCertificates(
       {@required String hostname,
       @required String domain,
       bool revoking = false,
@@ -124,6 +125,8 @@ class Certbot {
     }
     print('Deploy complete.');
     sleep(5);
+
+    return hasValidCerts;
   }
 
   void deployCertificatesDirect(String certificateRootPath,
@@ -387,7 +390,7 @@ class Certbot {
   /// Once a block is in place the user must use the cli 'acquire' command
   /// or pass in the CERTBOT_IGNORE_BLOCK=true environment variable.
   void blockAcquisitions() {
-    touch(_pathToBlockFlag, create: true);
+    touch(pathToBlockFlag, create: true);
   }
 
   bool isBlocked() {
@@ -399,8 +402,8 @@ class Certbot {
   /// that it was a temporary failure and the user has had time to fix it.
   bool get _hasValidBlockFlag {
     var valid = false;
-    if (exists(_pathToBlockFlag)) {
-      valid = stat(_pathToBlockFlag)
+    if (exists(pathToBlockFlag)) {
+      valid = stat(pathToBlockFlag)
           .changed
           .add(Duration(minutes: 15))
           .isBefore(DateTime.now());
@@ -410,11 +413,11 @@ class Certbot {
 
   void clearBlockFlag() {
     if (isBlocked()) {
-      delete(_pathToBlockFlag);
+      delete(pathToBlockFlag);
     }
   }
 
-  String get _pathToBlockFlag =>
+  String get pathToBlockFlag =>
       join(Environment().certbotRootPath, 'block_acquisitions.flag');
 }
 
