@@ -1,3 +1,343 @@
+# 4.0.14
+Fixed a bug caused by the live link already existing in some circumstances. Now we always check if it exists and delete it before we recreate it.
+fixed usage message.
+corrected usage message.
+updated to latest dcli version. releasd 4.0.13
+released 4.0.12
+The custom content provider was deleting the contents of the location and up stream files. Given these directories are provided by the user we should not be deleting the contents :<
+released 4.0.11
+removed --force-renewal which only meant to be for testing as it forces a new certificate on every renewal. Fixed an incorrect environment var name that was causing the deploy hook to fail.
+released 4.0.9
+renamed prepareHooks to prepareEnvironment
+added call to prepareEnvironment so the service test runs further before failing.
+Fixed an incorrect log message.
+removed the creating of letsencrypt/live dir as when we mount the volume this path is overwritten with the volume. Added logic to check that letsencrypt/live exists before we try to load certificates from a non-existant path. change printerr to print as this was causing logging to be incorrectly ordered making it hard to read the logs.
+improved logging.
+Added command to create the letsencrypt live directory.
+Moved all certbot related paths into class CertbotPaths. Fixed a bug wit the code that blocks acquistion attempts after an error as the touch command was missing the 'create' option.
+released 4.0.1
+Fixes for renewals not working (deploy wasn't being called) and general cleanup of the hook mechanisms to simplify them.
+Fixed bugs where the DNS auth hook setters were not working.
+made the reload ngxin method private.
+Now throws an exception if no auth provider set.
+released 3.0.2
+released 3.0.1.
+Added a 15 minute max life to the block file.
+refactored isolates into classes. Improve the error handling of isolates to log failures.  Added logic to suppress further acquistions when an error occurs so we don't immediately exceed rate limits. Change nginx to start in foreground mode so that the dart code can wait for it to complete.
+Fixed table formatting.
+released 2.7.10
+spelling.
+updated dependencies.
+Added test case for starting the service.
+Added logging when we shutdown due to an exception being thrown.
+restructured as a class.
+spelling.
+Fixed a bug where if the symlink already existed we were failing to delete it.
+relesaed 2.7.5 - updated to latest dcli version.
+improved doco.
+added logic to ensure we didn't end up with a double slash in the url
+released 2.7.4
+Fixed bug with tomcat provider not saving the context.
+updated doco on tomcat settings.
+lint errors
+Fixed problems with finding the Dockerfile path.
+Added option to force an image to be deleted.
+logrotate was failing if a log file didn't exist and the letsencrypt log file is rarely written to. Now set so it won't error if the file is missing.
+logrotate was causing nginx to stop if the logrotate command failed. No just prints an error.
+Added logic to ask for and configure a tomcat context.
+Added logic to search for the Dockerfile
+Fixed a bug in the log rotation config which mean it would only rotate after it hit 400MB. Now rotates every day or if it hits 400MB. Whichever occurs first.
+Improved the doc.
+upgraded to dcli 0.32.0
+released 2.5.0
+nginx logs: removed duplicated logging definitions.
+dcli: upgraded to dcli 0.29.0
+build: added logic to prompt the user for the version no.
+release_all: changed detection to using DartProject.
+Added logic to set docker permissions up if the docker group exists.
+Added logrotate for all of the nginx and certbot logs.
+released 2.4.5
+Fixed the fullname method so that it returns the correct fullname even if some components are missing.
+removed the autoCreate as we should be validating paths.
+Config: Added logic to ask the user if they want to start the container.
+corrected the tag name.
+Fixed a bug where the container was not placed into auto acquire mode.
+added details on running a command.
+Added pull to get latest ubuntu image before building nginx-le
+Added example of using a command.
+upgraded to dcli 0.27.1
+upgraded to dcli 0.27.1
+released 2.3.5
+Printed current version when releasing.
+Added a check that an Auth Provider has been set.
+Added checks an errors if an nginx container doesn't exist.
+released 2.3.4
+updated to the latest SettingsYaml
+We now activate the new published version before trying to do a docker build.
+removed test script.
+released 2.3.2
+spelling.
+changed is staging to isproduction to bring it in line with the change to the environment variable name.
+Added production state of the certificate.
+Fixed a bug where it was trying to get the username from the config which doesn't exist in the container.
+Added missing production key.
+I think this version works.
+renamed certbotAuthProviderKey to authProviderKey. continued work on cleaning up environment naming conventions.
+renamed start to service to make it clearer that it doesn't directly related to the external start commmand.
+updated env doco
+changed CERTBOT_AUTH_PROVIDER to AUTH_PROVIDER.
+released 2.1.1
+added example.
+grammar and spelling.
+final major refactor pre-release.
+Removed the 'mode' environment variable as it isn't used. Removed DNSAuthProviders as all AuthProviders are now considered the same.
+Rationalised the use of env keys.
+upgraded to dcli 0.23
+Changed output to recognize that all auth providers are now treated the same.
+removed unncessary if condtion.
+formatting.
+Fixed a major bug in the namecheap auth. It was calling certbot again rather than the dns hook.
+Improvements  in messages.
+Improved the validator by printing the erroneous entry.
+removed lauch.json
+released 1.4.11
+Logged the api key and cleaned up the logic around how we retrieve it.
+Fixed a number of bugs around wildcard certificates. Primarily the paths to the certification storage is different (no hostname) when dealing with wildcards.
+ignored launch.json
+Reformatted code 120 characters wide.
+Added additional logging.
+added doco on cloudflare environment vars.
+formattting and additional logging.
+Added support for interactive option on start method.
+Made file executable.
+Added interactive option to help debug startup failures.
+released 1.4.2
+Fixed incorrect environment names for namecheap.
+SMTP Server can now accept localhost.
+Updated doco on environment variables. released 1.4.1
+renamed providers and environment vars.
+Updated environment variables.
+released 1.4.0
+upgraded to dcli 0.22
+unit test for latestCertificatePath
+added release notes
+Fixed the wild card detection.
+formatting.
+Merge branch 'master' of github.com:bsutton/nginx-le
+Merge branch 'master' of github.com:bsutton/nginx-le
+Merge branch 'master' of github.com:bsutton/nginx-le
+Merge branch 'master' of github.com:bsutton/nginx-le
+Merge branch 'master' of github.com:bsutton/nginx-le
+udpated.
+Merge branch 'master' of github.com:bsutton/nginx-le
+Merge branch 'master' of github.com:bsutton/nginx-le
+removed unwanted files
+removed unwanted files
+Merge branch 'master' of github.com:bsutton/nginx-le
+Merge branch 'master' of github.com:bsutton/nginx-le
+Merge branch 'master' of github.com:bsutton/nginx-le
+Merge branch 'master' of github.com:bsutton/nginx-le
+Merge branch 'master' of github.com:bsutton/nginx-le
+Merge branch 'master' of github.com:bsutton/nginx-le
+released 1.1.6
+released 1.1.6
+formatting
+formatting
+released 1.1.6
+released 1.1.6
+upgraded to dcli to fix the tailing of streama.
+upgraded to dcli to fix the tailing of streama.
+formatting.
+formatting.
+minor changes to assist in unit testing and added unit tests.
+minor improvements in prompts.
+removed redundant code. Improved the usage instructions.
+upgraded to dcli 0.21.1
+Improved the start instructions by basing on them on the selected start method.
+ignored stuff
+ignored certbot conf
+ignored log file.
+upgraded to dcli
+upgraded to dcli
+Moved ConfigYaml into shared. Fixed bugs with acquistion/revokation and startup.
+Moved ConfigYaml into shared. Fixed bugs with acquistion/revokation and startup.
+Added error checks for failed cert acquisition and renewal. Added smtp server/port settings and are now sending emails when an error occurs.
+Added error checks for failed cert acquisition and renewal. Added smtp server/port settings and are now sending emails when an error occurs.
+released 1.1.2
+released 1.1.2
+Added logic to revoke and acquire a new certificate if the cert type changes.
+Added logic to revoke and acquire a new certificate if the cert type changes.
+documented environment vars.
+documented environment vars.
+renamed to make it more obvious what the code does.
+renamed to make it more obvious what the code does.
+fixed mis-named environment var.
+fixed mis-named environment var.
+formattig
+formattig
+Using wrong environment vars for http auth (there were missing completely).
+Using wrong environment vars for http auth (there were missing completely).
+released 1.0.10
+released 1.0.10
+improvements in doc.
+improvements in doc.
+completed work on centralising all environment var usage.
+completed work on centralising all environment var usage.
+Moved all the environment vars intoa single class and removed the internalConfig class.
+Moved all the environment vars intoa single class and removed the internalConfig class.
+released 1.0.7
+released 1.0.7
+Added logic to suppress acquire message when in auto acquire mode.
+Added logic to suppress acquire message when in auto acquire mode.
+Merge branch 'master' of github.com:bsutton/nginx-le
+Merge branch 'master' of github.com:bsutton/nginx-le
+change ConfigYaml to use SettingsYaml
+change ConfigYaml to use SettingsYaml
+we now use the fqdn rather than a separate host/domain name.
+we now use the fqdn rather than a separate host/domain name.
+spelling.
+spelling.
+removed as part of new provider implementation.
+removed as part of new provider implementation.
+added arg to supress mis-leading message when in auto acquire mode.
+added arg to supress mis-leading message when in auto acquire mode.
+spelling.
+spelling.
+Added support for new content providers.
+Added support for new content providers.
+formatting and doco.
+formatting and doco.
+removed excisve logging.
+removed excisve logging.
+Added config options to support tomcat and a general structure for adding additional webserver types. The config command now sets the container's debug option if it is run with the -d option.
+Added config options to support tomcat and a general structure for adding additional webserver types. The config command now sets the container's debug option if it is run with the -d option.
+Create FUNDING.yml
+Create FUNDING.yml
+Upgraded to dshell 1.11.0 and fixed breaking changes.
+Upgraded to dshell 1.11.0 and fixed breaking changes.
+Upgraded to dshell 1.11.0 and fixed breaking changes.
+Upgraded to dshell 1.11.0 and fixed breaking changes.
+Upgraded to dshell 1.11.0 and fixed breaking changes.
+Upgraded to dshell 1.11.0 and fixed breaking changes.
+Upgraded to dshell 1.11.0 and fixed breaking changes.
+Upgraded to dshell 1.11.0 and fixed breaking changes.
+Upgraded to dshell 1.11.0 and fixed breaking changes.
+Upgraded to dshell 1.11.0 and fixed breaking changes.
+upgraded to dshell 1.11.0 and fixed breaking changes.
+upgraded to dshell 1.11.0 and fixed breaking changes.
+moved to cli
+moved to cli
+released 1.0.1
+released 1.0.1
+released 1.0.1
+released 1.0.1
+released 1.0.1
+released 1.0.1
+Fixed a bug where the cert type selection menu was not showing the currently selected value.
+Fixed a bug where the cert type selection menu was not showing the currently selected value.
+released 0.5.4
+released 0.5.4
+Resolved confusion between the host and container include path. These are different but were being used interchangably.
+Resolved confusion between the host and container include path. These are different but were being used interchangably.
+released 0.5.3
+released 0.5.3
+Added logic to stop so it won't try to stop if the container isn' trunning.
+Added logic to stop so it won't try to stop if the container isn' trunning.
+Fixed a bug. We need the image even when using docker compose.
+Fixed a bug. We need the image even when using docker compose.
+released 0.5.0
+released 0.5.0
+adde dmissing space.
+adde dmissing space.
+auto selects the nginx-le container if it gets an exact match.
+auto selects the nginx-le container if it gets an exact match.
+released 0.4.5
+released 0.4.5
+collapse include directory structure into a single folder for .upstream and .location files at roberts insistance.
+collapse include directory structure into a single folder for .upstream and .location files at roberts insistance.
+released 0.4.4
+released 0.4.4
+correct the volume path.
+correct the volume path.
+cleaned up logging.
+cleaned up logging.
+released 0.4.3
+released 0.4.3
+New certificate class allows us to parse the certbot certificates.
+New certificate class allows us to parse the certbot certificates.
+changed to -F so we can follow certbots log rotation.
+changed to -F so we can follow certbots log rotation.
+Now using the new Certificate class to get better details of the cert.
+Now using the new Certificate class to get better details of the cert.
+exposed new certificates class.
+exposed new certificates class.
+fixed a bug. location not locations.
+fixed a bug. location not locations.
+we use the default include path even if its empty as when changing betwen content locations it can be left empty.
+we use the default include path even if its empty as when changing betwen content locations it can be left empty.
+We only run acquire if we have no certificates or the wrong type of certificate.
+We only run acquire if we have no certificates or the wrong type of certificate.
+tweaked content source logic as it wasn't requesting the right paths for the give type.
+tweaked content source logic as it wasn't requesting the right paths for the give type.
+released 0.4.1
+released 0.4.1
+switch the renew scheduler to run at 1am each day.
+switch the renew scheduler to run at 1am each day.
+released 0.4.0
+released 0.4.0
+changed retries to 20.
+changed retries to 20.
+add validation for the namecheap keys.
+add validation for the namecheap keys.
+change the default retries to 20 and made it configurable.
+change the default retries to 20 and made it configurable.
+prints a message after deploy indicating that certs are active.
+prints a message after deploy indicating that certs are active.
+print the version no. on start.
+print the version no. on start.
+Made it possible to auto acquire a certificate.
+Made it possible to auto acquire a certificate.
+no longer storing the namecheap keys as this is a security issue and wasn't required. Added in staging and debug.
+no longer storing the namecheap keys as this is a security issue and wasn't required. Added in staging and debug.
+removed unused code.
+removed unused code.
+ignored launch.json
+ignored launch.json
+released 0.3.14
+released 0.3.14
+updated default paths.
+updated default paths.
+created a tool to automate the release of nginx-le
+created a tool to automate the release of nginx-le
+fixed a bug when parsing names with no tag.
+fixed a bug when parsing names with no tag.
+built a script to automate
+built a script to automate
+added some additional prompts..
+added some additional prompts..
+Added method to pull images by the fullname.
+Added method to pull images by the fullname.
+renamed nginx_le_cli to nginx_le to make install easier.
+renamed nginx_le_cli to nginx_le to make install easier.
+Added option to redirect logging to stdout.
+Added option to redirect logging to stdout.
+Fixed the dns auth hook. The TXT record name as incorrect.
+Fixed the dns auth hook. The TXT record name as incorrect.
+0.2.0 release
+0.2.0 release
+fixed the test.
+fixed the test.
+Fixed the dig command as we were not passing down the domain.
+Fixed the dig command as we were not passing down the domain.
+Added logic to check the container exits.
+Added logic to check the container exits.
+moved to root.
+moved to root.
+moved readme
+moved readme
+first commit
+first commit
+
 # 4.0.13
 # 4.0.12
 # 4.0.11
