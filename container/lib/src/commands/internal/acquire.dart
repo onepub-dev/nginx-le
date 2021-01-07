@@ -25,7 +25,7 @@ void acquire(List<String> args) {
   Settings().verbose(
       '${Environment().authProviderKey}:${Environment().authProvider}');
 
-  /// if auto acquisition has been block an manual call to acquistion will clear the flag.
+  /// if auto acquisition has been block a manual call to acquire will clear the flag.
   Certbot().clearBlockFlag;
 
   var authProvider = AuthProviders().getByName(Environment().authProvider);

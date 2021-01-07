@@ -6,6 +6,9 @@ import '../../nginx_le_shared.dart';
 class Certificate {
   String fqdn;
 
+  String _hostname;
+  String _domain;
+
   String domains;
 
   DateTime expiryDate;
@@ -139,5 +142,51 @@ class Certificate {
     Expiry: ${dateTimeToOffset(datetime: expiryDate, offset: hours)}
     Certificate Path: $certificatePath
     Private Key Path: $privateKeyPath''';
+  }
+
+  /// Returns true if this certificate was issued for the given [hostname],
+  /// [domain] and is or isn't a [wildcard] certificate.
+  bool wasIssuedFor({String hostname, String domain, bool wildcard}) {
+    return this.wildcard == wildcard && '$hostname.$domain' == fqdn;
+  }
+
+  void revoke() {
+    Certbot().revoke(
+        hostname: hostname,
+        domain: domain,
+        wildcard: wildcard,
+        emailaddress: Environment().emailaddress);
+  }
+
+  String get hostname {
+    _hostname ??= hostnameFromFqdn(fqdn);
+    return _hostname;
+  }
+
+  String get domain {
+    _domain ??= domainFromFqdn(fqdn);
+    return _domain;
+  }
+
+  /// returns the hostname component of an fqdn
+  String hostnameFromFqdn(String fqdn) {
+    var parts = fqdn.split('.');
+
+    if (parts.isNotEmpty) {
+      return parts[0];
+    }
+
+    return fqdn;
+  }
+
+  /// returns the hostname component of an fqdn
+  String domainFromFqdn(String fqdn) {
+    var parts = fqdn.split('.');
+
+    if (parts.length > 1) {
+      return parts.sublist(1).join('.');
+    }
+
+    return fqdn;
   }
 }

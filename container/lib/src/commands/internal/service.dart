@@ -68,47 +68,19 @@ void _start() {
   var certbotAuthProvider = Environment().authProvider;
   Settings().verbose('${Environment().authProviderKey}=$certbotAuthProvider');
 
-  /// Places the server into acquire mode if certificates are not valid.
-  ///
-  final hasValidCert = Certbot().deployCertificates(
-      hostname: hostname,
-      domain: domain,
-      reload: false, // don't try to reload nginx as it won't be running as yet.
-      wildcard: wildcard,
-      autoAcquireMode: autoAcquire);
-
   LogManager().start();
+
+  if (!Certbot()
+      .wasIssuedTo(hostname: hostname, domain: domain, wildcard: wildcard)) {
+    /// One of fqdn or wild card type has changed so
+    /// revoke the certificates so we can acquire new ones.
+    /// If there are no certificates then this does nothing.
+    Certbot().revokeAll();
+  }
 
   RenewalManager().start();
 
-  if (autoAcquire) {
-    if (!Certbot().isBlocked()) {
-      var certificates = Certificate.load();
-
-      /// expired certs are handled by the renew scheduler
-      if (!hasValidCert) {
-        AcquisitionManager().start();
-      } else {
-        var certificate = certificates[0];
-
-        /// If the certificate type has changed then we must acquire a new one.
-        /// If we have more then one certificate then somethings wrong so start again by revoke all of them.
-        if (certificates.length > 1 ||
-            production != certificate.production ||
-            '$hostname.$domain' != certificate.fqdn ||
-            wildcard != certificate.wildcard) {
-          Certbot.revokeAll();
-          AcquisitionManager().start();
-        }
-      }
-    } else {
-      print(
-          'Acquistion is blocked due to an earlier failure. Fix the problem and delete ${Certbot().pathToBlockFlag} or wait 15 minutes');
-    }
-  } else {
-    print(
-        "AUTO_ACQUIRE=false please use 'nginx-le acquire' to acquire a certificate");
-  }
+  AcquisitionManager().start();
 
   print('Starting nginx');
 

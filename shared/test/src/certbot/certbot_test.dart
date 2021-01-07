@@ -11,9 +11,9 @@ import 'dns_auth_hook_test.dart';
 void main() {
   group('certbot', () {
     setUpAll(() {
-      if (which('dns_auth').notfound) {
+      if (which('auth_hook').notfound) {
         printerr(red(
-            'Compile and install dns_auth and dns_cleanup before running this test'));
+            'Compile and install auth_hook, cleanup_hook and deploy_hook before running this test'));
         exit(1);
       }
       print('setupall called');

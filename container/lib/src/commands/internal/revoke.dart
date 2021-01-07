@@ -20,7 +20,7 @@ void revoke(List<String> args) {
   Settings().verbose('${Environment().hostnameKey}:${Environment().hostname}');
   Settings().verbose('${Environment().domainKey}:${Environment().domain}');
 
-  Certbot.revokeAll();
+  Certbot().revokeAll();
 
   /// delete all of the certificates
   // find('*', root: _latestCertificatePath(hostname, domain))

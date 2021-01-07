@@ -51,8 +51,6 @@ void _startScheduler(String environment) {
 }
 
 void _logrotate() {
-  print('Running logrotate');
-
   if (!exists(CONFIG_FILE)) {
     printerr(
         red('The logrotate configuration file was not found at: $CONFIG_FILE'));

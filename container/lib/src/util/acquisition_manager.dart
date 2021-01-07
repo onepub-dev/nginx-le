@@ -21,39 +21,66 @@ class AcquisitionManager {
 }
 
 void _acquireThread(String environment) {
-  try {
-    print(orange('AcquisitionManager is starting'));
-    Env().fromJson(environment);
+  Env().fromJson(environment);
+  print(orange('AcquisitionManager is starting'));
 
-    Settings().setVerbose(enabled: Environment().debug);
-    var authProvider = AuthProviders().getByName(Environment().authProvider);
-    authProvider.acquire();
+  if (!Environment().autoAcquire) {
+    print(
+        "AUTO_ACQUIRE=false please use 'nginx-le acquire' to acquire a certificate");
+  } else {
+    /// start the acquisition loop.
+    do {
+      try {
+        if (Certbot().hasValidCertificate()) {
+          /// Places the server into acquire mode if certificates are not valid.
+          ///
+          if (!Certbot().isDeployed()) {
+            _deploy();
+          }
+        } else {
+          if (Certbot().isBlocked()) {
+            print(red(
+                'Acquisition is blocked. Please resolve the previously reported error.'));
+          } else {
+            Settings().setVerbose(enabled: Environment().debug);
+            var authProvider =
+                AuthProviders().getByName(Environment().authProvider);
+            authProvider.acquire();
+            _deploy();
 
-    Certbot().deployCertificates(
-        hostname: Environment().hostname,
-        domain: Environment().domain,
-        reload:
-            true, // don't try to reload nginx as it won't be running as yet.
-        wildcard: Environment().domainWildcard,
-        autoAcquireMode: Environment().autoAcquire);
-    print(orange('AcquisitionManager completed successfully.'));
-  } on CertbotException catch (e, st) {
-    Certbot().blockAcquisitions();
-    printerr(e.message);
-    printerr('Cerbot Error details begin: ${'*' * 20}');
-    printerr(e.details);
-    printerr('Cerbot Error details end: ${'*' * 20}');
-    printerr(st.toString());
-    Email.sendError(
-        subject: e.message, body: '${e.details}\n ${st.toString()}');
-  } catch (e, st) {
-    Certbot().blockAcquisitions();
-    printerr(red(
-        'AcquisitionManager has shutdown due to an unexpected error: ${e.runtimeType}'));
-    printerr(e.toString());
-    printerr(st.toString());
-    Email.sendError(subject: e.toString(), body: st.toString());
-  } finally {
-    print(orange('AcquisitionManager has shut down.'));
+            print(orange('AcquisitionManager completed successfully.'));
+          }
+        }
+      } on CertbotException catch (e, st) {
+        Certbot().blockAcquisitions();
+        print(red(
+            'Acquisition has failed. Retries will be blocked for fifteen minutes.'));
+
+        print(red(e.message));
+        print('Cerbot Error details begin: ${'*' * 20}');
+        print(e.details);
+        print('Cerbot Error details end: ${'*' * 20}');
+        print(st.toString());
+        Email.sendError(
+            subject: e.message, body: '${e.details}\n ${st.toString()}');
+      } catch (e, st) {
+        Certbot().blockAcquisitions();
+        print(red(
+            'Acquisition has failed due to an unexpected error: ${e.runtimeType}'));
+        print(e.toString());
+        print(st.toString());
+        Email.sendError(subject: e.toString(), body: st.toString());
+      }
+      sleep(5, interval: Interval.minutes);
+    } while (true);
   }
+}
+
+void _deploy() {
+  Certbot().deployCertificates(
+      hostname: Environment().hostname,
+      domain: Environment().domain,
+      reload: false, // don't try to reload nginx as it won't be running as yet.
+      wildcard: Environment().domainWildcard,
+      autoAcquireMode: Environment().autoAcquire);
 }

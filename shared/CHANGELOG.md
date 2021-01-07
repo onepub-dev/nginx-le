@@ -1,3 +1,12 @@
+# 5.0.0
+
+# 5.0.0
+
+# 4.0.15
+Added extra loggin to make it clear why the acquistion manager hasn't started.
+released 4.0.14
+grammar
+
 # 4.0.14
 Fixed a bug caused by the live link already existing in some circumstances. Now we always check if it exists and delete it before we recreate it.
 fixed usage message.

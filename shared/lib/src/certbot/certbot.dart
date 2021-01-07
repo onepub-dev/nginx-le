@@ -129,6 +129,93 @@ class Certbot {
     return hasValidCerts;
   }
 
+  /// true if we have a valid certificate for the given arguments
+  /// and it has not expired.
+  bool hasValidCertificate() {
+    var hostname = Environment().hostname;
+    var domain = Environment().domain;
+    var wildcard = Environment().domainWildcard;
+    var foundValidCertificate = false;
+
+    for (var certificate in certificates()) {
+      if (certificate.hasExpired()) continue;
+
+      if (certificate.wasIssuedFor(
+          hostname: hostname, domain: domain, wildcard: wildcard)) {
+        foundValidCertificate = true;
+        break;
+      }
+    }
+
+    return foundValidCertificate;
+  }
+
+  /// revokes any certificates that are not for the current
+  /// fqdn and wildcard type.
+  void revokeInvalidCertificates(
+      String hostname, String domain, bool wildcard) {
+    /// First try non-expired certificates
+    for (var certificate in certificates()) {
+      if (certificate.wasIssuedFor(
+          hostname: hostname, domain: domain, wildcard: wildcard)) {
+        certificate.revoke();
+      }
+    }
+  }
+
+  /// true if we have a valid, non-expired certificate and it has been deployed
+  bool isDeployed() {
+    var hostname = Environment().hostname;
+    var domain = Environment().domain;
+    var wildcard = Environment().domainWildcard;
+    var deployed = false;
+    var path = CertbotPaths.fullChainPath(
+        CertbotPaths.certificatePathRoot(hostname, domain, wildcard: wildcard));
+    if (exists(path)) {
+      if (!hasExpired(hostname, domain)) {
+        deployed = true;
+      }
+    }
+    return deployed;
+  }
+
+  /// true if the active certificate was bound the given [hostname],
+  /// [domain] and [wildcard] type.
+  ///
+  /// If there are only expired certificates then provided they were
+  /// issued according to the pass args then we return true.
+  ///
+  /// There is a chance we could have an old bad certificate and a new
+  /// good one in which case the result is random :)
+  /// On start up if we find a bad certificate
+  bool wasIssuedTo(
+      {@required String hostname,
+      @required String domain,
+      @required bool wildcard}) {
+    /// First try non-expired certificates
+    for (var certificate in certificates()) {
+      if (certificate.hasExpired()) continue;
+
+      if (certificate.wasIssuedFor(
+          hostname: hostname, domain: domain, wildcard: wildcard)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    /// now consider expired certificates
+    for (var certificate in certificates()) {
+      if (certificate.wasIssuedFor(
+          hostname: hostname, domain: domain, wildcard: wildcard)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
+  }
+
   void deployCertificatesDirect(String certificateRootPath,
       {bool revoking = false}) {
     if (exists(LIVE_WWW_PATH, followLinks: false)) {
@@ -367,7 +454,7 @@ class Certbot {
   }
 
   /// Revoke all the certificates we have.
-  static void revokeAll() {
+  void revokeAll() {
     /// we revoke all the certs we have.
     /// We should only have one but if things go wrong we might have old ones
     /// lying around so this cleans things up.
