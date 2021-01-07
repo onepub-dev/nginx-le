@@ -135,5 +135,22 @@ void main() {
 
       // createDir(join(path, 'robtest18.clouddialer.com.au'));
     });
+
+    test('block flag', () {
+      print('');
+      //var flag = '/tmp/test.flag';
+      //var flag = join(HOME, '.dcli');
+      Environment().certbotRootPath = '/tmp';
+      var flag = '/tmp/block_acquisitions.flag';
+
+      touch(flag, create: true);
+      var flagStat = stat(flag);
+      print(flagStat.changed);
+      print(flagStat.changed.add(Duration(minutes: 15)));
+      print(
+          flagStat.changed.add(Duration(minutes: 15)).isAfter(DateTime.now()));
+
+      print('isblocedk ${Certbot().isBlocked()}');
+    });
   });
 }
