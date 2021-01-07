@@ -16,7 +16,11 @@ class Certbot {
   /// We also write our log messages to this file.
   static const LOG_FILE_NAME = 'letsencrypt.log';
 
-  static const LIVE_WWW_PATH = '/etc/nginx/live';
+  static const WWW_PATH_LIVE = '/etc/nginx/live';
+
+  static const WWW_PATH_CUSTOM = '/etc/nginx/custom';
+
+  static const WWW_PATH_ACQUIRE = '/etc/nginx/acquire';
 
   static final Certbot _self = Certbot._internal();
 
@@ -50,83 +54,62 @@ class Certbot {
   /// so that nginx has access to them.
   ///
   /// returns true if it deployed a valid certificate
-  bool deployCertificates(
-      {@required String hostname,
-      @required String domain,
-      bool revoking = false,
-      bool reload = true,
-      @required bool wildcard,
-      @required bool autoAcquireMode}) {
-    var hasValidCerts = false;
-
-    /// envs.forEach((key, value) => print('$key=$value'));
-
-    /// If there is no live path then no certificates have been acquired.
-    if (exists(CertbotPaths.letsEncryptLivePath)) {
-      var certs = certificates();
-
-      for (var cert in certs) {
-        print(cert.toString());
-      }
-
-      if (!revoking) {
-        var path = CertbotPaths.fullChainPath(CertbotPaths.certificatePathRoot(
-            hostname, domain,
-            wildcard: wildcard));
-        if (exists(path)) {
-          print('Found fullchain in: $path');
-
-          if (hasExpired(hostname, domain)) {
-            print(
-                "ERROR The Certificate for $hostname.$domain has expired. Please run 'nginx-le acquire.");
-          } else {
-            hasValidCerts = true;
-          }
-        } else {
-          if (!autoAcquireMode) {
-            print(
-                "No Certificates found for $hostname.$domain. You may need to run 'nginx-le acquire");
-          }
-        }
-      }
-    }
-
-    // we are about to recreate the symlink to the appropriate path
-    if (exists(LIVE_WWW_PATH, followLinks: false)) {
-      deleteSymlink(LIVE_WWW_PATH);
-    }
+  bool deployCertificates({
+    bool reload = true,
+  }) {
+    var hostname = Environment().hostname;
+    var domain = Environment().domain;
+    var wildcard = Environment().domainWildcard;
+    var hasValidCerts = Certbot().hasValidCertificate();
 
     if (hasValidCerts) {
       print(orange('Deploying certificates'));
-
-      /// symlink the user's custom content.
-      print('symlinking /etc/nginx/custom');
-
-      symlink('/etc/nginx/custom', LIVE_WWW_PATH);
       _deploy(CertbotPaths.certificatePathRoot(hostname, domain,
           wildcard: wildcard));
+      _createSymlink(WWW_PATH_CUSTOM);
+
       print(green('*') * 120);
       print(green('* Nginx-LE is running with an active Certificate.'));
       print(green('*') * 120);
     } else {
+      /// symlink in the http configs which only permit certbot access
+      _createSymlink(WWW_PATH_ACQUIRE);
+
       print(red('*') * 120);
       print(red('No certificates Found during deploy!!'));
       print(red(
           "* Nginx-LE is running in 'Certificate Acquisition' mode. It will only respond to CertBot validation requests."));
       print(red('*') * 120);
-
-      /// symlink in the http configs which only permit certbot access
-      print('symlinking /etc/nginx/acquire');
-      symlink('/etc/nginx/acquire', LIVE_WWW_PATH);
     }
 
     if (reload) {
       _reloadNginx();
     }
     print('Deploy complete.');
-    sleep(5);
 
     return hasValidCerts;
+  }
+
+  void _createSymlink(String existingPath) {
+    var validTarget = false;
+    // we are about to recreate the symlink to the appropriate path
+    if (exists(WWW_PATH_LIVE, followLinks: false)) {
+      if (exists(WWW_PATH_LIVE)) {
+        validTarget = true;
+      }
+    }
+
+    if (validTarget) {
+      if (resolveSymLink(WWW_PATH_LIVE) != existingPath) {
+        deleteSymlink(WWW_PATH_LIVE);
+        symlink(existingPath, WWW_PATH_LIVE);
+      }
+      // else the symlink already points at the target.
+    } else {
+      /// the current target is invalid so recreate the link.
+      deleteSymlink(WWW_PATH_LIVE);
+      symlink(existingPath, WWW_PATH_LIVE);
+    }
   }
 
   /// true if we have a valid certificate for the given arguments
@@ -218,15 +201,15 @@ class Certbot {
 
   void deployCertificatesDirect(String certificateRootPath,
       {bool revoking = false}) {
-    if (exists(LIVE_WWW_PATH, followLinks: false)) {
-      deleteSymlink(LIVE_WWW_PATH);
+    if (exists(WWW_PATH_LIVE, followLinks: false)) {
+      deleteSymlink(WWW_PATH_LIVE);
     }
 
     if (!revoking) {
       print(orange('Deploying certificates'));
 
       /// symlink the user's custom content.
-      symlink('/etc/nginx/custom', LIVE_WWW_PATH);
+      symlink('/etc/nginx/custom', WWW_PATH_LIVE);
       _deploy(certificateRootPath);
       print(green('*') * 120);
       print(green('* Nginx-LE is running with an active Certificate.'));
@@ -239,7 +222,7 @@ class Certbot {
       print(red('*') * 120);
 
       /// symlink in the http configs which only permit certbot access
-      symlink('/etc/nginx/acquire', LIVE_WWW_PATH);
+      symlink('/etc/nginx/acquire', WWW_PATH_LIVE);
     }
 
     _reloadNginx();
