@@ -7,15 +7,14 @@ void main() {
   test('deploy certificates ...', () {
     prepareCertHooks();
 
-    /// certbotRootPath
+    Environment().hostname = 'auditor';
+    Environment().domain = 'noojee.com.au';
+    Environment().domainWildcard = false;
+    Environment().autoAcquire = true;
 
     Certbot().deployCertificates(
-        hostname: 'auditor',
-        domain: 'noojee.com.au',
-        reload:
-            false, // don't try to reload nginx as it won't be running as yet.
-        wildcard: false,
-        autoAcquireMode: true);
+      reload: false, // don't try to reload nginx as it won't be running as yet.
+    );
 
     print('deploy has returned');
   });

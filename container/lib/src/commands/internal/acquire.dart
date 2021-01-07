@@ -31,9 +31,5 @@ void acquire(List<String> args) {
   var authProvider = AuthProviders().getByName(Environment().authProvider);
   authProvider.acquire();
 
-  Certbot().deployCertificates(
-      hostname: Environment().hostname,
-      domain: Environment().domain,
-      wildcard: Environment().domainWildcard,
-      autoAcquireMode: Environment().autoAcquire);
+  Certbot().deployCertificates();
 }

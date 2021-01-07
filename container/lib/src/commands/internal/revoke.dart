@@ -22,14 +22,6 @@ void revoke(List<String> args) {
 
   Certbot().revokeAll();
 
-  /// delete all of the certificates
-  // find('*', root: _latestCertificatePath(hostname, domain))
-  //     .forEach((file) => delete(file));
   /// calling deploy will put nginx back into acquire mode.
-  Certbot().deployCertificates(
-      hostname: Environment().hostname,
-      domain: Environment().domain,
-      revoking: true,
-      wildcard: Environment().domainWildcard,
-      autoAcquireMode: Environment().autoAcquire);
+  Certbot().deployCertificates();
 }

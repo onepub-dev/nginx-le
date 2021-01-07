@@ -10,6 +10,12 @@ class AcquisitionManager {
   void start() {
     print('Starting the certificate acquire thread.');
 
+    /// If we have a cert make certain its deployed
+    /// We need to do this immedately as
+    /// when the service starts nginx the symlinks
+    /// need to be in place.
+    Certbot().deployCertificates();
+
     var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
     try {
@@ -78,9 +84,6 @@ void _acquireThread(String environment) {
 
 void _deploy() {
   Certbot().deployCertificates(
-      hostname: Environment().hostname,
-      domain: Environment().domain,
-      reload: false, // don't try to reload nginx as it won't be running as yet.
-      wildcard: Environment().domainWildcard,
-      autoAcquireMode: Environment().autoAcquire);
+    reload: false, // don't try to reload nginx as it won't be running as yet.
+  );
 }
