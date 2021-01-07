@@ -55,19 +55,21 @@ void main(List<String> args) {
 }
 
 void makePublished(String cliPubspec, String containerPubspec) {
-  print('Processing cli');
+  print(red('Processing cli'));
   makePubDev(cliPubspec);
 
-  print('Processing container');
+  print('');
+  print(red('Processing container'));
 
   makePubDev(containerPubspec);
 }
 
 void makeLocal(String cliPubspec, String containerPubspec) {
-  print('Processing cli');
+  print(red('Processing cli'));
   makeRelative(cliPubspec);
 
-  print('Processing container');
+  print('');
+  print(red('Processing container'));
 
   makeRelative(containerPubspec);
 }
@@ -92,6 +94,7 @@ void makeRelative(String pathToPubSpec) {
     pathToPubSpec.append('    path:');
     pathToPubSpec.append('      ../shared');
 
+    'dart pub get'.start(workingDirectory: dirname(pathToPubSpec));
     print(green('nginx_le_shared is now a relative dependency'));
   }
 }
@@ -135,6 +138,7 @@ void makePubDev(String pathToPubSpec) {
       }
     });
 
+    'dart pub get'.start(workingDirectory: dirname(pathToPubSpec));
     print(green('nginx_le_shared is now a pub.dev dependency'));
   }
 }
