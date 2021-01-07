@@ -1,3 +1,6 @@
+# 5.0.2
+released 5.0.1
+
 # 5.0.1
 reworked the acquistiion manager to better deail with failed acquisitions. It now has a retry loop if an acquisition failed. Previously it would not retry until restarted.
 
