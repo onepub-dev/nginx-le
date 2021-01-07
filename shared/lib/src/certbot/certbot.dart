@@ -92,8 +92,10 @@ class Certbot {
 
   void _createSymlink(String existingPath) {
     var validTarget = false;
+    var existing = false;
     // we are about to recreate the symlink to the appropriate path
     if (exists(WWW_PATH_LIVE, followLinks: false)) {
+      existing = true;
       if (exists(WWW_PATH_LIVE)) {
         validTarget = true;
       }
@@ -107,7 +109,7 @@ class Certbot {
       // else the symlink already points at the target.
     } else {
       /// the current target is invalid so recreate the link.
-      deleteSymlink(WWW_PATH_LIVE);
+      if (existing) deleteSymlink(WWW_PATH_LIVE);
       symlink(existingPath, WWW_PATH_LIVE);
     }
   }
@@ -476,13 +478,13 @@ class Certbot {
       valid = stat(pathToBlockFlag)
           .changed
           .add(Duration(minutes: 15))
-          .isBefore(DateTime.now());
+          .isAfter(DateTime.now());
     }
     return valid;
   }
 
   void clearBlockFlag() {
-    if (isBlocked()) {
+    if (exists(pathToBlockFlag)) {
       delete(pathToBlockFlag);
     }
   }
