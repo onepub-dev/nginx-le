@@ -1,3 +1,7 @@
+# 5.0.6
+
+# 5.0.5
+
 # 5.0.3
 simplified/fixed the symlink logic
 added release hooks to automatically toggle between public and local dependency for shared.
