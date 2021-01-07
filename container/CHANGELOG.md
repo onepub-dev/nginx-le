@@ -1,3 +1,7 @@
+# 5.0.2
+released 5.0.2
+upgraded to dcli 0.39.7 to fix a bug when fetching the dart version when dartsdk isn't installed.
+
 # 5.0.1
 
 # 5.0.0
