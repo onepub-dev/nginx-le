@@ -60,7 +60,7 @@ class Certificate {
   static List<Certificate> load() {
     print('Loading certificates from ${CertbotPaths.letsEncryptConfigPath}');
 
-    print('directory tree of certs');
+    Settings().verbose('directory tree of certs');
     find('*',
             root: CertbotPaths.letsEncryptConfigPath,
             types: [Find.directory, Find.file, Find.link])
@@ -72,10 +72,10 @@ class Certificate {
 
     var lines = cmd.toList(nothrow: true);
 
-    print('output from certbot certificates');
+    Settings().verbose('output from certbot certificates');
 
     for (var line in lines) {
-      print('Certificate Load: $line');
+      Settings().verbose('Certificate Load: $line');
     }
 
     return parse(lines);
