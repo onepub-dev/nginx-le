@@ -84,7 +84,8 @@ void _start() {
 
   print('Starting nginx');
 
-  /// run the command passed in on the command line.
+  /// run nginx in the foreground.
+  /// As such this call won't return until nginx shutsdown.
   "nginx -g 'daemon off;'".start();
 }
 
