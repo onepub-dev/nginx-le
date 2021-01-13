@@ -5,6 +5,13 @@ import 'package:nginx_le_shared/src/util/environment.dart';
 
 class Email {
   static void sendError({String subject, String body}) {
+    if (Environment().smtpServer == null || Environment().smtpServer.isEmpty) {
+      printerr(
+          'Error not emailed as no ${Environment().smtpServerKey} environment variable set');
+      print('Subject: $subject');
+      print('Body: \n$body');
+      return;
+    }
     final smtpServer = SmtpServer(Environment().smtpServer,
         port: Environment().smtpServerPort);
 
