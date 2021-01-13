@@ -465,23 +465,23 @@ class Certbot {
     touch(pathToBlockFlag, create: true);
   }
 
-  bool isBlocked() {
+  bool get isBlocked {
     return _hasValidBlockFlag && !Environment().certbotIgnoreBlock;
   }
+
+  /// If acquisitions are blocked returns the time at which it will be unblocked.
+  /// If acquistions are not blocked returns the curren time.
+  DateTime get blockedUntil => isBlocked
+      ? stat(pathToBlockFlag).changed.add(Duration(minutes: 15))
+      : DateTime.now();
 
   /// returns true if the block flag file exists and it is no more than 15 minutes old
   /// Essentially we allow an acquisition to retry every 15 minutes on the assumption
   /// that it was a temporary failure and the user has had time to fix it.
-  bool get _hasValidBlockFlag {
-    var valid = false;
-    if (exists(pathToBlockFlag)) {
-      valid = stat(pathToBlockFlag)
-          .changed
-          .add(Duration(minutes: 15))
-          .isAfter(DateTime.now());
-    }
-    return valid;
-  }
+  bool get _hasValidBlockFlag =>
+      _blockFlagExists && blockedUntil.isAfter(DateTime.now());
+
+  bool get _blockFlagExists => exists(pathToBlockFlag);
 
   void clearBlockFlag() {
     if (exists(pathToBlockFlag)) {
