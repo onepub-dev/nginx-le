@@ -1,3 +1,11 @@
+# 5.0.11
+Added message when nginx shutsdown cleanly.
+
+# 5.0.10
+Improved the acquistion managers blocked message.
+Fixed a stack overflow.
+added member to Certbot blockedUntil which reports the time until which acquistions are blocked.
+
 # 5.0.9
 Stopped the acquistion manager trying to reload nginx before it has started.
 Added logic to stop the system trying to send an email when no smtp server has been set.
