@@ -1,3 +1,13 @@
+# 5.0.9
+Stopped the acquistion manager trying to reload nginx before it has started.
+Added logic to stop the system trying to send an email when no smtp server has been set.
+change certificate load logging from print to verbose.
+Added documenation to service.dart
+
+# 5.0.8
+
+# 5.0.7
+
 # 5.0.6
 
 # 5.0.5

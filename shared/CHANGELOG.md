@@ -1,3 +1,12 @@
+# 5.0.8
+
+# 5.0.7
+
+# 5.0.7
+released 5.0.6
+Added test for block flag expiry.
+Fixed a bug caused by trying to delete a non-existant symlink. Fixed a bug with block flag. Date comparision was inverted.
+
 # 5.0.6
 
 # 5.0.5
