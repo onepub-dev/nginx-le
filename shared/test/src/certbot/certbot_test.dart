@@ -150,7 +150,7 @@ void main() {
       print(
           flagStat.changed.add(Duration(minutes: 15)).isAfter(DateTime.now()));
 
-      print('isblocedk ${Certbot().isBlocked()}');
+      print('isblocked ${Certbot().isBlocked}');
     });
   });
 }
