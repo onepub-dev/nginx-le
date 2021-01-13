@@ -58,13 +58,14 @@ class Certificate {
   }
 
   static List<Certificate> load() {
-    print('Loading certificates from ${CertbotPaths.letsEncryptConfigPath}');
+    Settings().verbose(
+        'Loading certificates from ${CertbotPaths.letsEncryptConfigPath}');
 
     Settings().verbose('directory tree of certs');
     find('*',
             root: CertbotPaths.letsEncryptConfigPath,
             types: [Find.directory, Find.file, Find.link])
-        .forEach((file) => print(file));
+        .forEach((file) => Settings().verbose(file));
     var cmd = 'certbot certificates '
         ' --config-dir=${CertbotPaths.letsEncryptConfigPath}'
         ' --work-dir=${CertbotPaths.letsEncryptWorkPath}'
