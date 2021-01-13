@@ -56,9 +56,9 @@ void acquistionCheck() {
         Certbot().deployCertificates();
       }
     } else {
-      if (Certbot().isBlocked()) {
+      if (Certbot().isBlocked) {
         print(red(
-            'Acquisition is blocked. Please resolve the previously reported error.'));
+            'Acquisition is blocked due to a prior error. Nginx-le will try again at ${Certbot().blockedUntil}. Alternately resolve the error and then run nginx-le acquire.'));
       } else {
         Settings().setVerbose(enabled: Environment().debug);
         var authProvider =
