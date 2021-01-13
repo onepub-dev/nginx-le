@@ -87,6 +87,8 @@ void _start() {
   /// run nginx in the foreground.
   /// As such this call won't return until nginx shutsdown.
   "nginx -g 'daemon off;'".start();
+
+  print('Nginx has shutdown');
 }
 
 void dumpEnvironmentVariables() {
