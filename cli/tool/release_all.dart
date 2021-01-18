@@ -13,9 +13,6 @@ void main() {
   /// release shared
   print('Releasing code to pub.dev.');
 
-  './toggle_shared_location.dart published'
-      .start(workingDirectory: join(projectRootPath, 'tool'));
-
   print(orange('Current version is: $currentVersion'));
   var newVersion = askForVersion(currentVersion);
 
@@ -23,6 +20,9 @@ void main() {
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../shared'));
   'pub_release --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../shared'));
+
+  './toggle_shared_location.dart published'
+      .start(workingDirectory: join(projectRootPath, 'tool'));
 
   /// release container
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../container'));
