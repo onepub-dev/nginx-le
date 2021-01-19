@@ -71,14 +71,17 @@ void acquistionCheck() {
     }
   } on CertbotException catch (e, st) {
     Certbot().blockAcquisitions();
+    print('');
+    print('*' * 80);
     print(red(
         'Acquisition has failed. Retries will be blocked for fifteen minutes.'));
+    print('*' * 80);
+    print('');
 
     print(red(e.message));
-    print('Cerbot Error details begin: ${'*' * 20}');
+    print('${'*' * 30} Cerbot Error details begin: ${'*' * 30}');
     print(e.details);
-    print('Cerbot Error details end: ${'*' * 20}');
-    print(st.toString());
+    print('${'*' * 30} Cerbot Error details end: ${'*' * 30}');
     Email.sendError(
         subject: e.message, body: '${e.details}\n ${st.toString()}');
   } catch (e, st) {
