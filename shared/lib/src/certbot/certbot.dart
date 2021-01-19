@@ -321,17 +321,14 @@ class Certbot {
   /// has expired
   bool hasExpired(String hostname, String domain) {
     var certificatelist = certificates();
-    print(red('HasExpired evaluating ${certificatelist.length} certificates'));
+    Settings().verbose(
+        red('HasExpired evaluating ${certificatelist.length} certificates'));
     if (certificatelist.isEmpty) {
       return true;
     }
 
-    for (var cert in certificatelist) {
-      print('${cert.toString()}');
-    }
-
     var certificate = certificatelist[0];
-    print('testing expiry for ${certificate}');
+    Settings().verbose('testing expiry for ${certificate}');
     return certificate.hasExpired();
   }
 
