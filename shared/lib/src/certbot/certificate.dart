@@ -125,10 +125,10 @@ class Certificate {
   }
 
   bool hasExpired() {
-    print('expiry date $expiryDate');
+    Settings().verbose('expiry date $expiryDate');
     var expired = (expiryDate.isBefore(DateTime.now()));
 
-    print('expired=$expired');
+    Settings().verbose('expired=$expired');
     return expired;
   }
 
