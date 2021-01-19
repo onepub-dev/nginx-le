@@ -262,7 +262,7 @@ class Certbot {
     var configDir = _createDir(CertbotPaths.letsEncryptConfigPath);
 
     var cmd = 'certbot revoke'
-        ' --cert-path ${CertbotPaths.certificatePathRoot(hostname, domain, wildcard: wildcard)}'
+        ' --cert-path ${join(CertbotPaths.certificatePathRoot(hostname, domain, wildcard: wildcard), CertbotPaths.CERTIFICATE_FILE)}'
         ' --non-interactive '
         ' -m $emailaddress  '
         ' --agree-tos '
