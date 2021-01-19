@@ -61,15 +61,15 @@ class Certificate {
     Settings().verbose(
         'Loading certificates from ${CertbotPaths.letsEncryptConfigPath}');
 
-    Settings().verbose('directory tree of certs');
-    find('*',
-            root: CertbotPaths.letsEncryptConfigPath,
-            types: [Find.directory, Find.file, Find.link])
-        .forEach((file) => Settings().verbose(file));
+    // Settings().verbose('directory tree of certs');
+    // find('*',
+    //         root: CertbotPaths.letsEncryptConfigPath,
+    //         types: [Find.directory, Find.file, Find.link])
+    //     .forEach((file) => Settings().verbose(file));
     var cmd = 'certbot certificates '
         ' --config-dir=${CertbotPaths.letsEncryptConfigPath}'
         ' --work-dir=${CertbotPaths.letsEncryptWorkPath}'
-        ' --work-dir=${CertbotPaths.letsEncryptLogPath}';
+        ' --logs-dir=${CertbotPaths.letsEncryptLogPath}';
 
     var lines = cmd.toList(nothrow: true);
 

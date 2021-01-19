@@ -1,3 +1,27 @@
+# 5.0.20
+
+# 5.0.19
+
+# 5.0.19
+released 5.0.13.
+
+# 5.0.18
+
+# 5.0.17
+
+# 5.0.16
+
+# 5.0.15
+
+# 5.0.14
+
+# 5.0.13
+
+# 5.0.14
+
+# 5.0.13
+moved toggle to after release of shared as toggle had indirect dependencies on shared.
+
 # 5.0.13
 
 # 5.0.12

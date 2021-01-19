@@ -32,7 +32,7 @@ void main() {
       .start(workingDirectory: join(projectRootPath, '../shared'));
 
   './toggle_shared_location.dart published'
-      .start(workingDirectory: join(projectRootPath, 'tool'));
+      .start(workingDirectory: join(projectRootPath, '..', 'cli', 'tool'));
 
   print(green('Publishing nginx-le-container'));
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../container'));
@@ -42,7 +42,7 @@ void main() {
   print(green('Publishing nginx-le-cli'));
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../cli'));
   'pub_release --setVersion=${newVersion.toString()}'
-      .start(workingDirectory: projectRootPath);
+      .start(workingDirectory: join(projectRootPath, '../cli'));
 
   build(newVersion);
 }
