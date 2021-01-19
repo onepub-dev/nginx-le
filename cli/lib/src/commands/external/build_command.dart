@@ -98,6 +98,9 @@ class BuildCommand extends Command<void> {
   // ignore: missing_return
   String findDockerfile() {
     var projectPath = DartProject.current.pathToProjectRoot;
+    if (Script.current.isPubGlobalActivated || Script.current.isCompiled) {
+      projectPath = pwd;
+    }
     if (exists(join(projectPath, 'Dockerfile'))) return projectPath;
 
     if (exists(join(projectPath, '..', 'Dockerfile'))) {
