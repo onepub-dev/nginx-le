@@ -1,3 +1,13 @@
+# 5.0.22
+
+# 5.0.21
+
+# 5.0.21
+Reduced noisy loggers.
+When revoking a certificate the path must point to the pem file not a directory.
+Reduced logging when looking for expired certificates.
+Improved formatting when outputing a certbot error.
+
 # 5.0.20
 
 # 5.0.16

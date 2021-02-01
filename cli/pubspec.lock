@@ -301,7 +301,7 @@ packages:
       path: "../shared"
       relative: true
     source: path
-    version: "5.0.20"
+    version: "5.0.22"
   node_interop:
     dependency: transitive
     description:
@@ -378,7 +378,7 @@ packages:
       name: pub_release
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.3"
+    version: "4.0.4"
   pub_semver:
     dependency: "direct main"
     description:

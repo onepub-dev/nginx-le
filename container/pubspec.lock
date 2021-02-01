@@ -280,7 +280,7 @@ packages:
       path: "../shared"
       relative: true
     source: path
-    version: "5.0.20"
+    version: "5.0.22"
   node_interop:
     dependency: transitive
     description:
