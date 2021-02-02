@@ -15,7 +15,11 @@ class AcquisitionManager {
     /// when the service starts nginx, the symlinks
     /// need to be in place.
     /// At this point nginx isn't running so don't try to reload it.
-    Certbot().deployCertificates(reload: false);
+    if (Certbot().deployCertificates(reload: false)) {
+      AcquisitionManager.leaveAcquistionMode();
+    } else {
+      AcquisitionManager.enterAcquisitionMode();
+    }
 
     var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
@@ -25,8 +29,113 @@ class AcquisitionManager {
       waitForEx(iso.close());
     }
   }
+
+  static void enterAcquisitionMode() {
+    /// symlink in the http configs which only permit certbot access
+    _createSymlink(Certbot.WWW_PATH_ACQUIRE);
+
+    print(red('*') * 120);
+    print(red('No valid certificates Found!!'));
+    print(red(
+        "* Nginx-LE is running in 'Certificate Acquisition' mode. It will only respond to CertBot validation requests."));
+    print(red('*') * 120);
+  }
+
+  static void leaveAcquistionMode() {
+    _createSymlink(Certbot.WWW_PATH_CUSTOM);
+
+    print(green('*') * 120);
+    print(green('* Nginx-LE is running with an active Certificate.'));
+    print(green('*') * 120);
+  }
+
+  static void acquistionCheck() {
+    try {
+      if (!Certbot().isDeployed()) {
+        /// Places the server into acquire mode if certificates are not deployed.
+        enterAcquisitionMode();
+
+        if (Certbot().hasValidCertificate()) {
+          if (Certbot().deployCertificates()) {
+            leaveAcquistionMode();
+            print(orange('AcquisitionManager completed successfully.'));
+          } else {
+            print(orange(
+                'AcquisitionManager failed to deploy certificates. Will remain in acquistion mode.'));
+          }
+        } else {
+          ///
+          if (Certbot().isBlocked) {
+            print(red(
+                'Acquisition is blocked due to a prior error. Nginx-le will try again at ${Certbot().blockedUntil}. Alternately resolve the error and then run nginx-le acquire.'));
+          } else {
+            Settings().setVerbose(enabled: Environment().debug);
+            var authProvider =
+                AuthProviders().getByName(Environment().authProvider);
+            authProvider.acquire();
+
+            if (Certbot().deployCertificates()) {
+              leaveAcquistionMode();
+              print(orange(
+                  'AcquisitionManager successfully deployed certficates.'));
+            } else {
+              print(orange(
+                  'AcquisitionManager failed to acquire certificates. Will remain in acquistion mode.'));
+            }
+          }
+        }
+      }
+    } on CertbotException catch (e, st) {
+      Certbot().blockAcquisitions();
+      print('');
+      print('*' * 80);
+      print(red(
+          'Acquisition has failed. Retries will be blocked for fifteen minutes.'));
+      print('*' * 80);
+      print('');
+
+      print(red(e.message));
+      print('${'*' * 30} Cerbot Error details begin: ${'*' * 30}');
+      print(e.details);
+      print('${'*' * 30} Cerbot Error details end: ${'*' * 30}');
+      Email.sendError(
+          subject: e.message, body: '${e.details}\n ${st.toString()}');
+    } catch (e, st) {
+      Certbot().blockAcquisitions();
+      print(red(
+          'Acquisition has failed due to an unexpected error: ${e.runtimeType}'));
+      print(e.toString());
+      print(st.toString());
+      Email.sendError(subject: e.toString(), body: st.toString());
+    }
+  }
+
+  static void _createSymlink(String existingPath) {
+    var validTarget = false;
+    var existing = false;
+    // we are about to recreate the symlink to the appropriate path
+    if (exists(Certbot.WWW_PATH_LIVE, followLinks: false)) {
+      existing = true;
+      if (exists(Certbot.WWW_PATH_LIVE)) {
+        validTarget = true;
+      }
+    }
+
+    if (validTarget) {
+      if (resolveSymLink(Certbot.WWW_PATH_LIVE) != existingPath) {
+        deleteSymlink(Certbot.WWW_PATH_LIVE);
+        symlink(existingPath, Certbot.WWW_PATH_LIVE);
+      }
+      // else the symlink already points at the target.
+    } else {
+      /// the current target is invalid so recreate the link.
+      if (existing) deleteSymlink(Certbot.WWW_PATH_LIVE);
+      symlink(existingPath, Certbot.WWW_PATH_LIVE);
+    }
+  }
 }
 
+/// Global function required for isolate.
 void _acquireThread(String environment) {
   Env().fromJson(environment);
 
@@ -41,55 +150,8 @@ void _acquireThread(String environment) {
 
     /// start the acquisition loop.
     do {
-      acquistionCheck();
+      AcquisitionManager.acquistionCheck();
       sleep(5, interval: Interval.minutes);
     } while (true);
-  }
-}
-
-void acquistionCheck() {
-  try {
-    if (Certbot().hasValidCertificate()) {
-      /// Places the server into acquire mode if certificates are not valid.
-      ///
-      if (!Certbot().isDeployed()) {
-        Certbot().deployCertificates();
-      }
-    } else {
-      if (Certbot().isBlocked) {
-        print(red(
-            'Acquisition is blocked due to a prior error. Nginx-le will try again at ${Certbot().blockedUntil}. Alternately resolve the error and then run nginx-le acquire.'));
-      } else {
-        Settings().setVerbose(enabled: Environment().debug);
-        var authProvider =
-            AuthProviders().getByName(Environment().authProvider);
-        authProvider.acquire();
-        Certbot().deployCertificates();
-
-        print(orange('AcquisitionManager completed successfully.'));
-      }
-    }
-  } on CertbotException catch (e, st) {
-    Certbot().blockAcquisitions();
-    print('');
-    print('*' * 80);
-    print(red(
-        'Acquisition has failed. Retries will be blocked for fifteen minutes.'));
-    print('*' * 80);
-    print('');
-
-    print(red(e.message));
-    print('${'*' * 30} Cerbot Error details begin: ${'*' * 30}');
-    print(e.details);
-    print('${'*' * 30} Cerbot Error details end: ${'*' * 30}');
-    Email.sendError(
-        subject: e.message, body: '${e.details}\n ${st.toString()}');
-  } catch (e, st) {
-    Certbot().blockAcquisitions();
-    print(red(
-        'Acquisition has failed due to an unexpected error: ${e.runtimeType}'));
-    print(e.toString());
-    print(st.toString());
-    Email.sendError(subject: e.toString(), body: st.toString());
   }
 }
