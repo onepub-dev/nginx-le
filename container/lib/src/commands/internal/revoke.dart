@@ -1,5 +1,6 @@
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
+import 'package:nginx_le_container/src/util/acquisition_manager.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /// revokes any existing certificates by deleting
@@ -22,6 +23,9 @@ void revoke(List<String> args) {
 
   Certbot().revokeAll();
 
-  /// calling deploy will put nginx back into acquire mode.
-  Certbot().deployCertificates();
+  if (Certbot().deployCertificates()) {
+    AcquisitionManager.leaveAcquistionMode();
+  } else {
+    AcquisitionManager.enterAcquisitionMode();
+  }
 }

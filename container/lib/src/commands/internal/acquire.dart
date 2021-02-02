@@ -1,4 +1,5 @@
 import 'package:dcli/dcli.dart';
+import 'package:nginx_le_container/src/util/acquisition_manager.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 void acquire(List<String> args) {
@@ -25,11 +26,15 @@ void acquire(List<String> args) {
   Settings().verbose(
       '${Environment().authProviderKey}:${Environment().authProvider}');
 
-  /// if auto acquisition has been block a manual call to acquire will clear the flag.
+  /// if auto acquisition has been blocked a manual call to acquire will clear the flag.
   Certbot().clearBlockFlag;
 
   var authProvider = AuthProviders().getByName(Environment().authProvider);
   authProvider.acquire();
 
-  Certbot().deployCertificates();
+  if (Certbot().deployCertificates()) {
+    AcquisitionManager.leaveAcquistionMode();
+  } else {
+    AcquisitionManager.enterAcquisitionMode();
+  }
 }

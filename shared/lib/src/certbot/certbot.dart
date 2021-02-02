@@ -66,20 +66,6 @@ class Certbot {
       print(orange('Deploying certificates'));
       _deploy(CertbotPaths.certificatePathRoot(hostname, domain,
           wildcard: wildcard));
-      _createSymlink(WWW_PATH_CUSTOM);
-
-      print(green('*') * 120);
-      print(green('* Nginx-LE is running with an active Certificate.'));
-      print(green('*') * 120);
-    } else {
-      /// symlink in the http configs which only permit certbot access
-      _createSymlink(WWW_PATH_ACQUIRE);
-
-      print(red('*') * 120);
-      print(red('No certificates Found during deploy!!'));
-      print(red(
-          "* Nginx-LE is running in 'Certificate Acquisition' mode. It will only respond to CertBot validation requests."));
-      print(red('*') * 120);
     }
 
     if (reload) {
@@ -88,30 +74,6 @@ class Certbot {
     print('Deploy complete.');
 
     return hasValidCerts;
-  }
-
-  void _createSymlink(String existingPath) {
-    var validTarget = false;
-    var existing = false;
-    // we are about to recreate the symlink to the appropriate path
-    if (exists(WWW_PATH_LIVE, followLinks: false)) {
-      existing = true;
-      if (exists(WWW_PATH_LIVE)) {
-        validTarget = true;
-      }
-    }
-
-    if (validTarget) {
-      if (resolveSymLink(WWW_PATH_LIVE) != existingPath) {
-        deleteSymlink(WWW_PATH_LIVE);
-        symlink(existingPath, WWW_PATH_LIVE);
-      }
-      // else the symlink already points at the target.
-    } else {
-      /// the current target is invalid so recreate the link.
-      if (existing) deleteSymlink(WWW_PATH_LIVE);
-      symlink(existingPath, WWW_PATH_LIVE);
-    }
   }
 
   /// true if we have a valid certificate for the given arguments
@@ -195,6 +157,9 @@ class Certbot {
           hostname: hostname, domain: domain, wildcard: wildcard)) {
         return true;
       } else {
+        print(red(
+            'Found Certificated that was not issued to expected domain: expected $hostname.$domain, wildcard: $wildcard found ${certificate.fqdn}, wildcard: ${certificate.wildcard}'));
+
         return false;
       }
     }
