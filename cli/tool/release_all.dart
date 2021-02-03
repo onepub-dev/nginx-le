@@ -24,6 +24,7 @@ void main() {
   print(orange('Current version is: $currentVersion'));
   var newVersion = askForVersion(currentVersion);
 
+  /// shared
   print(green('Publishing nginx-le-shared'));
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../shared'));
   'git add pubspec.lock'
@@ -35,9 +36,12 @@ void main() {
   'pub_release --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../shared'));
 
+  // toggle to the published version of shared.
   './toggle_shared_location.dart published'
       .start(workingDirectory: join(projectRootPath, '..', 'cli', 'tool'));
 
+
+  // container
   print(green('Publishing nginx-le-container'));
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../container'));
   'git add pubspec.lock'
@@ -49,6 +53,8 @@ void main() {
   'pub_release --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../container'));
 
+
+  // cli
   print(green('Publishing nginx-le-cli'));
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../cli'));
   'git add pubspec.lock'
