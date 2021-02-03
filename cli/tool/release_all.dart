@@ -1,6 +1,5 @@
 #! /bin/env dcli
 
-
 import 'package:dcli/dcli.dart';
 import 'package:pub_release/pub_release.dart';
 
@@ -27,6 +26,10 @@ void main() {
 
   print(green('Publishing nginx-le-shared'));
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../shared'));
+  'git add pubspec.lock'
+      .start(workingDirectory: join(projectRootPath, '../shared'));
+  'git commit -m "Upgraded packages as part of release process"'
+      .start(workingDirectory: join(projectRootPath, '../shared'));
   'pub_release --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../shared'));
 
@@ -35,11 +38,19 @@ void main() {
 
   print(green('Publishing nginx-le-container'));
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../container'));
+  'git add pubspec.lock'
+      .start(workingDirectory: join(projectRootPath, '../container'));
+  'git commit -m "Upgraded packages as part of release process"'
+      .start(workingDirectory: join(projectRootPath, '../container'));
   'pub_release --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../container'));
 
   print(green('Publishing nginx-le-cli'));
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../cli'));
+  'git add pubspec.lock'
+      .start(workingDirectory: join(projectRootPath, '../cli'));
+  'git commit -m "Upgraded packages as part of release process"'
+      .start(workingDirectory: join(projectRootPath, '../cli'));
   'pub_release --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../cli'));
 
