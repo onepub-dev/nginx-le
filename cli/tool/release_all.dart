@@ -28,8 +28,10 @@ void main() {
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../shared'));
   'git add pubspec.lock'
       .start(workingDirectory: join(projectRootPath, '../shared'));
-  'git commit -m "Upgraded packages as part of release process"'
-      .start(workingDirectory: join(projectRootPath, '../shared'));
+  conditionalCommit(
+      message: 'Upgraded packages as part of release process',
+      path: '../shared',
+      projectRootPath: projectRootPath);
   'pub_release --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../shared'));
 
@@ -40,8 +42,10 @@ void main() {
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../container'));
   'git add pubspec.lock'
       .start(workingDirectory: join(projectRootPath, '../container'));
-  'git commit -m "Upgraded packages as part of release process"'
-      .start(workingDirectory: join(projectRootPath, '../container'));
+  conditionalCommit(
+      message: 'Upgraded packages as part of release process',
+      path: '../container',
+      projectRootPath: projectRootPath);
   'pub_release --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../container'));
 
@@ -49,12 +53,23 @@ void main() {
   'pub upgrade'.start(workingDirectory: join(projectRootPath, '../cli'));
   'git add pubspec.lock'
       .start(workingDirectory: join(projectRootPath, '../cli'));
-  'git commit -m "Upgraded packages as part of release process"'
-      .start(workingDirectory: join(projectRootPath, '../cli'));
+  conditionalCommit(
+      message: 'Upgraded packages as part of release process',
+      path: '../cli',
+      projectRootPath: projectRootPath);
   'pub_release --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../cli'));
 
   build(newVersion);
+}
+
+void conditionalCommit({String message, String path, String projectRootPath}) {
+  final outstanding = 'git status --porcelain'.toList();
+
+  if (outstanding.isNotEmpty) {
+    'git commit -m "$message"'
+        .start(workingDirectory: join(projectRootPath, path));
+  }
 }
 
 void build(Version newVersion) {
