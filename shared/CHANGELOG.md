@@ -1,3 +1,5 @@
+# 5.0.26
+
 # 5.0.25
 now only commits if there are uncommited files.
 
