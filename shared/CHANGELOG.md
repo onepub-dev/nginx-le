@@ -1,3 +1,7 @@
+# 5.0.23
+Upgraded packages as part of release process
+commit pubspec.lock after doing pub upgrade as pub_release requires all files to be commited.
+
 # 5.0.22
 
 # 5.0.21
