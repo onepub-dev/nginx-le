@@ -1,3 +1,6 @@
+# 5.0.25
+now only commits if there are uncommited files.
+
 # 5.0.23
 Upgraded packages as part of release process
 commit pubspec.lock after doing pub upgrade as pub_release requires all files to be commited.
