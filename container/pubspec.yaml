@@ -21,3 +21,8 @@ dependencies:
   nginx_le_shared: ^5.0.0
 dev_dependencies: 
   test: ^1.0.0
+
+dependency_overrides:
+  nginx_le_shared:
+    path:
+      ../shared
