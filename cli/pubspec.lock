@@ -121,12 +121,12 @@ packages:
     source: hosted
     version: "4.1.0"
   dcli:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: dcli
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.40.5"
+    version: "0.41.8"
   encrypt:
     dependency: "direct main"
     description:
@@ -298,10 +298,10 @@ packages:
   nginx_le_shared:
     dependency: "direct main"
     description:
-      name: nginx_le_shared
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "5.0.34"
+      path: "../shared"
+      relative: true
+    source: path
+    version: "5.0.37"
   node_interop:
     dependency: transitive
     description:
@@ -378,7 +378,7 @@ packages:
       name: pub_release
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.4"
+    version: "4.3.1"
   pub_semver:
     dependency: "direct main"
     description:
