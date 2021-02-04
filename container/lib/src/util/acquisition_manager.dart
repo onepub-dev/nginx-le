@@ -118,9 +118,11 @@ class AcquisitionManager {
     }
   }
 
-  /// returns true if we are currently in acquisition mode.
+  /// returns true if we are currently in acquisition mode or
+  /// [Certbot.WWW_PATH_LIVE] doesn't exists which means we haven't been configured.
   static bool get inAcquisitionMode {
-    return resolveSymLink(Certbot.WWW_PATH_LIVE) == Certbot.WWW_PATH_ACQUIRE;
+    return exists(Certbot.WWW_PATH_LIVE) &&
+        resolveSymLink(Certbot.WWW_PATH_LIVE) == Certbot.WWW_PATH_ACQUIRE;
   }
 
   static void _createSymlink(String targetPath) {
