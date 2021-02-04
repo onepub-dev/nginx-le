@@ -1,3 +1,6 @@
+# 5.0.39
+transitive dependencies for dcli didn't work as the tools need it locally.
+
 # 5.0.38
 made dcli transitive.
 
