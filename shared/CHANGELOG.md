@@ -1,3 +1,7 @@
+# 5.0.32
+failed release.
+Added log message of path to deploy_hook
+
 # 5.0.31
 spelling.
 failed release attempt
