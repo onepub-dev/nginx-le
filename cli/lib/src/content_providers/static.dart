@@ -64,7 +64,7 @@ class Static extends ContentProvider {
   @override
   void createLocationFile() {
     _backupLocationContent();
-    find('*.location', root: ConfigYaml().hostIncludePath)
+    find('*.location', workingDirectory: ConfigYaml().hostIncludePath)
         .forEach((file) => delete(file));
 
     _locationPath.write(_locationContent);
@@ -73,7 +73,7 @@ class Static extends ContentProvider {
   @override
   void createUpstreamFile() {
     /// no op as we don't require an upstream file.
-    find('*.upstream', root: ConfigYaml().hostIncludePath)
+    find('*.upstream', workingDirectory: ConfigYaml().hostIncludePath)
         .forEach((file) => delete(file));
   }
 

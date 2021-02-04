@@ -56,7 +56,7 @@ class Tomcat extends ContentProvider {
   void createLocationFile() {
     var config = ConfigYaml();
 
-    find('*.location', root: config.hostIncludePath)
+    find('*.location', workingDirectory: config.hostIncludePath)
         .forEach((file) => delete(file));
     var location = join(config.hostIncludePath, 'tomcat.location');
 
@@ -103,7 +103,7 @@ class Tomcat extends ContentProvider {
 
   @override
   void createUpstreamFile() {
-    find('*.upstream', root: ConfigYaml().hostIncludePath)
+    find('*.upstream', workingDirectory: ConfigYaml().hostIncludePath)
         .forEach((file) => delete(file));
     var config = ConfigYaml();
     var location = join(ConfigYaml().hostIncludePath, 'tomcat.upstream');

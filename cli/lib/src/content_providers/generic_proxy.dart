@@ -47,7 +47,7 @@ class GenericProxy extends ContentProvider {
   void createLocationFile() {
     var config = ConfigYaml();
     var location = join(config.hostIncludePath, '$name.location');
-    find('*.location', root: config.hostIncludePath)
+    find('*.location', workingDirectory: config.hostIncludePath)
         .forEach((file) => delete(file));
 
     location.write(r'''location / {
@@ -68,7 +68,7 @@ class GenericProxy extends ContentProvider {
   @override
   void createUpstreamFile() {
     var config = ConfigYaml();
-    find('*.upstream', root: ConfigYaml().hostIncludePath)
+    find('*.upstream', workingDirectory: ConfigYaml().hostIncludePath)
         .forEach((file) => delete(file));
     var location = join(config.hostIncludePath, '$name.upstream');
 
