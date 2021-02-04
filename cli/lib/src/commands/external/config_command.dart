@@ -135,7 +135,7 @@ class ConfigCommand extends Command<void> {
         '$dnsProviderEnvs'
         ' --net=host'
         ' --log-driver=journald'
-        ' -v certificates:${CertbotPaths.letsEncryptRootPath}'
+        ' -v certificates:${CertbotPaths().letsEncryptRootPath}'
         '$volumes'
         ' ${config.image.imageid}';
 

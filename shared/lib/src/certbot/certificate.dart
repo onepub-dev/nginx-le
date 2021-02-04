@@ -59,17 +59,17 @@ class Certificate {
 
   static List<Certificate> load() {
     Settings().verbose(
-        'Loading certificates from ${CertbotPaths.letsEncryptConfigPath}');
+        'Loading certificates from ${CertbotPaths().letsEncryptConfigPath}');
 
     // Settings().verbose('directory tree of certs');
     // find('*',
-    //         root: CertbotPaths.letsEncryptConfigPath,
+    //         root: CertbotPaths().letsEncryptConfigPath,
     //         types: [Find.directory, Find.file, Find.link])
     //     .forEach((file) => Settings().verbose(file));
     var cmd = 'certbot certificates '
-        ' --config-dir=${CertbotPaths.letsEncryptConfigPath}'
-        ' --work-dir=${CertbotPaths.letsEncryptWorkPath}'
-        ' --logs-dir=${CertbotPaths.letsEncryptLogPath}';
+        ' --config-dir=${CertbotPaths().letsEncryptConfigPath}'
+        ' --work-dir=${CertbotPaths().letsEncryptWorkPath}'
+        ' --logs-dir=${CertbotPaths().letsEncryptLogPath}';
 
     var lines = cmd.toList(nothrow: true);
 

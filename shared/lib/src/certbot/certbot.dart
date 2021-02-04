@@ -7,48 +7,27 @@ import 'package:path/path.dart';
 import '../../nginx_le_shared.dart';
 
 class Certbot {
-  /// The directory where lets encrypt stores its certificates.
-  /// As we need to persist certificates between container restarts
-  /// the CERTBOT_ROOT_DEFAULT_PATH path is mounted to a persistent volume on start up.
-  static const CERTBOT_ROOT_DEFAULT_PATH = '/etc/letsencrypt';
-
-  /// The name of the logfile that certbot writes to.
-  /// We also write our log messages to this file.
-  static const LOG_FILE_NAME = 'letsencrypt.log';
-
-  /// The path that nginx takes its home directory from.
-  /// This is symlinked into either [WWW_PATH_OPERATING] or [WWW_PATH_ACQUIRE] depending
-  /// on whether we are in acquire or operational mode.
-  static const WWW_PATH_LIVE = '/etc/nginx/live';
-
-  /// When [WWW_PATH_LIVE] is symlinked to this path then
-  /// we have a certificate and are running in operatational mode.
-  static const WWW_PATH_OPERATING = '/etc/nginx/custom';
-
-  /// When [WWW_PATH_LIVE] is symlinked to this path then
-  /// we DO NOT have a certificate and are running in acquistion mode.
-  static const WWW_PATH_ACQUIRE = '/etc/nginx/acquire';
-
   static final Certbot _self = Certbot._internal();
 
   bool _sendToStdout = false;
   factory Certbot() => _self;
 
   /// The certbot log file
-  String get logfile => join(CertbotPaths.letsEncryptLogPath, LOG_FILE_NAME);
+  String get logfile =>
+      join(CertbotPaths().letsEncryptLogPath, CertbotPaths().LOG_FILE_NAME);
   Certbot._internal() {
     Settings().verbose('Logging to $logfile');
 
-    if (!exists(CertbotPaths.letsEncryptLogPath)) {
-      createDir(CertbotPaths.letsEncryptLogPath, recursive: true);
+    if (!exists(CertbotPaths().letsEncryptLogPath)) {
+      createDir(CertbotPaths().letsEncryptLogPath, recursive: true);
     }
 
-    if (!exists(CertbotPaths.letsEncryptWorkPath)) {
-      createDir(CertbotPaths.letsEncryptWorkPath, recursive: true);
+    if (!exists(CertbotPaths().letsEncryptWorkPath)) {
+      createDir(CertbotPaths().letsEncryptWorkPath, recursive: true);
     }
 
-    if (!exists(CertbotPaths.letsEncryptConfigPath)) {
-      createDir(CertbotPaths.letsEncryptConfigPath, recursive: true);
+    if (!exists(CertbotPaths().letsEncryptConfigPath)) {
+      createDir(CertbotPaths().letsEncryptConfigPath, recursive: true);
     }
   }
 
@@ -73,8 +52,8 @@ class Certbot {
 
     if (hasValidCerts) {
       print(orange('Deploying certificates'));
-      _deploy(CertbotPaths.certificatePathRoot(hostname, domain,
-          wildcard: wildcard));
+      _deploy(CertbotPaths()
+          .certificatePathRoot(hostname, domain, wildcard: wildcard));
       deployed = true;
     }
 
@@ -128,8 +107,8 @@ class Certbot {
     var domain = Environment().domain;
     var wildcard = Environment().domainWildcard;
     var deployed = false;
-    var path = CertbotPaths.fullChainPath(
-        CertbotPaths.certificatePathRoot(hostname, domain, wildcard: wildcard));
+    var path = CertbotPaths().fullChainPath(CertbotPaths()
+        .certificatePathRoot(hostname, domain, wildcard: wildcard));
     if (exists(path)) {
       if (!hasExpired(hostname, domain)) {
         deployed = true;
@@ -182,15 +161,15 @@ class Certbot {
 
   void deployCertificatesDirect(String certificateRootPath,
       {bool revoking = false}) {
-    if (exists(WWW_PATH_LIVE, followLinks: false)) {
-      deleteSymlink(WWW_PATH_LIVE);
+    if (exists(CertbotPaths().WWW_PATH_LIVE, followLinks: false)) {
+      deleteSymlink(CertbotPaths().WWW_PATH_LIVE);
     }
 
     if (!revoking) {
       print(orange('Deploying certificates'));
 
       /// symlink the user's custom content.
-      symlink('/etc/nginx/custom', WWW_PATH_LIVE);
+      symlink('/etc/nginx/custom', CertbotPaths().WWW_PATH_LIVE);
       _deploy(certificateRootPath);
       print(green('*') * 120);
       print(green('* Nginx-LE is running with an active Certificate.'));
@@ -203,7 +182,7 @@ class Certbot {
       print(red('*') * 120);
 
       /// symlink in the http configs which only permit certbot access
-      symlink('/etc/nginx/acquire', WWW_PATH_LIVE);
+      symlink('/etc/nginx/acquire', CertbotPaths().WWW_PATH_LIVE);
     }
 
     _reloadNginx();
@@ -213,17 +192,19 @@ class Certbot {
   void _deploy(String certificateRootPath) {
     /// we need to leave the original files in place as they form part
     /// of the letsencrypt archive
-    copy(CertbotPaths.fullChainPath(certificateRootPath), '/tmp/fullchain.pem',
+    copy(
+        CertbotPaths().fullChainPath(certificateRootPath), '/tmp/fullchain.pem',
         overwrite: true);
-    copy(CertbotPaths.privateKeyPath(certificateRootPath), '/tmp/privkey.pem',
+    copy(CertbotPaths().privateKeyPath(certificateRootPath), '/tmp/privkey.pem',
         overwrite: true);
 
     /// but we need to move them in place using move so that
     /// the replace is essentially atomic so that nginx doesn't see partially
     /// created certificates.
-    move('/tmp/fullchain.pem', join(nginxCertPath, 'fullchain.pem'),
+    move('/tmp/fullchain.pem',
+        join(CertbotPaths().nginxCertPath, 'fullchain.pem'),
         overwrite: true);
-    move('/tmp/privkey.pem', join(nginxCertPath, 'privkey.pem'),
+    move('/tmp/privkey.pem', join(CertbotPaths().nginxCertPath, 'privkey.pem'),
         overwrite: true);
   }
 
@@ -236,12 +217,12 @@ class Certbot {
       bool production = false,
       @required bool wildcard,
       @required String emailaddress}) {
-    var workDir = _createDir(CertbotPaths.letsEncryptWorkPath);
-    var logDir = _createDir(CertbotPaths.letsEncryptLogPath);
-    var configDir = _createDir(CertbotPaths.letsEncryptConfigPath);
+    var workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
+    var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
+    var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
 
     var cmd = 'certbot revoke'
-        ' --cert-path ${join(CertbotPaths.certificatePathRoot(hostname, domain, wildcard: wildcard), CertbotPaths.CERTIFICATE_FILE)}'
+        ' --cert-path ${join(CertbotPaths().certificatePathRoot(hostname, domain, wildcard: wildcard), CertbotPaths().CERTIFICATE_FILE)}'
         ' --non-interactive '
         ' -m $emailaddress  '
         ' --agree-tos '
@@ -272,9 +253,9 @@ class Certbot {
   /// If we don't do this then the revoked certificates will still be renewed.
   void _delete(String hostname, String domain,
       {@required String emailaddress}) {
-    var workDir = _createDir(CertbotPaths.letsEncryptWorkPath);
-    var logDir = _createDir(CertbotPaths.letsEncryptLogPath);
-    var configDir = _createDir(CertbotPaths.letsEncryptConfigPath);
+    var workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
+    var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
+    var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
 
     var cmd = 'certbot delete'
         ' --cert-name $hostname.$domain'
@@ -346,9 +327,9 @@ class Certbot {
     var certbot = 'certbot renew '
         ' --agree-tos '
         ' --deploy-hook=${Environment().certbotDeployHookPath}'
-        ' --work-dir=${CertbotPaths.letsEncryptWorkPath}'
-        ' --config-dir=${CertbotPaths.letsEncryptConfigPath}'
-        ' --logs-dir=${CertbotPaths.letsEncryptLogPath}';
+        ' --work-dir=${CertbotPaths().letsEncryptWorkPath}'
+        ' --config-dir=${CertbotPaths().letsEncryptConfigPath}'
+        ' --logs-dir=${CertbotPaths().letsEncryptLogPath}';
 
     if (force == true) {
       certbot += ' --force-renewal';
@@ -397,13 +378,6 @@ class Certbot {
     } else {
       Settings().verbose('Nginx reload ignored as nginx is not running');
     }
-  }
-
-  static String get nginxCertPath {
-    var path = Environment().nginxCertRootPathOverwrite;
-
-    path ??= CertbotPaths.NGINX_CERT_ROOT;
-    return path;
   }
 
   String _createDir(String dir) {

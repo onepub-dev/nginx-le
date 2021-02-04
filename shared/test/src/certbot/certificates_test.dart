@@ -24,11 +24,11 @@ void main() {
       expect(certificate.domains, equals('slayer.noojee.org'));
       expect(
           certificate.certificatePath,
-          equals(join(CertbotPaths.letsEncryptLivePath,
+          equals(join(CertbotPaths().letsEncryptLivePath,
               'slayer.noojee.org/fullchain.pem')));
       expect(
           certificate.privateKeyPath,
-          equals(join(CertbotPaths.letsEncryptLivePath,
+          equals(join(CertbotPaths().letsEncryptLivePath,
               'slayer.noojee.org/privkey.pem')));
       expect(certificate.production, equals(true));
       expect(certificate.expiryDate,

@@ -6,29 +6,57 @@ import 'package:meta/meta.dart';
 import '../../nginx_le_shared.dart';
 
 class CertbotPaths {
+  static final CertbotPaths _self = CertbotPaths._internal();
+
   /// The directory where lets encrypt stores its certificates.
   /// As we need to persist certificates between container restarts
   /// [LIVE_PATH] lives under [CERTBOT_ROOT_PATH] and
   /// MUST be on a persistent volume so we don't loose the
   /// certificates each time we restart nginx.
   /// The full path is /etc/letsencrypt/config/live
-  static const _LIVE_PATH = 'live';
+  final _LIVE_PATH = 'live';
 
   /// The directory where nginx loads its certificates from
   /// The deploy process copies certificates from the lets encrypt
   /// [LIVE_PATH] to the [NGINX_CERT_ROOT].
-  static const NGINX_CERT_ROOT = '/etc/nginx/certs/';
+  final NGINX_CERT_ROOT = '/etc/nginx/certs/';
 
   /// The file containing the concatenated certs.
-  static const FULLCHAIN_FILE = 'fullchain.pem';
+  final FULLCHAIN_FILE = 'fullchain.pem';
 
-  static const CHAIN_FILE = 'chain.pem';
+  final CHAIN_FILE = 'chain.pem';
 
   /// our private key.
-  static const PRIVATE_KEY_FILE = 'privkey.pem';
+  final PRIVATE_KEY_FILE = 'privkey.pem';
 
   /// certificate file
-  static const CERTIFICATE_FILE = 'cert.pem';
+  final CERTIFICATE_FILE = 'cert.pem';
+
+  /// The directory where lets encrypt stores its certificates.
+  /// As we need to persist certificates between container restarts
+  /// the CERTBOT_ROOT_DEFAULT_PATH path is mounted to a persistent volume on start up.
+  final CERTBOT_ROOT_DEFAULT_PATH = '/etc/letsencrypt';
+
+  /// The name of the logfile that certbot writes to.
+  /// We also write our log messages to this file.
+  final LOG_FILE_NAME = 'letsencrypt.log';
+
+  /// The path that nginx takes its home directory from.
+  /// This is symlinked into either [WWW_PATH_OPERATING] or [WWW_PATH_ACQUIRE] depending
+  /// on whether we are in acquire or operational mode.
+  final WWW_PATH_LIVE = '/etc/nginx/live';
+
+  /// When [WWW_PATH_LIVE] is symlinked to this path then
+  /// we have a certificate and are running in operatational mode.
+  final WWW_PATH_OPERATING = '/etc/nginx/custom';
+
+  /// When [WWW_PATH_LIVE] is symlinked to this path then
+  /// we DO NOT have a certificate and are running in acquistion mode.
+  final WWW_PATH_ACQUIRE = '/etc/nginx/acquire';
+
+  factory CertbotPaths() => _self;
+
+  CertbotPaths._internal();
 
   /// Each time certbot creates a new certificate (excluding  the first one)
   ///  it places it in a 'number' path.
@@ -38,9 +66,9 @@ class CertbotPaths {
   /// conifg/live/<fqdn-001>
   /// conifg/live/<fqdn-002>
   @visibleForTesting
-  static String latestCertificatePath(String hostname, String domain,
+  String latestCertificatePath(String hostname, String domain,
       {@required bool wildcard}) {
-    var livepath = join(CertbotPaths.letsEncryptLivePath);
+    var livepath = join(CertbotPaths().letsEncryptLivePath);
     // if no paths contain '-' then the base fqdn path is correct.
 
     var defaultPath =
@@ -79,54 +107,61 @@ class CertbotPaths {
   /// encrypt adds a number designator when new certificates are aquired.
   ///
   /// See: [lastestCertificatePath] for details.
-  static String _liveDefaultPathForFQDN(String hostname, String domain,
+  String _liveDefaultPathForFQDN(String hostname, String domain,
       {@required bool wildcard}) {
     var fqdn = wildcard ? domain : '$hostname.$domain';
     return join(letsEncryptLivePath, fqdn);
   }
 
   /// The root directory for the certificate files of the given [hostname] and [domain].
-  static String certificatePathRoot(String hostname, String domain,
+  String certificatePathRoot(String hostname, String domain,
       {@required bool wildcard}) {
     return latestCertificatePath(hostname, domain, wildcard: wildcard);
   }
 
   /// The path to the active fullchain.pem file in the live directory.
-  static String fullChainPath(String certificateRootPath) {
+  String fullChainPath(String certificateRootPath) {
 //     getLatest
     return join(certificateRootPath, FULLCHAIN_FILE);
   }
 
   /// The path to the active privatekey.pem file in the live directory
-  static String privateKeyPath(String certificateRootPath) {
+  String privateKeyPath(String certificateRootPath) {
     return join(certificateRootPath, PRIVATE_KEY_FILE);
   }
 
   /// path to the active certificate in the live directory
-  static String certificatePath(String certificateRootPath) {
+  String certificatePath(String certificateRootPath) {
     return join(certificateRootPath, CERTIFICATE_FILE);
   }
 
-  static String get letsEncryptRootPath {
+  String get letsEncryptRootPath {
     /// allows the root to be over-ridden to make testing easier.
     return Environment().certbotRootPath;
   }
 
-  static String get letsEncryptWorkPath {
+  String get letsEncryptWorkPath {
     return join(letsEncryptRootPath, 'work');
   }
 
-  static String get letsEncryptLogPath {
+  String get letsEncryptLogPath {
     return join(letsEncryptRootPath, 'logs');
   }
 
-  static String get letsEncryptConfigPath {
+  String get letsEncryptConfigPath {
     return join(letsEncryptRootPath, 'config');
   }
 
   /// path to the directory where the active certificates
   /// are stored.
-  static String get letsEncryptLivePath {
+  String get letsEncryptLivePath {
     return join(letsEncryptRootPath, 'config', _LIVE_PATH);
+  }
+
+  String get nginxCertPath {
+    var path = Environment().nginxCertRootPathOverwrite;
+
+    path ??= CertbotPaths().NGINX_CERT_ROOT;
+    return path;
   }
 }

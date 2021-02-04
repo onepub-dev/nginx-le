@@ -17,7 +17,7 @@ void main() {
   test('check for certificate with matching details ...', () async {
     prepareEnvironment();
 
-    print('loading certificates from: ${CertbotPaths.letsEncryptConfigPath}');
+    print('loading certificates from: ${CertbotPaths().letsEncryptConfigPath}');
     var certificates = Certificate.load();
 
     print('Found ${certificates.length} certificates');

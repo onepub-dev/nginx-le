@@ -59,15 +59,15 @@ void main() {
 
 void setup() {
   Environment().certbotRootPath = '/tmp/letsencrypt';
-  if (!exists(CertbotPaths.letsEncryptRootPath)) {
-    createDir(CertbotPaths.letsEncryptRootPath);
+  if (!exists(CertbotPaths().letsEncryptRootPath)) {
+    createDir(CertbotPaths().letsEncryptRootPath);
   }
 
-  if (!exists(CertbotPaths.letsEncryptLogPath)) {
-    createDir(CertbotPaths.letsEncryptRootPath);
+  if (!exists(CertbotPaths().letsEncryptLogPath)) {
+    createDir(CertbotPaths().letsEncryptRootPath);
   }
 
-  touch(join(CertbotPaths.letsEncryptLogPath, Certbot.LOG_FILE_NAME),
+  touch(join(CertbotPaths().letsEncryptLogPath, CertbotPaths().LOG_FILE_NAME),
       create: true);
 
   Environment().nginxAccessLogPath = '/tmp/nginx/access.log';

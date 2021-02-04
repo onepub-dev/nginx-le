@@ -78,7 +78,7 @@ class Environment {
 
   String get certbotRootPathKey => 'CERTBOT_ROOT_PATH';
   String get certbotRootPath =>
-      env[certbotRootPathKey] ?? Certbot.CERTBOT_ROOT_DEFAULT_PATH;
+      env[certbotRootPathKey] ?? CertbotPaths().CERTBOT_ROOT_DEFAULT_PATH;
   set certbotRootPath(String certbotRootPath) =>
       env[certbotRootPathKey] = certbotRootPath;
 
