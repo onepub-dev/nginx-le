@@ -1,5 +1,5 @@
 name: nginx_le_container
-version: 5.0.34
+version: 5.0.37
 description: Commands that live in the nginx-le docker container.
 repository: https://github.com/bsutton/nginx-le
 environment: 
