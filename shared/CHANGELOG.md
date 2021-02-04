@@ -1,3 +1,6 @@
+# 5.0.34
+Added option to force renewals. This is mainly for testing purposes.
+
 # 5.0.33
 tried to add test for wasIssuedFor but its hard to get certificates on a local system.
 Improved the wasIssuedTo error messages.
