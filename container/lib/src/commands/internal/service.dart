@@ -70,19 +70,24 @@ void _start() {
 
   LogManager().start();
 
-  if (!Certbot()
-      .wasIssuedTo(hostname: hostname, domain: domain, wildcard: wildcard)) {
-    /// One of fqdn or wild card type has changed so
-    /// revoke the certificates so we can acquire new ones.
-    /// If there are no certificates then this does nothing.
-    Certbot().revokeAll();
+  /// If we have certificates check they were issued to the expected domain...
+  if (Certbot().certificates().isNotEmpty) {
+    if (!Certbot()
+        .wasIssuedTo(hostname: hostname, domain: domain, wildcard: wildcard)) {
+      /// One of fqdn or wild card type has changed so
+      /// revoke the certificates so we can acquire new ones.
+      /// If there are no certificates then this does nothing.
+      print(
+          'The existing certificate does not match the required settings. Revoking certificate.');
+      Certbot().revokeAll();
+    }
   }
 
   RenewalManager().start();
 
   AcquisitionManager().start();
 
-  print('Starting nginx');
+  print('Starting nginx daemon.');
 
   /// run nginx in the foreground.
   /// As such this call won't return until nginx shutsdown.
