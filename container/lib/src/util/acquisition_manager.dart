@@ -35,10 +35,10 @@ class AcquisitionManager {
   }
 
   static void enterAcquisitionMode() {
-    if (!inAcquisitionMode) {
-      /// symlink in the http configs which only permit certbot access
-      _createSymlink(Certbot.WWW_PATH_ACQUIRE);
+    /// symlink in the http configs which only permit certbot access
+    _createSymlink(Certbot.WWW_PATH_ACQUIRE);
 
+    if (!inAcquisitionMode) {
       print(red('*') * 120);
       print(red('No valid certificates Found!!'));
       print(red(
@@ -47,10 +47,10 @@ class AcquisitionManager {
     }
   }
 
-  static void leaveAcquistionMode() {
-    if (inAcquisitionMode) {
-      _createSymlink(Certbot.WWW_PATH_OPERATING);
+  static void leaveAcquistionMode({bool checkLinks}) {
+    _createSymlink(Certbot.WWW_PATH_OPERATING);
 
+    if (inAcquisitionMode) {
       print(green('*') * 120);
       print(green('* Nginx-LE is running with an active Certificate.'));
       print(green('*') * 120);
@@ -121,7 +121,8 @@ class AcquisitionManager {
   /// returns true if we are currently in acquisition mode or
   /// [Certbot.WWW_PATH_LIVE] doesn't exists which means we haven't been configured.
   static bool get inAcquisitionMode {
-    return exists(Certbot.WWW_PATH_LIVE) &&
+    return exists(Certbot.WWW_PATH_LIVE, followLinks: false) &&
+        exists(Certbot.WWW_PATH_LIVE, followLinks: true) &&
         resolveSymLink(Certbot.WWW_PATH_LIVE) == Certbot.WWW_PATH_ACQUIRE;
   }
 
