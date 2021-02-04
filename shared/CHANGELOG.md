@@ -1,3 +1,11 @@
+# 5.0.33
+tried to add test for wasIssuedFor but its hard to get certificates on a local system.
+Improved the wasIssuedTo error messages.
+grammar
+When we start the acquisition mode we only try to deploy certificates if they are not already deployed.
+On service start we now only attempt to revoke invalid certificates if we have some certificates.
+improved commit message in release_all
+
 # 5.0.32
 failed release.
 Added log message of path to deploy_hook
