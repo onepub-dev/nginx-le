@@ -330,6 +330,8 @@ class Certbot {
     /// add the following switch in testing to force a cert renewal
     /// everytime.
     /// ' --force-renewal' // for testing only!!! - TODO: REMOVE.
+    print(
+        'Attempting renew using deploy-hook at: ${Environment().certbotDeployHookPath}');
     var certbot = 'certbot renew '
         ' --agree-tos '
         ' --deploy-hook=${Environment().certbotDeployHookPath}'
