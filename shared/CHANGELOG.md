@@ -1,3 +1,7 @@
+# 5.0.42
+updated dcli named args.
+Upgraded packages as part of release process
+
 # 5.0.41
 
 # 5.0.40
