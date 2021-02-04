@@ -340,10 +340,7 @@ class Certbot {
     });
   }
 
-  void renew() {
-    /// add the following switch in testing to force a cert renewal
-    /// everytime.
-    /// ' --force-renewal' // for testing only!!! - TODO: REMOVE.
+  void renew({bool force}) {
     print(
         'Attempting renew using deploy-hook at: ${Environment().certbotDeployHookPath}');
     var certbot = 'certbot renew '
@@ -352,6 +349,10 @@ class Certbot {
         ' --work-dir=${CertbotPaths.letsEncryptWorkPath}'
         ' --config-dir=${CertbotPaths.letsEncryptConfigPath}'
         ' --logs-dir=${CertbotPaths.letsEncryptLogPath}';
+
+    if (force == true) {
+      certbot += ' --force-renewal';
+    }
 
     var lines = <String>[];
     var progress = Progress((line) {
