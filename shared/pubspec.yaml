@@ -1,5 +1,5 @@
 name: nginx_le_shared
-version: 5.0.34
+version: 5.0.35
 homepage: https://github.com/bsutton/nginx-le
 description: shared library used by Nginx-LE
 environment: 
@@ -9,7 +9,7 @@ dependencies:
   args: ^1.5.2
   path: ^1.6.4
   cron: ^0.2.3
-  dcli: ^0.40.0
+  dcli: ^0.41.0
   instant: ^0.3.2
   http: ^0.12.1
   intl: ^0.16.1
