@@ -1,3 +1,9 @@
+# 5.0.36
+Fixed typo.
+upgraded to dcli 0.41
+Added logic in the acquistion manager to build/repair the LIVE link if it doesn't exist.
+Fixed a bug in inAcquistionMode which was failing if the symlink didn't exist at all.
+
 # 5.0.34
 Added option to force renewals. This is mainly for testing purposes.
 
