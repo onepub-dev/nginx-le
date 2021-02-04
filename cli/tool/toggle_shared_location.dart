@@ -138,6 +138,8 @@ void makePubDev(String pathToPubSpec) {
       }
     });
 
+    delete(backup);
+
     'dart pub get'.start(workingDirectory: dirname(pathToPubSpec));
     print(green('nginx_le_shared is now a pub.dev dependency'));
   }
