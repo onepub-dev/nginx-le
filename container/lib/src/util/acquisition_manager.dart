@@ -10,15 +10,19 @@ class AcquisitionManager {
   void start() {
     print(orange('AcquisitionManager is starting'));
 
-    /// If we have a cert make certain its deployed
-    /// We need to do this immedately as
-    /// when the service starts nginx, the symlinks
-    /// need to be in place.
-    /// At this point nginx isn't running so don't try to reload it.
-    if (Certbot().deployCertificates(reload: false)) {
+    if (Certbot().isDeployed()) {
       AcquisitionManager.leaveAcquistionMode();
     } else {
-      AcquisitionManager.enterAcquisitionMode();
+      /// If we have a cert make certain its deployed
+      /// We need to do this immedately as
+      /// when the service starts nginx, the symlinks
+      /// need to be in place.
+      /// At this point nginx isn't running so don't try to reload it.
+      if (Certbot().deployCertificates(reload: false)) {
+        AcquisitionManager.leaveAcquistionMode();
+      } else {
+        AcquisitionManager.enterAcquisitionMode();
+      }
     }
 
     var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
@@ -31,22 +35,26 @@ class AcquisitionManager {
   }
 
   static void enterAcquisitionMode() {
-    /// symlink in the http configs which only permit certbot access
-    _createSymlink(Certbot.WWW_PATH_ACQUIRE);
+    if (!inAcquisitionMode) {
+      /// symlink in the http configs which only permit certbot access
+      _createSymlink(Certbot.WWW_PATH_ACQUIRE);
 
-    print(red('*') * 120);
-    print(red('No valid certificates Found!!'));
-    print(red(
-        "* Nginx-LE is running in 'Certificate Acquisition' mode. It will only respond to CertBot validation requests."));
-    print(red('*') * 120);
+      print(red('*') * 120);
+      print(red('No valid certificates Found!!'));
+      print(red(
+          "* Nginx-LE is running in 'Certificate Acquisition' mode. It will only respond to CertBot validation requests."));
+      print(red('*') * 120);
+    }
   }
 
   static void leaveAcquistionMode() {
-    _createSymlink(Certbot.WWW_PATH_CUSTOM);
+    if (inAcquisitionMode) {
+      _createSymlink(Certbot.WWW_PATH_OPERATING);
 
-    print(green('*') * 120);
-    print(green('* Nginx-LE is running with an active Certificate.'));
-    print(green('*') * 120);
+      print(green('*') * 120);
+      print(green('* Nginx-LE is running with an active Certificate.'));
+      print(green('*') * 120);
+    }
   }
 
   static void acquistionCheck() {
@@ -110,7 +118,12 @@ class AcquisitionManager {
     }
   }
 
-  static void _createSymlink(String existingPath) {
+  /// returns true if we are currently in acquisition mode.
+  static bool get inAcquisitionMode {
+    return resolveSymLink(Certbot.WWW_PATH_LIVE) == Certbot.WWW_PATH_ACQUIRE;
+  }
+
+  static void _createSymlink(String targetPath) {
     var validTarget = false;
     var existing = false;
     // we are about to recreate the symlink to the appropriate path
@@ -122,15 +135,15 @@ class AcquisitionManager {
     }
 
     if (validTarget) {
-      if (resolveSymLink(Certbot.WWW_PATH_LIVE) != existingPath) {
+      if (resolveSymLink(Certbot.WWW_PATH_LIVE) != targetPath) {
         deleteSymlink(Certbot.WWW_PATH_LIVE);
-        symlink(existingPath, Certbot.WWW_PATH_LIVE);
+        symlink(targetPath, Certbot.WWW_PATH_LIVE);
       }
       // else the symlink already points at the target.
     } else {
       /// the current target is invalid so recreate the link.
       if (existing) deleteSymlink(Certbot.WWW_PATH_LIVE);
-      symlink(existingPath, Certbot.WWW_PATH_LIVE);
+      symlink(targetPath, Certbot.WWW_PATH_LIVE);
     }
   }
 }
