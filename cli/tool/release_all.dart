@@ -41,10 +41,10 @@ void main() {
       .start(workingDirectory: join(projectRootPath, '..', 'cli', 'tool'));
 
   // the toggle action updates the yaml.
-  'git add cli/pubspec.lock'.start(workingDirectory: projectRootPath);
-  'git add cli/pubspec.yaml'.start(workingDirectory: projectRootPath);
-  'git add container/pubspec.yaml'.start(workingDirectory: projectRootPath);
-  'git add container/pubspec.lock'.start(workingDirectory: projectRootPath);
+  'git add ../cli/pubspec.lock'.start(workingDirectory: projectRootPath);
+  'git add ../cli/pubspec.yaml'.start(workingDirectory: projectRootPath);
+  'git add ../container/pubspec.yaml'.start(workingDirectory: projectRootPath);
+  'git add ../container/pubspec.lock'.start(workingDirectory: projectRootPath);
 
   conditionalCommit(
       message: 'Upgraded packages as part of release process',
