@@ -47,7 +47,7 @@ void main() {
   'git add ../container/pubspec.lock'.start(workingDirectory: projectRootPath);
 
   conditionalCommit(
-      message: 'Upgraded packages as part of release process',
+      message: 'Toggled path to shared package',
       path: '../shared',
       projectRootPath: projectRootPath);
 
