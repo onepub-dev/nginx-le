@@ -352,7 +352,7 @@ class Certbot {
       var system = 'hostname'.firstLine;
 
       throw CertbotException(
-          'certbot failed renewing a certificate for ${Environment().fqdn}on $system',
+          'certbot failed renewing a certificate for ${Environment().fqdn} on $system',
           details: lines.join('\n'));
     }
   }
