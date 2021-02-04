@@ -1,3 +1,8 @@
+# 5.0.31
+spelling.
+failed release attempt
+updated the path to dcli.
+
 # 5.0.30
 removed backups
 Upgraded packages as part of release process
