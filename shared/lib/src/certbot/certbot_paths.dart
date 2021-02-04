@@ -48,7 +48,8 @@ class CertbotPaths {
 
     /// find all the dirs that begin with <fqdn> in the live directory.
     var paths = find('$hostname.$domain*',
-        root: livepath, types: [FileSystemEntityType.directory]).toList();
+        workingDirectory: livepath,
+        types: [FileSystemEntityType.directory]).toList();
 
     var max = 0;
     for (var path in paths) {
