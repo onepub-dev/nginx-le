@@ -46,7 +46,7 @@ void _startScheduler(String environment) {
     printerr(st.toString());
     Email.sendError(subject: e.toString(), body: st.toString());
   } finally {
-    print(orange('LogManager has shutting down.'));
+    print(orange('LogManager has shut down.'));
   }
 }
 

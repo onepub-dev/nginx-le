@@ -39,6 +39,6 @@ void startScheduler(String environment) {
     printerr(st.toString());
     Email.sendError(subject: e.toString(), body: st.toString());
   } finally {
-    print(orange('RenewManager has shutting down.'));
+    print(orange('RenewManager has shut down.'));
   }
 }
