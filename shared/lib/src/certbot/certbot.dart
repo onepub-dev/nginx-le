@@ -16,10 +16,17 @@ class Certbot {
   /// We also write our log messages to this file.
   static const LOG_FILE_NAME = 'letsencrypt.log';
 
+  /// The path that nginx takes its home directory from.
+  /// This is symlinked into either [WWW_PATH_OPERATING] or [WWW_PATH_ACQUIRE] depending
+  /// on whether we are in acquire or operational mode.
   static const WWW_PATH_LIVE = '/etc/nginx/live';
 
-  static const WWW_PATH_CUSTOM = '/etc/nginx/custom';
+  /// When [WWW_PATH_LIVE] is symlinked to this path then
+  /// we have a certificate and are running in operatational mode.
+  static const WWW_PATH_OPERATING = '/etc/nginx/custom';
 
+  /// When [WWW_PATH_LIVE] is symlinked to this path then
+  /// we DO NOT have a certificate and are running in acquistion mode.
   static const WWW_PATH_ACQUIRE = '/etc/nginx/acquire';
 
   static final Certbot _self = Certbot._internal();
@@ -62,18 +69,23 @@ class Certbot {
     var wildcard = Environment().domainWildcard;
     var hasValidCerts = Certbot().hasValidCertificate();
 
+    var deployed = false;
+
     if (hasValidCerts) {
       print(orange('Deploying certificates'));
       _deploy(CertbotPaths.certificatePathRoot(hostname, domain,
           wildcard: wildcard));
+      deployed = true;
     }
 
     if (reload) {
       _reloadNginx();
     }
-    print('Deploy complete.');
+    if (deployed) {
+      print('Deploy complete.');
+    }
 
-    return hasValidCerts;
+    return deployed;
   }
 
   /// true if we have a valid certificate for the given arguments
@@ -147,6 +159,8 @@ class Certbot {
           hostname: hostname, domain: domain, wildcard: wildcard)) {
         return true;
       } else {
+        print(red(
+            'Found Certificate that was not issued to expected domain: expected $hostname.$domain, wildcard: $wildcard found ${certificate.fqdn}, wildcard: ${certificate.wildcard}'));
         return false;
       }
     }
@@ -158,7 +172,7 @@ class Certbot {
         return true;
       } else {
         print(red(
-            'Found Certificated that was not issued to expected domain: expected $hostname.$domain, wildcard: $wildcard found ${certificate.fqdn}, wildcard: ${certificate.wildcard}'));
+            'Found expired certificate that was not issued to expected domain: expected $hostname.$domain, wildcard: $wildcard found ${certificate.fqdn}, wildcard: ${certificate.wildcard}'));
 
         return false;
       }
