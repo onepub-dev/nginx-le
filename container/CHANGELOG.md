@@ -1,3 +1,7 @@
+# 5.0.38
+Upgraded packages as part of release process
+Toggled path to shared package
+
 # 5.0.37
 Upgraded packages as part of release process
 Toggled path to shared package
