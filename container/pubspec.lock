@@ -107,12 +107,12 @@ packages:
     source: hosted
     version: "4.1.0"
   dcli:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: dcli
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.40.5"
+    version: "0.41.8"
   equatable:
     dependency: transitive
     description:
@@ -273,7 +273,7 @@ packages:
       name: nginx_le_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.34"
+    version: "5.0.36"
   node_interop:
     dependency: transitive
     description:
