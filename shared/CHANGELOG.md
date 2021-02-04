@@ -1,3 +1,8 @@
+# 5.0.28
+commits the changed pubspec related files after running toggle.
+Now deletes the backup file after toggling.
+Upgraded packages as part of release process
+
 # 5.0.27
 Added comments.
 
