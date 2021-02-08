@@ -1,3 +1,9 @@
+# 5.0.46
+Upgraded packages as part of release process
+Added move verbose statements on startup so we can see what mode nginx is starting in.
+Corrected a bug in isDeploy which was checking that the certs existed not that they had been deployed.
+released.
+
 # 5.0.45
 deploy attempt.
 renamed dir custom to operating.
