@@ -78,12 +78,9 @@ final production = false;
 void setup() {
   var paths = MockCertbotPaths();
 
-  paths.wireEnvironment();
-  paths.wirePaths();
+  paths.wire();
 
   config_mock_deploy_hook();
-
-  paths.setMock();
 }
 
 void config_mock_deploy_hook() {
