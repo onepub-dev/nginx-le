@@ -69,7 +69,7 @@ class CloudFlareProvider extends GenericAuthProvider {
     var domain = Environment().domain;
     var production = Environment().production;
     var wildcard = Environment().domainWildcard;
-    var emailaddress = Environment().emailaddress;
+    var emailaddress = Environment().authProviderEmailAddress;
 
     hostname = wildcard ? '*' : hostname;
 
@@ -104,7 +104,10 @@ class CloudFlareProvider extends GenericAuthProvider {
 
     certbot.start(runInShell: true, nothrow: true, progress: progress);
 
-    deleteSettings();
+    // We do not delete the settings file as the certbot renewal process
+    // keeps a link to this file but not its contents. So the settings
+    // file is required for renewals.
+    //deleteSettings();
 
     if (progress.exitCode != 0) {
       var system = 'hostname'.firstLine;
@@ -140,9 +143,9 @@ class CloudFlareProvider extends GenericAuthProvider {
     logfile.append(read(_settings).toList().join('\n'));
   }
 
-  void deleteSettings() {
-    delete(_settings);
-  }
+  // void deleteSettings() {
+  //   delete(_settings);
+  // }
 
   @override
   bool get supportsPrivateMode => true;
