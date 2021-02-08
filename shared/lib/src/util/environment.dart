@@ -1,7 +1,10 @@
 import 'package:dcli/dcli.dart';
+import 'package:meta/meta.dart';
 
 import '../../nginx_le_shared.dart';
 
+/// Provides wrappers to get/set environment variables to
+/// ensure we are consistently using the same environment keys.
 class Environment {
   static final _self = Environment._internal();
 
@@ -69,6 +72,32 @@ class Environment {
   String get authProviderKey => 'AUTH_PROVIDER';
   String get authProvider => env[authProviderKey];
   set authProvider(String authProvider) => env[authProviderKey] = authProvider;
+
+  /// These two environment variables are nomally set by the dockerfile
+  /// We have these here for testing purposes only
+  @visibleForTesting
+  String get authProviderTokenKey => 'AUTH_PROVIDER_TOKEN';
+  @visibleForTesting
+  String get authProviderToken => env[authProviderTokenKey];
+  @visibleForTesting
+  set authProviderToken(String authProviderToken) =>
+      env[authProviderTokenKey] = authProviderToken;
+
+  String get authProviderEmailAddressKey => 'AUTH_PROVIDER_EMAIL_ADDRESS';
+
+  /// returns the value in [authProviderEmailAddressKey] if this is not set
+  /// then returns [emailAddress].
+  String get authProviderEmailAddress {
+    var email = env[authProviderEmailAddressKey];
+
+    return email ?? Environment().emailaddress;
+  }
+
+  set authProviderEmailAddress(String authProviderEmailAddress) =>
+      env[authProviderEmailAddressKey] = authProviderEmailAddress;
+
+  //  env['AUTH_PROVIDER_TOKEN'] = settings['AUTH_PROVIDER_TOKEN'] as String;
+  //   env['AUTH_PROVIDER_EMAIL_ADDRESS'] = settings['AUTH_PROVIDER_TOKEN'] as String;
 
   /// Certbot
   String get certbotVerboseKey => 'CERTBOT_VERBOSE';
