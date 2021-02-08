@@ -1,3 +1,7 @@
+# 5.0.44
+formatting.
+Upgraded packages as part of release process
+
 # 5.0.43
 Added ability to stop nginx reload when doing unit tests
 upgraded dcli
