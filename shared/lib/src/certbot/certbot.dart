@@ -177,7 +177,7 @@ class Certbot {
   }
 
   void deployCertificatesDirect(String certificateRootPath,
-      {bool revoking = false}) {
+      {bool revoking = false, bool reload = true}) {
     if (exists(CertbotPaths().WWW_PATH_LIVE, followLinks: false)) {
       deleteSymlink(CertbotPaths().WWW_PATH_LIVE);
     }
@@ -203,7 +203,7 @@ class Certbot {
       symlink(CertbotPaths().WWW_PATH_ACQUIRE, CertbotPaths().WWW_PATH_LIVE);
     }
 
-    _reloadNginx();
+    if (reload) _reloadNginx();
   }
 
   /// copy the certificate files from the given root directory.
