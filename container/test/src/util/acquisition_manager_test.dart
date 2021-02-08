@@ -66,6 +66,44 @@ void main() {
             hostname: hostname, domain: domain, wildcard: wildcard),
         equals(true));
   });
+
+  test('isdeployed...', () {
+    setup();
+    var certificate =
+        join(CertbotPaths().nginxCertPath, CertbotPaths().FULLCHAIN_FILE);
+    var privatekey =
+        join(CertbotPaths().nginxCertPath, CertbotPaths().PRIVATE_KEY_FILE);
+
+    if (!exists(dirname(certificate))) {
+      createDir(dirname(certificate), recursive: true);
+    }
+    if (!exists(dirname(privatekey))) {
+      createDir(dirname(privatekey), recursive: true);
+    }
+
+    if (exists(certificate)) {
+      delete(certificate);
+    }
+
+    expect(Certbot().isDeployed(), equals(false));
+
+    if (exists(privatekey)) {
+      delete(privatekey);
+    }
+
+    expect(Certbot().isDeployed(), equals(false));
+
+    touch(privatekey, create: true);
+
+    expect(Certbot().isDeployed(), equals(false));
+
+    touch(certificate, create: true);
+
+    expect(Certbot().isDeployed(), equals(true));
+
+    delete(certificate);
+    delete(privatekey);
+  });
 }
 
 final hostname = 'auditor';

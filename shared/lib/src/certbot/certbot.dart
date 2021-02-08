@@ -120,12 +120,13 @@ class Certbot {
   bool isDeployed() {
     var hostname = Environment().hostname;
     var domain = Environment().domain;
-    var wildcard = Environment().domainWildcard;
     var deployed = false;
-    final rootPath = CertbotPaths()
-        .certificatePathRoot(hostname, domain, wildcard: wildcard);
-    var path = CertbotPaths().fullChainPath(rootPath);
-    if (exists(path)) {
+
+    var fullchain =
+        join(CertbotPaths().nginxCertPath, CertbotPaths().FULLCHAIN_FILE);
+    var private =
+        join(CertbotPaths().nginxCertPath, CertbotPaths().PRIVATE_KEY_FILE);
+    if (exists(fullchain) && exists(private)) {
       if (!hasExpired(hostname, domain)) {
         deployed = true;
       }
@@ -220,9 +221,10 @@ class Certbot {
     /// the replace is essentially atomic so that nginx doesn't see partially
     /// created certificates.
     move('/tmp/fullchain.pem',
-        join(CertbotPaths().nginxCertPath, 'fullchain.pem'),
+        join(CertbotPaths().nginxCertPath, CertbotPaths().FULLCHAIN_FILE),
         overwrite: true);
-    move('/tmp/privkey.pem', join(CertbotPaths().nginxCertPath, 'privkey.pem'),
+    move('/tmp/privkey.pem',
+        join(CertbotPaths().nginxCertPath, CertbotPaths().PRIVATE_KEY_FILE),
         overwrite: true);
   }
 

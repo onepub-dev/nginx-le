@@ -53,7 +53,9 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
     when(WWW_PATH_OPERATING)
         .thenReturn(_mockPath(CertbotPaths().WWW_PATH_OPERATING));
 
+    when(FULLCHAIN_FILE).thenReturn(CertbotPaths().FULLCHAIN_FILE);
     when(CERTIFICATE_FILE).thenReturn(CertbotPaths().CERTIFICATE_FILE);
+    when(PRIVATE_KEY_FILE).thenReturn(CertbotPaths().PRIVATE_KEY_FILE);
 
     when(letsEncryptRootPath)
         .thenReturn(_mockPath(CertbotPaths().letsEncryptRootPath));
