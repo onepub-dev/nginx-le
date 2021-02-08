@@ -1,3 +1,22 @@
+# 5.0.43
+Added ability to stop nginx reload when doing unit tests
+upgraded dcli
+unit tests for renewal.
+ignored securitysettings.
+Added unit tests for acquistion and renewal.
+Added reload control for unit testing without nginx.
+Changed path name from custom to opeerationa.
+Mock object for all of the certbotpaths.
+Changed the user of the auth provider email address so it works as per the doco (e.g. use the auth provider email but if not provided use the certbot email address).
+Added optional argument so you can test if a certificate expires at a given date.
+Added doco.
+Fixed bug caused when _internal through an exception causing a subseqent error as _self didn't get initialised. We now print a message when revoking an invalid certificate. We know invoke expired certificates if they are more than 90 days old, just to keep things tidy. Change the term 'custom' to 'operating' to make the paths clearer.
+Moved the revoke of invalid certificates into Certbot
+Fixed renewal bug when using cloudflare. The renew needs the cloudflare settings file which we were deleting.
+Added mock version of deploy hook which does everything deploy_hook does but from the /tmp folder.
+Upgraded packages as part of release process
+moved all paths to certbotpaths and made it a factory so we can overload paths for unit testing.
+
 # 5.0.42
 updated dcli named args.
 Upgraded packages as part of release process
