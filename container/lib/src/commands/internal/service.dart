@@ -70,18 +70,11 @@ void _start() {
 
   LogManager().start();
 
-  /// If we have certificates check they were issued to the expected domain...
-  if (Certbot().certificates().isNotEmpty) {
-    if (!Certbot()
-        .wasIssuedTo(hostname: hostname, domain: domain, wildcard: wildcard)) {
-      /// One of fqdn or wild card type has changed so
-      /// revoke the certificates so we can acquire new ones.
-      /// If there are no certificates then this does nothing.
-      print(
-          'The existing certificate does not match the required settings. Revoking certificate.');
-      Certbot().revokeAll();
-    }
-  }
+  /// In case the host, domain or wildard settings have changed.
+  /// Also cleans up an old expired certificates
+  Certbot().revokeInvalidCertificates(
+      hostname: hostname, domain: domain, wildcard: wildcard);
+
 
   RenewalManager().start();
 
