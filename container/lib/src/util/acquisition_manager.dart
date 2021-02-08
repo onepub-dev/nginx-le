@@ -11,7 +11,7 @@ class AcquisitionManager {
     print(orange('AcquisitionManager is starting'));
 
     if (Certbot().isDeployed()) {
-      AcquisitionManager.leaveAcquistionMode();
+      AcquisitionManager.leaveAcquistionMode(show: true);
     } else {
       /// If we have a cert make certain its deployed
       /// We need to do this immedately as
@@ -19,9 +19,9 @@ class AcquisitionManager {
       /// need to be in place.
       /// At this point nginx isn't running so don't try to reload it.
       if (Certbot().deployCertificates(reload: false)) {
-        AcquisitionManager.leaveAcquistionMode();
+        AcquisitionManager.leaveAcquistionMode(show: true);
       } else {
-        AcquisitionManager.enterAcquisitionMode();
+        AcquisitionManager.enterAcquisitionMode(show: true);
       }
     }
 
@@ -35,11 +35,11 @@ class AcquisitionManager {
     }
   }
 
-  static void enterAcquisitionMode() {
+  static void enterAcquisitionMode({bool show = false}) {
     /// symlink in the http configs which only permit certbot access
     _createSymlink(CertbotPaths().WWW_PATH_ACQUIRE);
 
-    if (!inAcquisitionMode) {
+    if (!inAcquisitionMode || show) {
       print(red('*') * 120);
       print(red('No valid certificates Found!!'));
       print(red(
@@ -48,13 +48,15 @@ class AcquisitionManager {
     }
   }
 
-  static void leaveAcquistionMode({bool checkLinks}) {
+  static void leaveAcquistionMode({bool show = false}) {
     _createSymlink(CertbotPaths().WWW_PATH_OPERATING);
 
-    if (inAcquisitionMode) {
+    if (inAcquisitionMode || show) {
       print(green('*') * 120);
       print(green('* Nginx-LE is running with an active Certificate.'));
       print(green('*') * 120);
+    } else if (show) {
+      print(green('* Nginx-LE is running with an active Certificate.'));
     }
   }
 
