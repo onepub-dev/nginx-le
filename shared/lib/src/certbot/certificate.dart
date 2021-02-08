@@ -124,9 +124,12 @@ class Certificate {
     return certificates;
   }
 
-  bool hasExpired() {
-    Settings().verbose('expiry date $expiryDate');
-    var expired = (expiryDate.isBefore(DateTime.now()));
+  /// returns true if the cerificate has expired at the date/time given
+  /// by [asAt]. If [asAt] is null then 'now' is used.
+  bool hasExpired({DateTime asAt}) {
+    asAt ??= DateTime.now();
+    Settings().verbose('expiry date $expiryDate asAt: $asAt');
+    var expired = (expiryDate.isBefore(asAt));
 
     Settings().verbose('expired=$expired');
     return expired;
