@@ -65,9 +65,10 @@ abstract class AuthProvider {
   String get envToken => env[AUTH_PROVIDER_TOKEN];
   set envToken(String token) => env[AUTH_PROVIDER_TOKEN] = token;
 
-  String get envEmailAddress => env[AUTH_PROVIDER_EMAIL_ADDRESS];
+  String get envEmailAddress => Environment().authProviderEmailAddress;
+
   set envEmailAddress(String emailAddress) =>
-      env[AUTH_PROVIDER_EMAIL_ADDRESS] = emailAddress;
+      Environment().authProviderEmailAddress = emailAddress;
 
   String get envUsername => env[AUTH_PROVIDER_USERNAME];
   set envUsername(String username) => env[AUTH_PROVIDER_USERNAME] = username;
