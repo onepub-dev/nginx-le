@@ -503,13 +503,13 @@ By default the Nginx-LE ships with the following configuration files:
 The base nginx configuration is defined by:
 
 * /etc/nginx/nginx.conf
-* /etc/nginx/custom/defaults.conf
+* /etc/nginx/operating/defaults.conf
 
 The `nginx.conf` is the first configuration file that nginx loads which then chains the `default.conf` file which in turn loads our standard `.location` and `.upstream` files.
 
 If you are happy with the standard configuration you can simply add `.location` and `.upstream`files under `/opt/nginx/include`.
 
-Otherwise you can replace the `/etc/nginx/custom/default.conf` with your own customised defaults.
+Otherwise you can replace the `/etc/nginx/operating/default.conf` with your own customised defaults.
 
 NOTE: if you replace `default.conf` you MUST include a `./well-known` location for lets-encrypt to work:
 ```
@@ -522,7 +522,7 @@ NOTE: if you replace `default.conf` you MUST include a `./well-known` location f
 
 The nginx-le container REQUIRES that you have a default.conf file in:
 
-* /etc/nginx/custom/default.conf
+* /etc/nginx/operating/default.conf
 
 If you need complete control over nginx then you can also replace the `nginx-conf` file.
 
@@ -538,13 +538,13 @@ Changing any of the above settings will cause nginx-le to fail.
 
 The `nginx.conf` loads its configuration from the `/etc/nginx/live/defaults.conf` file.
 
-However the above instructions dictate that you put your `default.conf`  in `/etc/nginx/custom/defaults.conf`
+However the above instructions dictate that you put your `default.conf`  in `/etc/nginx/operating/defaults.conf`
 
-Note: the difference `custom` vs `live`.
+Note: the difference `operating` vs `live`.
 
 At runtime Nginx-LE pulls its configuration from the `live` directory.
 
-On startup, if you have a valid certificate, the `live` directory is symlinked to your `/etc/nginx/custom` directory.
+On startup, if you have a valid certificate, the `live` directory is symlinked to your `/etc/nginx/operating` directory.
 
 If you don't have a valid certificate, the `live` directory is symlinked to the `acquire` folder and Nginx-LE is placed into acquisition mode.
 
@@ -555,7 +555,7 @@ This allows `nginx` to start and then `nginx-le` can then you can run the `acqui
 
 Its important to note here that we do this because `nginx` will not start if you don't have a valid certificate and it has been configured to start a HTTPS service.
 
-Once a valid certificate has been acquired `nginx-le` switches the `live` symlink back to `/etc/nginx/custom` and does a `nginx` reload and your site is online.
+Once a valid certificate has been acquired `nginx-le` switches the `live` symlink back to `/etc/nginx/operating` and does a `nginx` reload and your site is online.
 
 
 # Environment variables

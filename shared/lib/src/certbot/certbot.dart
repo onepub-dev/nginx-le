@@ -7,14 +7,15 @@ import 'package:path/path.dart';
 import '../../nginx_le_shared.dart';
 
 class Certbot {
-  static final Certbot _self = Certbot._internal();
+  static Certbot _self;
 
   bool _sendToStdout = false;
-  factory Certbot() => _self;
+  factory Certbot() => _self ??= Certbot._internal();
 
   /// The certbot log file
   String get logfile =>
       join(CertbotPaths().letsEncryptLogPath, CertbotPaths().LOG_FILE_NAME);
+
   Certbot._internal() {
     Settings().verbose('Logging to $logfile');
 
@@ -91,11 +92,25 @@ class Certbot {
   /// revokes any certificates that are not for the current
   /// fqdn and wildcard type.
   void revokeInvalidCertificates(
-      String hostname, String domain, bool wildcard) {
+      {@required String hostname,
+      @required String domain,
+      @required bool wildcard}) {
     /// First try non-expired certificates
     for (var certificate in certificates()) {
-      if (certificate.wasIssuedFor(
+      if (!certificate.wasIssuedFor(
           hostname: hostname, domain: domain, wildcard: wildcard)) {
+        print(
+            'Found certificate that does not match the required settings. host: $hostname domain: $domain wildard: $wildcard. Revoking certificate.');
+
+        certificate.revoke();
+      }
+
+      /// revoke any really old certificates
+      if (certificate.hasExpired(
+          asAt: DateTime.now().subtract(Duration(days: 90)))) {
+        print(
+            'Found certificate that expired more than 90 days ago. host: $hostname domain: $domain wildard: $wildcard. Revoking certificate.');
+
         certificate.revoke();
       }
     }
@@ -107,8 +122,9 @@ class Certbot {
     var domain = Environment().domain;
     var wildcard = Environment().domainWildcard;
     var deployed = false;
-    var path = CertbotPaths().fullChainPath(CertbotPaths()
-        .certificatePathRoot(hostname, domain, wildcard: wildcard));
+    final rootPath = CertbotPaths()
+        .certificatePathRoot(hostname, domain, wildcard: wildcard);
+    var path = CertbotPaths().fullChainPath(rootPath);
     if (exists(path)) {
       if (!hasExpired(hostname, domain)) {
         deployed = true;
@@ -117,7 +133,7 @@ class Certbot {
     return deployed;
   }
 
-  /// true if the active certificate was bound the given [hostname],
+  /// true if if we have a certificate was issued for the given [hostname],
   /// [domain] and [wildcard] type.
   ///
   /// If there are only expired certificates then provided they were
@@ -125,7 +141,8 @@ class Certbot {
   ///
   /// There is a chance we could have an old bad certificate and a new
   /// good one in which case the result is random :)
-  /// On start up if we find a bad certificate
+  ///
+  /// On start up if we find a bad certificate.
   bool wasIssuedTo(
       {@required String hostname,
       @required String domain,
@@ -168,8 +185,8 @@ class Certbot {
     if (!revoking) {
       print(orange('Deploying certificates'));
 
-      /// symlink the user's custom content.
-      symlink('/etc/nginx/custom', CertbotPaths().WWW_PATH_LIVE);
+      /// symlink the user's operational content
+      symlink(CertbotPaths().WWW_PATH_OPERATING, CertbotPaths().WWW_PATH_LIVE);
       _deploy(certificateRootPath);
       print(green('*') * 120);
       print(green('* Nginx-LE is running with an active Certificate.'));
@@ -182,7 +199,8 @@ class Certbot {
       print(red('*') * 120);
 
       /// symlink in the http configs which only permit certbot access
-      symlink('/etc/nginx/acquire', CertbotPaths().WWW_PATH_LIVE);
+
+      symlink(CertbotPaths().WWW_PATH_ACQUIRE, CertbotPaths().WWW_PATH_LIVE);
     }
 
     _reloadNginx();
@@ -208,10 +226,14 @@ class Certbot {
         overwrite: true);
   }
 
-  /// Used more for testing, but essentially deletes any existing certificates
-  /// and places the system into acquire mode.
-  /// Could also be used to play with and remove staging certificates
-  bool revoke(
+  /// Revokes a certbot certificate.
+  ///
+  /// You can use this if your certificate has been compromised.
+  /// It is also used for testing.
+  ///
+  /// Before you revoke the certificate you must to place the system into
+  /// acquistion mode otherwise nginx may shutdown.
+  void revoke(
       {@required String hostname,
       @required String domain,
       bool production = false,
@@ -221,8 +243,17 @@ class Certbot {
     var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
     var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
 
+    var certFilePath = join(
+        CertbotPaths()
+            .certificatePathRoot(hostname, domain, wildcard: wildcard),
+        CertbotPaths().CERTIFICATE_FILE);
+    print('Revoking certificate at: $certFilePath');
+    // print('isDirectory: ${isDirectory(certFilePath)}');
+    // print('isFile: ${isFile(certFilePath)}');
+    // print('isLink: ${isLink(certFilePath)}');
+
     var cmd = 'certbot revoke'
-        ' --cert-path ${join(CertbotPaths().certificatePathRoot(hostname, domain, wildcard: wildcard), CertbotPaths().CERTIFICATE_FILE)}'
+        ' --cert-path $certFilePath'
         ' --non-interactive '
         ' -m $emailaddress  '
         ' --agree-tos '
@@ -244,9 +275,10 @@ class Certbot {
 
     if (progress.exitCode == 0) {
       _delete(hostname, domain, emailaddress: emailaddress);
+    } else {
+      throw CertbotException(
+          'Revokation of certificate: $hostname.$domain failed. See logs for details');
     }
-
-    return progress.exitCode == 0;
   }
 
   /// used by revoke to delete certificates after they have been revoked

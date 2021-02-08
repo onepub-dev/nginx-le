@@ -57,7 +57,7 @@ void certbot_http_auth_hook() {
       'The environment variable ${Environment().certbotTokenKey} was empty');
 
   /// This path MUST match the path set in the nginx config files:
-  /// /etc/nginx/custom/default.conf
+  /// /etc/nginx/operating/default.conf
   /// /etc/nginx/acquire/default.conf
   var path = join('/', 'opt', 'letsencrypt', 'wwwroot', '.well-known',
       'acme-challenge', token);

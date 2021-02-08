@@ -85,9 +85,9 @@ RUN touch /var/nginx/error.log
 RUN touch /var/nginx/access.log
 
 # we have two alternate configurations. 
-# custom where a user of this container places the content they wish to serve.
+# operating where a user of this container places the content they wish to serve.
 # acquire used when we don't have a cert and need to place the server it aquisition mode.
-RUN mkdir /etc/nginx/custom
+RUN mkdir /etc/nginx/operating
 RUN mkdir /etc/nginx/acquire
 
 # nginx looks here for our certs.
@@ -134,7 +134,7 @@ RUN mkdir -p /etc/nginx-le
 # copy the default nginx-le config in
 COPY container/nginx_config/etc/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY container/nginx_config/etc/nginx/logrotate.conf /etc/nginx/logrotate.conf
-COPY container/nginx_config/etc/nginx/custom/ /etc/nginx/custom
+COPY container/nginx_config/etc/nginx/operating/ /etc/nginx/operating
 COPY container/nginx_config/etc/nginx/acquire/ /etc/nginx/acquire
 
 # lograte requires group and other to not have write access.

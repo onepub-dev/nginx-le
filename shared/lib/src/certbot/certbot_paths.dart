@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 import '../../nginx_le_shared.dart';
 
 class CertbotPaths {
-  static final CertbotPaths _self = CertbotPaths._internal();
+  static CertbotPaths _self = CertbotPaths._internal();
 
   /// The directory where lets encrypt stores its certificates.
   /// As we need to persist certificates between container restarts
@@ -48,7 +48,7 @@ class CertbotPaths {
 
   /// When [WWW_PATH_LIVE] is symlinked to this path then
   /// we have a certificate and are running in operatational mode.
-  final WWW_PATH_OPERATING = '/etc/nginx/custom';
+  final WWW_PATH_OPERATING = '/etc/nginx/operating';
 
   /// When [WWW_PATH_LIVE] is symlinked to this path then
   /// we DO NOT have a certificate and are running in acquistion mode.
@@ -163,5 +163,10 @@ class CertbotPaths {
 
     path ??= CertbotPaths().NGINX_CERT_ROOT;
     return path;
+  }
+
+  @visibleForTesting
+  static void setMock(CertbotPaths mock) {
+    _self = mock;
   }
 }
