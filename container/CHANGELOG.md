@@ -1,3 +1,7 @@
+# 5.0.46
+Upgraded packages as part of release process
+Toggled path to shared package
+
 # 5.0.45
 Toggled path to shared package
 
