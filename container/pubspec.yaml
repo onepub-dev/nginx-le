@@ -20,4 +20,11 @@ dependencies:
   uuid: ^2.0.4
   nginx_le_shared: ^5.0.0
 dev_dependencies: 
+  mockito: ^4.1.4
   test: ^1.0.0
+  settings_yaml: ^2.0.0
+
+dependency_overrides:
+  nginx_le_shared:
+    path:
+      ../shared
