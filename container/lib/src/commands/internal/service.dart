@@ -75,7 +75,6 @@ void _start() {
   Certbot().revokeInvalidCertificates(
       hostname: hostname, domain: domain, wildcard: wildcard);
 
-
   RenewalManager().start();
 
   AcquisitionManager().start();

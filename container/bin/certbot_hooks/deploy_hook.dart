@@ -15,6 +15,5 @@ import 'package:nginx_le_container/src/commands/internal/deploy_hook.dart';
 /// we use this deploy hook.
 ///
 void main() {
-
   deploy_hook();
 }
