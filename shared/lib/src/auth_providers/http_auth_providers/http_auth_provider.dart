@@ -61,7 +61,7 @@ class HTTPAuthProvider extends AuthProvider {
         'The environment variable ${Environment().certbotTokenKey} was empty');
 
     /// This path MUST match the path set in the nginx config files:
-    /// /etc/nginx/custom/default.conf
+    /// /etc/nginx/operating/default.conf
     /// /etc/nginx/acquire/default.conf
     var path = join('/', 'opt', 'letsencrypt', 'wwwroot', '.well-known',
         'acme-challenge', token);
@@ -90,7 +90,7 @@ class HTTPAuthProvider extends AuthProvider {
         'The environment variable ${Environment().certbotTokenKey} was empty');
 
     /// This path MUST match the path set in the nginx config files:
-    /// /etc/nginx/custom/default.conf
+    /// /etc/nginx/operating/default.conf
     /// /etc/nginx/acquire/default.conf
     var path = join('/', 'opt', 'letsencrypt', 'wwwroot', '.well-known',
         Environment().certbotToken);
@@ -113,7 +113,7 @@ class HTTPAuthProvider extends AuthProvider {
     var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
     var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
 
-    var emailaddress = Environment().emailaddress;
+    var emailaddress = Environment().authProviderEmailAddress;
     var hostname = Environment().hostname;
     var domain = Environment().domain;
     var production = Environment().production;
