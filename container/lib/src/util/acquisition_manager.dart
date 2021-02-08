@@ -30,6 +30,7 @@ class AcquisitionManager {
     try {
       iso.run(_acquireThread, Env().toJson());
     } finally {
+      /// let the isolate run in the background so we can return immediately.
       waitForEx(iso.close());
     }
   }
@@ -57,14 +58,18 @@ class AcquisitionManager {
     }
   }
 
-  static void acquistionCheck() {
+  /// Main entry point for the isolate.
+  /// The [reload] flag controls whether we reload nginx after deploying
+  /// certificates. This is true by default and only set to false for unit
+  /// testing.
+  static void acquistionCheck({bool reload = true}) {
     try {
       if (!Certbot().isDeployed()) {
         /// Places the server into acquire mode if certificates are not deployed.
         enterAcquisitionMode();
 
         if (Certbot().hasValidCertificate()) {
-          if (Certbot().deployCertificates()) {
+          if (Certbot().deployCertificates(reload: reload)) {
             leaveAcquistionMode();
             print(orange('AcquisitionManager completed successfully.'));
           } else {
@@ -82,7 +87,7 @@ class AcquisitionManager {
                 AuthProviders().getByName(Environment().authProvider);
             authProvider.acquire();
 
-            if (Certbot().deployCertificates()) {
+            if (Certbot().deployCertificates(reload: reload)) {
               leaveAcquistionMode();
               print(orange(
                   'AcquisitionManager successfully deployed certficates.'));
