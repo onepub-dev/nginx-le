@@ -22,3 +22,4 @@ container/pubspec.yaml.bak
 cli/pubspec.yaml.bak
 
 container/test/src/util/mock_deploy_hook
+container/test/src/util/settings.yaml
