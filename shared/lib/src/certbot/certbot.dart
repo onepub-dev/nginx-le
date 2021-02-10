@@ -94,7 +94,8 @@ class Certbot {
   void revokeInvalidCertificates(
       {@required String hostname,
       @required String domain,
-      @required bool wildcard}) {
+      @required bool wildcard,
+      @required bool production}) {
     /// First try non-expired certificates
     for (var certificate in certificates()) {
       if (!certificate.wasIssuedFor(
@@ -238,7 +239,7 @@ class Certbot {
   void revoke(
       {@required String hostname,
       @required String domain,
-      bool production = false,
+      @required bool production,
       @required bool wildcard,
       @required String emailaddress}) {
     var workDir = _createDir(CertbotPaths().letsEncryptWorkPath);

@@ -48,7 +48,36 @@ void main() {
           hostname: hostname,
           domain: domain,
           wildcard: wildcard,
-          emailaddress: emailAddress);
+          emailaddress: emailAddress,
+          production: false);
+    }
+    expect(Certbot().hasValidCertificate(), equals(false));
+    expect(Certbot().isDeployed(), equals(false));
+
+    /// tell the AcquisitionManager isolate that it needs to call the mock functions.
+    // env['MOCK_ACQUISITION_MANAGER'] = 'true';
+
+    AcquisitionManager.acquistionCheck(reload: false);
+
+    expect(AcquisitionManager.inAcquisitionMode, equals(false));
+    expect(Certbot().hasValidCertificate(), equals(true));
+    expect(Certbot().isDeployed(), equals(true));
+    expect(
+        Certbot().wasIssuedTo(
+            hostname: hostname, domain: domain, wildcard: wildcard),
+        equals(true));
+  });
+
+  test('acquire wildcard certificate ...', () async {
+    wildcard = true;
+    setup();
+
+    Certbot().clearBlockFlag();
+
+//    if (Certbot().hasValidCertificate()) {
+
+    for (var certificate in Certificate.load()) {
+      certificate.revoke();
     }
     expect(Certbot().hasValidCertificate(), equals(false));
     expect(Certbot().isDeployed(), equals(false));
@@ -109,7 +138,7 @@ void main() {
 final hostname = 'auditor';
 final domain = 'noojee.com.au';
 final tld = 'com.au';
-final wildcard = false;
+var wildcard = false;
 final emailAddress = 'support@noojeeit.com.au';
 final production = false;
 

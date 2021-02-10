@@ -73,7 +73,10 @@ void _start() {
   /// In case the host, domain or wildard settings have changed.
   /// Also cleans up an old expired certificates
   Certbot().revokeInvalidCertificates(
-      hostname: hostname, domain: domain, wildcard: wildcard);
+      hostname: hostname,
+      domain: domain,
+      wildcard: wildcard,
+      production: production);
 
   RenewalManager().start();
 

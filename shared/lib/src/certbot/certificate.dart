@@ -151,6 +151,7 @@ class Certificate {
   /// Returns true if this certificate was issued for the given [hostname],
   /// [domain] and is or isn't a [wildcard] certificate.
   bool wasIssuedFor({String hostname, String domain, bool wildcard}) {
+    if (wildcard) hostname = '*';
     return this.wildcard == wildcard && '$hostname.$domain' == fqdn;
   }
 
@@ -159,7 +160,8 @@ class Certificate {
         hostname: hostname,
         domain: domain,
         wildcard: wildcard,
-        emailaddress: Environment().emailaddress);
+        emailaddress: Environment().emailaddress,
+        production: production);
   }
 
   String get hostname {
@@ -174,6 +176,8 @@ class Certificate {
 
   /// returns the hostname component of an fqdn
   String hostnameFromFqdn(String fqdn) {
+    if (wildcard) return '*';
+
     var parts = fqdn.split('.');
 
     if (parts.isNotEmpty) {
@@ -185,6 +189,8 @@ class Certificate {
 
   /// returns the hostname component of an fqdn
   String domainFromFqdn(String fqdn) {
+    if (wildcard) return fqdn;
+
     var parts = fqdn.split('.');
 
     if (parts.length > 1) {

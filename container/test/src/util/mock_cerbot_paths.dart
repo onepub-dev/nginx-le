@@ -35,15 +35,25 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
     when(WWW_PATH_OPERATING)
         .thenReturn(_mockPath(CertbotPaths().WWW_PATH_OPERATING));
 
-    var rootPath = CertbotPaths()
-        .certificatePathRoot(hostname, domain, wildcard: wildcard);
+    var rootPathHost =
+        CertbotPaths().certificatePathRoot(hostname, domain, wildcard: false);
 
-    var _fullChainPath = CertbotPaths().fullChainPath(rootPath);
+    var rootPathWildcard =
+        CertbotPaths().certificatePathRoot('*', domain, wildcard: true);
 
-    var _privateKeyPath = CertbotPaths().privateKeyPath(rootPath);
+    var _fullChainPathHost = CertbotPaths().fullChainPath(rootPathHost);
+    var _fullChainPathWildcard = CertbotPaths().fullChainPath(rootPathWildcard);
 
-    when(privateKeyPath(_mockPath(rootPath)))
-        .thenReturn(_mockPath(_privateKeyPath));
+    var _privateKeyPathHost = CertbotPaths().privateKeyPath(rootPathHost);
+
+    var _privateKeyPathWildcard =
+        CertbotPaths().privateKeyPath(rootPathWildcard);
+
+    when(privateKeyPath(_mockPath(rootPathHost)))
+        .thenReturn(_mockPath(_privateKeyPathHost));
+
+    when(privateKeyPath(_mockPath(rootPathWildcard)))
+        .thenReturn(_mockPath(_privateKeyPathWildcard));
 
     when(WWW_PATH_ACQUIRE)
         .thenReturn(_mockPath(CertbotPaths().WWW_PATH_ACQUIRE));
@@ -74,11 +84,17 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
 
     when(nginxCertPath).thenReturn(_mockPath(CertbotPaths().nginxCertPath));
 
-    when(certificatePathRoot(hostname, domain, wildcard: wildcard))
-        .thenReturn(_mockPath(rootPath));
+    when(certificatePathRoot(hostname, domain, wildcard: false))
+        .thenReturn(_mockPath(rootPathHost));
 
-    when(fullChainPath(_mockPath(rootPath)))
-        .thenReturn(_mockPath(_fullChainPath));
+    when(certificatePathRoot('*', domain, wildcard: true))
+        .thenReturn(_mockPath(rootPathWildcard));
+
+    when(fullChainPath(_mockPath(rootPathHost)))
+        .thenReturn(_mockPath(_fullChainPathHost));
+
+    when(fullChainPath(_mockPath(rootPathWildcard)))
+        .thenReturn(_mockPath(_fullChainPathWildcard));
   }
 
   void _wireEnvironment() {
