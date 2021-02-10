@@ -1,3 +1,8 @@
+# 5.0.47
+release
+Upgraded packages as part of release process
+Fixed bugs in the handling of wildcards.
+
 # 5.0.46
 Upgraded packages as part of release process
 Added move verbose statements on startup so we can see what mode nginx is starting in.
