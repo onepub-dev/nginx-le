@@ -1,3 +1,6 @@
+# 5.0.47
+Upgraded packages as part of release process
+
 # 5.0.46
 Upgraded packages as part of release process
 
