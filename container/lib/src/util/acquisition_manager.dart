@@ -87,6 +87,8 @@ class AcquisitionManager {
             Settings().setVerbose(enabled: Environment().debug);
             var authProvider =
                 AuthProviders().getByName(Environment().authProvider);
+
+            /// Acquire a new certificate
             authProvider.acquire();
 
             if (Certbot().deployCertificates(reload: reload)) {
