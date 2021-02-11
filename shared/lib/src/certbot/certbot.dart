@@ -52,7 +52,7 @@ class Certbot {
     var deployed = false;
 
     if (hasValidCerts) {
-      print(orange('Deploying certificates'));
+      print(orange('Deploying certificates.'));
       _deploy(CertbotPaths()
           .certificatePathRoot(hostname, domain, wildcard: wildcard));
       deployed = true;
@@ -262,7 +262,8 @@ class Certbot {
         ' --agree-tos '
         ' --work-dir=$workDir '
         ' --config-dir=$configDir '
-        ' --logs-dir=$logDir ';
+        ' --logs-dir=$logDir '
+        ' --delete-after-revoke';
 
     if (!production) cmd += ' --staging ';
 
@@ -276,24 +277,23 @@ class Certbot {
       progress: progress,
     );
 
-    if (progress.exitCode == 0) {
-      _delete(hostname, domain, emailaddress: emailaddress);
-    } else {
+    if (progress.exitCode != 0) {
       throw CertbotException(
-          'Revokation of certificate: $hostname.$domain failed. See logs for details');
+          'Revocation of certificate: $hostname.$domain failed. See logs for details');
     }
   }
 
   /// used by revoke to delete certificates after they have been revoked
   /// If we don't do this then the revoked certificates will still be renewed.
+  // ignore: unused_element
   void _delete(String hostname, String domain,
-      {@required String emailaddress}) {
+      {@required bool wildcard, @required String emailaddress}) {
     var workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
     var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
     var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
 
     var cmd = 'certbot delete'
-        ' --cert-name $hostname.$domain'
+        ' --cert-name ${wildcard ? domain : '$hostname.$domain'}'
         ' --non-interactive '
         ' -m $emailaddress  '
         ' --agree-tos '
