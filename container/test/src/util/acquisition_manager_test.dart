@@ -38,7 +38,22 @@ void main() {
 //    'test/src/util/mock_deploy_hook'.run;
   });
 
+  test('Revoke certificate', () {
+    env['DEBUG'] = 'true';
+    Settings().setVerbose(enabled: true);
+    wildcard = true;
+    setup();
+
+    Certbot().clearBlockFlag();
+
+    for (var certificate in Certificate.load()) {
+      certificate.revoke();
+    }
+  }, skip: true);
+
   test('acquire certificate ...', () async {
+    // Settings().setVerbose(enabled: true);
+    // env['DEBUG'] = 'true';
     setup();
 
     Certbot().clearBlockFlag();
