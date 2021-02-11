@@ -39,7 +39,7 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
         CertbotPaths().certificatePathRoot(hostname, domain, wildcard: false);
 
     var rootPathWildcard =
-        CertbotPaths().certificatePathRoot('*', domain, wildcard: true);
+        CertbotPaths().certificatePathRoot(hostname, domain, wildcard: true);
 
     var _fullChainPathHost = CertbotPaths().fullChainPath(rootPathHost);
     var _fullChainPathWildcard = CertbotPaths().fullChainPath(rootPathWildcard);
@@ -86,6 +86,9 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
 
     when(certificatePathRoot(hostname, domain, wildcard: false))
         .thenReturn(_mockPath(rootPathHost));
+
+    when(certificatePathRoot(hostname, domain, wildcard: true))
+        .thenReturn(_mockPath(rootPathWildcard));
 
     when(certificatePathRoot('*', domain, wildcard: true))
         .thenReturn(_mockPath(rootPathWildcard));
