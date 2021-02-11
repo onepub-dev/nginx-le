@@ -1,3 +1,12 @@
+# 5.0.48
+toggled to local shared.
+Added standalone test for revoke.
+Fixed handling of wild card host names as a wildcard certificate doesn't have a host name.
+Looks like the revoke command deletes files but doco is ambigous. We are now passing the delete option explicity and have remove the call to certbot --delete.
+Added log message when cert is acquired for cloudflare.
+Fixed mock paths for wildcards.
+Improved comments.
+
 # 5.0.47
 release
 Upgraded packages as part of release process
