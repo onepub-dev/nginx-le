@@ -151,8 +151,11 @@ class Certificate {
   /// Returns true if this certificate was issued for the given [hostname],
   /// [domain] and is or isn't a [wildcard] certificate.
   bool wasIssuedFor({String hostname, String domain, bool wildcard}) {
-    if (wildcard) hostname = '*';
-    return this.wildcard == wildcard && '$hostname.$domain' == fqdn;
+    if (wildcard) {
+      return this.wildcard == wildcard && '$domain' == fqdn;
+    } else {
+      return this.wildcard == wildcard && '$hostname.$domain' == fqdn;
+    }
   }
 
   void revoke() {
