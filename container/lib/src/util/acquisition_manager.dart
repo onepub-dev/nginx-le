@@ -177,7 +177,10 @@ void _acquireThread(String environment) {
     /// start the acquisition loop.
     do {
       AcquisitionManager.acquistionCheck();
+
+      Settings().setVerbose(enabled: false);
       sleep(5, interval: Interval.minutes);
+      Settings().setVerbose(enabled: Environment().debug);
     } while (true);
   }
 }

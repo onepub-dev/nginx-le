@@ -30,7 +30,9 @@ void startScheduler(String environment) {
 
     /// keep the isolate running forever.
     while (true) {
+      Settings().setVerbose(enabled: false);
       sleep(10);
+      Settings().setVerbose(enabled: Environment().debug);
     }
   } catch (e, st) {
     printerr(red(
