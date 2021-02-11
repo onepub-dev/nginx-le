@@ -115,6 +115,8 @@ class CloudFlareProvider extends GenericAuthProvider {
       throw CertbotException(
           'certbot failed acquiring a certificate for $hostname.$domain on $system',
           details: lines.join('\n'));
+    } else {
+      print('Certificate acquired.');
     }
   }
 
