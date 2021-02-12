@@ -66,19 +66,22 @@ class Certificate {
     //         root: CertbotPaths().letsEncryptConfigPath,
     //         types: [Find.directory, Find.file, Find.link])
     //     .forEach((file) => Settings().verbose(file));
-    var cmd = 'certbot certificates '
-        ' --config-dir=${CertbotPaths().letsEncryptConfigPath}'
-        ' --work-dir=${CertbotPaths().letsEncryptWorkPath}'
-        ' --logs-dir=${CertbotPaths().letsEncryptLogPath}';
 
-    var lines = cmd.toList(nothrow: true);
+    var lines = <String>[];
+    NamedLock(name: 'certbot').withLock(() {
+      var cmd = 'certbot certificates '
+          ' --config-dir=${CertbotPaths().letsEncryptConfigPath}'
+          ' --work-dir=${CertbotPaths().letsEncryptWorkPath}'
+          ' --logs-dir=${CertbotPaths().letsEncryptLogPath}';
 
-    Settings().verbose('output from certbot certificates');
+      lines = cmd.toList(nothrow: true);
 
-    for (var line in lines) {
-      Settings().verbose('Certificate Load: $line');
-    }
+      Settings().verbose('output from certbot certificates');
 
+      for (var line in lines) {
+        Settings().verbose('Certificate Load: $line');
+      }
+    });
     return parse(lines);
   }
 

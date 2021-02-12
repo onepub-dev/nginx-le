@@ -129,40 +129,42 @@ class HTTPAuthProvider extends AuthProvider {
 
     Settings().verbose('Starting cerbot with authProvider: $name');
 
-    var certbot = 'certbot certonly '
-        ' --manual '
-        ' --preferred-challenges=http '
-        ' -m $emailaddress  '
-        ' -d $hostname.$domain '
-        ' --agree-tos '
-        ' --manual-public-ip-logging-ok '
-        ' --non-interactive '
-        ' --manual-auth-hook="$auth_hook" '
-        ' --manual-cleanup-hook="$cleanup_hook" '
-        ' --work-dir=$workDir '
-        ' --config-dir=$configDir '
-        ' --logs-dir=$logDir ';
+    NamedLock(name: 'certbot').withLock(() {
+      var certbot = 'certbot certonly '
+          ' --manual '
+          ' --preferred-challenges=http '
+          ' -m $emailaddress  '
+          ' -d $hostname.$domain '
+          ' --agree-tos '
+          ' --manual-public-ip-logging-ok '
+          ' --non-interactive '
+          ' --manual-auth-hook="$auth_hook" '
+          ' --manual-cleanup-hook="$cleanup_hook" '
+          ' --work-dir=$workDir '
+          ' --config-dir=$configDir '
+          ' --logs-dir=$logDir ';
 
-    if (!production) certbot += ' --staging ';
+      if (!production) certbot += ' --staging ';
 
-    var lines = <String>[];
-    var progress = Progress((line) {
-      print(line);
-      lines.add(line);
-    }, stderr: (line) {
-      printerr(line);
-      lines.add(line);
+      var lines = <String>[];
+      var progress = Progress((line) {
+        print(line);
+        lines.add(line);
+      }, stderr: (line) {
+        printerr(line);
+        lines.add(line);
+      });
+
+      certbot.start(runInShell: true, nothrow: true, progress: progress);
+
+      if (progress.exitCode != 0) {
+        var system = 'hostname'.firstLine;
+
+        throw CertbotException(
+            'certbot failed acquiring a certificate for $hostname.$domain on $system',
+            details: lines.join('\n'));
+      }
     });
-
-    certbot.start(runInShell: true, nothrow: true, progress: progress);
-
-    if (progress.exitCode != 0) {
-      var system = 'hostname'.firstLine;
-
-      throw CertbotException(
-          'certbot failed acquiring a certificate for $hostname.$domain on $system',
-          details: lines.join('\n'));
-    }
   }
 
   String _createDir(String dir) {

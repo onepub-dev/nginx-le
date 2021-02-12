@@ -79,45 +79,47 @@ class CloudFlareProvider extends GenericAuthProvider {
     Settings().verbose(
         'Cloudflare api token. Env:${AuthProvider.AUTH_PROVIDER_TOKEN}: $envToken');
 
-    var certbot = 'certbot certonly '
-        ' --dns-cloudflare '
-        ' --dns-cloudflare-credentials $_settings'
-        ' -m $emailaddress '
-        ' -d $hostname.$domain '
-        ' --agree-tos '
-        ' --manual-public-ip-logging-ok '
-        ' --non-interactive '
-        ' --work-dir=$workDir '
-        ' --config-dir=$configDir '
-        ' --logs-dir=$logDir ';
+    NamedLock(name: 'certbot').withLock(() {
+      var certbot = 'certbot certonly '
+          ' --dns-cloudflare '
+          ' --dns-cloudflare-credentials $_settings'
+          ' -m $emailaddress '
+          ' -d $hostname.$domain '
+          ' --agree-tos '
+          ' --manual-public-ip-logging-ok '
+          ' --non-interactive '
+          ' --work-dir=$workDir '
+          ' --config-dir=$configDir '
+          ' --logs-dir=$logDir ';
 
-    if (!production) certbot += ' --staging ';
+      if (!production) certbot += ' --staging ';
 
-    var lines = <String>[];
-    var progress = Progress((line) {
-      print(line);
-      lines.add(line);
-    }, stderr: (line) {
-      printerr(line);
-      lines.add(line);
+      var lines = <String>[];
+      var progress = Progress((line) {
+        print(line);
+        lines.add(line);
+      }, stderr: (line) {
+        printerr(line);
+        lines.add(line);
+      });
+
+      certbot.start(runInShell: true, nothrow: true, progress: progress);
+
+      // We do not delete the settings file as the certbot renewal process
+      // keeps a link to this file but not its contents. So the settings
+      // file is required for renewals.
+      //deleteSettings();
+
+      if (progress.exitCode != 0) {
+        var system = 'hostname'.firstLine;
+
+        throw CertbotException(
+            'certbot failed acquiring a certificate for $hostname.$domain on $system',
+            details: lines.join('\n'));
+      } else {
+        print('Certificate acquired.');
+      }
     });
-
-    certbot.start(runInShell: true, nothrow: true, progress: progress);
-
-    // We do not delete the settings file as the certbot renewal process
-    // keeps a link to this file but not its contents. So the settings
-    // file is required for renewals.
-    //deleteSettings();
-
-    if (progress.exitCode != 0) {
-      var system = 'hostname'.firstLine;
-
-      throw CertbotException(
-          'certbot failed acquiring a certificate for $hostname.$domain on $system',
-          details: lines.join('\n'));
-    } else {
-      print('Certificate acquired.');
-    }
   }
 
   String _createDir(String dir) {

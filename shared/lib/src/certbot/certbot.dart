@@ -115,20 +115,21 @@ class Certbot {
     }
   }
 
-  /// true if we have a valid, non-expired certificate and it has been deployed
+  /// true if we have a valid certificate and it has been deployed
   bool isDeployed() {
     var hostname = Environment().hostname;
     var domain = Environment().domain;
+    var wildcard = Environment().domainWildcard;
     var deployed = false;
 
     var fullchain =
         join(CertbotPaths().nginxCertPath, CertbotPaths().FULLCHAIN_FILE);
     var private =
         join(CertbotPaths().nginxCertPath, CertbotPaths().PRIVATE_KEY_FILE);
-    if (exists(fullchain) && exists(private)) {
-      if (!hasExpired(hostname, domain)) {
-        deployed = true;
-      }
+    if (exists(fullchain) &&
+        exists(private) &&
+        wasIssuedTo(hostname: hostname, domain: domain, wildcard: wildcard)) {
+      deployed = true;
     }
     return deployed;
   }
@@ -253,32 +254,34 @@ class Certbot {
     // print('isFile: ${isFile(certFilePath)}');
     // print('isLink: ${isLink(certFilePath)}');
 
-    var cmd = 'certbot revoke'
-        ' --cert-path $certFilePath'
-        ' --non-interactive '
-        ' -m $emailaddress  '
-        ' --agree-tos '
-        ' --work-dir=$workDir '
-        ' --config-dir=$configDir '
-        ' --logs-dir=$logDir '
-        ' --delete-after-revoke';
+    NamedLock(name: 'certbot').withLock(() {
+      var cmd = 'certbot revoke'
+          ' --cert-path $certFilePath'
+          ' --non-interactive '
+          ' -m $emailaddress  '
+          ' --agree-tos '
+          ' --work-dir=$workDir '
+          ' --config-dir=$configDir '
+          ' --logs-dir=$logDir '
+          ' --delete-after-revoke';
 
-    if (!production) cmd += ' --staging ';
+      if (!production) cmd += ' --staging ';
 
-    var progress = Progress(
-      (line) => print(line),
-      stderr: (line) => print(line),
-    );
-    cmd.start(
-      runInShell: true,
-      nothrow: true,
-      progress: progress,
-    );
+      var progress = Progress(
+        (line) => print(line),
+        stderr: (line) => print(line),
+      );
+      cmd.start(
+        runInShell: true,
+        nothrow: true,
+        progress: progress,
+      );
 
-    if (progress.exitCode != 0) {
-      throw CertbotException(
-          'Revocation of certificate: $hostname.$domain failed. See logs for details');
-    }
+      if (progress.exitCode != 0) {
+        throw CertbotException(
+            'Revocation of certificate: $hostname.$domain failed. See logs for details');
+      }
+    });
   }
 
   /// used by revoke to delete certificates after they have been revoked
@@ -290,24 +293,26 @@ class Certbot {
     var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
     var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
 
-    var cmd = 'certbot delete'
-        ' --cert-name ${wildcard ? domain : '$hostname.$domain'}'
-        ' --non-interactive '
-        ' -m $emailaddress  '
-        ' --agree-tos '
-        ' --work-dir=$workDir '
-        ' --config-dir=$configDir '
-        ' --logs-dir=$logDir ';
+    NamedLock(name: 'certbot').withLock(() {
+      var cmd = 'certbot delete'
+          ' --cert-name ${wildcard ? domain : '$hostname.$domain'}'
+          ' --non-interactive '
+          ' -m $emailaddress  '
+          ' --agree-tos '
+          ' --work-dir=$workDir '
+          ' --config-dir=$configDir '
+          ' --logs-dir=$logDir ';
 
-    cmd.start(
-        runInShell: true,
-        nothrow: true,
-        progress: Progress((line) {
-          if (!line.startsWith('- - - -') &&
-              !line.startsWith('Saving debug ')) {
-            print(line);
-          }
-        }, stderr: (line) => print(line)));
+      cmd.start(
+          runInShell: true,
+          nothrow: true,
+          progress: Progress((line) {
+            if (!line.startsWith('- - - -') &&
+                !line.startsWith('Saving debug ')) {
+              print(line);
+            }
+          }, stderr: (line) => print(line)));
+    });
   }
 
   /// Checks if the certificate for the given hostname.domain
@@ -357,35 +362,38 @@ class Certbot {
   void renew({bool force = false}) {
     print(
         'Attempting renew using deploy-hook at: ${Environment().certbotDeployHookPath}');
-    var certbot = 'certbot renew '
-        ' --agree-tos '
-        ' --deploy-hook=${Environment().certbotDeployHookPath}'
-        ' --work-dir=${CertbotPaths().letsEncryptWorkPath}'
-        ' --config-dir=${CertbotPaths().letsEncryptConfigPath}'
-        ' --logs-dir=${CertbotPaths().letsEncryptLogPath}';
 
-    if (force == true) {
-      certbot += ' --force-renewal';
-    }
+    NamedLock(name: 'certbot').withLock(() {
+      var certbot = 'certbot renew '
+          ' --agree-tos '
+          ' --deploy-hook=${Environment().certbotDeployHookPath}'
+          ' --work-dir=${CertbotPaths().letsEncryptWorkPath}'
+          ' --config-dir=${CertbotPaths().letsEncryptConfigPath}'
+          ' --logs-dir=${CertbotPaths().letsEncryptLogPath}';
 
-    var lines = <String>[];
-    var progress = Progress((line) {
-      print(line);
-      lines.add(line);
-    }, stderr: (line) {
-      print(line);
-      lines.add(line);
+      if (force == true) {
+        certbot += ' --force-renewal';
+      }
+
+      var lines = <String>[];
+      var progress = Progress((line) {
+        print(line);
+        lines.add(line);
+      }, stderr: (line) {
+        print(line);
+        lines.add(line);
+      });
+
+      certbot.start(runInShell: true, nothrow: true, progress: progress);
+
+      if (progress.exitCode != 0) {
+        var system = 'hostname'.firstLine;
+
+        throw CertbotException(
+            'certbot failed renewing a certificate for ${Environment().fqdn} on $system',
+            details: lines.join('\n'));
+      }
     });
-
-    certbot.start(runInShell: true, nothrow: true, progress: progress);
-
-    if (progress.exitCode != 0) {
-      var system = 'hostname'.firstLine;
-
-      throw CertbotException(
-          'certbot failed renewing a certificate for ${Environment().fqdn} on $system',
-          details: lines.join('\n'));
-    }
   }
 
   void log(String message) {
