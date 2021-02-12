@@ -363,41 +363,40 @@ class Certbot {
     print(
         'Attempting renew using deploy-hook at: ${Environment().certbotDeployHookPath}');
 
-  try {
-    NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
-      var certbot = 'certbot renew '
-          ' --agree-tos '
-          ' --deploy-hook=${Environment().certbotDeployHookPath}'
-          ' --work-dir=${CertbotPaths().letsEncryptWorkPath}'
-          ' --config-dir=${CertbotPaths().letsEncryptConfigPath}'
-          ' --logs-dir=${CertbotPaths().letsEncryptLogPath}';
+    try {
+      NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
+        var certbot = 'certbot renew '
+            ' --agree-tos '
+            ' --deploy-hook=${Environment().certbotDeployHookPath}'
+            ' --work-dir=${CertbotPaths().letsEncryptWorkPath}'
+            ' --config-dir=${CertbotPaths().letsEncryptConfigPath}'
+            ' --logs-dir=${CertbotPaths().letsEncryptLogPath}';
 
-      if (force == true) {
-        certbot += ' --force-renewal';
-      }
+        if (force == true) {
+          certbot += ' --force-renewal';
+        }
 
-      var lines = <String>[];
-      var progress = Progress((line) {
-        print(line);
-        lines.add(line);
-      }, stderr: (line) {
-        print(line);
-        lines.add(line);
+        var lines = <String>[];
+        var progress = Progress((line) {
+          print(line);
+          lines.add(line);
+        }, stderr: (line) {
+          print(line);
+          lines.add(line);
+        });
+
+        certbot.start(runInShell: true, nothrow: true, progress: progress);
+
+        if (progress.exitCode != 0) {
+          var system = 'hostname'.firstLine;
+
+          throw CertbotException(
+              'certbot failed renewing a certificate for ${Environment().fqdn} on $system',
+              details: lines.join('\n'));
+        }
       });
-
-      certbot.start(runInShell: true, nothrow: true, progress: progress);
-
-      if (progress.exitCode != 0) {
-        var system = 'hostname'.firstLine;
-
-        throw CertbotException(
-            'certbot failed renewing a certificate for ${Environment().fqdn} on $system',
-            details: lines.join('\n'));
-      }
-    });
-   } catch (e, _) {
-      print(red('Renew failed as certbot was busy. Will try again later.'))
-
+    } catch (e, _) {
+      print(red('Renew failed as certbot was busy. Will try again later.'));
     }
   }
 
