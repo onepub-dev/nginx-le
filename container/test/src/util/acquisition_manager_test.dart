@@ -36,7 +36,7 @@ void main() {
     Certbot().renew(force: true);
 
 //    'test/src/util/mock_deploy_hook'.run;
-  });
+  }, skip: true);
 
   test('Revoke certificate', () {
     env['DEBUG'] = 'true';
@@ -78,7 +78,7 @@ void main() {
     expect(Certbot().hasValidCertificate(), equals(true));
     expect(Certbot().isDeployed(), equals(true));
     expect(
-        Certbot().wasIssuedTo(
+        Certbot().wasIssuedFor(
             hostname: hostname, domain: domain, wildcard: wildcard),
         equals(true));
   });
@@ -106,7 +106,7 @@ void main() {
     expect(Certbot().hasValidCertificate(), equals(true));
     expect(Certbot().isDeployed(), equals(true));
     expect(
-        Certbot().wasIssuedTo(
+        Certbot().wasIssuedFor(
             hostname: hostname, domain: domain, wildcard: wildcard),
         equals(true));
   });
@@ -124,7 +124,7 @@ void main() {
     expect(Certbot().hasValidCertificate(), equals(true));
     expect(Certbot().isDeployed(), equals(true));
     expect(
-        Certbot().wasIssuedTo(
+        Certbot().wasIssuedFor(
             hostname: hostname, domain: domain, wildcard: wildcard),
         equals(true));
 
@@ -172,7 +172,10 @@ void main() {
 
 final hostname = 'auditor';
 final domain = 'noojee.com.au';
+// final domain = 'noojee.org';
+
 final tld = 'com.au';
+// final tld = 'org';
 var wildcard = false;
 final emailAddress = 'support@noojeeit.com.au';
 final production = false;

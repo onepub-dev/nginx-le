@@ -98,6 +98,8 @@ class AcquisitionManager {
             print(green('Acquiring a new certificate.'));
             authProvider.acquire();
 
+            print('Trying to deploy acquired certificate');
+
             if (Certbot().deployCertificates(reload: reload)) {
               leaveAcquistionMode();
               print(orange(

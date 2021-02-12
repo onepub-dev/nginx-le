@@ -110,6 +110,7 @@ class Certificate {
         cert = Certificate();
         certificates.add(cert);
         cert.parseName(line);
+        print('Found certificate: ${cert.fqdn}');
       }
       if (line.trim().startsWith('Domains:')) {
         cert.parseDomains(line);

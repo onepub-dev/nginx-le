@@ -68,6 +68,8 @@ void _start() {
   var certbotAuthProvider = Environment().authProvider;
   Settings().verbose('${Environment().authProviderKey}=$certbotAuthProvider');
 
+  _clearLocks();
+
   LogManager().start();
 
   /// In case the host, domain or wildard settings have changed.
@@ -92,6 +94,17 @@ void _start() {
     "nginx -g 'daemon off;'".start();
   } finally {
     print('Nginx has shutdown');
+  }
+}
+
+/// under docker after a crash NamedLock mis-behaves as docker uses the
+/// same pid no. (1) each time we start so NamedLocks thinks the lock is still
+/// held.
+void _clearLocks() {
+  var lockPath = join(rootPath, Directory.systemTemp.path, 'dcli', 'locks');
+
+  if (exists(lockPath)) {
+    deleteDir(lockPath);
   }
 }
 

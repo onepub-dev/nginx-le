@@ -28,4 +28,23 @@ void main() {
 
     }
   });
+
+  test('parse', () {
+    var cert = '''
+   Certificate Name: robtest5.noojee.org
+     Domains: robtest5.noojee.org
+     Expiry Date: 2021-05-13 04:36:22+00:00 (INVALID: TEST_CERT)
+     Certificate Path: /etc/letsencrypt/config/live/robtest5.noojee.org/fullchain.pem
+     Private Key Path: /etc/letsencrypt/config/live/robtest5.noojee.org/privkey.pem
+''';
+
+    var certificate = Certificate.parse(cert.split('\n'));
+
+    print(certificate);
+
+    expect(
+        certificate[0].wasIssuedFor(
+            hostname: 'robtest5', domain: 'noojee.org', wildcard: false),
+        equals(true));
+  });
 }

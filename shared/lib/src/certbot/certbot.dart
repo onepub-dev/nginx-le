@@ -47,6 +47,8 @@ class Certbot {
     var hostname = Environment().hostname;
     var domain = Environment().domain;
     var wildcard = Environment().domainWildcard;
+
+    print('Checking for valid certificate');
     var hasValidCerts = Certbot().hasValidCertificate();
 
     var deployed = false;
@@ -56,9 +58,12 @@ class Certbot {
       _deploy(CertbotPaths()
           .certificatePathRoot(hostname, domain, wildcard: wildcard));
       deployed = true;
+    } else {
+      print('No valid certificates found during deploy');
     }
 
     if (reload) {
+      print('reloading nginx');
       _reloadNginx();
     }
     if (deployed) {
@@ -77,10 +82,14 @@ class Certbot {
     var foundValidCertificate = false;
 
     for (var certificate in certificates()) {
+      print('Certificate found: ${certificate}');
       if (certificate.wasIssuedFor(
           hostname: hostname, domain: domain, wildcard: wildcard)) {
+        print('Found valid certificate');
         foundValidCertificate = true;
         break;
+      } else {
+        print('Certificate not valid');
       }
     }
 
@@ -128,7 +137,7 @@ class Certbot {
         join(CertbotPaths().nginxCertPath, CertbotPaths().PRIVATE_KEY_FILE);
     if (exists(fullchain) &&
         exists(private) &&
-        wasIssuedTo(hostname: hostname, domain: domain, wildcard: wildcard)) {
+        wasIssuedFor(hostname: hostname, domain: domain, wildcard: wildcard)) {
       deployed = true;
     }
     return deployed;
@@ -144,7 +153,7 @@ class Certbot {
   /// good one in which case the result is random :)
   ///
   /// On start up if we find a bad certificate.
-  bool wasIssuedTo(
+  bool wasIssuedFor(
       {@required String hostname,
       @required String domain,
       @required bool wildcard}) {
