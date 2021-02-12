@@ -9,6 +9,8 @@ class RenewalManager {
   void start() {
     print('Starting the certificate renewal scheduler.');
 
+    Certbot().renew();
+
     var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
     try {
