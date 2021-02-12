@@ -363,6 +363,7 @@ class Certbot {
     print(
         'Attempting renew using deploy-hook at: ${Environment().certbotDeployHookPath}');
 
+  try {
     NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
       var certbot = 'certbot renew '
           ' --agree-tos '
@@ -394,6 +395,10 @@ class Certbot {
             details: lines.join('\n'));
       }
     });
+   } catch (e, _) {
+      print(red('Renew failed as certbot was busy. Will try again later.'))
+
+    }
   }
 
   void log(String message) {
