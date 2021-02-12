@@ -1,3 +1,8 @@
+# 5.0.51
+The renew manager now immediately check if certificaetes need to be renewed on startup so that if a system has been idle for a long time we don't have to wait for 1am for the certificate to be renewed.
+released
+Added a test for double tries at acquistion.
+
 # 5.0.50
 release.
 set the default renewal value for 'force' to false.
