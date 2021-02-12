@@ -1,3 +1,8 @@
+# 5.0.50
+release.
+set the default renewal value for 'force' to false.
+removed the revoke command on startup to reduce the risk of exceeding rate limits.
+
 # 5.0.49
 toggeld to shared.
 suppressed the sleep calls flooding logs.
