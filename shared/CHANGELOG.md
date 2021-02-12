@@ -1,3 +1,6 @@
+# 5.0.52
+Fixed the live config so we can always do renewals.
+
 # 5.0.51
 The renew manager now immediately check if certificaetes need to be renewed on startup so that if a system has been idle for a long time we don't have to wait for 1am for the certificate to be renewed.
 released
