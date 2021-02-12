@@ -1,3 +1,6 @@
+# 5.0.55
+Increased lock timeouts to 20 minutes a certbot calls can be slow (renew can easily).
+
 # 5.0.54
 Added namedlocks around certbot as only one instance of certbot can run at a time.
 Improved startup logic. Now checks if we hav a valid cert before we worry about if it is deployed.
