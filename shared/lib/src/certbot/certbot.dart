@@ -356,7 +356,7 @@ class Certbot {
     });
   }
 
-  void renew({bool force}) {
+  void renew({bool force = false}) {
     print(
         'Attempting renew using deploy-hook at: ${Environment().certbotDeployHookPath}');
     var certbot = 'certbot renew '
