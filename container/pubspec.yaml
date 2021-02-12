@@ -1,5 +1,5 @@
 name: nginx_le_container
-version: 5.0.50
+version: 5.0.51
 description: Commands that live in the nginx-le docker container.
 repository: https://github.com/bsutton/nginx-le
 environment: 
@@ -23,4 +23,3 @@ dev_dependencies:
   mockito: ^4.1.4
   test: ^1.0.0
   settings_yaml: ^2.0.0
-
