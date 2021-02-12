@@ -33,11 +33,10 @@ abstract class GenericAuthProvider extends AuthProvider {
     /// Pass environment vars down to the auth hook.
     Environment().logfile = join(logDir, 'letsencrypt.log');
 
-    
     var hostname = Environment().hostname;
     var domain = Environment().domain;
     var wildcard = Environment().domainWildcard;
-    
+
     var production = Environment().production;
     var emailaddress = Environment().emailaddress;
 
