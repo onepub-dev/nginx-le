@@ -111,6 +111,26 @@ void main() {
         equals(true));
   });
 
+  /// The second attempt to acquire a certificate should do nothing.
+  test('double acquire wildcard certificate ...', () async {
+    wildcard = true;
+    setup();
+
+    Certbot().clearBlockFlag();
+
+    AcquisitionManager.acquistionCheck(reload: false);
+
+    expect(AcquisitionManager.inAcquisitionMode, equals(false));
+    expect(Certbot().hasValidCertificate(), equals(true));
+    expect(Certbot().isDeployed(), equals(true));
+    expect(
+        Certbot().wasIssuedTo(
+            hostname: hostname, domain: domain, wildcard: wildcard),
+        equals(true));
+
+    AcquisitionManager.acquistionCheck(reload: false);
+  });
+
   test('isdeployed...', () {
     setup();
     var certificate =
