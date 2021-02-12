@@ -1,3 +1,6 @@
+# 5.0.52
+Upgraded packages as part of release process
+
 # 5.0.51
 
 # 5.0.50
