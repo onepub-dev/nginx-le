@@ -1,3 +1,7 @@
+# 5.0.53
+Added finally block around nginx start so we can see any failures.
+An expired certificate is no considered a valid certificate as nginx can still run with an expired certificate and we actually need it up and running so we can renew the certificate.
+
 # 5.0.52
 Fixed the live config so we can always do renewals.
 
