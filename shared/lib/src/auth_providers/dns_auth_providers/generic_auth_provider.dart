@@ -33,10 +33,13 @@ abstract class GenericAuthProvider extends AuthProvider {
     /// Pass environment vars down to the auth hook.
     Environment().logfile = join(logDir, 'letsencrypt.log');
 
-    var emailaddress = Environment().emailaddress;
+    
     var hostname = Environment().hostname;
     var domain = Environment().domain;
+    var wildcard = Environment().domainWildcard;
+    
     var production = Environment().production;
+    var emailaddress = Environment().emailaddress;
 
     var auth_hook_path = Environment().certbotAuthHookPath;
     var cleanup_hook_path = Environment().certbotCleanupHookPath;
@@ -45,6 +48,8 @@ abstract class GenericAuthProvider extends AuthProvider {
         'Environment variable: ${Environment().certbotAuthHookPathKey} missing');
     ArgumentError.checkNotNull(cleanup_hook_path,
         'Environment variable: ${Environment().certbotCleanupHookPathKey} missing');
+
+    hostname = wildcard ? '*' : hostname;
 
     Settings().verbose('Starting cerbot with authProvider: $name');
 

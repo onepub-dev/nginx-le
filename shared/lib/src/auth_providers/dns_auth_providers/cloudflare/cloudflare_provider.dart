@@ -67,8 +67,8 @@ class CloudFlareProvider extends GenericAuthProvider {
 
     var hostname = Environment().hostname;
     var domain = Environment().domain;
-    var production = Environment().production;
     var wildcard = Environment().domainWildcard;
+    var production = Environment().production;
     var emailaddress = Environment().authProviderEmailAddress;
 
     hostname = wildcard ? '*' : hostname;
