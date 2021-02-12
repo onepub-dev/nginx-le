@@ -1,3 +1,7 @@
+# 5.0.56
+missing ;
+added catch block so a renew timeout won't cause docker to shutdown.
+
 # 5.0.55
 Increased lock timeouts to 20 minutes a certbot calls can be slow (renew can easily).
 
