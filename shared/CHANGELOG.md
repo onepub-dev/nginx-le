@@ -1,3 +1,7 @@
+# 5.0.54
+Added namedlocks around certbot as only one instance of certbot can run at a time.
+Improved startup logic. Now checks if we hav a valid cert before we worry about if it is deployed.
+
 # 5.0.53
 Added finally block around nginx start so we can see any failures.
 An expired certificate is no considered a valid certificate as nginx can still run with an expired certificate and we actually need it up and running so we can renew the certificate.
