@@ -10,19 +10,25 @@ class AcquisitionManager {
   void start() {
     print(orange('AcquisitionManager is starting'));
 
-    if (Certbot().isDeployed()) {
-      AcquisitionManager.leaveAcquistionMode(show: true);
-    } else {
-      /// If we have a cert make certain its deployed
-      /// We need to do this immedately as
-      /// when the service starts nginx, the symlinks
-      /// need to be in place.
-      /// At this point nginx isn't running so don't try to reload it.
-      if (Certbot().deployCertificates(reload: false)) {
+    if (Certbot().hasValidCertificate()) {
+      if (Certbot().isDeployed()) {
         AcquisitionManager.leaveAcquistionMode(show: true);
       } else {
-        AcquisitionManager.enterAcquisitionMode(show: true);
+        /// We have a cert so make certain its deployed.
+        /// We need to do this immedately as
+        /// when the service starts nginx, the symlinks
+        /// need to be in place.
+        /// At this point nginx isn't running so don't try to reload it.
+        if (Certbot().deployCertificates(reload: false)) {
+          AcquisitionManager.leaveAcquistionMode(show: true);
+        } else {
+          // deploy failed which should never happen here
+          // as we started by checking the certs were valid.
+          AcquisitionManager.enterAcquisitionMode(show: true);
+        }
       }
+    } else {
+      AcquisitionManager.enterAcquisitionMode(show: true);
     }
 
     var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
@@ -89,6 +95,7 @@ class AcquisitionManager {
                 AuthProviders().getByName(Environment().authProvider);
 
             /// Acquire a new certificate
+            print(green('Acquiring a new certificate.'));
             authProvider.acquire();
 
             if (Certbot().deployCertificates(reload: reload)) {
