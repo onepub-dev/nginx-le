@@ -129,7 +129,7 @@ class HTTPAuthProvider extends AuthProvider {
 
     Settings().verbose('Starting cerbot with authProvider: $name');
 
-    NamedLock(name: 'certbot').withLock(() {
+    NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
       var certbot = 'certbot certonly '
           ' --manual '
           ' --preferred-challenges=http '

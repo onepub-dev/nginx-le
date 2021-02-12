@@ -79,7 +79,7 @@ class CloudFlareProvider extends GenericAuthProvider {
     Settings().verbose(
         'Cloudflare api token. Env:${AuthProvider.AUTH_PROVIDER_TOKEN}: $envToken');
 
-    NamedLock(name: 'certbot').withLock(() {
+    NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
       var certbot = 'certbot certonly '
           ' --dns-cloudflare '
           ' --dns-cloudflare-credentials $_settings'

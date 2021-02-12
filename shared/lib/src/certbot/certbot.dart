@@ -254,7 +254,7 @@ class Certbot {
     // print('isFile: ${isFile(certFilePath)}');
     // print('isLink: ${isLink(certFilePath)}');
 
-    NamedLock(name: 'certbot').withLock(() {
+    NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
       var cmd = 'certbot revoke'
           ' --cert-path $certFilePath'
           ' --non-interactive '
@@ -293,7 +293,7 @@ class Certbot {
     var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
     var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
 
-    NamedLock(name: 'certbot').withLock(() {
+    NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
       var cmd = 'certbot delete'
           ' --cert-name ${wildcard ? domain : '$hostname.$domain'}'
           ' --non-interactive '
@@ -363,7 +363,7 @@ class Certbot {
     print(
         'Attempting renew using deploy-hook at: ${Environment().certbotDeployHookPath}');
 
-    NamedLock(name: 'certbot').withLock(() {
+    NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
       var certbot = 'certbot renew '
           ' --agree-tos '
           ' --deploy-hook=${Environment().certbotDeployHookPath}'

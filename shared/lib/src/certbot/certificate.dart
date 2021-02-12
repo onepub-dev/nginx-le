@@ -68,7 +68,7 @@ class Certificate {
     //     .forEach((file) => Settings().verbose(file));
 
     var lines = <String>[];
-    NamedLock(name: 'certbot').withLock(() {
+    NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
       var cmd = 'certbot certificates '
           ' --config-dir=${CertbotPaths().letsEncryptConfigPath}'
           ' --work-dir=${CertbotPaths().letsEncryptWorkPath}'
