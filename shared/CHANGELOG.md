@@ -1,3 +1,6 @@
+# 5.0.57
+added logging.
+
 # 5.0.56
 missing ;
 added catch block so a renew timeout won't cause docker to shutdown.
