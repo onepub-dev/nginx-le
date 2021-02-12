@@ -1,3 +1,6 @@
+# 5.0.59
+Namecheap provider was not setting the host to '*' when a wild card was requested.
+
 # 5.0.58
 formatting.
 
