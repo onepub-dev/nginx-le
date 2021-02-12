@@ -77,8 +77,6 @@ class Certbot {
     var foundValidCertificate = false;
 
     for (var certificate in certificates()) {
-      if (certificate.hasExpired()) continue;
-
       if (certificate.wasIssuedFor(
           hostname: hostname, domain: domain, wildcard: wildcard)) {
         foundValidCertificate = true;

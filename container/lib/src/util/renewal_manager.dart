@@ -9,8 +9,6 @@ class RenewalManager {
   void start() {
     print('Starting the certificate renewal scheduler.');
 
-    Certbot().renew();
-
     var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
     try {
@@ -23,6 +21,12 @@ class RenewalManager {
 
 /// Isolate callback must be a top level function.
 void startScheduler(String environment) {
+  sleep(15);
+
+  /// We do an immediate renew attempt incase this service hasn't run
+  /// for a while and its certificate has expired.
+  Certbot().renew();
+
   try {
     print(orange('RenewManager is starting'));
     Env().fromJson(environment);
