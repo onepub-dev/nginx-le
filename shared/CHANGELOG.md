@@ -1,3 +1,13 @@
+# 5.0.61
+unit tests added for namecheap with wildcards.
+Improved wasIssuedFor by ignoring invalid certificates.
+hooks now require the wildcard.
+Added set/get for auth provider username.
+Now passing the wildcard down to the auth provider so the can correctly format challenges.
+Added wildcard flag to challeange so we can correctly format the challange that we send to the provider. For wild cards we need to strip the host name.
+No throws if we can't get an auth provider and logs the selected authprovider.
+improved doco.
+
 # 5.0.60
 format.
 
