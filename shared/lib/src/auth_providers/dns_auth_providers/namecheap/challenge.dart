@@ -28,7 +28,8 @@ class Challenge {
       @required String domain,
       @required String tld,
       @required String certbotValidationString,
-      int retries = 20}) {
+      int retries = 20,
+      bool wildcard}) {
     var records = _getHosts(domain: domain, tld: tld);
 
     if (records.isEmpty) {
@@ -38,7 +39,7 @@ class Challenge {
 
     /// certbot wont' be happy if it finds to TXT records so remove any old
     /// ones that might be hanging around.
-    records = removeOldChallenge(records: records, hostname: hostname);
+    records = removeOldChallenge(records: records, hostname: hostname, wildcard: wildcard);
 
     if (records.length > 10) {
       throw DNSProviderException(
@@ -46,7 +47,7 @@ class Challenge {
     }
 
     var certRecord = DNSRecord(
-        name: challengeHost(hostname: hostname),
+        name: challengeHost(hostname: hostname, wildcard: wildcard),
         type: 'TXT',
         address: certbotValidationString,
         mxPref: '10',
@@ -62,13 +63,14 @@ class Challenge {
         apiUser: username,
         username: username,
         domain: domain,
-        tld: 'org');
+        tld: tld);
 
     return waitForRecordToBeVisible(
         certRecord: certRecord,
         hostname: hostname,
         domain: domain,
         tld: tld,
+        wildcard: wildcard,
         certBotAuthKey: certbotValidationString,
         retries: retries);
   }
@@ -78,6 +80,7 @@ class Challenge {
       @required String hostname,
       @required String domain,
       @required String tld,
+      @required bool wildcard,
       @required String certBotAuthKey,
       int retries}) {
     var found = false;
@@ -88,7 +91,8 @@ class Challenge {
     Certbot().log('Waiting for challenge "$certBotAuthKey" be visible');
     while (!found && retryAttempts < retries) {
       // ignore: unnecessary_cast
-      var dig = 'dig +short ${challengeHost(hostname: hostname)}.${domain} TXT';
+      var dig =
+          'dig +short ${challengeHost(hostname: hostname, wildcard: wildcard)}.${domain} TXT';
       Certbot().log('running $dig');
       var token = dig.toList(nothrow: true);
 
@@ -127,13 +131,14 @@ class Challenge {
       {@required String hostname,
       @required String domain,
       @required String tld,
+      @required bool wildcard,
       @required String certbotValidationString}) {
     var records = _getHosts(domain: domain, tld: tld);
 
     // Find the challenge TXT record and remove it if found.
     var found = false;
     var newRecords = <DNSRecord>[];
-    var challengeName = challengeHost(hostname: hostname);
+    var challengeName = challengeHost(hostname: hostname, wildcard: wildcard);
     Settings().verbose('Cleaning $challengeName');
     for (var h in records) {
       Settings().verbose('Found DNS: hostname=${h.name}');
@@ -152,7 +157,7 @@ class Challenge {
           apiUser: username,
           username: username,
           domain: domain,
-          tld: 'org');
+          tld: tld);
     }
   }
 
@@ -166,14 +171,15 @@ class Challenge {
         username: username,
         clientIP: '192.168.1.1',
         domain: domain,
-        tld: 'org');
+        tld: tld);
   }
 
   List<DNSRecord> removeOldChallenge(
-      {List<DNSRecord> records, String hostname}) {
+      {List<DNSRecord> records, String hostname, @required bool wildcard}) {
     var found = <DNSRecord>[];
     for (var h in records) {
-      if (h.name == challengeHost(hostname: hostname) && h.type == 'TXT') {
+      if (h.name == challengeHost(hostname: hostname, wildcard: wildcard) &&
+          h.type == 'TXT') {
         found.add(h);
       }
     }
@@ -183,5 +189,11 @@ class Challenge {
     return records;
   }
 
-  String challengeHost({String hostname}) => '$CHALLENGE_HOST_NAME.$hostname';
+  String challengeHost({String hostname, @required bool wildcard}) {
+    if (wildcard) {
+      return CHALLENGE_HOST_NAME;
+    } else {
+      return '$CHALLENGE_HOST_NAME.$hostname';
+    }
+  }
 }
