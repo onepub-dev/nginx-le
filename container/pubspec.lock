@@ -322,7 +322,7 @@ packages:
       name: nginx_le_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.62"
+    version: "5.0.63"
   node_interop:
     dependency: transitive
     description:
