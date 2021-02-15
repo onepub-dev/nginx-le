@@ -22,9 +22,8 @@ void namncheap_dns_cleanup() {
   var fqdn = Environment().certbotDomain;
   Certbot().log('fqdn: $fqdn');
 
-    var wildcard = Environment().domainWildcard;
+  var wildcard = Environment().domainWildcard;
   Certbot().log('wildcard: $wildcard');
-
 
   var certbotAuthKey = Environment().certbotValidation;
   Certbot().log('CertbotAuthKey: $certbotAuthKey');

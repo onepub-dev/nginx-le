@@ -1,3 +1,5 @@
+# 5.0.62
+
 # 5.0.61
 unit tests added for namecheap with wildcards.
 Improved wasIssuedFor by ignoring invalid certificates.
