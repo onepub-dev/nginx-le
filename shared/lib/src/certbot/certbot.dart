@@ -98,11 +98,13 @@ class Certbot {
 
   /// revokes any certificates that are not for the current
   /// fqdn and wildcard type.
-  void revokeInvalidCertificates(
+  int revokeInvalidCertificates(
       {@required String hostname,
       @required String domain,
       @required bool wildcard,
       @required bool production}) {
+    var count = 0;
+
     /// First try non-expired certificates
     for (var certificate in certificates()) {
       if (!certificate.wasIssuedFor(
@@ -111,6 +113,7 @@ class Certbot {
             'Found certificate that does not match the required settings. host: $hostname domain: $domain wildard: $wildcard. Revoking certificate.');
 
         certificate.revoke();
+        count++;
       }
 
       /// revoke any really old certificates
@@ -120,8 +123,11 @@ class Certbot {
             'Found certificate that expired more than 90 days ago. host: $hostname domain: $domain wildard: $wildcard. Revoking certificate.');
 
         certificate.revoke();
+        count++;
       }
     }
+
+    return count;
   }
 
   /// true if we have a valid certificate and it has been deployed
