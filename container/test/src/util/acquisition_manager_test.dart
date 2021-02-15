@@ -61,7 +61,7 @@ void main() {
   }, skip: true);
 
   test('Revoke Invalid certificates', () {
-      setup(
+    setup(
         hostname: 'auditor',
         domain: 'noojee.com.au',
         tld: 'com.au',
