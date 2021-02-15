@@ -44,7 +44,10 @@ void main() {
 
     expect(
         certificate[0].wasIssuedFor(
-            hostname: 'robtest5', domain: 'noojee.org', wildcard: false),
+            hostname: 'robtest5',
+            domain: 'noojee.org',
+            wildcard: false,
+            production: false),
         equals(true));
   });
 }

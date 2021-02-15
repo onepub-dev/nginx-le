@@ -58,7 +58,7 @@ void main() {
     Certbot().renew(force: true);
 
 //    'test/src/util/mock_deploy_hook'.run;
-  }, skip: true);
+  }, skip: false);
 
   test('Revoke Invalid certificates', () {
     setup(
@@ -125,6 +125,28 @@ void main() {
         emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'cloudflare.yaml');
   });
+
+  /// this should be run infrequently as we will hit the production certbot rate limiter.
+  test('test switch from staging to production cloudflare ...', () async {
+    _acquire(
+        hostname: 'robtest',
+        domain: 'noojee.org',
+        wildcard: false,
+        tld: 'org',
+        emailAddress: 'support@noojeeit.com.au',
+        settingFilename: 'namecheap.yaml',
+        production: false,
+        revoke: false);
+
+    _acquire(
+        hostname: 'robtest',
+        domain: 'noojee.org',
+        wildcard: false,
+        tld: 'org',
+        emailAddress: 'support@noojeeit.com.au',
+        settingFilename: 'namecheap.yaml',
+        production: true);
+  }, skip: true);
 
   test('acquire certificate cloudflare wildcard ...', () async {
     _acquire(
@@ -195,10 +217,10 @@ void main() {
     expect(Certbot().isDeployed(), equals(true));
     expect(
         Certbot().wasIssuedFor(
-          hostname: 'auditor',
-          domain: 'noojee.com.au',
-          wildcard: true,
-        ),
+            hostname: 'auditor',
+            domain: 'noojee.com.au',
+            wildcard: true,
+            production: false),
         equals(true));
 
     AcquisitionManager().acquistionCheck(reload: false);
@@ -208,10 +230,10 @@ void main() {
     expect(Certbot().isDeployed(), equals(true));
     expect(
         Certbot().wasIssuedFor(
-          hostname: 'auditor',
-          domain: 'noojee.com.au',
-          wildcard: true,
-        ),
+            hostname: 'auditor',
+            domain: 'noojee.com.au',
+            wildcard: true,
+            production: false),
         equals(true));
   });
 
@@ -276,6 +298,7 @@ void _acquire(
       wildcard: wildcard,
       tld: tld,
       emailAddress: emailAddress,
+      production: production,
       settingsFilename: settingFilename);
 
   Certbot().clearBlockFlag();
@@ -304,19 +327,22 @@ void _acquire(
   expect(Certbot().isDeployed(), equals(true));
   expect(
       Certbot().wasIssuedFor(
-        hostname: hostname,
-        domain: domain,
-        wildcard: wildcard,
-      ),
+          hostname: hostname,
+          domain: domain,
+          wildcard: wildcard,
+          production: production),
       equals(true));
 
   if (revoke) {
-    Certbot().revoke(
+    var cert = Certificate.find(
         hostname: hostname,
         domain: domain,
         wildcard: wildcard,
-        emailaddress: 'support@noojeeit.com.au',
         production: production);
+
+    expect(cert, equals(isNotNull));
+
+    cert.revoke();
   }
 }
 

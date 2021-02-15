@@ -32,15 +32,15 @@ class Certbot {
     }
   }
 
-  /// Check that we have valid certificates and deploys them to nginx.
+  /// Check that we have valid certificate and deploy it to nginx.
   ///
   ///
-  /// The certificates are stored in a persistant volume called 'certificates'
-  /// and we need to copy them into /etc/nginx/certs on each start
+  /// Certificates are stored in a persistant volume called 'certificates'
+  /// and we need to copy the active certificate into /etc/nginx/certs on each start
   /// so that nginx has access to them.
   ///
-  /// returns true if it deployed a valid certificate
-  bool deployCertificates() {
+  /// returns true if we deployed a valid certificate
+  bool deployCertificate() {
     var hostname = Environment().hostname;
     var domain = Environment().domain;
     var wildcard = Environment().domainWildcard;
@@ -51,7 +51,7 @@ class Certbot {
     var deployed = false;
 
     if (hasValidCerts) {
-      print(orange('Deploying certificates.'));
+      print(orange('Deploying certificate.'));
       _deploy(CertbotPaths()
           .certificatePathRoot(hostname, domain, wildcard: wildcard));
       deployed = true;
@@ -72,12 +72,16 @@ class Certbot {
     var hostname = Environment().hostname;
     var domain = Environment().domain;
     var wildcard = Environment().domainWildcard;
+    var production = Environment().production;
     var foundValidCertificate = false;
 
     for (var certificate in certificates()) {
       print('Certificate found: ${certificate}');
       if (certificate.wasIssuedFor(
-          hostname: hostname, domain: domain, wildcard: wildcard)) {
+          hostname: hostname,
+          domain: domain,
+          wildcard: wildcard,
+          production: production)) {
         print('Found valid certificate');
         foundValidCertificate = true;
         break;
@@ -101,9 +105,12 @@ class Certbot {
     /// First try non-expired certificates
     for (var certificate in certificates()) {
       if (!certificate.wasIssuedFor(
-          hostname: hostname, domain: domain, wildcard: wildcard)) {
+          hostname: hostname,
+          domain: domain,
+          wildcard: wildcard,
+          production: production)) {
         print(
-            'Found certificate that does not match the required settings. host: $hostname domain: $domain wildard: $wildcard. Revoking certificate.');
+            'Found certificate that does not match the required settings. host: $hostname domain: $domain wildard: $wildcard production: $production. Revoking certificate.');
 
         certificate.revoke();
         count++;
@@ -113,7 +120,7 @@ class Certbot {
       if (certificate.hasExpired(
           asAt: DateTime.now().subtract(Duration(days: 90)))) {
         print(
-            'Found certificate that expired more than 90 days ago. host: $hostname domain: $domain wildard: $wildcard. Revoking certificate.');
+            'Found certificate that expired more than 90 days ago. host: $hostname domain: $domain wildard: $wildcard production: $production. Revoking certificate.');
 
         certificate.revoke();
         count++;
@@ -128,6 +135,7 @@ class Certbot {
     var hostname = Environment().hostname;
     var domain = Environment().domain;
     var wildcard = Environment().domainWildcard;
+    var production = Environment().production;
     var deployed = false;
 
     var fullchain =
@@ -136,7 +144,11 @@ class Certbot {
         join(CertbotPaths().nginxCertPath, CertbotPaths().PRIVATE_KEY_FILE);
     if (exists(fullchain) &&
         exists(private) &&
-        wasIssuedFor(hostname: hostname, domain: domain, wildcard: wildcard)) {
+        wasIssuedFor(
+            hostname: hostname,
+            domain: domain,
+            wildcard: wildcard,
+            production: production)) {
       deployed = true;
     }
     return deployed;
@@ -155,13 +167,17 @@ class Certbot {
   bool wasIssuedFor(
       {@required String hostname,
       @required String domain,
-      @required bool wildcard}) {
+      @required bool wildcard,
+      @required bool production}) {
     /// First try non-expired certificates
     for (var certificate in certificates()) {
       if (certificate.hasExpired()) continue;
 
       if (certificate.wasIssuedFor(
-          hostname: hostname, domain: domain, wildcard: wildcard)) {
+          hostname: hostname,
+          domain: domain,
+          wildcard: wildcard,
+          production: production)) {
         return true;
       } else {
         print(red(
@@ -172,7 +188,10 @@ class Certbot {
     /// now consider expired certificates
     for (var certificate in certificates()) {
       if (!certificate.wasIssuedFor(
-          hostname: hostname, domain: domain, wildcard: wildcard)) {
+          hostname: hostname,
+          domain: domain,
+          wildcard: wildcard,
+          production: production)) {
         continue;
       }
       if (certificate.hasExpired()) {
@@ -440,12 +459,7 @@ class Certbot {
     /// lying around so this cleans things up.
     for (var cert in Certbot().certificates()) {
       print('Revoking ${cert.fqdn}');
-      Certbot().revoke(
-          hostname: cert.hostname,
-          domain: cert.domain,
-          production: cert.production,
-          wildcard: cert.wildcard,
-          emailaddress: Environment().emailaddress);
+      cert.revoke();
     }
     print('');
   }

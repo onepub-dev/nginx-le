@@ -52,21 +52,25 @@ void main() {
 
       authProvider.acquire();
 
-      Certbot().revoke(
-          hostname: 'slayer',
-          domain: 'noojee.org',
-          production: false,
-          wildcard: false,
-          emailaddress: Environment().emailaddress);
+      var cert = Certificate.find(
+        hostname: 'slayer',
+        domain: 'noojee.org',
+        production: false,
+        wildcard: false,
+      );
+      expect(cert, equals(isNotNull));
+      cert.revoke();
 
       authProvider.acquire();
 
-      Certbot().revoke(
-          hostname: 'slayer',
-          domain: 'noojee.org',
-          production: false,
-          wildcard: false,
-          emailaddress: Environment().emailaddress);
+      cert = Certificate.find(
+        hostname: 'slayer',
+        domain: 'noojee.org',
+        production: false,
+        wildcard: false,
+      );
+      expect(cert, equals(isNotNull));
+      cert.revoke();
     }, timeout: Timeout(Duration(minutes: 5)), skip: true);
 
     test('renew', () {
@@ -90,12 +94,12 @@ void main() {
       authProvider.acquire();
 
       print(orange('calling revoke'));
-      Certbot().revoke(
+      var cert = Certificate.find(
           hostname: 'slayer',
           domain: 'noojee.org',
           production: false,
-          wildcard: false,
-          emailaddress: Environment().emailaddress);
+          wildcard: false);
+      cert.revoke();
 
       print(orange('calling acquire'));
       authProvider.acquire();

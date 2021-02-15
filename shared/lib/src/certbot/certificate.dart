@@ -1,5 +1,6 @@
 import 'package:dcli/dcli.dart';
 import 'package:instant/instant.dart';
+import 'package:meta/meta.dart';
 
 import '../../nginx_le_shared.dart';
 
@@ -110,7 +111,6 @@ class Certificate {
         cert = Certificate();
         certificates.add(cert);
         cert.parseName(line);
-        print('Found certificate: ${cert.fqdn}');
       }
       if (line.trim().startsWith('Domains:')) {
         cert.parseDomains(line);
@@ -154,11 +154,21 @@ class Certificate {
 
   /// Returns true if this certificate was issued for the given [hostname],
   /// [domain] and is or isn't a [wildcard] certificate.
-  bool wasIssuedFor({String hostname, String domain, bool wildcard}) {
+  /// Returns true if this certificate was issued for the given [hostname],
+  /// [domain] and is or isn't a [wildcard] certificate.
+  bool wasIssuedFor(
+      {@required String hostname,
+      @required String domain,
+      @required bool wildcard,
+      @required bool production}) {
     if (wildcard) {
-      return this.wildcard == wildcard && '$domain' == fqdn;
+      return this.wildcard == wildcard &&
+          this.production == production &&
+          '$domain' == fqdn;
     } else {
-      return this.wildcard == wildcard && '$hostname.$domain' == fqdn;
+      return this.wildcard == wildcard &&
+          this.production == production &&
+          '$hostname.$domain' == fqdn;
     }
   }
 
@@ -205,5 +215,21 @@ class Certificate {
     }
 
     return fqdn;
+  }
+
+  /// Finds the matching certificate and returns it.
+  static Certificate find(
+      {String hostname, String domain, bool wildcard, bool production}) {
+    if (wildcard) hostname = '*';
+    for (var certificate in Certificate.load()) {
+      if (certificate.hostname == hostname &&
+          certificate.domain == domain &&
+          certificate.wildcard == wildcard &&
+          certificate.production == production) {
+        return certificate;
+      }
+    }
+
+    return null;
   }
 }

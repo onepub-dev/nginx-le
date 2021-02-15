@@ -26,7 +26,7 @@ class AcquisitionManager {
         /// when the service starts nginx, the symlinks
         /// need to be in place.
         /// At this point nginx isn't running so don't try to reload it.
-        if (Certbot().deployCertificates()) {
+        if (Certbot().deployCertificate()) {
           leaveAcquistionMode(show: true, reload: false);
         } else {
           // deploy failed which should never happen here
@@ -100,6 +100,11 @@ class AcquisitionManager {
   /// certificates. This is true by default and only set to false for unit
   /// testing.
   void acquistionCheck({bool reload = true}) {
+    var hostname = Environment().hostname;
+    var domain = Environment().domain;
+    var wildcard = Environment().domainWildcard;
+    var production = Environment().production;
+
     try {
       if (Certbot().isDeployed()) {
         leaveAcquistionMode(reload: reload);
@@ -108,7 +113,7 @@ class AcquisitionManager {
         enterAcquisitionMode(reload: reload);
 
         if (Certbot().hasValidCertificate()) {
-          if (Certbot().deployCertificates()) {
+          if (Certbot().deployCertificate()) {
             leaveAcquistionMode(reload: reload);
             print(orange('AcquisitionManager completed successfully.'));
           } else {
@@ -134,15 +139,22 @@ class AcquisitionManager {
                 'Acquiring a new certificate using ${authProvider.name}.'));
             authProvider.acquire();
 
-            print('Trying to deploy acquired certificate');
+            /// find the cert we just acquired.
+            var cert = Certificate.find(
+                hostname: hostname,
+                domain: domain,
+                wildcard: wildcard,
+                production: production);
 
-            if (Certbot().deployCertificates()) {
+            print('${orange('Acquired certificate:')}\n $cert');
+
+            if (Certbot().deployCertificate()) {
               leaveAcquistionMode(reload: reload);
               print(orange(
-                  'AcquisitionManager successfully deployed certficates.'));
+                  'AcquisitionManager successfully deployed the certficate.'));
             } else {
               print(orange(
-                  'AcquisitionManager failed to acquire certificates. Will remain in acquistion mode.'));
+                  'AcquisitionManager failed to acquire a certificate. Will remain in acquistion mode.'));
             }
           }
         }
@@ -220,7 +232,7 @@ void _acquireThread(String environment) {
     print(
         "AUTO_ACQUIRE=false please use 'nginx-le acquire' to acquire a certificate");
   } else {
-    // we give nginx a litte time to start so we don't deploy and
+    // we give nginx a little time to start so we don't deploy and
     // attempt a reload before its running.
     // We should really use a flag to ensure that nginx has started.
     sleep(10);
