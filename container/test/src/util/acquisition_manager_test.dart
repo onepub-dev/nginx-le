@@ -53,6 +53,8 @@ void main() {
 
     Certbot().clearBlockFlag();
 
+    Certbot().revokeAll();
+
     AcquisitionManager().acquistionCheck(reload: false);
 
     Certbot().renew(force: true);
