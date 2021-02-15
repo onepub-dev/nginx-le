@@ -1,3 +1,8 @@
+# 5.0.63
+Added more unit testing combinations.
+Added count of revoked certificates to help with unit testing.
+Added call to explitiy push system out of acquisition mode on every check. This is more for unit testing but could be needed in some start up conditions if they system shutdown badly.
+
 # 5.0.62
 
 # 5.0.61
