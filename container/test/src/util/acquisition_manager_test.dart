@@ -11,12 +11,16 @@ import 'mock_cerbot_paths.dart';
 var possibleCerts = <PossibleCert>[];
 void main() {
   setUpAll(() {
+    possibleCerts.add(PossibleCert('*', 'noojee.com.au', wildcard: true));
     possibleCerts
         .add(PossibleCert('auditor', 'noojee.com.au', wildcard: false));
-    possibleCerts.add(PossibleCert('*', 'noojee.com.au', wildcard: true));
     possibleCerts.add(PossibleCert('auditor', 'noojee.com.au', wildcard: true));
-    possibleCerts.add(PossibleCert('robtest5', 'noojee.org', wildcard: true));
+
     possibleCerts.add(PossibleCert('*', 'noojee.org', wildcard: true));
+    possibleCerts.add(PossibleCert('robtest5', 'noojee.org', wildcard: false));
+    possibleCerts.add(PossibleCert('robtest5', 'noojee.org', wildcard: true));
+    possibleCerts.add(PossibleCert('robtest', 'noojee.org', wildcard: false));
+    possibleCerts.add(PossibleCert('auditor', 'noojee.org', wildcard: false));
   });
   test('acquisition manager ...', () async {
     setup(
@@ -54,137 +58,115 @@ void main() {
     Certbot().renew(force: true);
 
 //    'test/src/util/mock_deploy_hook'.run;
-  }, skip: true);
+  }, skip: false);
 
-  test('Revoke certificate', () {
-    env['DEBUG'] = 'true';
-    Settings().setVerbose(enabled: true);
-    setup(
+  test('Revoke Invalid certificates', () {
+    Certbot().revokeAll();
+
+    _acquire(
         hostname: 'auditor',
         domain: 'noojee.com.au',
         tld: 'com.au',
         wildcard: true,
         emailAddress: 'support@noojeeit.com.au',
-        settingsFilename: 'cloudflare.yaml');
+        settingFilename: 'cloudflare.yaml',
+        revoke: false);
 
-    Certbot().clearBlockFlag();
+    _acquire(
+        hostname: 'robtest5',
+        domain: 'noojee.org',
+        tld: 'org',
+        wildcard: false,
+        emailAddress: 'support@noojeeit.com.au',
+        settingFilename: 'namecheap.yaml',
+        revoke: false);
 
-    for (var certificate in Certificate.load()) {
-      certificate.revoke();
-    }
-  }, skip: true);
+    expect(
+        Certbot().revokeInvalidCertificates(
+            hostname: 'auditor',
+            domain: 'noojee.com.au',
+            wildcard: false,
+            production: false),
+        equals(2));
+  });
+  test('Revoke All certificate', () {
+    Certbot().revokeAll();
+    expect(Certificate.load().length, equals(0));
 
-  test('acquire certificate ...', () async {
-    // Settings().setVerbose(enabled: true);
-    // env['DEBUG'] = 'true';
-    setup(
+    _acquire(
         hostname: 'auditor',
         domain: 'noojee.com.au',
         wildcard: false,
         tld: 'com.au',
         emailAddress: 'support@noojeeit.com.au',
-        settingsFilename: 'cloudflare.yaml');
+        settingFilename: 'cloudflare.yaml',
+        revoke: false);
 
-    Certbot().clearBlockFlag();
+    expect(Certificate.load().length, equals(1));
 
-    if (Certbot().hasValidCertificate()) {
-      Certbot().revoke(
-          hostname: 'auditor',
-          domain: 'noojee.com.au',
-          wildcard: false,
-          emailaddress: 'support@noojeeit.com.au',
-          production: false);
-    }
-    expect(Certbot().hasValidCertificate(), equals(false));
-    expect(Certbot().isDeployed(), equals(false));
+    Certbot().revokeAll();
 
-    /// tell the AcquisitionManager isolate that it needs to call the mock functions.
-    // env['MOCK_ACQUISITION_MANAGER'] = 'true';
+    expect(Certificate.load().length, equals(0));
+  }, skip: false);
 
-    AcquisitionManager.acquistionCheck(reload: false);
-
-    expect(AcquisitionManager.inAcquisitionMode, equals(false));
-    expect(Certbot().hasValidCertificate(), equals(true));
-    expect(Certbot().isDeployed(), equals(true));
-    expect(
-        Certbot().wasIssuedFor(
-          hostname: 'auditor',
-          domain: 'noojee.com.au',
-          wildcard: false,
-        ),
-        equals(true));
-  });
-
-  test('acquire wildcard certificate ...', () async {
-    setup(
+  test('acquire certificate cloudflare ...', () async {
+    _acquire(
         hostname: 'auditor',
         domain: 'noojee.com.au',
+        wildcard: false,
         tld: 'com.au',
-        wildcard: true,
         emailAddress: 'support@noojeeit.com.au',
-        settingsFilename: 'cloudflare.yaml');
-
-    Certbot().clearBlockFlag();
-
-//    if (Certbot().hasValidCertificate()) {
-
-    for (var certificate in Certificate.load()) {
-      certificate.revoke();
-    }
-    expect(Certbot().hasValidCertificate(), equals(false));
-    expect(Certbot().isDeployed(), equals(false));
-
-    /// tell the AcquisitionManager isolate that it needs to call the mock functions.
-    // env['MOCK_ACQUISITION_MANAGER'] = 'true';
-
-    AcquisitionManager.acquistionCheck(reload: false);
-
-    expect(AcquisitionManager.inAcquisitionMode, equals(false));
-    expect(Certbot().hasValidCertificate(), equals(true));
-    expect(Certbot().isDeployed(), equals(true));
-    expect(
-        Certbot().wasIssuedFor(
-          hostname: 'auditor',
-          domain: 'noojee.com.au',
-          wildcard: true,
-        ),
-        equals(true));
+        settingFilename: 'cloudflare.yaml');
   });
 
-  test('acquire namecheap wildcard certificate ...', () async {
-    setup(
+  test('acquire certificate cloudflare wildcard ...', () async {
+    _acquire(
+        hostname: 'auditor',
+        domain: 'noojee.com.au',
+        wildcard: true,
+        tld: 'com.au',
+        emailAddress: 'support@noojeeit.com.au',
+        settingFilename: 'cloudflare.yaml');
+  });
+
+  test('acquire certificate cloudflare wildcard  *...', () async {
+    _acquire(
+        hostname: '*',
+        domain: 'noojee.com.au',
+        wildcard: true,
+        tld: 'com.au',
+        emailAddress: 'support@noojeeit.com.au',
+        settingFilename: 'cloudflare.yaml');
+  });
+
+  test('acquire certificate namecheap ...', () async {
+    _acquire(
+        hostname: 'robtest5',
+        domain: 'noojee.org',
+        wildcard: false,
+        tld: 'org',
+        emailAddress: 'support@noojeeit.com.au',
+        settingFilename: 'namecheap.yaml');
+  });
+
+  test('acquire certificate namecheap wildcard ...', () async {
+    _acquire(
+        hostname: 'robtest5',
+        domain: 'noojee.org',
+        wildcard: true,
+        tld: 'org',
+        emailAddress: 'support@noojeeit.com.au',
+        settingFilename: 'namecheap.yaml');
+  });
+
+  test('acquire certificate namecheap wildcard  *...', () async {
+    _acquire(
         hostname: '*',
         domain: 'noojee.org',
-        tld: 'org',
         wildcard: true,
+        tld: 'org',
         emailAddress: 'support@noojeeit.com.au',
-        settingsFilename: 'namecheap.yaml');
-
-    Certbot().clearBlockFlag();
-
-//    if (Certbot().hasValidCertificate()) {
-
-    for (var certificate in Certificate.load()) {
-      certificate.revoke();
-    }
-    expect(Certbot().hasValidCertificate(), equals(false));
-    expect(Certbot().isDeployed(), equals(false));
-
-    /// tell the AcquisitionManager isolate that it needs to call the mock functions.
-    // env['MOCK_ACQUISITION_MANAGER'] = 'true';
-
-    AcquisitionManager.acquistionCheck(reload: false);
-
-    expect(AcquisitionManager.inAcquisitionMode, equals(false));
-    expect(Certbot().hasValidCertificate(), equals(true));
-    expect(Certbot().isDeployed(), equals(true));
-    expect(
-        Certbot().wasIssuedFor(
-          hostname: '*',
-          domain: 'noojee.org',
-          wildcard: true,
-        ),
-        equals(true));
+        settingFilename: 'namecheap.yaml');
   });
 
   /// The second attempt to acquire a certificate should do nothing.
@@ -213,6 +195,17 @@ void main() {
         equals(true));
 
     AcquisitionManager.acquistionCheck(reload: false);
+
+    expect(AcquisitionManager.inAcquisitionMode, equals(false));
+    expect(Certbot().hasValidCertificate(), equals(true));
+    expect(Certbot().isDeployed(), equals(true));
+    expect(
+        Certbot().wasIssuedFor(
+          hostname: 'auditor',
+          domain: 'noojee.com.au',
+          wildcard: true,
+        ),
+        equals(true));
   });
 
 //   test('isdeployed...', () {
@@ -259,6 +252,65 @@ void main() {
 //     delete(certificate);
 //     delete(privatekey);
 //   });
+}
+
+void _acquire(
+    {String hostname,
+    String domain,
+    String tld,
+    bool wildcard,
+    String emailAddress,
+    bool production = false,
+    String settingFilename,
+    bool revoke = true}) {
+  setup(
+      hostname: hostname,
+      domain: domain,
+      wildcard: wildcard,
+      tld: tld,
+      emailAddress: emailAddress,
+      settingsFilename: settingFilename);
+
+  Certbot().clearBlockFlag();
+
+  if (revoke) {
+    Certbot().revokeInvalidCertificates(
+        hostname: hostname,
+        domain: domain,
+        wildcard: wildcard,
+        production: production);
+
+    for (var certificate in Certbot().certificates()) {
+      certificate.revoke();
+    }
+    expect(Certbot().hasValidCertificate(), equals(false));
+    expect(Certbot().isDeployed(), equals(false));
+  }
+
+  AcquisitionManager.enterAcquisitionMode();
+
+  /// acquire the certificate
+  AcquisitionManager.acquistionCheck(reload: false);
+
+  expect(AcquisitionManager.inAcquisitionMode, equals(false));
+  expect(Certbot().hasValidCertificate(), equals(true));
+  expect(Certbot().isDeployed(), equals(true));
+  expect(
+      Certbot().wasIssuedFor(
+        hostname: hostname,
+        domain: domain,
+        wildcard: wildcard,
+      ),
+      equals(true));
+
+  if (revoke) {
+    Certbot().revoke(
+        hostname: hostname,
+        domain: domain,
+        wildcard: wildcard,
+        emailaddress: 'support@noojeeit.com.au',
+        production: production);
+  }
 }
 
 void setup(
