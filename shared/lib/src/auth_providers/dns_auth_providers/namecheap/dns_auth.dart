@@ -52,6 +52,9 @@ void namecheap_dns_auth() {
   Certbot().log('${Environment().hostnameKey}: $hostname');
   var tld = Environment().tld;
   Certbot().log('tld: $tld');
+  var wildcard = Environment().domainWildcard;
+  Certbot().log('wildcard: $wildcard');
+
   var username = authProvider.envUsername;
   Certbot().log('username: $username');
   var apiKey = authProvider.envToken;
@@ -83,6 +86,7 @@ void namecheap_dns_auth() {
         hostname: hostname,
         domain: domain,
         tld: tld,
+        wildcard: wildcard,
         certbotValidationString: certbotValidation,
         retries: retries))) {
       Certbot().log('createDNSChallenged SUCCESS');
