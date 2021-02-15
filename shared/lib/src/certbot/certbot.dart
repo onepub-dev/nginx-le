@@ -34,16 +34,13 @@ class Certbot {
 
   /// Check that we have valid certificates and deploys them to nginx.
   ///
-  /// If we have no certificates then we force nginx into acquire mode.
   ///
   /// The certificates are stored in a persistant volume called 'certificates'
   /// and we need to copy them into /etc/nginx/certs on each start
   /// so that nginx has access to them.
   ///
   /// returns true if it deployed a valid certificate
-  bool deployCertificates({
-    bool reload = true,
-  }) {
+  bool deployCertificates() {
     var hostname = Environment().hostname;
     var domain = Environment().domain;
     var wildcard = Environment().domainWildcard;
@@ -62,10 +59,6 @@ class Certbot {
       print('No valid certificates found during deploy');
     }
 
-    if (reload) {
-      print('reloading nginx');
-      _reloadNginx();
-    }
     if (deployed) {
       print('Deploy complete.');
     }
@@ -218,8 +211,6 @@ class Certbot {
 
       symlink(CertbotPaths().WWW_PATH_ACQUIRE, CertbotPaths().WWW_PATH_LIVE);
     }
-
-    if (reload) _reloadNginx();
   }
 
   /// copy the certificate files from the given root directory.
@@ -431,15 +422,6 @@ class Certbot {
     logfile.append('*' * 80);
   }
 
-  void _reloadNginx() {
-    if (exists('/var/run/nginx.pid')) {
-      /// force nginx to reload its config.
-      'nginx -s reload'.run;
-    } else {
-      Settings().verbose('Nginx reload ignored as nginx is not running');
-    }
-  }
-
   String _createDir(String dir) {
     if (!exists(dir)) {
       createDir(dir, recursive: true);
@@ -458,11 +440,9 @@ class Certbot {
     /// lying around so this cleans things up.
     for (var cert in Certbot().certificates()) {
       print('Revoking ${cert.fqdn}');
-      var hostname = cert.fqdn.split('.')[0];
-      var domain = cert.fqdn.split('.').sublist(1).join('.');
       Certbot().revoke(
-          hostname: hostname,
-          domain: domain,
+          hostname: cert.hostname,
+          domain: cert.domain,
           production: cert.production,
           wildcard: cert.wildcard,
           emailaddress: Environment().emailaddress);

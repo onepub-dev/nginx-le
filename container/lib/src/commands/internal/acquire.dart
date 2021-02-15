@@ -33,8 +33,8 @@ void acquire(List<String> args) {
   authProvider.acquire();
 
   if (Certbot().deployCertificates()) {
-    AcquisitionManager.leaveAcquistionMode();
+    AcquisitionManager().leaveAcquistionMode(reload: true);
   } else {
-    AcquisitionManager.enterAcquisitionMode();
+    AcquisitionManager().enterAcquisitionMode(reload: true);
   }
 }

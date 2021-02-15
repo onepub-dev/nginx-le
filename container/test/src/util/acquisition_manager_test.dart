@@ -29,17 +29,17 @@ void main() {
         wildcard: false,
         settingsFilename: 'cloudflare.yaml');
 
-    AcquisitionManager.enterAcquisitionMode();
-    expect(AcquisitionManager.inAcquisitionMode, equals(true));
+    AcquisitionManager().enterAcquisitionMode(reload: false);
+    expect(AcquisitionManager().inAcquisitionMode, equals(true));
 
-    AcquisitionManager.leaveAcquistionMode();
-    expect(AcquisitionManager.inAcquisitionMode, equals(false));
+    AcquisitionManager().leaveAcquistionMode(reload: false);
+    expect(AcquisitionManager().inAcquisitionMode, equals(false));
 
-    AcquisitionManager.enterAcquisitionMode();
-    expect(AcquisitionManager.inAcquisitionMode, equals(true));
+    AcquisitionManager().enterAcquisitionMode(reload: false);
+    expect(AcquisitionManager().inAcquisitionMode, equals(true));
 
-    AcquisitionManager.leaveAcquistionMode();
-    expect(AcquisitionManager.inAcquisitionMode, equals(false));
+    AcquisitionManager().leaveAcquistionMode(reload: false);
+    expect(AcquisitionManager().inAcquisitionMode, equals(false));
   });
 
   test('Renew certificate', () {
@@ -53,14 +53,21 @@ void main() {
 
     Certbot().clearBlockFlag();
 
-    AcquisitionManager.acquistionCheck(reload: false);
+    AcquisitionManager().acquistionCheck(reload: false);
 
     Certbot().renew(force: true);
 
 //    'test/src/util/mock_deploy_hook'.run;
-  }, skip: false);
+  }, skip: true);
 
   test('Revoke Invalid certificates', () {
+      setup(
+        hostname: 'auditor',
+        domain: 'noojee.com.au',
+        tld: 'com.au',
+        wildcard: false,
+        emailAddress: 'support@noojeeit.com.au',
+        settingsFilename: 'cloudflare.yaml');
     Certbot().revokeAll();
 
     _acquire(
@@ -181,9 +188,9 @@ void main() {
 
     Certbot().clearBlockFlag();
 
-    AcquisitionManager.acquistionCheck(reload: false);
+    AcquisitionManager().acquistionCheck(reload: false);
 
-    expect(AcquisitionManager.inAcquisitionMode, equals(false));
+    expect(AcquisitionManager().inAcquisitionMode, equals(false));
     expect(Certbot().hasValidCertificate(), equals(true));
     expect(Certbot().isDeployed(), equals(true));
     expect(
@@ -194,9 +201,9 @@ void main() {
         ),
         equals(true));
 
-    AcquisitionManager.acquistionCheck(reload: false);
+    AcquisitionManager().acquistionCheck(reload: false);
 
-    expect(AcquisitionManager.inAcquisitionMode, equals(false));
+    expect(AcquisitionManager().inAcquisitionMode, equals(false));
     expect(Certbot().hasValidCertificate(), equals(true));
     expect(Certbot().isDeployed(), equals(true));
     expect(
@@ -287,12 +294,12 @@ void _acquire(
     expect(Certbot().isDeployed(), equals(false));
   }
 
-  AcquisitionManager.enterAcquisitionMode();
+  AcquisitionManager().enterAcquisitionMode(reload: false);
 
   /// acquire the certificate
-  AcquisitionManager.acquistionCheck(reload: false);
+  AcquisitionManager().acquistionCheck(reload: false);
 
-  expect(AcquisitionManager.inAcquisitionMode, equals(false));
+  expect(AcquisitionManager().inAcquisitionMode, equals(false));
   expect(Certbot().hasValidCertificate(), equals(true));
   expect(Certbot().isDeployed(), equals(true));
   expect(

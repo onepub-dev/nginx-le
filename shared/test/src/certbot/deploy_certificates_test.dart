@@ -12,9 +12,7 @@ void main() {
     Environment().domainWildcard = false;
     Environment().autoAcquire = true;
 
-    Certbot().deployCertificates(
-      reload: false, // don't try to reload nginx as it won't be running as yet.
-    );
+    Certbot().deployCertificates();
 
     print('deploy has returned');
   });

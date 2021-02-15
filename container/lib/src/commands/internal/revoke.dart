@@ -24,8 +24,8 @@ void revoke(List<String> args) {
   Certbot().revokeAll();
 
   if (Certbot().deployCertificates()) {
-    AcquisitionManager.leaveAcquistionMode();
+    AcquisitionManager().leaveAcquistionMode(reload: true);
   } else {
-    AcquisitionManager.enterAcquisitionMode();
+    AcquisitionManager().enterAcquisitionMode(reload: true);
   }
 }

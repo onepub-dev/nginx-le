@@ -1,5 +1,6 @@
 import 'package:dcli/dcli.dart';
 import 'package:isolate/isolate_runner.dart';
+import 'package:meta/meta.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /////////////////////////////////////////////
@@ -7,28 +8,34 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 /////////////////////////////////////////////
 ///
 class AcquisitionManager {
+  static AcquisitionManager _self;
+
+  factory AcquisitionManager() => _self ??= AcquisitionManager._internal();
+
+  AcquisitionManager._internal();
+
   void start() {
     print(orange('AcquisitionManager is starting'));
 
     if (Certbot().hasValidCertificate()) {
       if (Certbot().isDeployed()) {
-        AcquisitionManager.leaveAcquistionMode(show: true);
+        leaveAcquistionMode(show: true, reload: false);
       } else {
         /// We have a cert so make certain its deployed.
         /// We need to do this immedately as
         /// when the service starts nginx, the symlinks
         /// need to be in place.
         /// At this point nginx isn't running so don't try to reload it.
-        if (Certbot().deployCertificates(reload: false)) {
-          AcquisitionManager.leaveAcquistionMode(show: true);
+        if (Certbot().deployCertificates()) {
+          leaveAcquistionMode(show: true, reload: false);
         } else {
           // deploy failed which should never happen here
           // as we started by checking the certs were valid.
-          AcquisitionManager.enterAcquisitionMode(show: true);
+          enterAcquisitionMode(show: true, reload: false);
         }
       }
     } else {
-      AcquisitionManager.enterAcquisitionMode(show: true);
+      enterAcquisitionMode(show: true, reload: false);
     }
 
     var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
@@ -41,28 +48,50 @@ class AcquisitionManager {
     }
   }
 
-  static void enterAcquisitionMode({bool show = false}) {
+  void enterAcquisitionMode({bool show = false, @required bool reload}) {
     /// symlink in the http configs which only permit certbot access
-    _createSymlink(CertbotPaths().WWW_PATH_ACQUIRE);
+    final _created = _createSymlink(CertbotPaths().WWW_PATH_ACQUIRE);
 
-    if (!inAcquisitionMode || show) {
+    if (!inAcquisitionMode && show) {
       print(red('*') * 120);
       print(red('No valid certificates Found!!'));
       print(red(
           "* Nginx-LE is running in 'Certificate Acquisition' mode. It will only respond to CertBot validation requests."));
       print(red('*') * 120);
     }
+
+    /// only reload if things changed
+    if (reload && _created) {
+      print('reloading nginx');
+      _reloadNginx();
+    }
   }
 
-  static void leaveAcquistionMode({bool show = false}) {
-    _createSymlink(CertbotPaths().WWW_PATH_OPERATING);
+  void leaveAcquistionMode({bool show = false, @required bool reload}) {
+    final _created = _createSymlink(CertbotPaths().WWW_PATH_OPERATING);
 
-    if (inAcquisitionMode || show) {
-      print(green('*') * 120);
-      print(green('* Nginx-LE is running with an active Certificate.'));
-      print(green('*') * 120);
+    if (inAcquisitionMode) {
+      if (show) {
+        print(green('*') * 120);
+        print(green('* Nginx-LE is running with an active Certificate.'));
+        print(green('*') * 120);
+      }
     } else if (show) {
       print(green('* Nginx-LE is running with an active Certificate.'));
+    }
+
+    if (reload && _created) {
+      print('reloading nginx');
+      _reloadNginx();
+    }
+  }
+
+  void _reloadNginx() {
+    if (exists('/var/run/nginx.pid')) {
+      /// force nginx to reload its config.
+      'nginx -s reload'.run;
+    } else {
+      Settings().verbose('Nginx reload ignored as nginx is not running');
     }
   }
 
@@ -70,17 +99,17 @@ class AcquisitionManager {
   /// The [reload] flag controls whether we reload nginx after deploying
   /// certificates. This is true by default and only set to false for unit
   /// testing.
-  static void acquistionCheck({bool reload = true}) {
+  void acquistionCheck({bool reload = true}) {
     try {
       if (Certbot().isDeployed()) {
-        leaveAcquistionMode();
+        leaveAcquistionMode(reload: reload);
       } else {
         /// Places the server into acquire mode if certificates are not deployed.
-        enterAcquisitionMode();
+        enterAcquisitionMode(reload: reload);
 
         if (Certbot().hasValidCertificate()) {
-          if (Certbot().deployCertificates(reload: reload)) {
-            leaveAcquistionMode();
+          if (Certbot().deployCertificates()) {
+            leaveAcquistionMode(reload: reload);
             print(orange('AcquisitionManager completed successfully.'));
           } else {
             print(orange(
@@ -107,8 +136,8 @@ class AcquisitionManager {
 
             print('Trying to deploy acquired certificate');
 
-            if (Certbot().deployCertificates(reload: reload)) {
-              leaveAcquistionMode();
+            if (Certbot().deployCertificates()) {
+              leaveAcquistionMode(reload: reload);
               print(orange(
                   'AcquisitionManager successfully deployed certficates.'));
             } else {
@@ -145,14 +174,17 @@ class AcquisitionManager {
 
   /// returns true if we are currently in acquisition mode or
   /// [CertbotPaths().WWW_PATH_LIVE] doesn't exists which means we haven't been configured.
-  static bool get inAcquisitionMode {
+  bool get inAcquisitionMode {
     return exists(CertbotPaths().WWW_PATH_LIVE, followLinks: false) &&
         exists(CertbotPaths().WWW_PATH_LIVE, followLinks: true) &&
         resolveSymLink(CertbotPaths().WWW_PATH_LIVE) ==
             CertbotPaths().WWW_PATH_ACQUIRE;
   }
 
-  static void _createSymlink(String targetPath) {
+  /// returns true if the correct link didn't exists and had to be created.
+  bool _createSymlink(String targetPath) {
+    var created = false;
+
     var validTarget = false;
     var existing = false;
     // we are about to recreate the symlink to the appropriate path
@@ -167,13 +199,16 @@ class AcquisitionManager {
       if (resolveSymLink(CertbotPaths().WWW_PATH_LIVE) != targetPath) {
         deleteSymlink(CertbotPaths().WWW_PATH_LIVE);
         symlink(targetPath, CertbotPaths().WWW_PATH_LIVE);
+        created = true;
       }
       // else the symlink already points at the target.
     } else {
       /// the current target is invalid so recreate the link.
       if (existing) deleteSymlink(CertbotPaths().WWW_PATH_LIVE);
       symlink(targetPath, CertbotPaths().WWW_PATH_LIVE);
+      created = true;
     }
+    return created;
   }
 }
 
@@ -192,7 +227,7 @@ void _acquireThread(String environment) {
 
     /// start the acquisition loop.
     do {
-      AcquisitionManager.acquistionCheck();
+      AcquisitionManager().acquistionCheck();
 
       Settings().setVerbose(enabled: false);
       sleep(5, interval: Interval.minutes);
