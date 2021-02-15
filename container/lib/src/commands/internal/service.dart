@@ -75,12 +75,15 @@ void _start() {
   /// In case the host, domain or wildard settings have changed.
   /// Also cleans up an old expired certificates
 
-  /// Removed as a precaution until we can do more testing.
-  // Certbot().revokeInvalidCertificates(
-  //     hostname: hostname,
-  //     domain: domain,
-  //     wildcard: wildcard,
-  //     production: production);
+  /// We originally revoked certificates but decided it was safer
+  /// to just delete them in case a bug causes us to revoke
+  /// a live certificate. By deleting the certs we can recover
+  /// them from backup.
+  Certbot().deleteInvalidCertificates(
+      hostname: hostname,
+      domain: domain,
+      wildcard: wildcard,
+      production: production);
 
   RenewalManager().start();
 

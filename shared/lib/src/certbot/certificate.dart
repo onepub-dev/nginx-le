@@ -181,6 +181,15 @@ class Certificate {
         production: production);
   }
 
+  void delete() {
+    Certbot().delete(
+      hostname: hostname,
+      domain: domain,
+      wildcard: wildcard,
+      emailaddress: Environment().emailaddress,
+    );
+  }
+
   String get hostname {
     _hostname ??= hostnameFromFqdn(fqdn);
     return _hostname;

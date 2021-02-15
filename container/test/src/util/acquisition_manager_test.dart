@@ -91,7 +91,7 @@ void main() {
         revoke: false);
 
     expect(
-        Certbot().revokeInvalidCertificates(
+        Certbot().deleteInvalidCertificates(
             hostname: 'auditor',
             domain: 'noojee.com.au',
             wildcard: false,
@@ -306,7 +306,7 @@ void _acquire(
   Certbot().clearBlockFlag();
 
   if (revoke) {
-    Certbot().revokeInvalidCertificates(
+    Certbot().deleteInvalidCertificates(
         hostname: hostname,
         domain: domain,
         wildcard: wildcard,

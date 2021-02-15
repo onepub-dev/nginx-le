@@ -1,5 +1,6 @@
 import 'package:cron/cron.dart';
-import 'package:dcli/dcli.dart';
+import 'package:dcli/dcli.dart' hide delete;
+import 'package:dcli/dcli.dart' as dcli;
 import 'package:meta/meta.dart';
 import 'package:nginx_le_shared/src/util/email.dart';
 import 'package:path/path.dart';
@@ -95,7 +96,7 @@ class Certbot {
 
   /// revokes any certificates that are not for the current
   /// fqdn and wildcard type.
-  int revokeInvalidCertificates(
+  int deleteInvalidCertificates(
       {@required String hostname,
       @required String domain,
       @required bool wildcard,
@@ -112,7 +113,7 @@ class Certbot {
         print(
             'Found certificate that does not match the required settings. host: $hostname domain: $domain wildard: $wildcard production: $production. Revoking certificate.');
 
-        certificate.revoke();
+        certificate.delete();
         count++;
       }
 
@@ -122,7 +123,7 @@ class Certbot {
         print(
             'Found certificate that expired more than 90 days ago. host: $hostname domain: $domain wildard: $wildcard production: $production. Revoking certificate.');
 
-        certificate.revoke();
+        certificate.delete();
         count++;
       }
     }
@@ -311,9 +312,11 @@ class Certbot {
 
   /// used by revoke to delete certificates after they have been revoked
   /// If we don't do this then the revoked certificates will still be renewed.
-  // ignore: unused_element
-  void _delete(String hostname, String domain,
-      {@required bool wildcard, @required String emailaddress}) {
+  void delete(
+      {String hostname,
+      String domain,
+      @required bool wildcard,
+      @required String emailaddress}) {
     var workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
     var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
     var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
@@ -492,7 +495,7 @@ class Certbot {
 
   void clearBlockFlag() {
     if (exists(pathToBlockFlag)) {
-      delete(pathToBlockFlag);
+      dcli.delete(pathToBlockFlag);
     }
   }
 
