@@ -166,17 +166,17 @@ class Certbot {
         return true;
       } else {
         print(red(
-            'Found Certificate that was not issued to expected domain: expected $hostname.$domain, wildcard: $wildcard found ${certificate.fqdn}, wildcard: ${certificate.wildcard}'));
-        return false;
+            'Ignored Certificate that was not issued to expected domain: expected $hostname.$domain, wildcard: $wildcard found ${certificate.fqdn}, wildcard: ${certificate.wildcard}'));
       }
     }
 
     /// now consider expired certificates
     for (var certificate in certificates()) {
-      if (certificate.wasIssuedFor(
+      if (!certificate.wasIssuedFor(
           hostname: hostname, domain: domain, wildcard: wildcard)) {
-        return true;
-      } else {
+        continue;
+      }
+      if (certificate.hasExpired()) {
         print(red(
             'Found expired certificate that was not issued to expected domain: expected $hostname.$domain, wildcard: $wildcard found ${certificate.fqdn}, wildcard: ${certificate.wildcard}'));
 
