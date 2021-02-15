@@ -4,7 +4,7 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/namecheap/namecheap_auth_provider.dart';
 import 'package:test/test.dart';
 
-/// You must run this command with the console option.
+/// You must run this test app in vscode with the console option.
 void main() {
   Settings().setVerbose(enabled: true);
   prepareCertHooks();
@@ -24,6 +24,7 @@ void prepareCertHooks() {
   Environment().hostname = 'slayer';
   Environment().domain = 'noojee.org';
   Environment().tld = 'org';
+  Environment().domainWildcard = false;
   Environment().certbotValidation = 'TEST_TOKEN_ABC134';
   Environment().nginxCertRootPathOverwrite = '/tmp/nginx/certs';
   Environment().authProvider = NameCheapAuthProvider().name;
