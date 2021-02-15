@@ -15,6 +15,7 @@ class Environment {
   /// logging
   String get debugKey => 'DEBUG';
   bool get debug => env[debugKey] == 'true';
+
   set debug(bool _debug) => env[debugKey] = '$_debug';
 
   String get logfileKey => 'LOG_FILE';
@@ -73,7 +74,7 @@ class Environment {
   String get authProvider => env[authProviderKey];
   set authProvider(String authProvider) => env[authProviderKey] = authProvider;
 
-  /// These two environment variables are nomally set by the dockerfile
+  /// These environments variables are nomally set by the dockerfile
   /// We have these here for testing purposes only
   @visibleForTesting
   String get authProviderTokenKey => 'AUTH_PROVIDER_TOKEN';
@@ -82,6 +83,14 @@ class Environment {
   @visibleForTesting
   set authProviderToken(String authProviderToken) =>
       env[authProviderTokenKey] = authProviderToken;
+
+  @visibleForTesting
+  String get authProviderUsernameKey => 'AUTH_PROVIDER_USERNAME';
+  @visibleForTesting
+  String get authProviderUsername => env[authProviderTokenKey];
+  @visibleForTesting
+  set authProviderUsername(String authProviderUsername) =>
+      env[authProviderUsernameKey] = authProviderUsername;
 
   String get authProviderEmailAddressKey => 'AUTH_PROVIDER_EMAIL_ADDRESS';
 
