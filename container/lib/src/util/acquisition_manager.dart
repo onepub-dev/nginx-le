@@ -72,7 +72,9 @@ class AcquisitionManager {
   /// testing.
   static void acquistionCheck({bool reload = true}) {
     try {
-      if (!Certbot().isDeployed()) {
+      if (Certbot().isDeployed()) {
+        leaveAcquistionMode();
+      } else {
         /// Places the server into acquire mode if certificates are not deployed.
         enterAcquisitionMode();
 
