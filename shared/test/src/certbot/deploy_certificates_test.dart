@@ -12,7 +12,7 @@ void main() {
     Environment().domainWildcard = false;
     Environment().autoAcquire = true;
 
-    Certbot().deployCertificates();
+    Certbot().deployCertificate();
 
     print('deploy has returned');
   });

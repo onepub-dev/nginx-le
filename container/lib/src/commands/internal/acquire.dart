@@ -32,7 +32,7 @@ void acquire(List<String> args) {
   var authProvider = AuthProviders().getByName(Environment().authProvider);
   authProvider.acquire();
 
-  if (Certbot().deployCertificates()) {
+  if (Certbot().deployCertificate()) {
     AcquisitionManager().leaveAcquistionMode(reload: true);
   } else {
     AcquisitionManager().enterAcquisitionMode(reload: true);

@@ -23,7 +23,7 @@ void revoke(List<String> args) {
 
   Certbot().revokeAll();
 
-  if (Certbot().deployCertificates()) {
+  if (Certbot().deployCertificate()) {
     AcquisitionManager().leaveAcquistionMode(reload: true);
   } else {
     AcquisitionManager().enterAcquisitionMode(reload: true);
