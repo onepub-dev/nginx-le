@@ -1,16 +1,44 @@
 import 'package:dcli/dcli.dart';
+import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
-import 'acquisition_manager_test.dart';
+class PossibleCert {
+  String hostname;
+  String domain;
+  bool wildcard;
+
+  PossibleCert(this.hostname, this.domain, {@required this.wildcard});
+
+  @override
+  String toString() => '$hostname.$domain wildcard: $wildcard';
+}
 
 class MockCertbotPaths extends Mock implements CertbotPaths {
+  String hostname;
+  String domain;
+  String tld;
+  bool wildcard;
+  bool production;
+  String settingsFilename;
+
+  var possibleCerts = <PossibleCert>[];
+
+  MockCertbotPaths(
+      {@required this.hostname,
+      @required this.domain,
+      @required this.tld,
+      @required this.wildcard,
+      @required this.settingsFilename,
+      @required this.possibleCerts,
+      this.production = false});
   void wire() {
+    throwOnMissingStub(this); // , (invocation) => buildException(invocation));
     Environment().certbotRootPath = _mockPath('/etc/letsencrypt');
 
     _wirePaths();
-    _wireEnvironment();
+    _wireEnvironment(settingsFilename);
 
     _setMock();
   }
@@ -35,25 +63,9 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
     when(WWW_PATH_OPERATING)
         .thenReturn(_mockPath(CertbotPaths().WWW_PATH_OPERATING));
 
-    var rootPathHost =
-        CertbotPaths().certificatePathRoot(hostname, domain, wildcard: false);
-
-    var rootPathWildcard =
-        CertbotPaths().certificatePathRoot(hostname, domain, wildcard: true);
-
-    var _fullChainPathHost = CertbotPaths().fullChainPath(rootPathHost);
-    var _fullChainPathWildcard = CertbotPaths().fullChainPath(rootPathWildcard);
-
-    var _privateKeyPathHost = CertbotPaths().privateKeyPath(rootPathHost);
-
-    var _privateKeyPathWildcard =
-        CertbotPaths().privateKeyPath(rootPathWildcard);
-
-    when(privateKeyPath(_mockPath(rootPathHost)))
-        .thenReturn(_mockPath(_privateKeyPathHost));
-
-    when(privateKeyPath(_mockPath(rootPathWildcard)))
-        .thenReturn(_mockPath(_privateKeyPathWildcard));
+    for (var possibleCert in possibleCerts) {
+      mockPossibleCertPath(possibleCert);
+    }
 
     when(WWW_PATH_ACQUIRE)
         .thenReturn(_mockPath(CertbotPaths().WWW_PATH_ACQUIRE));
@@ -66,6 +78,8 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
     when(FULLCHAIN_FILE).thenReturn(CertbotPaths().FULLCHAIN_FILE);
     when(CERTIFICATE_FILE).thenReturn(CertbotPaths().CERTIFICATE_FILE);
     when(PRIVATE_KEY_FILE).thenReturn(CertbotPaths().PRIVATE_KEY_FILE);
+
+    when(LOG_FILE_NAME).thenReturn(CertbotPaths().LOG_FILE_NAME);
 
     when(letsEncryptRootPath)
         .thenReturn(_mockPath(CertbotPaths().letsEncryptRootPath));
@@ -83,30 +97,17 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
         .thenReturn(_mockPath(CertbotPaths().letsEncryptLivePath));
 
     when(nginxCertPath).thenReturn(_mockPath(CertbotPaths().nginxCertPath));
-
-    when(certificatePathRoot(hostname, domain, wildcard: false))
-        .thenReturn(_mockPath(rootPathHost));
-
-    when(certificatePathRoot(hostname, domain, wildcard: true))
-        .thenReturn(_mockPath(rootPathWildcard));
-
-    when(certificatePathRoot('*', domain, wildcard: true))
-        .thenReturn(_mockPath(rootPathWildcard));
-
-    when(fullChainPath(_mockPath(rootPathHost)))
-        .thenReturn(_mockPath(_fullChainPathHost));
-
-    when(fullChainPath(_mockPath(rootPathWildcard)))
-        .thenReturn(_mockPath(_fullChainPathWildcard));
   }
 
-  void _wireEnvironment() {
-    final settingsPath = truepath('test', 'src', 'util', 'settings.yaml');
+  void _wireEnvironment(String settingFileName) {
+    final settingsPath = truepath('test', 'src', 'util', settingFileName);
     final settings = SettingsYaml.load(pathToSettings: settingsPath);
-    Environment().authProvider = 'clourdflare';
-    env[AuthProvider.AUTH_PROVIDER_TOKEN] =
+    Environment().authProvider = settings['AUTH_PROVIDER'] as String;
+    Environment().authProviderToken =
         settings[AuthProvider.AUTH_PROVIDER_TOKEN] as String;
-    env[AuthProvider.AUTH_PROVIDER_EMAIL_ADDRESS] =
+    Environment().authProviderUsername =
+        settings[AuthProvider.AUTH_PROVIDER_USERNAME] as String;
+    Environment().authProviderEmailAddress =
         settings[AuthProvider.AUTH_PROVIDER_EMAIL_ADDRESS] as String;
 
     Environment().hostname = hostname;
@@ -114,7 +115,6 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
     Environment().tld = tld;
     Environment().domainWildcard = wildcard;
 
-    Environment().authProvider = 'cloudflare';
     Environment().production = production;
   }
 
@@ -129,5 +129,47 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
 
   void _setMock() {
     CertbotPaths.setMock(this);
+  }
+
+  void mockPossibleCertPath(PossibleCert possibleCert) {
+    print('Creating mocks for: $possibleCert');
+    var rootPathHost = CertbotPaths().certificatePathRoot(
+        possibleCert.hostname, possibleCert.domain,
+        wildcard: possibleCert.wildcard);
+
+    var _fullChainPathHost = CertbotPaths().fullChainPath(rootPathHost);
+
+    var _privateKeyPathHost = CertbotPaths().privateKeyPath(rootPathHost);
+
+    // when(privateKeyPath(_mockPath(rootPathHost)))
+    //     .thenReturn(_mockPath(_privateKeyPathHost));
+
+    // when(privateKeyPath(_mockPath(rootPathWildcard)))
+    //     .thenReturn(_mockPath(_privateKeyPathWildcard));
+
+    // when(certificatePathRoot(hostname, domain, wildcard: false))
+    //     .thenReturn(_mockPath(rootPathHost));
+
+    // when(certificatePathRoot(hostname, domain, wildcard: true))
+    //     .thenReturn(_mockPath(rootPathWildcard));
+
+    // when(certificatePathRoot('*', domain, wildcard: true))
+    //     .thenReturn(_mockPath(rootPathWildcard));
+
+    // when(fullChainPath(_mockPath(rootPathHost)))
+    //     .thenReturn(_mockPath(_fullChainPathHost));
+
+    // when(fullChainPath(_mockPath(rootPathWildcard)))
+    //     .thenReturn(_mockPath(_fullChainPathWildcard));
+
+    when(privateKeyPath(_mockPath(rootPathHost)))
+        .thenReturn(_mockPath(_privateKeyPathHost));
+
+    when(certificatePathRoot(possibleCert.hostname, possibleCert.domain,
+            wildcard: possibleCert.wildcard))
+        .thenReturn(_mockPath(rootPathHost));
+
+    when(fullChainPath(_mockPath(rootPathHost)))
+        .thenReturn(_mockPath(_fullChainPathHost));
   }
 }

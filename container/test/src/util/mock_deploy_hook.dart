@@ -8,7 +8,15 @@ import 'mock_cerbot_paths.dart';
 /// Used by unit tests. This code runs the same logic as deploy_hook
 /// but mocks the paths to /tmp.
 void main() {
-  var paths = MockCertbotPaths();
+  var paths = MockCertbotPaths(
+      hostname: 'auditor',
+      domain: 'noojee.com.au',
+      wildcard: false,
+      tld: 'com.au',
+      settingsFilename: 'cloudflare.yaml',
+      possibleCerts: [
+        PossibleCert('auditor', 'noojee.com.au', wildcard: false)
+      ]);
   paths.wire();
 
   /// /tmp/etc/letsencrypt/config/live/auditor.noojee.com.au
