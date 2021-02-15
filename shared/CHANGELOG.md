@@ -1,3 +1,7 @@
+# 5.0.64
+Upgraded packages as part of release process
+Moved the nginx reload logic from the deploy command to the enter/leave acquisition mode as the mode is where we change the symlinks that actually affect whether we need an nginx reload.
+
 # 5.0.63
 Added more unit testing combinations.
 Added count of revoked certificates to help with unit testing.
