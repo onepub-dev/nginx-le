@@ -1,3 +1,7 @@
+# 5.0.65
+Created a find method on Certificate to find a certificate that matches and then changed revoke to work against the matching certificate. This is safer than what revoke was doing which was to guess the path. The wasIssuedFor command now checks that production/staging type of the certificate matches.
+renamed method.
+
 # 5.0.64
 Upgraded packages as part of release process
 Moved the nginx reload logic from the deploy command to the enter/leave acquisition mode as the mode is where we change the symlinks that actually affect whether we need an nginx reload.
