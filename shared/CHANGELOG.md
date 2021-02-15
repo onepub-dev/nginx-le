@@ -1,3 +1,6 @@
+# 5.0.66
+Added revoke all so the renew doesn't have to deal with odd certificates lying around.
+
 # 5.0.65
 Created a find method on Certificate to find a certificate that matches and then changed revoke to work against the matching certificate. This is safer than what revoke was doing which was to guess the path. The wasIssuedFor command now checks that production/staging type of the certificate matches.
 renamed method.
