@@ -93,9 +93,14 @@ class AcquisitionManager {
             Settings().setVerbose(enabled: Environment().debug);
             var authProvider =
                 AuthProviders().getByName(Environment().authProvider);
+            if (authProvider == null) {
+              throw CertbotException(
+                  'No valid auth provider was found for ${Environment().authProvider}. Check ${Environment().authProviderKey}');
+            }
 
             /// Acquire a new certificate
-            print(green('Acquiring a new certificate.'));
+            print(green(
+                'Acquiring a new certificate using ${authProvider.name}.'));
             authProvider.acquire();
 
             print('Trying to deploy acquired certificate');
