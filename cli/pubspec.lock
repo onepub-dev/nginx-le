@@ -126,7 +126,7 @@ packages:
       name: dcli
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.41.13"
+    version: "0.41.16"
   encrypt:
     dependency: "direct main"
     description:
@@ -301,7 +301,7 @@ packages:
       name: nginx_le_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.66"
+    version: "5.0.67"
   node_interop:
     dependency: transitive
     description:
@@ -371,7 +371,7 @@ packages:
       name: posix
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.3.2"
+    version: "1.3.4"
   pub_release:
     dependency: "direct main"
     description:
