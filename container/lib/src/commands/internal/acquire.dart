@@ -29,6 +29,12 @@ void acquire(List<String> args) {
   /// if auto acquisition has been blocked a manual call to acquire will clear the flag.
   Certbot().clearBlockFlag;
 
+  Certbot().deleteInvalidCertificates(
+      hostname: Environment().hostname,
+      domain: Environment().domain,
+      wildcard: Environment().domainWildcard,
+      production: Environment().production);
+
   var authProvider = AuthProviders().getByName(Environment().authProvider);
   authProvider.acquire();
 
