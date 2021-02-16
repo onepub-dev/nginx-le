@@ -6,7 +6,8 @@ import 'package:nginx_le_shared/src/util/env_var.dart';
 import '../../../../nginx_le_shared.dart';
 
 class CloudFlareProvider extends GenericAuthProvider {
-  final _settings = join('/tmp', 'cloudflare', 'settings.ini');
+  final _settings =
+      join('/etc', 'letsencrypt', 'nj-cloudflare', 'settings.ini');
 
   @override
   String get name => 'cloudflare';
