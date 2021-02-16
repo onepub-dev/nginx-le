@@ -1,3 +1,9 @@
+# 5.0.67
+Upgraded packages as part of release process
+updated tests for switching from staging to production.
+Added logic to the acquire command to delete invalid certificates. If users changes from staging to production this is needed as certbot can't tell the difference.
+Added logic to the service to delete any invalid certificates on startup
+
 # 5.0.66
 Added revoke all so the renew doesn't have to deal with odd certificates lying around.
 
