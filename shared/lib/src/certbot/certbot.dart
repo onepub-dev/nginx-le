@@ -111,7 +111,7 @@ class Certbot {
           wildcard: wildcard,
           production: production)) {
         print(
-            'Found certificate that does not match the required settings. host: $hostname domain: $domain wildard: $wildcard production: $production. Revoking certificate.');
+            'Found certificate that does not match the required settings. host: $hostname domain: $domain wildard: $wildcard production: $production. Deleting certificate.');
 
         certificate.delete();
         count++;
@@ -121,7 +121,7 @@ class Certbot {
       if (certificate.hasExpired(
           asAt: DateTime.now().subtract(Duration(days: 90)))) {
         print(
-            'Found certificate that expired more than 90 days ago. host: $hostname domain: $domain wildard: $wildcard production: $production. Revoking certificate.');
+            'Found certificate that expired more than 90 days ago. host: $hostname domain: $domain wildard: $wildcard production: $production. Deleting certificate.');
 
         certificate.delete();
         count++;

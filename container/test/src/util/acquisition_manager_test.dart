@@ -130,6 +130,7 @@ void main() {
 
   /// this should be run infrequently as we will hit the production certbot rate limiter.
   test('test switch from staging to production cloudflare ...', () async {
+    Certbot().revokeAll();
     _acquire(
         hostname: 'robtest',
         domain: 'noojee.org',
@@ -140,6 +141,24 @@ void main() {
         production: false,
         revoke: false);
 
+    var cert = Certificate.find(
+        hostname: 'robtest',
+        domain: 'noojee.org',
+        wildcard: false,
+        production: false);
+
+    expect(cert, equals(isNotNull));
+    expect(cert.hostname, equals('robtest'));
+    expect(cert.domain, equals('noojee.org'));
+    expect(cert.wildcard, equals(false));
+    expect(cert.production, equals(false));
+
+    Certbot().deleteInvalidCertificates(
+        hostname: 'robtest',
+        domain: 'noojee.org',
+        wildcard: false,
+        production: true);
+
     _acquire(
         hostname: 'robtest',
         domain: 'noojee.org',
@@ -147,7 +166,21 @@ void main() {
         tld: 'org',
         emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'namecheap.yaml',
+        production: true,
+        revoke: false);
+
+    cert = Certificate.find(
+        hostname: 'robtest',
+        domain: 'noojee.org',
+        wildcard: false,
         production: true);
+
+    expect(cert, equals(isNotNull));
+
+    expect(cert.hostname, equals('robtest'));
+    expect(cert.domain, equals('noojee.org'));
+    expect(cert.wildcard, equals(false));
+    expect(cert.production, equals(true));
   }, skip: true);
 
   test('acquire certificate cloudflare wildcard ...', () async {
