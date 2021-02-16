@@ -1,3 +1,6 @@
+# 5.0.68
+Updated path to cloudflare settings.ini as it needs to be persistant.
+
 # 5.0.67
 Upgraded packages as part of release process
 updated tests for switching from staging to production.
