@@ -26,6 +26,11 @@ class Certificate {
   String privateKeyPath;
 
   void parseName(String line) {
+    /// Handle names of the form: billing.noojee.com.au-0001
+    if (line.contains('-')) {
+      line = line.split('-')[0];
+    }
+
     var parts = line.split(':');
     fqdn = parts[1].trim();
   }
