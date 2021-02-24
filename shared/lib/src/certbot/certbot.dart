@@ -77,7 +77,7 @@ class Certbot {
     var foundValidCertificate = false;
 
     for (var certificate in certificates()) {
-      print('Certificate found: ${certificate}');
+      print('Certificate found:\n ${certificate}');
       if (certificate.wasIssuedFor(
           hostname: hostname,
           domain: domain,
