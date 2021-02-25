@@ -48,7 +48,6 @@ void main() {
         domain: 'noojee.com.au',
         tld: 'com.au',
         wildcard: false,
-        emailAddress: 'support@noojeeit.com.au',
         settingsFilename: 'cloudflare.yaml');
 
     Certbot().clearBlockFlag();
@@ -68,7 +67,6 @@ void main() {
         domain: 'noojee.com.au',
         tld: 'com.au',
         wildcard: false,
-        emailAddress: 'support@noojeeit.com.au',
         settingsFilename: 'cloudflare.yaml');
     Certbot().revokeAll();
 
@@ -77,7 +75,6 @@ void main() {
         domain: 'noojee.com.au',
         tld: 'com.au',
         wildcard: true,
-        emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'cloudflare.yaml',
         revoke: false);
 
@@ -86,7 +83,6 @@ void main() {
         domain: 'noojee.org',
         tld: 'org',
         wildcard: false,
-        emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'namecheap.yaml',
         revoke: false);
 
@@ -107,7 +103,6 @@ void main() {
         domain: 'noojee.com.au',
         wildcard: false,
         tld: 'com.au',
-        emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'cloudflare.yaml',
         revoke: false);
 
@@ -124,7 +119,6 @@ void main() {
         domain: 'noojee.com.au',
         wildcard: false,
         tld: 'com.au',
-        emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'cloudflare.yaml');
   });
 
@@ -136,7 +130,7 @@ void main() {
         domain: 'noojee.org',
         wildcard: false,
         tld: 'org',
-        emailAddress: 'support@noojeeit.com.au',
+        //emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'namecheap.yaml',
         production: false,
         revoke: false);
@@ -164,7 +158,7 @@ void main() {
         domain: 'noojee.org',
         wildcard: false,
         tld: 'org',
-        emailAddress: 'support@noojeeit.com.au',
+        // emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'namecheap.yaml',
         production: true,
         revoke: false);
@@ -181,7 +175,7 @@ void main() {
     expect(cert.domain, equals('noojee.org'));
     expect(cert.wildcard, equals(false));
     expect(cert.production, equals(true));
-  }, skip: true);
+  }, skip: false);
 
   test('acquire certificate cloudflare wildcard ...', () async {
     _acquire(
@@ -189,7 +183,6 @@ void main() {
         domain: 'noojee.com.au',
         wildcard: true,
         tld: 'com.au',
-        emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'cloudflare.yaml');
   });
 
@@ -199,7 +192,6 @@ void main() {
         domain: 'noojee.com.au',
         wildcard: true,
         tld: 'com.au',
-        emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'cloudflare.yaml');
   });
 
@@ -209,7 +201,6 @@ void main() {
         domain: 'noojee.org',
         wildcard: false,
         tld: 'org',
-        emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'namecheap.yaml');
   });
 
@@ -219,7 +210,6 @@ void main() {
         domain: 'noojee.org',
         wildcard: true,
         tld: 'org',
-        emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'namecheap.yaml');
   });
 
@@ -229,7 +219,6 @@ void main() {
         domain: 'noojee.org',
         wildcard: true,
         tld: 'org',
-        emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'namecheap.yaml');
   });
 
@@ -240,7 +229,6 @@ void main() {
         domain: 'noojee.com.au',
         tld: 'com.au',
         wildcard: true,
-        emailAddress: 'support@noojeeit.com.au',
         settingsFilename: 'cloudflare.yaml');
 
     Certbot().clearBlockFlag();
@@ -319,20 +307,18 @@ void main() {
 }
 
 void _acquire(
-    {String hostname,
-    String domain,
-    String tld,
-    bool wildcard,
-    String emailAddress,
+    {@required String hostname,
+    @required String domain,
+    @required String tld,
+    bool wildcard = false,
     bool production = false,
-    String settingFilename,
+    @required String settingFilename,
     bool revoke = true}) {
   setup(
       hostname: hostname,
       domain: domain,
       wildcard: wildcard,
       tld: tld,
-      emailAddress: emailAddress,
       production: production,
       settingsFilename: settingFilename);
 
@@ -387,7 +373,6 @@ void setup(
     @required bool wildcard,
     @required String settingsFilename,
     bool production = false,
-    String emailAddress,
     String tld}) {
   var paths = MockCertbotPaths(
       hostname: hostname,
