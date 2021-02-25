@@ -55,6 +55,8 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
       createDir(_mockPath(CertbotPaths().nginxCertPath), recursive: true);
     }
 
+    when(CLOUD_FLARE_SETTINGS)
+        .thenReturn(_mockPath(CertbotPaths().CLOUD_FLARE_SETTINGS));
     when(WWW_PATH_ACQUIRE)
         .thenReturn(_mockPath(CertbotPaths().WWW_PATH_ACQUIRE));
 

@@ -6,9 +6,6 @@ import 'package:nginx_le_shared/src/util/env_var.dart';
 import '../../../../nginx_le_shared.dart';
 
 class CloudFlareProvider extends GenericAuthProvider {
-  final _settings =
-      join('/etc', 'letsencrypt', 'nj-cloudflare', 'settings.ini');
-
   @override
   String get name => 'cloudflare';
   @override
@@ -83,7 +80,7 @@ class CloudFlareProvider extends GenericAuthProvider {
     NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
       var certbot = 'certbot certonly '
           ' --dns-cloudflare '
-          ' --dns-cloudflare-credentials $_settings'
+          ' --dns-cloudflare-credentials ${CertbotPaths().CLOUD_FLARE_SETTINGS}'
           ' -m $emailaddress '
           ' -d $hostname.$domain '
           ' --agree-tos '
@@ -134,18 +131,18 @@ class CloudFlareProvider extends GenericAuthProvider {
   /// settings.
   /// This method creates that file.
   void _createSettings() {
-    _createDir(dirname(_settings));
+    _createDir(dirname(CertbotPaths().CLOUD_FLARE_SETTINGS));
 
     // Only works with a cloudflare global api token.
-    _settings.write('dns_cloudflare_api_key=${envToken}');
-    _settings.append('dns_cloudflare_email=${envEmailAddress}');
+    CertbotPaths().CLOUD_FLARE_SETTINGS.write('dns_cloudflare_api_key=${envToken}');
+    CertbotPaths().CLOUD_FLARE_SETTINGS.append('dns_cloudflare_email=${envEmailAddress}');
 
-    'chmod 600 $_settings'.run;
+    'chmod 600 ${CertbotPaths().CLOUD_FLARE_SETTINGS}'.run;
 
     var logfile = Environment().logfile;
 
     logfile.append('Created certbot settings.ini: ');
-    logfile.append(read(_settings).toList().join('\n'));
+    logfile.append(read(CertbotPaths().CLOUD_FLARE_SETTINGS).toList().join('\n'));
   }
 
   // void deleteSettings() {

@@ -54,6 +54,9 @@ class CertbotPaths {
   /// we DO NOT have a certificate and are running in acquistion mode.
   final WWW_PATH_ACQUIRE = '/etc/nginx/acquire';
 
+  final CLOUD_FLARE_SETTINGS =
+      join('/etc', 'letsencrypt', 'nj-cloudflare', 'settings.ini');
+
   factory CertbotPaths() => _self;
 
   CertbotPaths._internal();
