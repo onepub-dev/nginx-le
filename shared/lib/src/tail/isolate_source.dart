@@ -145,6 +145,8 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
   void initIsolate() async {
     receiveFromIsolatePort = ReceivePort();
 
+    var forwardCount = 0;
+
     ///
     /// Create the listner to recieve data from the isolate
     /// listen to data coming back from the isolate.
@@ -159,7 +161,7 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
       }
 
       if (data is StoppedMessage) {
-        Settings().verbose('Recieved StoppedMessage killing isolate');
+        Settings().verbose('Received StoppedMessage killing isolate');
         receiveFromIsolatePort.close();
         _isolate.kill();
         _controller.close();
@@ -176,6 +178,7 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
       } else {
         /// We recieve the stream of data from the isolate here.
         /// So now send it up to our master.
+        Settings().verbose('forwarding: ${++forwardCount} $data');
         _controller.sink.add(data as R);
       }
     }, onDone: (() => Settings().verbose('IsolatePort done')));
@@ -193,7 +196,7 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
   /// static methods.
   static void spawnEntryPoint<R, ARG1, ARG2>(SendPort sendToMainPort) {
     /// we are in a different isolate so the settings don't transfer across.
-    Settings().setVerbose(enabled: false);
+    Settings().setVerbose(enabled: true);
     var recieveFromMainPort = ReceivePort();
 
     /// Immediately Send our send port to the main thread so
@@ -206,10 +209,13 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
         if (message.stopFunction != null) {
           await message.stopFunction();
         }
+        Settings().verbose('sending StoppedMessage');
         sendToMainPort.send(StoppedMessage());
         return;
       }
 
+      /// Run the passed function processing its output.
+      var sentCount = 0;
       try {
         final currentMessage =
             message as StartMessage<String, String, int, bool>;
@@ -221,6 +227,7 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
         Settings().verbose(
             'Isolate recieved Start Message $argument1 $argument2 $argument3');
         startFunction(argument1, argument2, argument3).listen((dynamic event) {
+          Settings().verbose('Sending ${++sentCount} $event');
           sendToMainPort.send(event);
         }).onDone(() {
           Settings().verbose('onDone returned by controller');
@@ -233,7 +240,7 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
           sendToMainPort.send(Result<R>.error(error));
         } catch (error) {
           sendToMainPort.send(Result<R>.error(
-              'cant send error with too big stackTrace, error is : ${error.toString()}'));
+              "can't send error with big stackTrace, error is : ${error.toString()}"));
         }
       }
     });
