@@ -38,7 +38,7 @@ abstract class GenericAuthProvider extends AuthProvider {
     var wildcard = Environment().domainWildcard;
 
     var production = Environment().production;
-    var emailaddress = Environment().emailaddress;
+    var emailaddress = Environment().authProviderEmailAddress;
 
     var auth_hook_path = Environment().certbotAuthHookPath;
     var cleanup_hook_path = Environment().certbotCleanupHookPath;
