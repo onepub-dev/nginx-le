@@ -1,3 +1,16 @@
+# 5.0.69
+Upgraded packages as part of release process
+Upgraded packages as part of release process
+test is no longer needed.
+increased logging.
+Changed test to find an existing container.
+Added logic so test completes.
+now pulling the email address from the settings file.
+Moved the cloudflare paths so we can mock them.
+Fixed bug where the generic auth provider wasn't picking up the email address from the correct environment var.
+Improved log formatting.
+Fixed a bug parsing the certificate name when it contains a -000n
+
 # 5.0.68
 Updated path to cloudflare settings.ini as it needs to be persistant.
 

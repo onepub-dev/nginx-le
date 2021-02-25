@@ -1,5 +1,5 @@
 name: nginx_le_shared
-version: 5.0.68
+version: 5.0.69
 homepage: https://github.com/bsutton/nginx-le
 description: shared library used by Nginx-LE
 environment: 

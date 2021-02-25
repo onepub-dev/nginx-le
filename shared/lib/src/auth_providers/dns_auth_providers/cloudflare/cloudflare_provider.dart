@@ -134,15 +134,20 @@ class CloudFlareProvider extends GenericAuthProvider {
     _createDir(dirname(CertbotPaths().CLOUD_FLARE_SETTINGS));
 
     // Only works with a cloudflare global api token.
-    CertbotPaths().CLOUD_FLARE_SETTINGS.write('dns_cloudflare_api_key=${envToken}');
-    CertbotPaths().CLOUD_FLARE_SETTINGS.append('dns_cloudflare_email=${envEmailAddress}');
+    CertbotPaths()
+        .CLOUD_FLARE_SETTINGS
+        .write('dns_cloudflare_api_key=${envToken}');
+    CertbotPaths()
+        .CLOUD_FLARE_SETTINGS
+        .append('dns_cloudflare_email=${envEmailAddress}');
 
     'chmod 600 ${CertbotPaths().CLOUD_FLARE_SETTINGS}'.run;
 
     var logfile = Environment().logfile;
 
     logfile.append('Created certbot settings.ini: ');
-    logfile.append(read(CertbotPaths().CLOUD_FLARE_SETTINGS).toList().join('\n'));
+    logfile
+        .append(read(CertbotPaths().CLOUD_FLARE_SETTINGS).toList().join('\n'));
   }
 
   // void deleteSettings() {
