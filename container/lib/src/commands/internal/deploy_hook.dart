@@ -11,6 +11,6 @@ void deploy_hook() {
       'deploy_hook: renewedLinagePath: ${Environment().certbotDeployHookRenewedLineagePath}');
 
   Certbot().deployCertificatesDirect(
-    Environment().certbotDeployHookRenewedLineagePath,
+    Environment().certbotDeployHookRenewedLineagePath!,
   );
 }

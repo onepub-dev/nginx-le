@@ -1,5 +1,5 @@
 import 'package:dcli/dcli.dart';
-import 'package:isolate/isolate_runner.dart';
+import 'package:isolates/isolate_runner.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 const CONFIG_FILE = '/etc/nginx/logrotate.conf';
@@ -9,7 +9,7 @@ const CONFIG_FILE = '/etc/nginx/logrotate.conf';
 ////////////////////////////////////////////
 
 class LogManager {
-  IsolateRunner isoLogRotate;
+  late IsolateRunner isoLogRotate;
 
   void start({bool debug = false}) {
     print('Starting the logrotate  scheduler.');

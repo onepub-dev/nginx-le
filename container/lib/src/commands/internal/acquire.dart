@@ -30,12 +30,12 @@ void acquire(List<String> args) {
   Certbot().clearBlockFlag;
 
   Certbot().deleteInvalidCertificates(
-      hostname: Environment().hostname,
-      domain: Environment().domain,
+      hostname: Environment().hostname!,
+      domain: Environment().domain!,
       wildcard: Environment().domainWildcard,
       production: Environment().production);
 
-  var authProvider = AuthProviders().getByName(Environment().authProvider);
+  var authProvider = AuthProviders().getByName(Environment().authProvider!)!;
   authProvider.acquire();
 
   if (Certbot().deployCertificate()) {

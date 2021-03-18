@@ -1,6 +1,5 @@
 @Timeout(Duration(minutes: 20))
 import 'package:dcli/dcli.dart' hide equals;
-import 'package:meta/meta.dart';
 
 import 'package:nginx_le_container/src/util/acquisition_manager.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
@@ -139,7 +138,7 @@ void main() {
         hostname: 'robtest',
         domain: 'noojee.org',
         wildcard: false,
-        production: false);
+        production: false)!;
 
     expect(cert, equals(isNotNull));
     expect(cert.hostname, equals('robtest'));
@@ -167,7 +166,7 @@ void main() {
         hostname: 'robtest',
         domain: 'noojee.org',
         wildcard: false,
-        production: true);
+        production: true)!;
 
     expect(cert, equals(isNotNull));
 
@@ -307,12 +306,12 @@ void main() {
 }
 
 void _acquire(
-    {@required String hostname,
-    @required String domain,
-    @required String tld,
+    {required String hostname,
+    required String domain,
+    required String tld,
     bool wildcard = false,
     bool production = false,
-    @required String settingFilename,
+    required String settingFilename,
     bool revoke = true}) {
   setup(
       hostname: hostname,
@@ -332,7 +331,7 @@ void _acquire(
         production: production);
 
     for (var certificate in Certbot().certificates()) {
-      certificate.revoke();
+      certificate!.revoke();
     }
     expect(Certbot().hasValidCertificate(), equals(false));
     expect(Certbot().isDeployed(), equals(false));
@@ -359,7 +358,7 @@ void _acquire(
         hostname: hostname,
         domain: domain,
         wildcard: wildcard,
-        production: production);
+        production: production)!;
 
     expect(cert, equals(isNotNull));
 
@@ -368,12 +367,12 @@ void _acquire(
 }
 
 void setup(
-    {@required String hostname,
-    @required String domain,
-    @required bool wildcard,
-    @required String settingsFilename,
+    {required String hostname,
+    required String domain,
+    required bool wildcard,
+    required String settingsFilename,
     bool production = false,
-    String tld}) {
+    String? tld}) {
   var paths = MockCertbotPaths(
       hostname: hostname,
       domain: domain,

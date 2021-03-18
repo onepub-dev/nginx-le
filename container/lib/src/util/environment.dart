@@ -17,7 +17,7 @@ class IsolateEnvironment {
         JsonDecoder().convert(environment) as Map<dynamic, dynamic>));
   }
 
-  String _toEncodable(Object object) {
+  String _toEncodable(Object? object) {
     return object.toString();
   }
 }

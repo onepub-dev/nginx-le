@@ -56,13 +56,13 @@ void logs(List<String> args) {
 
   Settings().setVerbose(enabled: debug);
 
-  var follow = results['follow'] as bool;
+  var follow = results['follow'] as bool?;
   var lines = results['lines'] as String;
   var certbot = results['certbot'] as bool;
   var access = results['access'] as bool;
   var error = results['error'] as bool;
 
-  var lineCount = 0;
+  int? lineCount = 0;
   if ((lineCount = int.tryParse(lines)) == null) {
     printerr("'lines' must by an integer: found $lines");
     showUsage(argParser);
@@ -81,19 +81,19 @@ void logs(List<String> args) {
 
   try {
     if (certbot && (usedefaults || results.wasParsed('certbot'))) {
-      group.add(Tail(Certbot().logfile, lineCount, follow: follow)
+      group.add(Tail(Certbot().logfile, lineCount!, follow: follow!)
           .start()
           .map((line) => 'certbot: $line'));
     }
 
     if (access && (usedefaults || results.wasParsed('access'))) {
-      group.add(Tail(Nginx.accesslogpath, lineCount, follow: follow)
+      group.add(Tail(Nginx.accesslogpath, lineCount!, follow: follow!)
           .start()
           .map((line) => 'access: $line'));
     }
 
     if (error && (usedefaults || results.wasParsed('error'))) {
-      group.add(Tail(Nginx.errorlogpath, lineCount, follow: follow)
+      group.add(Tail(Nginx.errorlogpath, lineCount!, follow: follow!)
           .start()
           .map((line) => 'error: $line'));
     }

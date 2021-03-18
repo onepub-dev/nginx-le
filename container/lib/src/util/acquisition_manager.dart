@@ -1,6 +1,5 @@
 import 'package:dcli/dcli.dart';
-import 'package:isolate/isolate_runner.dart';
-import 'package:meta/meta.dart';
+import 'package:isolates/isolate_runner.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /////////////////////////////////////////////
@@ -8,7 +7,7 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 /////////////////////////////////////////////
 ///
 class AcquisitionManager {
-  static AcquisitionManager _self;
+  static AcquisitionManager? _self;
 
   factory AcquisitionManager() => _self ??= AcquisitionManager._internal();
 
@@ -48,7 +47,7 @@ class AcquisitionManager {
     }
   }
 
-  void enterAcquisitionMode({bool show = false, @required bool reload}) {
+  void enterAcquisitionMode({bool show = false, required bool reload}) {
     /// symlink in the http configs which only permit certbot access
     final _created = _createSymlink(CertbotPaths().WWW_PATH_ACQUIRE);
 
@@ -67,7 +66,7 @@ class AcquisitionManager {
     }
   }
 
-  void leaveAcquistionMode({bool show = false, @required bool reload}) {
+  void leaveAcquistionMode({bool show = false, required bool reload}) {
     final _created = _createSymlink(CertbotPaths().WWW_PATH_OPERATING);
 
     if (inAcquisitionMode) {
@@ -128,7 +127,7 @@ class AcquisitionManager {
           } else {
             Settings().setVerbose(enabled: Environment().debug);
             var authProvider =
-                AuthProviders().getByName(Environment().authProvider);
+                AuthProviders().getByName(Environment().authProvider!);
             if (authProvider == null) {
               throw CertbotException(
                   'No valid auth provider was found for ${Environment().authProvider}. Check ${Environment().authProviderKey}');

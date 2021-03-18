@@ -46,9 +46,9 @@ void _start() {
 
   dumpEnvironmentVariables();
 
-  var hostname = Environment().hostname;
+  var hostname = Environment().hostname!;
   Settings().verbose('${Environment().hostnameKey}=$hostname');
-  var domain = Environment().domain;
+  var domain = Environment().domain!;
   Settings().verbose('${Environment().domainKey}=$domain');
   var tld = Environment().tld;
   Settings().verbose('${Environment().tldKey}=$tld');
@@ -129,7 +129,13 @@ void dumpEnvironmentVariables() {
   printEnv(Environment().certbotIgnoreBlockKey,
       Environment().certbotIgnoreBlock.toString());
 
-  var authProvider = AuthProviders().getByName(Environment().authProvider);
+  if (Environment().authProvider == null) {
+    printerr(red(
+        'No Auth Provider has been set. Check ${Environment().authProviderKey} as been set'));
+    exit(1);
+  }
+
+  var authProvider = AuthProviders().getByName(Environment().authProvider!);
   if (authProvider == null) {
     printerr(red(
         'No Auth Provider has been set. Check ${Environment().authProviderKey} as been set'));
@@ -144,6 +150,6 @@ void dumpEnvironmentVariables() {
       Environment().nginxCertRootPathOverwrite);
 }
 
-void printEnv(String key, String value) {
+void printEnv(String key, String? value) {
   print('ENV: $key=$value');
 }

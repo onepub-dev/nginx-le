@@ -3,23 +3,28 @@ version: 5.0.69
 description: Commands that live in the nginx-le docker container.
 repository: https://github.com/bsutton/nginx-le
 environment: 
-  sdk: '>=2.7.0 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
 dependencies: 
   async: ^2.4.2
-  args: ^1.5.2
+  args: ^2.0.0
   path: ^1.6.4
-  cron: ^0.2.3
-  dcli: ^0.41.0
-  xml: ^4.2.0
-  http: ^0.12.1
-  intl: ^0.16.1
-  isolate: ^2.0.3
+  cron: ^0.3.0
+  dcli: ^0.51.5
+  xml: ^5.0.2
+  http: ^0.13.0
+  intl: ^0.17.0
+  isolates: ^3.0.3+7
   meta: ^1.0.0
   pedantic: ^1.0.0
-  public_suffix: ^1.0.0
-  uuid: ^2.0.4
+  public_suffix: ^2.0.1
+  uuid: ^3.0.1
   nginx_le_shared: ^5.0.0
 dev_dependencies: 
-  mockito: ^4.1.4
+  mockito: ^5.0.2
   test: ^1.0.0
-  settings_yaml: ^2.0.0
+  settings_yaml: ^3.0.1
+
+dependency_overrides:
+  nginx_le_shared:
+    path:
+      ../shared

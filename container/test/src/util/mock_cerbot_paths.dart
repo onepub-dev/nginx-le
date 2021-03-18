@@ -1,5 +1,4 @@
 import 'package:dcli/dcli.dart';
-import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:settings_yaml/settings_yaml.dart';
@@ -9,7 +8,7 @@ class PossibleCert {
   String domain;
   bool wildcard;
 
-  PossibleCert(this.hostname, this.domain, {@required this.wildcard});
+  PossibleCert(this.hostname, this.domain, {required this.wildcard});
 
   @override
   String toString() => '$hostname.$domain wildcard: $wildcard';
@@ -18,7 +17,7 @@ class PossibleCert {
 class MockCertbotPaths extends Mock implements CertbotPaths {
   String hostname;
   String domain;
-  String tld;
+  String? tld;
   bool wildcard;
   bool production;
   String settingsFilename;
@@ -26,12 +25,12 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
   var possibleCerts = <PossibleCert>[];
 
   MockCertbotPaths(
-      {@required this.hostname,
-      @required this.domain,
-      @required this.tld,
-      @required this.wildcard,
-      @required this.settingsFilename,
-      @required this.possibleCerts,
+      {required this.hostname,
+      required this.domain,
+      required this.tld,
+      required this.wildcard,
+      required this.settingsFilename,
+      required this.possibleCerts,
       this.production = false});
   void wire() {
     throwOnMissingStub(this); // , (invocation) => buildException(invocation));
@@ -104,13 +103,13 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
   void _wireEnvironment(String settingFileName) {
     final settingsPath = truepath('test', 'src', 'util', settingFileName);
     final settings = SettingsYaml.load(pathToSettings: settingsPath);
-    Environment().authProvider = settings['AUTH_PROVIDER'] as String;
+    Environment().authProvider = settings['AUTH_PROVIDER'] as String?;
     Environment().authProviderToken =
-        settings[AuthProvider.AUTH_PROVIDER_TOKEN] as String;
+        settings[AuthProvider.AUTH_PROVIDER_TOKEN] as String?;
     Environment().authProviderUsername =
-        settings[AuthProvider.AUTH_PROVIDER_USERNAME] as String;
+        settings[AuthProvider.AUTH_PROVIDER_USERNAME] as String?;
     Environment().authProviderEmailAddress =
-        settings[AuthProvider.AUTH_PROVIDER_EMAIL_ADDRESS] as String;
+        settings[AuthProvider.AUTH_PROVIDER_EMAIL_ADDRESS] as String?;
 
     Environment().hostname = hostname;
     Environment().domain = domain;
