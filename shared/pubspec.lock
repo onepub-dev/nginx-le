@@ -197,13 +197,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
-  isolate:
+  isolates:
     dependency: "direct main"
     description:
-      name: isolate
+      name: isolates
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.3"
+    version: "3.0.3+7"
   js:
     dependency: transitive
     description:

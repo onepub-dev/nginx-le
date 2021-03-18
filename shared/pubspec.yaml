@@ -13,7 +13,7 @@ dependencies:
   instant: ^0.4.1
   http: ^0.13.0
   intl: ^0.17.0
-  isolate: ^2.0.3
+  isolates: ^3.0.3+7
   mailer: ^4.0.0
   meta: ^1.0.0
   pedantic: ^1.0.0
