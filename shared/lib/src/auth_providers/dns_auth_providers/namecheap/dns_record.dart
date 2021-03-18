@@ -1,35 +1,34 @@
-import 'package:meta/meta.dart';
 import 'package:xml/xml.dart';
 
 class DNSRecord {
-  String name;
-  String type;
-  String address;
-  String mxPref;
-  String ttl;
-  String hostId;
+  String? name;
+  String? type;
+  String? address;
+  String? mxPref;
+  String? ttl;
+  String? hostId;
   bool isActive;
   bool isDDNSEnabled;
 
   DNSRecord(
-      {@required this.name,
-      @required this.type,
-      @required this.address,
-      @required this.mxPref,
-      @required this.ttl})
+      {required this.name,
+      required this.type,
+      required this.address,
+      required this.mxPref,
+      required this.ttl})
       : isActive = true,
         isDDNSEnabled = false,
         hostId = '';
 
   DNSRecord._internal(
-      {@required this.name,
-      @required this.type,
-      @required this.address,
-      @required this.mxPref,
-      @required this.ttl,
-      @required this.hostId,
-      @required this.isActive,
-      @required this.isDDNSEnabled});
+      {required this.name,
+      required this.type,
+      required this.address,
+      required this.mxPref,
+      required this.ttl,
+      required this.hostId,
+      required this.isActive,
+      required this.isDDNSEnabled});
 
   static DNSRecord fromXmlHost(XmlNode xmlHost) {
     var hostId = xmlHost.getAttribute('HostId');
@@ -39,9 +38,9 @@ class DNSRecord {
     var mxPref = xmlHost.getAttribute('MXPref');
     var ttl = xmlHost.getAttribute('TTL');
     // ignore: unnecessary_cast
-    var isActive = xmlHost.getAttribute('IsActive') as String;
+    var isActive = xmlHost.getAttribute('IsActive') as String?;
     // ignore: unnecessary_cast
-    var isDDNSEnabled = xmlHost.getAttribute('IsDDNSEnabled') as String;
+    var isDDNSEnabled = xmlHost.getAttribute('IsDDNSEnabled') as String?;
 
     isActive ??= 'false';
     isDDNSEnabled ??= 'false';

@@ -16,7 +16,7 @@ class HTTPAuthProvider extends AuthProvider {
 
   @override
   void auth_hook(
-      {String hostname, String domain, String tld, String emailaddress}) {
+      {String? hostname, String? domain, String? tld, String? emailaddress}) {
     Certbot().log('*' * 80);
     Certbot().log('certbot_http_auth_hook started');
 
@@ -67,7 +67,7 @@ class HTTPAuthProvider extends AuthProvider {
         'acme-challenge', token);
     print('writing token to $path');
     Certbot().log('writing token to $path');
-    path.write(certbotAuthKey);
+    path.write(certbotAuthKey!);
 
     Certbot().log('certbot_http_auth_hook completed');
     Certbot().log('*' * 80);
@@ -75,7 +75,7 @@ class HTTPAuthProvider extends AuthProvider {
 
   @override
   void cleanup_hook(
-      {String hostname, String domain, String tld, String emailaddress}) {
+      {String? hostname, String? domain, String? tld, String? emailaddress}) {
     Certbot().log('*' * 80);
     Certbot().log('cert_bot_http_cleanup_hook started');
 

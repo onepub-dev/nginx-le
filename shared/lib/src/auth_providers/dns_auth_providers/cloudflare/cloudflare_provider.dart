@@ -136,14 +136,14 @@ class CloudFlareProvider extends GenericAuthProvider {
     // Only works with a cloudflare global api token.
     CertbotPaths()
         .CLOUD_FLARE_SETTINGS
-        .write('dns_cloudflare_api_key=${envToken}');
+        .write('dns_cloudflare_api_key=$envToken');
     CertbotPaths()
         .CLOUD_FLARE_SETTINGS
-        .append('dns_cloudflare_email=${envEmailAddress}');
+        .append('dns_cloudflare_email=$envEmailAddress');
 
     'chmod 600 ${CertbotPaths().CLOUD_FLARE_SETTINGS}'.run;
 
-    var logfile = Environment().logfile;
+    var logfile = Environment().logfile!;
 
     logfile.append('Created certbot settings.ini: ');
     logfile

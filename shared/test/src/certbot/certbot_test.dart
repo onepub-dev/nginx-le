@@ -32,7 +32,7 @@ void main() {
       prepareCertHooks();
 
       var authProvider =
-          AuthProviders().getByName(NameCheapAuthProvider().name);
+          AuthProviders().getByName(NameCheapAuthProvider().name)!;
       print('acquire me');
 
       print('env ${env['CERTBOT_DNS_AUTH_HOOK_PATH']}');
@@ -57,7 +57,7 @@ void main() {
         domain: 'noojee.org',
         production: false,
         wildcard: false,
-      );
+      )!;
       expect(cert, equals(isNotNull));
       cert.revoke();
 
@@ -68,7 +68,7 @@ void main() {
         domain: 'noojee.org',
         production: false,
         wildcard: false,
-      );
+      )!;
       expect(cert, equals(isNotNull));
       cert.revoke();
     }, timeout: Timeout(Duration(minutes: 5)), skip: true);
@@ -83,7 +83,7 @@ void main() {
       }
 
       var authProvider =
-          AuthProviders().getByName(NameCheapAuthProvider().name);
+          AuthProviders().getByName(NameCheapAuthProvider().name)!;
 
       print('renew');
       authProvider.promptForSettings(ConfigYaml());
@@ -98,7 +98,7 @@ void main() {
           hostname: 'slayer',
           domain: 'noojee.org',
           production: false,
-          wildcard: false);
+          wildcard: false)!;
       cert.revoke();
 
       print(orange('calling acquire'));

@@ -63,7 +63,7 @@ void certbot_http_auth_hook() {
       'acme-challenge', token);
   print('writing token to $path');
   Certbot().log('writing token to $path');
-  path.write(token);
+  path.write(token!);
 
   Certbot().log('certbot_http_auth_hook completed');
   Certbot().log('*' * 80);

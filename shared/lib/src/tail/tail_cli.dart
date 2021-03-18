@@ -19,9 +19,7 @@ class TailCliInIsolate {
 
     // await _controller.close();
 
-    if (process != null) {
-      (await process).kill();
-    }
+      process.kill();
   }
 
   /// Returns the last [lines] of [containerid]  and then
@@ -39,7 +37,7 @@ class TailCli {
 
   TailCli(this.cli);
 
-  Stream<String> start() {
+  Stream<String?> start() {
     isoStream.onStart = _dockerLog;
     isoStream.onStop = _dockerLogsStop;
 

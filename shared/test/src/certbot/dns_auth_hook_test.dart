@@ -11,7 +11,7 @@ void main() {
 
   Certbot().sendToStdout();
 
-  var provider = AuthProviders().getByName(NameCheapAuthProvider().name);
+  var provider = AuthProviders().getByName(NameCheapAuthProvider().name)!;
   provider.auth_hook();
 }
 

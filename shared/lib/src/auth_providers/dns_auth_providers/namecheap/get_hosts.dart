@@ -1,5 +1,4 @@
 import 'package:dcli/dcli.dart';
-import 'package:meta/meta.dart';
 import 'package:xml/xml.dart';
 
 import 'dns_record.dart';
@@ -10,12 +9,12 @@ var getHostsCommand = 'namecheap.domains.dns.getHosts';
 /// [domain] - the domain e.g. noojee.com
 /// [tld] - the Top Level Domain e.g. com
 List<DNSRecord> getHosts(
-    {@required String apiUser,
-    @required String apiKey,
-    @required String username,
-    @required String clientIP,
-    @required String domain,
-    @required String tld}) {
+    {required String apiUser,
+    required String apiKey,
+    required String username,
+    required String clientIP,
+    required String domain,
+    required String tld}) {
   ArgumentError.checkNotNull(domain, 'domain');
   ArgumentError.checkNotNull(tld, 'tld');
   ArgumentError.checkNotNull(apiUser, 'apiUser');
@@ -59,7 +58,7 @@ List<DNSRecord> getHosts(
   /// No errors so extract the host names.
   var xmlResult = document.findAllElements('DomainDNSGetHostsResult').first;
   for (var xmlHost in xmlResult.children) {
-    Settings().verbose('node: ${xmlHost}');
+    Settings().verbose('node: $xmlHost');
     // skip empty nodes.
     if (xmlHost.attributes.isEmpty) continue;
 

@@ -20,9 +20,7 @@ class DockerLogsInIsolate {
 
     // await _controller.close();
 
-    if (process != null) {
-      (await process).kill();
-    }
+    process.kill();
   }
 
   /// Returns the last [lines] of [containerid]  and then
@@ -48,7 +46,7 @@ class DockerLogs {
 
   DockerLogs(this.containerid, this.lines, {this.follow = false});
 
-  Stream<String> start() {
+  Stream<String?> start() {
     isoSource.onStart = _dockerLog;
     isoSource.onStop = _dockerLogsStop;
 

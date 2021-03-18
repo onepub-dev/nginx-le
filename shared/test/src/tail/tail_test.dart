@@ -62,7 +62,7 @@ void main() {
     stream.listen((line) {
       print('tail: $line');
 
-      if (line.endsWith('9')) {
+      if (line!.endsWith('9')) {
         tail.stop();
       }
     }).onDone(() {

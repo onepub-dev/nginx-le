@@ -1,14 +1,13 @@
 import 'package:cron/cron.dart';
 import 'package:dcli/dcli.dart' hide delete;
 import 'package:dcli/dcli.dart' as dcli;
-import 'package:meta/meta.dart';
 import 'package:nginx_le_shared/src/util/email.dart';
 import 'package:path/path.dart';
 
 import '../../nginx_le_shared.dart';
 
 class Certbot {
-  static Certbot _self;
+  static Certbot? _self;
 
   bool _sendToStdout = false;
   factory Certbot() => _self ??= Certbot._internal();
@@ -77,8 +76,8 @@ class Certbot {
     var foundValidCertificate = false;
 
     for (var certificate in certificates()) {
-      print('Certificate found:\n ${certificate}');
-      if (certificate.wasIssuedFor(
+      print('Certificate found:\n $certificate');
+      if (certificate!.wasIssuedFor(
           hostname: hostname,
           domain: domain,
           wildcard: wildcard,
@@ -97,15 +96,15 @@ class Certbot {
   /// revokes any certificates that are not for the current
   /// fqdn and wildcard type.
   int deleteInvalidCertificates(
-      {@required String hostname,
-      @required String domain,
-      @required bool wildcard,
-      @required bool production}) {
+      {required String hostname,
+      required String domain,
+      required bool wildcard,
+      required bool production}) {
     var count = 0;
 
     /// First try non-expired certificates
     for (var certificate in certificates()) {
-      if (!certificate.wasIssuedFor(
+      if (!certificate!.wasIssuedFor(
           hostname: hostname,
           domain: domain,
           wildcard: wildcard,
@@ -166,13 +165,13 @@ class Certbot {
   ///
   /// On start up if we find a bad certificate.
   bool wasIssuedFor(
-      {@required String hostname,
-      @required String domain,
-      @required bool wildcard,
-      @required bool production}) {
+      {required String? hostname,
+      required String? domain,
+      required bool wildcard,
+      required bool production}) {
     /// First try non-expired certificates
     for (var certificate in certificates()) {
-      if (certificate.hasExpired()) continue;
+      if (certificate!.hasExpired()) continue;
 
       if (certificate.wasIssuedFor(
           hostname: hostname,
@@ -188,7 +187,7 @@ class Certbot {
 
     /// now consider expired certificates
     for (var certificate in certificates()) {
-      if (!certificate.wasIssuedFor(
+      if (!certificate!.wasIssuedFor(
           hostname: hostname,
           domain: domain,
           wildcard: wildcard,
@@ -262,11 +261,11 @@ class Certbot {
   /// Before you revoke the certificate you must to place the system into
   /// acquistion mode otherwise nginx may shutdown.
   void revoke(
-      {@required String hostname,
-      @required String domain,
-      @required bool production,
-      @required bool wildcard,
-      @required String emailaddress}) {
+      {required String? hostname,
+      required String? domain,
+      required bool? production,
+      required bool wildcard,
+      required String? emailaddress}) {
     var workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
     var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
     var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
@@ -291,7 +290,7 @@ class Certbot {
           ' --logs-dir=$logDir '
           ' --delete-after-revoke';
 
-      if (!production) cmd += ' --staging ';
+      if (!production!) cmd += ' --staging ';
 
       var progress = Progress(
         (line) => print(line),
@@ -313,10 +312,10 @@ class Certbot {
   /// used by revoke to delete certificates after they have been revoked
   /// If we don't do this then the revoked certificates will still be renewed.
   void delete(
-      {String hostname,
-      String domain,
-      @required bool wildcard,
-      @required String emailaddress}) {
+      {String? hostname,
+      String? domain,
+      required bool wildcard,
+      required String? emailaddress}) {
     var workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
     var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
     var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
@@ -353,13 +352,13 @@ class Certbot {
       return true;
     }
 
-    var certificate = certificatelist[0];
-    Settings().verbose('testing expiry for ${certificate}');
+    var certificate = certificatelist[0]!;
+    Settings().verbose('testing expiry for $certificate');
     return certificate.hasExpired();
   }
 
   /// Obtain the list of active certificates
-  List<Certificate> certificates() {
+  List<Certificate?> certificates() {
     return Certificate.load();
   }
 
@@ -461,7 +460,7 @@ class Certbot {
     /// We should only have one but if things go wrong we might have old ones
     /// lying around so this cleans things up.
     for (var cert in Certbot().certificates()) {
-      print('Revoking ${cert.fqdn}');
+      print('Revoking ${cert!.fqdn}');
       cert.revoke();
     }
     print('');
@@ -505,7 +504,7 @@ class Certbot {
 
 class CertbotException implements Exception {
   String message;
-  String details;
+  String? details;
   CertbotException(this.message, {this.details});
 
   @override

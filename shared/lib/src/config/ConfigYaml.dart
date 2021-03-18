@@ -18,7 +18,7 @@ class ConfigYaml {
   static const START_METHOD_DOCKER_START = 'docker start/run';
   static const START_METHOD_DOCKER_COMPOSE = 'docker-compose';
 
-  SettingsYaml settings;
+  late SettingsYaml settings;
 
   /// keys
   static const START_METHOD_KEY = 'start-method';
@@ -43,34 +43,34 @@ class ConfigYaml {
   // defaults:
   static const DEFAULT_HOST_INCLUDE_PATH = '/opt/nginx/include';
 
-  String startMethod;
-  String mode;
-  bool startPaused;
-  String fqdn;
-  String tld;
-  Image image;
+  String? startMethod;
+  String? mode;
+  bool? startPaused;
+  String? fqdn;
+  String? tld;
+  Image? image;
 
-  String certificateType;
+  String? certificateType;
 
   /// the name of the container to run
-  String containerid;
+  String? containerid;
 
   /// email
-  String emailaddress;
-  String smtpServer;
+  String? emailaddress;
+  String? smtpServer;
   int smtpServerPort = 25;
 
   /// If true we are using a wildcard dns (e.g. *.clouddialer.com.au)
   bool domainWildcard = false;
 
   // The name of the selected [ContentProvider]
-  String contentProvider;
+  String? contentProvider;
 
   /// host path which is mounted into ngix and contains .location and .upstream files from.
-  String _hostIncludePath;
+  String? _hostIncludePath;
 
   /// the DNS authentication provider to be used by certbot
-  String authProvider;
+  String? authProvider;
 
   factory ConfigYaml() => _self;
 
@@ -80,25 +80,25 @@ class ConfigYaml {
     }
 
     settings = SettingsYaml.load(pathToSettings: configPath);
-    startMethod = settings[START_METHOD_KEY] as String;
-    mode = settings[MODE_KEY] as String;
-    startPaused = settings[Environment().startPausedKey] as bool;
-    fqdn = settings[FQDN_KEY] as String;
-    tld = settings[TLD_KEY] as String;
-    image = Images().findByImageId(settings[IMAGE] as String);
-    certificateType = settings[CERTIFICATE_TYPE] as String;
-    emailaddress = settings[EMAILADDRESS] as String;
-    containerid = settings[CONTAINERID] as String;
-    authProvider = settings[AUTH_PROVIDER] as String;
-    contentProvider = settings[CONTENT_PROVIDER] as String;
-    _hostIncludePath = settings[HOST_INCLUDE_PATH] as String;
+    startMethod = settings[START_METHOD_KEY] as String?;
+    mode = settings[MODE_KEY] as String?;
+    startPaused = settings[Environment().startPausedKey] as bool?;
+    fqdn = settings[FQDN_KEY] as String?;
+    tld = settings[TLD_KEY] as String?;
+    image = Images().findByImageId(settings[IMAGE] as String?);
+    certificateType = settings[CERTIFICATE_TYPE] as String?;
+    emailaddress = settings[EMAILADDRESS] as String?;
+    containerid = settings[CONTAINERID] as String?;
+    authProvider = settings[AUTH_PROVIDER] as String?;
+    contentProvider = settings[CONTENT_PROVIDER] as String?;
+    _hostIncludePath = settings[HOST_INCLUDE_PATH] as String?;
 
-    smtpServer = settings[Environment().smtpServerKey] as String;
-    smtpServerPort = settings[Environment().smtpServerPortKey] as int ?? 25;
+    smtpServer = settings[Environment().smtpServerKey] as String?;
+    smtpServerPort = settings[Environment().smtpServerPortKey] as int? ?? 25;
 
     /// If true we are using a wildcard dns (e.g. *.clouddialer.com.au)
     domainWildcard =
-        ((settings[Environment().domainWildcardKey] as bool) ?? false);
+        ((settings[Environment().domainWildcardKey] as bool?) ?? false);
   }
 
   ///
@@ -108,36 +108,36 @@ class ConfigYaml {
       certificateType == ConfigYaml.CERTIFICATE_TYPE_PRODUCTION;
 
   bool get isModePrivate => mode == MODE_PRIVATE;
-  String get hostIncludePath {
+  String? get hostIncludePath {
     _hostIncludePath ??= DEFAULT_HOST_INCLUDE_PATH;
-    if (_hostIncludePath.isEmpty) {
+    if (_hostIncludePath!.isEmpty) {
       _hostIncludePath = DEFAULT_HOST_INCLUDE_PATH;
     }
     return _hostIncludePath;
   }
 
-  String get domain {
+  String? get domain {
     if (fqdn == null) return '';
 
-    if (fqdn.contains('.')) {
+    if (fqdn!.contains('.')) {
       /// return everything but the first part (hostname).
-      return fqdn.split('.').sublist(1).join('.');
+      return fqdn!.split('.').sublist(1).join('.');
     }
 
     return fqdn;
   }
 
-  String get hostname {
+  String? get hostname {
     if (fqdn == null) return '';
 
-    if (fqdn.contains('.')) {
-      return fqdn.split('.')[0];
+    if (fqdn!.contains('.')) {
+      return fqdn!.split('.')[0];
     }
 
     return fqdn;
   }
 
-  set hostIncludePath(String hostIncludePath) {
+  set hostIncludePath(String? hostIncludePath) {
     _hostIncludePath = hostIncludePath;
   }
 
@@ -180,12 +180,12 @@ class ConfigYaml {
     }
 
     if (!Containers().existsByContainerId(containerid)) {
-      printerr(red('The ngnix-le container ${containerid} no longer exists.'));
+      printerr(red('The ngnix-le container $containerid no longer exists.'));
       printerr(red('  Run nginx-le config to change the container.'));
       exit(1);
     }
-    if (!Images().existsByImageId(imageid: image.imageid)) {
-      printerr(red('The ngnix-le image ${image.imageid} no longer exists.'));
+    if (!Images().existsByImageId(imageid: image!.imageid)) {
+      printerr(red('The ngnix-le image ${image!.imageid} no longer exists.'));
       printerr(red('  Run nginx-le config to change the image.'));
       exit(1);
     }

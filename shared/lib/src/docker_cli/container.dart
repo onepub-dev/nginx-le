@@ -1,5 +1,4 @@
 import 'package:dcli/dcli.dart';
-import 'package:meta/meta.dart';
 
 import 'image.dart';
 import 'images.dart';
@@ -13,15 +12,15 @@ class Container {
   String names;
 
   Container({
-    @required this.containerid,
-    @required this.imageid,
-    @required this.created,
-    @required this.status,
-    @required this.ports,
-    @required this.names,
+    required this.containerid,
+    required this.imageid,
+    required this.created,
+    required this.status,
+    required this.ports,
+    required this.names,
   });
 
-  Image get image => Images().findByImageId(imageid);
+  Image? get image => Images().findByImageId(imageid);
 
   void stop() {
     if (isRunning) {

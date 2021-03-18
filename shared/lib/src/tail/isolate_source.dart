@@ -90,26 +90,26 @@ typedef ResultStream<R> = void Function(R data);
 /// Standard [Stream] rules apply to to the type of objects the
 /// isolate can return.
 class IsolateSource<R, ARG1, ARG2, ARG3> {
-  final _controller = StreamController<R>();
+  final StreamController<R?> _controller = StreamController<R>();
 
-  Stream<R> get stream => _controller.stream;
+  Stream<R?> get stream => _controller.stream;
 
   /// Set the method to be called in the isolate which
   /// performs the necessary processes and returns
   /// the resulting stream of data.
-  Processor<R, ARG1, ARG2, ARG3> onStart;
+  Processor<R, ARG1, ARG2, ARG3>? onStart;
 
-  void Function() onStop;
+  void Function()? onStop;
 
   //  set processor(Processor processor) =>
   //      processorMap[receiveFromIsolatePort.sendPort] = processor;
 
   // /// The isolate we spawn.
-  Isolate _isolate;
+  Isolate? _isolate;
 
-  SendPort sendToIsolatePort;
+  late SendPort sendToIsolatePort;
 
-  ReceivePort receiveFromIsolatePort;
+  ReceivePort? receiveFromIsolatePort;
 
   /// Completes once the isolate is set up
   /// and we have its sendPort.
@@ -122,10 +122,10 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
     Settings().verbose('Sending StopMessage');
     sendToIsolatePort.send(StopMessage(onStop));
     if (_isolate != null) {
-      _isolate.kill();
+      _isolate!.kill();
     }
     if (receiveFromIsolatePort != null) {
-      receiveFromIsolatePort.close();
+      receiveFromIsolatePort!.close();
     }
     _controller.close();
   }
@@ -151,7 +151,7 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
     /// Create the listner to recieve data from the isolate
     /// listen to data coming back from the isolate.
     ///
-    receiveFromIsolatePort.listen((Object data) {
+    receiveFromIsolatePort!.listen((Object? data) {
       if (data is SendPort) {
         /// We have recieved the isolates sendport so we can communicate with
         /// it now.
@@ -162,8 +162,8 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
 
       if (data is StoppedMessage) {
         Settings().verbose('Received StoppedMessage killing isolate');
-        receiveFromIsolatePort.close();
-        _isolate.kill();
+        receiveFromIsolatePort!.close();
+        _isolate!.kill();
         _controller.close();
         return;
       } else if (data is ErrorResult) {
@@ -179,15 +179,15 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
         /// We recieve the stream of data from the isolate here.
         /// So now send it up to our master.
         Settings().verbose('forwarding: ${++forwardCount} $data');
-        _controller.sink.add(data as R);
+        _controller.sink.add(data as R?);
       }
     }, onDone: (() => Settings().verbose('IsolatePort done')));
 
     _isolate = await Isolate.spawn<SendPort>(
-        spawnEntryPoint, receiveFromIsolatePort.sendPort,
+        spawnEntryPoint, receiveFromIsolatePort!.sendPort,
         debugName: 'tail',
-        onExit: receiveFromIsolatePort.sendPort,
-        onError: receiveFromIsolatePort.sendPort);
+        onExit: receiveFromIsolatePort!.sendPort,
+        onError: receiveFromIsolatePort!.sendPort);
   }
 
   /// Isolates entry point used by the above call to [spawn].
@@ -204,10 +204,10 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
     sendToMainPort.send(recieveFromMainPort.sendPort);
 
     /// Process messages from the main isolate.
-    recieveFromMainPort.listen((Object message) async {
+    recieveFromMainPort.listen((Object? message) async {
       if (message is StopMessage) {
         if (message.stopFunction != null) {
-          await message.stopFunction();
+          message.stopFunction!();
         }
         Settings().verbose('sending StoppedMessage');
         sendToMainPort.send(StoppedMessage());
@@ -220,7 +220,7 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
         final currentMessage =
             message as StartMessage<String, String, int, bool>;
 
-        final startFunction = currentMessage.startFunction;
+        final startFunction = currentMessage.startFunction!;
         final argument1 = currentMessage.argument1;
         final argument2 = currentMessage.argument2;
         final argument3 = currentMessage.argument3;

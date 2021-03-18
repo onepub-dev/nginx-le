@@ -69,8 +69,8 @@ class CertbotPaths {
   /// conifg/live/<fqdn-001>
   /// conifg/live/<fqdn-002>
   @visibleForTesting
-  String latestCertificatePath(String hostname, String domain,
-      {@required bool wildcard}) {
+  String latestCertificatePath(String? hostname, String? domain,
+      {required bool wildcard}) {
     var livepath = join(CertbotPaths().letsEncryptLivePath);
     // if no paths contain '-' then the base fqdn path is correct.
 
@@ -110,15 +110,15 @@ class CertbotPaths {
   /// encrypt adds a number designator when new certificates are aquired.
   ///
   /// See: [lastestCertificatePath] for details.
-  String _liveDefaultPathForFQDN(String hostname, String domain,
-      {@required bool wildcard}) {
+  String _liveDefaultPathForFQDN(String? hostname, String? domain,
+      {required bool wildcard}) {
     var fqdn = wildcard ? domain : '$hostname.$domain';
     return join(letsEncryptLivePath, fqdn);
   }
 
   /// The root directory for the certificate files of the given [hostname] and [domain].
-  String certificatePathRoot(String hostname, String domain,
-      {@required bool wildcard}) {
+  String certificatePathRoot(String? hostname, String? domain,
+      {required bool wildcard}) {
     return latestCertificatePath(hostname, domain, wildcard: wildcard);
   }
 

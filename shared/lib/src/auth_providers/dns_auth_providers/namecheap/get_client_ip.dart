@@ -7,13 +7,13 @@ import 'package:dcli/dcli.dart';
 
 var getIPURL = 'https://dynamicdns.park-your-domain.com/getip';
 
-String getClientIP({bool debug = false}) {
+String? getClientIP({bool debug = false}) {
   var request =
       waitForEx<HttpClientRequest>(HttpClient().getUrl(Uri.parse(getIPURL)));
 
   var response = waitForEx<HttpClientResponse>(request.close());
 
-  String clientIP;
+  String? clientIP;
 
   // defer
   for (var content
@@ -22,7 +22,7 @@ String getClientIP({bool debug = false}) {
   }
 
   if (debug) {
-    print('Client IP: ${clientIP}');
+    print('Client IP: $clientIP');
   }
   return clientIP;
 }

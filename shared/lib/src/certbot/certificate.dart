@@ -1,29 +1,28 @@
 import 'package:dcli/dcli.dart';
 import 'package:instant/instant.dart';
-import 'package:meta/meta.dart';
 
 import '../../nginx_le_shared.dart';
 
 class Certificate {
-  String fqdn;
+  String? fqdn;
 
-  String _hostname;
-  String _domain;
+  String? _hostname;
+  String? _domain;
 
-  String domains;
+  String? domains;
 
-  DateTime expiryDate;
+  DateTime? expiryDate;
 
   /// If [production] is true then this is a production certificate
   /// If [production] is false then this is a staging/test certificate.
-  bool production;
+  bool? production;
 
   /// If the fqdn starts with a '*' then its a wild card certificate.
   bool wildcard = false;
 
-  String certificatePath;
+  String? certificatePath;
 
-  String privateKeyPath;
+  String? privateKeyPath;
 
   void parseName(String line) {
     /// Handle names of the form: billing.noojee.com.au-0001
@@ -39,7 +38,7 @@ class Certificate {
     var parts = line.split(':');
     domains = parts[1].trim();
 
-    if (domains.startsWith('*')) {
+    if (domains!.startsWith('*')) {
       wildcard = true;
     }
   }
@@ -63,7 +62,7 @@ class Certificate {
     privateKeyPath = parts[1].trim();
   }
 
-  static List<Certificate> load() {
+  static List<Certificate?> load() {
     Settings().verbose(
         'Loading certificates from ${CertbotPaths().letsEncryptConfigPath}');
 
@@ -107,10 +106,10 @@ class Certificate {
 // No certs found.
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  static List<Certificate> parse(List<String> lines) {
-    var certificates = <Certificate>[];
+  static List<Certificate?> parse(List<String> lines) {
+    var certificates = <Certificate?>[];
 
-    Certificate cert;
+    Certificate? cert;
     for (var line in lines) {
       if (line.trim().startsWith('Certificate Name:')) {
         cert = Certificate();
@@ -118,16 +117,16 @@ class Certificate {
         cert.parseName(line);
       }
       if (line.trim().startsWith('Domains:')) {
-        cert.parseDomains(line);
+        cert!.parseDomains(line);
       }
       if (line.trim().startsWith('Expiry Date:')) {
-        cert.parseExpiryDate(line);
+        cert!.parseExpiryDate(line);
       }
       if (line.trim().startsWith('Certificate Path')) {
-        cert.parseCertificatePath(line);
+        cert!.parseCertificatePath(line);
       }
       if (line.trim().startsWith('Private Key Path:')) {
-        cert.parsePrivateKeyPath(line);
+        cert!.parsePrivateKeyPath(line);
       }
     }
     return certificates;
@@ -135,10 +134,10 @@ class Certificate {
 
   /// returns true if the cerificate has expired at the date/time given
   /// by [asAt]. If [asAt] is null then 'now' is used.
-  bool hasExpired({DateTime asAt}) {
+  bool hasExpired({DateTime? asAt}) {
     asAt ??= DateTime.now();
     Settings().verbose('expiry date $expiryDate asAt: $asAt');
-    var expired = (expiryDate.isBefore(asAt));
+    var expired = (expiryDate!.isBefore(asAt));
 
     Settings().verbose('expired=$expired');
     return expired;
@@ -152,7 +151,7 @@ class Certificate {
     Production: $production
     Wildcard: $wildcard
     Domains: $domains 
-    Expiry: ${dateTimeToOffset(datetime: expiryDate, offset: hours)}
+    Expiry: ${dateTimeToOffset(datetime: expiryDate!, offset: hours)}
     Certificate Path: $certificatePath
     Private Key Path: $privateKeyPath''';
   }
@@ -162,10 +161,10 @@ class Certificate {
   /// Returns true if this certificate was issued for the given [hostname],
   /// [domain] and is or isn't a [wildcard] certificate.
   bool wasIssuedFor(
-      {@required String hostname,
-      @required String domain,
-      @required bool wildcard,
-      @required bool production}) {
+      {required String? hostname,
+      required String? domain,
+      required bool wildcard,
+      required bool production}) {
     if (wildcard) {
       return this.wildcard == wildcard &&
           this.production == production &&
@@ -195,21 +194,21 @@ class Certificate {
     );
   }
 
-  String get hostname {
+  String? get hostname {
     _hostname ??= hostnameFromFqdn(fqdn);
     return _hostname;
   }
 
-  String get domain {
+  String? get domain {
     _domain ??= domainFromFqdn(fqdn);
     return _domain;
   }
 
   /// returns the hostname component of an fqdn
-  String hostnameFromFqdn(String fqdn) {
+  String? hostnameFromFqdn(String? fqdn) {
     if (wildcard) return '*';
 
-    var parts = fqdn.split('.');
+    var parts = fqdn!.split('.');
 
     if (parts.isNotEmpty) {
       return parts[0];
@@ -219,10 +218,10 @@ class Certificate {
   }
 
   /// returns the hostname component of an fqdn
-  String domainFromFqdn(String fqdn) {
+  String? domainFromFqdn(String? fqdn) {
     if (wildcard) return fqdn;
 
-    var parts = fqdn.split('.');
+    var parts = fqdn!.split('.');
 
     if (parts.length > 1) {
       return parts.sublist(1).join('.');
@@ -232,11 +231,11 @@ class Certificate {
   }
 
   /// Finds the matching certificate and returns it.
-  static Certificate find(
-      {String hostname, String domain, bool wildcard, bool production}) {
+  static Certificate? find(
+      {String? hostname, String? domain, required bool wildcard, bool? production}) {
     if (wildcard) hostname = '*';
     for (var certificate in Certificate.load()) {
-      if (certificate.hostname == hostname &&
+      if (certificate!.hostname == hostname &&
           certificate.domain == domain &&
           certificate.wildcard == wildcard &&
           certificate.production == production) {

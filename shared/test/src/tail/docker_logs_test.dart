@@ -14,7 +14,7 @@ void main() {
     var logger = DockerLogsInIsolate();
 
     logger
-      ..dockerLog(findDockerContainer(), follow: true).listen((event) {
+      .dockerLog(findDockerContainer(), follow: true).listen((event) {
         print(event);
         linesSeen++;
         if (linesSeen == 10) {

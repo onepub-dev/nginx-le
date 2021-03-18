@@ -1,20 +1,19 @@
 import 'package:dcli/dcli.dart';
-import 'package:meta/meta.dart';
 
 class Image {
-  String repository;
-  String name;
-  String tag;
-  String imageid;
-  String created;
-  String size;
+  String? repository;
+  String? name;
+  String? tag;
+  String? imageid;
+  String? created;
+  String? size;
 
   Image(
-      {@required String repositoryAndName,
-      @required this.tag,
-      @required this.imageid,
-      @required this.created,
-      @required this.size}) {
+      {required String repositoryAndName,
+      required this.tag,
+      required this.imageid,
+      required this.created,
+      required this.size}) {
     var repoAndName = splitRepoAndName(repositoryAndName);
     repository = repoAndName.repo;
     name = repoAndName.name;
@@ -31,21 +30,21 @@ class Image {
   String get fullname {
     var _full = '';
 
-    if (repository != null && repository.isNotEmpty) {
-      _full += repository;
+    if (repository != null && repository!.isNotEmpty) {
+      _full += repository!;
     }
 
-    if (name != null && name.isNotEmpty) {
+    if (name != null && name!.isNotEmpty) {
       if (_full.isEmpty) {
-        _full += name;
+        _full += name!;
       } else {
         _full += '/$name';
       }
     }
 
-    if (tag != null && tag.isNotEmpty) {
+    if (tag != null && tag!.isNotEmpty) {
       if (_full.isEmpty) {
-        _full += tag;
+        _full += tag!;
       } else {
         _full += ':$tag';
       }
@@ -58,8 +57,8 @@ class Image {
   /// three components.
   static _Fullname splitFullname(String fullname) {
     String repo;
-    String name;
-    String tag;
+    String? name;
+    String? tag;
 
     if (fullname.contains('/')) {
       var parts = fullname.split('/');
@@ -116,15 +115,15 @@ class Image {
 
 class _RepoAndName {
   String repo;
-  String name;
+  String? name;
 
   _RepoAndName(this.repo, this.name);
 }
 
 class _Fullname {
   String repo;
-  String name;
-  String tag;
+  String? name;
+  String? tag;
 
   _Fullname(this.repo, this.name, this.tag);
 }

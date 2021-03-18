@@ -1,5 +1,4 @@
 import 'package:dcli/dcli.dart';
-import 'package:meta/meta.dart';
 import 'image.dart';
 
 class Images {
@@ -46,21 +45,21 @@ class Images {
     imageCache.clear();
   }
 
-  bool existsByImageId({@required String imageid}) =>
+  bool existsByImageId({required String? imageid}) =>
       findByImageId(imageid) != null;
 
   bool existsByFullname({
-    @required String fullname,
+    required String fullname,
   }) =>
       findByFullname(fullname) != null;
 
   bool existsByParts(
-          {@required String repository,
-          @required String name,
-          @required String tag}) =>
+          {required String repository,
+          required String name,
+          required String tag}) =>
       findByParts(repository: repository, name: name, tag: tag) != null;
 
-  Image findByImageId(String imageid) {
+  Image? findByImageId(String? imageid) {
     var list = images;
 
     for (var image in list) {
@@ -72,17 +71,17 @@ class Images {
   }
 
   /// full name of the format repo/name:tag
-  Image findByFullname(String fullname) {
+  Image? findByFullname(String fullname) {
     var match = Image.fromName(fullname);
 
     return findByParts(
         repository: match.repository, name: match.name, tag: match.tag);
   }
 
-  Image findByParts(
-      {@required String repository,
-      @required String name,
-      @required String tag}) {
+  Image? findByParts(
+      {required String? repository,
+      required String? name,
+      required String? tag}) {
     var list = images;
 
     for (var image in list) {
@@ -95,7 +94,7 @@ class Images {
     return null;
   }
 
-  Image pull({String fullname}) {
+  Image? pull({required String fullname}) {
     'docker pull $fullname'.run;
     flushCache();
     return findByFullname(fullname);

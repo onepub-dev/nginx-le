@@ -19,9 +19,7 @@ class TailInIsolate {
 
     // await _controller.close();
 
-    if (process != null) {
-      (await process).kill();
-    }
+    process.kill();
   }
 
   /// Returns the last [lines] of [filename]  and then
@@ -53,7 +51,7 @@ class Tail {
     }
   }
 
-  Stream<String> start() {
+  Stream<String?> start() {
     isoStream.onStart = tail;
     isoStream.onStop = tailStop;
 
@@ -74,7 +72,7 @@ class Tail {
 }
 
 var tallTail = TailInIsolate();
-Stream<String> tailStream;
+Stream<String>? tailStream;
 
 /////////////////////////////////////////////////
 ///

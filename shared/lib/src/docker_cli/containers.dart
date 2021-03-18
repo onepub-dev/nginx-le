@@ -1,5 +1,4 @@
 import 'package:dcli/dcli.dart';
-import 'package:meta/meta.dart';
 import '../../nginx_le_shared.dart';
 import 'container.dart';
 
@@ -12,11 +11,11 @@ class Containers {
 
   final containerCache = <Container>[];
 
-  List<Container> containers({bool excludeStopped = false}) {
+  List<Container> containers({bool? excludeStopped = false}) {
     if (containerCache.isEmpty) {
       var cmd =
           'docker container ls --format "table {{.ID}}|{{.Image}}|{{.CreatedAt}}|{{.Status}}|{{.Ports}}|{{.Names}}"';
-      if (!excludeStopped) cmd += ' --all';
+      if (!excludeStopped!) cmd += ' --all';
       var lines = cmd.toList(skipLines: 1);
 
       for (var line in lines) {
@@ -33,7 +32,7 @@ class Containers {
         if (image != null) {
           /// the imageid that we parsed actually contained an image name
           /// so lets replace that with the actual id.
-          imageid = image.imageid;
+          imageid = image.imageid!;
         }
 
         var container = Container(
@@ -53,13 +52,13 @@ class Containers {
     containerCache.clear();
   }
 
-  bool existsByContainerId(String containerid, {bool excludeStopped = false}) =>
+  bool existsByContainerId(String? containerid, {bool excludeStopped = false}) =>
       findByContainerId(containerid, excludeStopped: excludeStopped) != null;
 
-  bool existsByName({@required String name, bool excludeStopped}) =>
+  bool existsByName({required String name, bool? excludeStopped}) =>
       findByName(name, excludeStopped: excludeStopped) != null;
 
-  Container findByContainerId(String containerid,
+  Container? findByContainerId(String? containerid,
       {bool excludeStopped = false}) {
     var list = containers(excludeStopped: excludeStopped);
 
@@ -71,7 +70,7 @@ class Containers {
     return null;
   }
 
-  List<Container> findByImageid(String imageid, {bool excludeStopped = false}) {
+  List<Container> findByImageid(String? imageid, {bool excludeStopped = false}) {
     var list = containers(excludeStopped: excludeStopped);
     var matches = <Container>[];
 
@@ -85,7 +84,7 @@ class Containers {
 
   /// assumes that a container only has one name :)
   /// if [includeStopped] is true then also  return containers that are not running.
-  Container findByName(String name, {bool excludeStopped = false}) {
+  Container? findByName(String name, {bool? excludeStopped = false}) {
     var list = containers(excludeStopped: excludeStopped);
 
     for (var container in list) {

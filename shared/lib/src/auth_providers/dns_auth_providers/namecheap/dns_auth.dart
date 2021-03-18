@@ -43,14 +43,14 @@ void namecheap_dns_auth() {
   ArgumentError.checkNotNull(certbotValidation,
       'The environment variable ${Environment().certbotValidationKey} was empty');
 
-  var authProvider = AuthProviders().getByName(NameCheapAuthProvider().name);
+  var authProvider = AuthProviders().getByName(NameCheapAuthProvider().name)!;
 
   /// our own envs.
-  var domain = Environment().domain;
+  var domain = Environment().domain!;
   Certbot().log('${Environment().domainKey}: $domain');
   var hostname = Environment().hostname;
   Certbot().log('${Environment().hostnameKey}: $hostname');
-  var tld = Environment().tld;
+  var tld = Environment().tld!;
   Certbot().log('tld: $tld');
   var wildcard = Environment().domainWildcard;
   Certbot().log('wildcard: $wildcard');
@@ -87,7 +87,7 @@ void namecheap_dns_auth() {
         domain: domain,
         tld: tld,
         wildcard: wildcard,
-        certbotValidationString: certbotValidation,
+        certbotValidationString: certbotValidation!,
         retries: retries))) {
       Certbot().log('createDNSChallenged SUCCESS');
     } else {

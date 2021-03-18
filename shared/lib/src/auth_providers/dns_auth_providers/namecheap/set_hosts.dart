@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 
 import 'package:dcli/dcli.dart';
 import 'package:xml/xml.dart';
@@ -13,12 +12,12 @@ var setHostsCommand = 'namecheap.domains.dns.setHosts';
 /// [domain] - the domain e.g. noojee.com
 /// [tld] - the Top Level Domain e.g. com
 void setHost(
-    {@required List<DNSRecord> records,
-    @required String apiKey,
-    @required String apiUser,
-    @required String username,
-    @required String domain,
-    @required String tld}) {
+    {required List<DNSRecord> records,
+    required String? apiKey,
+    required String? apiUser,
+    required String? username,
+    required String domain,
+    required String tld}) {
   // ArgumentError.checkNotNull(fqdomainn, 'domain');
   // ArgumentError.checkNotNull(tld, 'tld');
   // ArgumentError.checkNotNull(apiUser, 'apiUser');

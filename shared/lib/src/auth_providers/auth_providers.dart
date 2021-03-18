@@ -32,7 +32,7 @@ class AuthProviders {
   }
 
   /// Finds and returns a [ContentProvider] via its name.
-  AuthProvider getByName(String name) {
+  AuthProvider? getByName(String name) {
     for (var provider in providers) {
       if (provider.name == name) {
         return provider;

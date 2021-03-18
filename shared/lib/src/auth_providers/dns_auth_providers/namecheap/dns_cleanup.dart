@@ -28,12 +28,12 @@ void namncheap_dns_cleanup() {
   var certbotAuthKey = Environment().certbotValidation;
   Certbot().log('CertbotAuthKey: $certbotAuthKey');
 
-  var authProvider = AuthProviders().getByName(NameCheapAuthProvider().name);
+  var authProvider = AuthProviders().getByName(NameCheapAuthProvider().name)!;
 
   /// our own envs.
-  var domain = Environment().domain;
+  var domain = Environment().domain!;
   var hostname = Environment().hostname;
-  var tld = Environment().tld;
+  var tld = Environment().tld!;
   Certbot().log('tld: $tld');
   var username = authProvider.envUsername;
   Certbot().log('username: $username');
