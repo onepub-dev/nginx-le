@@ -52,7 +52,8 @@ class Containers {
     containerCache.clear();
   }
 
-  bool existsByContainerId(String? containerid, {bool excludeStopped = false}) =>
+  bool existsByContainerId(String? containerid,
+          {bool excludeStopped = false}) =>
       findByContainerId(containerid, excludeStopped: excludeStopped) != null;
 
   bool existsByName({required String name, bool? excludeStopped}) =>
@@ -70,7 +71,8 @@ class Containers {
     return null;
   }
 
-  List<Container> findByImageid(String? imageid, {bool excludeStopped = false}) {
+  List<Container> findByImageid(String? imageid,
+      {bool excludeStopped = false}) {
     var list = containers(excludeStopped: excludeStopped);
     var matches = <Container>[];
 

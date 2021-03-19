@@ -232,7 +232,10 @@ class Certificate {
 
   /// Finds the matching certificate and returns it.
   static Certificate? find(
-      {String? hostname, String? domain, required bool wildcard, bool? production}) {
+      {String? hostname,
+      String? domain,
+      required bool wildcard,
+      bool? production}) {
     if (wildcard) hostname = '*';
     for (var certificate in Certificate.load()) {
       if (certificate!.hostname == hostname &&

@@ -19,7 +19,7 @@ class TailCliInIsolate {
 
     // await _controller.close();
 
-      process.kill();
+    process.kill();
   }
 
   /// Returns the last [lines] of [containerid]  and then

@@ -1,3 +1,9 @@
+# 6.0.1
+migrated to nnbd.
+Migrated to nnbd.
+upgraded to nnbd version of isolates.
+Migrated to nnbd.
+
 # 5.0.69
 Upgraded packages as part of release process
 Upgraded packages as part of release process
