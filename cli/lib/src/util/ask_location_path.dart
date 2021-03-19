@@ -10,7 +10,7 @@ void askForLocationPath(String prompt) {
   ConfigYaml().hostIncludePath = hostIncludePath;
 }
 
-String askForHostPath({String title, String prompt, String defaultPath}) {
+String askForHostPath({String? title, String? prompt, String? defaultPath}) {
   var valid = false;
   String hostPath;
   do {

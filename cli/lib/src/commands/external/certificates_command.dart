@@ -21,13 +21,13 @@ class CertificatesCommand extends Command<void> {
 
   @override
   void run() {
-    var debug = argResults['debug'] as bool;
+    var debug = argResults!['debug'] as bool;
     Settings().setVerbose(enabled: debug);
 
     var config = ConfigYaml();
     config.validate(() => showUsage(argParser));
 
-    var container = Containers().findByContainerId(config.containerid);
+    var container = Containers().findByContainerId(config.containerid)!;
     if (container.isRunning) {
       'docker exec -it ${config.containerid} /home/bin/certificates ${config.domain}'
           .run;

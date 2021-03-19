@@ -203,7 +203,7 @@ void main() {
         settingFilename: 'namecheap.yaml');
   });
 
-  test('acquire certificate namecheap wildcard ...', () async {
+  test('acquire certificate namecheap robtest5 ...', () async {
     _acquire(
         hostname: 'robtest5',
         domain: 'noojee.org',

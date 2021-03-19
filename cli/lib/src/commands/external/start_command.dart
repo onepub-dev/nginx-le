@@ -29,15 +29,15 @@ class StartCommand extends Command<void> {
 
   @override
   void run() {
-    var debug = argResults['debug'] as bool;
+    var debug = argResults!['debug'] as bool;
     Settings().setVerbose(enabled: debug);
 
-    var interactive = argResults['interactive'] as bool;
+    var interactive = argResults!['interactive'] as bool;
 
     var config = ConfigYaml();
     config.validate(() => showUsage(argParser));
 
-    var container = Containers().findByContainerId(config.containerid);
+    var container = Containers().findByContainerId(config.containerid)!;
     if (container.isRunning) {
       printerr(
           'The container ${config.containerid} is already running. Consider nginx-le restart');
@@ -60,17 +60,5 @@ class StartCommand extends Command<void> {
   void showUsage(ArgParser parser) {
     print(parser.usage);
     exit(-1);
-  }
-
-  String checkRequired(String value, String defaultValue, String error) {
-    if (value == null) {
-      if (defaultValue == null) {
-        print(error);
-        showUsage(argParser);
-      } else {
-        value = defaultValue;
-      }
-    }
-    return value;
   }
 }

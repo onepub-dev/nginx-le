@@ -28,7 +28,7 @@ class ConfigCommand extends Command<void> {
   @override
   void run() {
     print('Nginx-LE config Version:$packageVersion');
-    var debug = argResults['debug'] as bool;
+    var debug = argResults!['debug'] as bool;
     Settings().setVerbose(enabled: debug);
 
     var config = ConfigYaml();
@@ -51,14 +51,14 @@ class ConfigCommand extends Command<void> {
     config.save();
     print('Configuration saved.');
 
-    var provider = ContentProviders().getByName(config.contentProvider);
+    var provider = ContentProviders().getByName(config.contentProvider)!;
 
     provider.createLocationFile();
     provider.createUpstreamFile();
 
     if (config.startMethod != ConfigYaml.START_METHOD_DOCKER_COMPOSE) {
       deleteOldContainers(containerName, image);
-      createContainer(image, config, debug);
+      createContainer(image!, config, debug);
     } else {
       selectContainer(config);
     }
@@ -67,7 +67,7 @@ class ConfigCommand extends Command<void> {
     config.save();
   }
 
-  void deleteOldContainers(String containerName, Image image) {
+  void deleteOldContainers(String containerName, Image? image) {
     var existing = Containers().findByName(containerName);
 
     if (existing != null) {
@@ -87,7 +87,7 @@ class ConfigCommand extends Command<void> {
             printerr(red(
                 'Unable to delete container ${existing.containerid} as it is running'));
             printerr(
-                'Delete all containers for ${image.imageid} and try again.');
+                'Delete all containers for ${image!.imageid} and try again.');
             exit(1);
           }
         }
@@ -104,12 +104,12 @@ class ConfigCommand extends Command<void> {
         Progress((line) => lines.add(line), stderr: (line) => lines.add(line));
 
     var volumes = '';
-    var provider = ContentProviders().getByName(config.contentProvider);
+    var provider = ContentProviders().getByName(config.contentProvider)!;
     for (var volume in provider.getVolumes()) {
       volumes += ' -v ${volume.hostPath}:${volume.containerPath}';
     }
 
-    var authProvider = AuthProviders().getByName(config.authProvider);
+    var authProvider = AuthProviders().getByName(config.authProvider!)!;
     var environments = authProvider.environment;
 
     var dnsProviderEnvs = '';
@@ -137,7 +137,7 @@ class ConfigCommand extends Command<void> {
         ' --log-driver=journald'
         ' -v certificates:${CertbotPaths().letsEncryptRootPath}'
         '$volumes'
-        ' ${config.image.imageid}';
+        ' ${config.image!.imageid}';
 
     cmd.start(nothrow: true, progress: progress);
     Containers().flushCache();
@@ -179,7 +179,7 @@ class ConfigCommand extends Command<void> {
   void selectAuthProvider(ConfigYaml config) {
     var authProviders = AuthProviders().getValidProviders(config);
 
-    var defaultProvider = AuthProviders().getByName(config.authProvider);
+    var defaultProvider = AuthProviders().getByName(config.authProvider!);
     print('');
     print(green('Select the Auth Provider'));
     var provider = menu<AuthProvider>(
@@ -254,7 +254,7 @@ class ConfigCommand extends Command<void> {
     config.fqdn = fqdn;
   }
 
-  Image selectImage(ConfigYaml config) {
+  Image? selectImage(ConfigYaml config) {
     print('');
     print(green('Select the image to utilise.'));
     var latest = 'noojee/nginx-le:latest';
@@ -269,7 +269,7 @@ class ConfigCommand extends Command<void> {
       downloadLatest.imageid = 'Download'.padRight(12);
       images.insert(0, downloadLatest);
     }
-    var image = menu<Image>(
+    Image? image = menu<Image>(
         prompt: 'Image:',
         options: images,
         format: (image) =>

@@ -12,7 +12,7 @@ void main() {
 
   var projectRootPath = project.pathToProjectRoot;
   var pubspec = project.pubSpec;
-  var currentVersion = pubspec.version;
+  var currentVersion = pubspec.version!;
 
   print('projectRoot $projectRootPath');
 
@@ -78,16 +78,16 @@ void main() {
   build(newVersion);
 }
 
-void conditionalCommit({String message, String path, String projectRootPath}) {
+void conditionalCommit({String? message, String? path, String? projectRootPath}) {
   final outstanding = 'git status --porcelain'.toList();
 
   if (outstanding.isNotEmpty) {
     'git commit -m "$message"'
-        .start(workingDirectory: join(projectRootPath, path));
+        .start(workingDirectory: join(projectRootPath!, path));
   }
 }
 
-void build(Version newVersion) {
+void build(Version? newVersion) {
   print('Activate the just published version');
   'pub global activate nginx_le'.run;
   var name = 'noojee/nginx-le';

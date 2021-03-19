@@ -14,24 +14,24 @@ class Tomcat extends ContentProvider {
   @override
   void promptForSettings() {
     var config = ConfigYaml();
-    String fqdn;
+    String? fqdn;
     print('');
     print('${green('Tomcat server details')}');
 
-    var context = config.settings[contextKey] as String;
+    var context = config.settings[contextKey] as String?;
     context ??= '';
 
     context = ask('webapp context (blank for the ROOT context):',
         defaultValue: context);
 
-    fqdn = config.settings[fqdnKey] as String;
+    fqdn = config.settings[fqdnKey] as String?;
     fqdn ??= 'localhost';
 
     fqdn = ask('FQDN of Tomcat server:',
         defaultValue: fqdn,
         validator: Ask.all([Ask.required, AskFQDNOrLocalhost()]));
 
-    var port = config.settings[portKey] as int;
+    var port = config.settings[portKey] as int?;
     port ??= 8080;
 
     port = int.parse(ask('TCP Port of Tomcat server:',
@@ -56,11 +56,11 @@ class Tomcat extends ContentProvider {
   void createLocationFile() {
     var config = ConfigYaml();
 
-    find('*.location', workingDirectory: config.hostIncludePath)
+    find('*.location', workingDirectory: config.hostIncludePath!)
         .forEach((file) => delete(file));
-    var location = join(config.hostIncludePath, 'tomcat.location');
+    var location = join(config.hostIncludePath!, 'tomcat.location');
 
-    var context = config.settings[contextKey] as String;
+    var context = config.settings[contextKey] as String?;
 
     // avoid double slashes.
     if (context == '/') {
@@ -68,7 +68,7 @@ class Tomcat extends ContentProvider {
     }
 
     /// add trailing slash.
-    if (context.isNotEmpty) {
+    if (context!.isNotEmpty) {
       context += '/';
     }
 
@@ -103,13 +103,13 @@ class Tomcat extends ContentProvider {
 
   @override
   void createUpstreamFile() {
-    find('*.upstream', workingDirectory: ConfigYaml().hostIncludePath)
+    find('*.upstream', workingDirectory: ConfigYaml().hostIncludePath!)
         .forEach((file) => delete(file));
     var config = ConfigYaml();
-    var location = join(ConfigYaml().hostIncludePath, 'tomcat.upstream');
+    var location = join(ConfigYaml().hostIncludePath!, 'tomcat.upstream');
 
-    var fqdn = config.settings[fqdnKey] as String;
-    var port = config.settings[portKey] as int;
+    var fqdn = config.settings[fqdnKey] as String?;
+    var port = config.settings[portKey] as int?;
 
     location.write('''upstream tomcat {
     server $fqdn:$port fail_timeout=0;

@@ -37,16 +37,16 @@ class BuildCommand extends Command<void> {
   }
   @override
   void run() {
-    var results = argResults;
+    var results = argResults!;
 
-    var debug = argResults['debug'] as bool;
+    var debug = argResults!['debug'] as bool;
     Settings().setVerbose(enabled: debug);
 
-    var overwrite = results['overwrite'] as bool;
+    var overwrite = results['overwrite'] as bool?;
 
     var dockerPath = findDockerfile();
 
-    var imageName = argResults['image'] as String;
+    var imageName = argResults!['image'] as String?;
 
     if (imageName == null) {
       var repo = ask('ImageName:', defaultValue: 'noojee/nginx-le');
@@ -59,7 +59,7 @@ class BuildCommand extends Command<void> {
     // check for an existing image.
     var image = Images().findByFullname(imageName);
     if (image != null) {
-      if (!overwrite) {
+      if (!overwrite!) {
         printerr(
             'The image $imageName already exists. Choose a different name or use --overwrite to replace it.');
         showUsage(argParser);
@@ -109,6 +109,7 @@ class BuildCommand extends Command<void> {
       printerr(
           'The Dockerfile must be present in the project root at ${truepath(projectPath)}.');
       showUsage(argParser);
+      exit(1);
     }
   }
 

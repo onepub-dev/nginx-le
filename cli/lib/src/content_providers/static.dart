@@ -38,16 +38,16 @@ class Static extends ContentProvider {
   }
 
   String get _locationFile => 'static.location';
-  String get _locationPath => join(ConfigYaml().hostIncludePath, _locationFile);
+  String get _locationPath => join(ConfigYaml().hostIncludePath!, _locationFile);
 
   String get _staticRootPath =>
-      ConfigYaml().settings['$name-static-wwwroot'] as String ??
+      ConfigYaml().settings['$name-static-wwwroot'] as String? ??
       _defaultStaticRootPath;
   set _staticRootPath(String rootPath) =>
       ConfigYaml().settings['$name-static-wwwroot'] = rootPath;
 
   String get _homePage =>
-      ConfigYaml().settings['$name-home-page'] as String ?? _defaultHomePage;
+      ConfigYaml().settings['$name-home-page'] as String? ?? _defaultHomePage;
   set _homePage(String rootPath) =>
       ConfigYaml().settings['$name-home-page'] = rootPath;
 
@@ -64,7 +64,7 @@ class Static extends ContentProvider {
   @override
   void createLocationFile() {
     _backupLocationContent();
-    find('*.location', workingDirectory: ConfigYaml().hostIncludePath)
+    find('*.location', workingDirectory: ConfigYaml().hostIncludePath!)
         .forEach((file) => delete(file));
 
     _locationPath.write(_locationContent);
@@ -73,7 +73,7 @@ class Static extends ContentProvider {
   @override
   void createUpstreamFile() {
     /// no op as we don't require an upstream file.
-    find('*.upstream', workingDirectory: ConfigYaml().hostIncludePath)
+    find('*.upstream', workingDirectory: ConfigYaml().hostIncludePath!)
         .forEach((file) => delete(file));
   }
 
@@ -95,7 +95,7 @@ class Static extends ContentProvider {
     var onDiskContent = read(_locationPath).toList().join('\n');
     if (onDiskContent != _locationContent) {
       // looks like the user manually changed the contents of the file.
-      var backup = '${_locationPath}.bak';
+      var backup = '$_locationPath.bak';
       if (exists(backup)) {
         var target = '$backup.${Uuid().v4()}';
         if (!isWritable(backup)) {
@@ -110,7 +110,7 @@ class Static extends ContentProvider {
       }
 
       if (!isWritable(dirname(backup))) {
-        'cp ${_locationPath} $backup'.start(privileged: true);
+        'cp $_locationPath $backup'.start(privileged: true);
 
         if (isGroupExists('docker')) {
           'chown docker:docker $backup'.start(privileged: true);
@@ -120,7 +120,7 @@ class Static extends ContentProvider {
       }
 
       print(
-          'Your original location file ${_locationPath} has been backed up to $backup');
+          'Your original location file $_locationPath has been backed up to $backup');
     }
   }
 

@@ -8,18 +8,18 @@ class GenericProxy extends ContentProvider {
   @override
   void promptForSettings() {
     var config = ConfigYaml();
-    String fqdn;
+    String? fqdn;
     print('');
     print('${green('Web Application Server details')}');
 
-    fqdn = config.settings[fqdnKey] as String;
+    fqdn = config.settings[fqdnKey] as String?;
     fqdn ??= 'localhost';
 
     fqdn = ask('FQDN of web application server:',
         defaultValue: fqdn,
         validator: Ask.all([Ask.required, AskFQDNOrLocalhost()]));
 
-    var port = config.settings[portKey] as int;
+    var port = config.settings[portKey] as int?;
     port ??= 8080;
 
     port = int.parse(ask('TCP Port of web application server:',
@@ -46,8 +46,8 @@ class GenericProxy extends ContentProvider {
   @override
   void createLocationFile() {
     var config = ConfigYaml();
-    var location = join(config.hostIncludePath, '$name.location');
-    find('*.location', workingDirectory: config.hostIncludePath)
+    var location = join(config.hostIncludePath!, '$name.location');
+    find('*.location', workingDirectory: config.hostIncludePath!)
         .forEach((file) => delete(file));
 
     location.write(r'''location / {
@@ -68,12 +68,12 @@ class GenericProxy extends ContentProvider {
   @override
   void createUpstreamFile() {
     var config = ConfigYaml();
-    find('*.upstream', workingDirectory: ConfigYaml().hostIncludePath)
+    find('*.upstream', workingDirectory: ConfigYaml().hostIncludePath!)
         .forEach((file) => delete(file));
-    var location = join(config.hostIncludePath, '$name.upstream');
+    var location = join(config.hostIncludePath!, '$name.upstream');
 
-    var fqdn = config.settings[fqdnKey] as String;
-    var port = config.settings[portKey] as int;
+    var fqdn = config.settings[fqdnKey] as String?;
+    var port = config.settings[portKey] as int?;
 
     location.write('''upstream generic {
     server $fqdn:$port fail_timeout=0;

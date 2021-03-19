@@ -30,7 +30,7 @@ class ContentProviders {
   }
 
   /// Finds and returns a [ContentProvider] via its name.
-  ContentProvider getByName(String name) {
+  ContentProvider? getByName(String? name) {
     for (var provider in providers) {
       if (provider.name == name) {
         return provider;

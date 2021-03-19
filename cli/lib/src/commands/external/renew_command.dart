@@ -30,7 +30,7 @@ class RenewCommand extends Command<void> {
   void run() {
     print('Renew command running');
 
-    var debug = argResults['debug'] as bool;
+    var debug = argResults!['debug'] as bool;
 
     ///var target = containerOrName(argParser, argResults);
     ///

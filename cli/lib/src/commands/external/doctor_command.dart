@@ -57,13 +57,13 @@ class DoctorCommand extends Command<void> {
     _colprint(['Docker container', config.containerid]);
     _colprint(['Auth Provider', config.authProvider]);
 
-    var authProvider = AuthProviders().getByName(config.authProvider);
+    var authProvider = AuthProviders().getByName(config.authProvider!)!;
     var envs = authProvider.environment;
     for (var env in envs) {
       _colprint([env.name, env.value]);
     }
 
-    var provider = ContentProviders().getByName(config.contentProvider);
+    var provider = ContentProviders().getByName(config.contentProvider)!;
     print('');
     _colprint(['Content Provider', config.contentProvider]);
     for (var volume in provider.getVolumes()) {
@@ -80,13 +80,13 @@ class DoctorCommand extends Command<void> {
       printerr(
           red("The image has not been configured.  Run 'nginx-le config'"));
     } else {
-      var image = Images().findByImageId(config.image.imageid);
+      var image = Images().findByImageId(config.image!.imageid);
 
       if (image == null) {
-        printerr(red('The Image ${image.imageid} does not exist'));
+        printerr(red('The Image ${config.image!.imageid} does not exist'));
       }
       {
-        _colprint(['Image Name', image.fullname]);
+        _colprint(['Image Name', config.image!.fullname]);
       }
     }
 
@@ -98,8 +98,7 @@ class DoctorCommand extends Command<void> {
 
       if (container == null) {
         printerr(red('The Container ${config.containerid} does not exist'));
-      }
-      {
+      } else {
         _colprint([
           'Container Name',
           container.names,
@@ -110,7 +109,7 @@ class DoctorCommand extends Command<void> {
     }
   }
 
-  void _colprint(List<String> cols) {
+  void _colprint(List<String?> cols) {
     if (cols[1] == null) {
       cols[1] = '<null>';
     }
@@ -157,8 +156,8 @@ class DoctorCommand extends Command<void> {
 }
 
 class _Owner {
-  String user;
-  String group;
+  String? user;
+  String? group;
 
   _Owner(String path) {
     if (Settings().isWindows) {

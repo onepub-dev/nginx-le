@@ -24,7 +24,7 @@ class StopCommand extends Command<void> {
 
     config.validate(() => showUsage(argParser));
 
-    var container = Containers().findByContainerId(config.containerid);
+    var container = Containers().findByContainerId(config.containerid)!;
     if (container.isRunning) {
       print('Stopping...');
       container.stop();

@@ -10,8 +10,8 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 ///
 /// Returns the selected container by name or containerid.
 String containerOrName(ArgParser argParser, ArgResults argResults) {
-  var containerid = argResults['containerid'] as String;
-  var name = argResults['name'] as String;
+  var containerid = argResults['containerid'] as String?;
+  var name = argResults['name'] as String?;
 
   if (name != null && containerid != null) {
     printerr('You may only pass one of "name" and "containerid');
@@ -43,7 +43,7 @@ String containerOrName(ArgParser argParser, ArgResults argResults) {
   var target = name;
   target ??= containerid;
 
-  return target;
+  return target!;
 }
 
 void showUsage(ArgParser argParser) {

@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 /// Provides a base class for content source providers.
 ///
 /// For an Nginx install we need to define where it pulls its
@@ -30,8 +28,8 @@ abstract class ContentProvider {
 
 /// Defines the paths for a Volume to be mounted into the nginx docker container.
 class Volume {
-  final String hostPath;
+  final String? hostPath;
   final String containerPath;
 
-  Volume({@required this.hostPath, @required this.containerPath});
+  Volume({required this.hostPath, required this.containerPath});
 }

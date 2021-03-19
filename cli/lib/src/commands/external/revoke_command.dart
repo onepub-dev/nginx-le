@@ -29,7 +29,7 @@ class RevokeCommand extends Command<void> {
 
   @override
   void run() {
-    var debug = argResults['debug'] as bool;
+    var debug = argResults!['debug'] as bool;
     Settings().setVerbose(enabled: debug);
 
     //var target = containerOrName(argParser, argResults);
@@ -37,7 +37,7 @@ class RevokeCommand extends Command<void> {
     var config = ConfigYaml();
     config.validate(() => showUsage(argParser));
 
-    if (Containers().findByContainerId(config.containerid).isRunning) {
+    if (Containers().findByContainerId(config.containerid)!.isRunning) {
       var cmd = 'docker exec -it ${config.containerid} /home/bin/revoke';
       if (debug) cmd += ' --debug';
       cmd.run;

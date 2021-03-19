@@ -24,7 +24,7 @@ class RestartCommand extends Command<void> {
   void run() {
     print('nginx-le container is starting.');
 
-    var debug = argResults['debug'] as bool;
+    var debug = argResults!['debug'] as bool?;
     debug ??= false;
 
     Settings().setVerbose(enabled: debug);

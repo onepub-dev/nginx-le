@@ -62,26 +62,26 @@ class LogsCommand extends Command<void> {
 
   @override
   void run() {
-    var follow = argResults['follow'] as bool;
-    var lines = argResults['lines'] as String;
-    var certbot = argResults['certbot'] as bool;
-    var nginx = argResults['nginx'] as bool;
-    var access = argResults['access'] as bool;
-    var error = argResults['error'] as bool;
-    var debug = argResults['debug'] as bool;
+    var follow = argResults!['follow'] as bool;
+    var lines = argResults!['lines'] as String;
+    var certbot = argResults!['certbot'] as bool;
+    var nginx = argResults!['nginx'] as bool;
+    var access = argResults!['access'] as bool?;
+    var error = argResults!['error'] as bool?;
+    var debug = argResults!['debug'] as bool;
 
     Settings().setVerbose(enabled: debug);
 
     var config = ConfigYaml();
     config.validate(() => showUsage(argParser));
 
-    var lineCount = 0;
+    int? lineCount = 0;
     if ((lineCount = int.tryParse(lines)) == null) {
       printerr("'lines' must by an integer: found $lines");
       showUsage(argParser);
     }
 
-    if (lineCount < 0) {
+    if (lineCount! < 0) {
       printerr("'lines' must be >= 0");
       showUsage(argParser);
     }
@@ -96,7 +96,7 @@ class LogsCommand extends Command<void> {
       print('nginx-le displaying logs. ');
     }
 
-    var container = Containers().findByContainerId(config.containerid);
+    var container = Containers().findByContainerId(config.containerid)!;
     if (!container.isRunning) {
       printerr(red(
           "Nginx-LE container ${config.containerid} isn't running. Use 'nginx-le start' to start the container"));
@@ -110,8 +110,8 @@ class LogsCommand extends Command<void> {
         error, debug);
   }
 
-  void tailLogs(String containerid, bool follow, int lines, bool nginx,
-      bool certbot, bool access, bool error, bool debug) {
+  void tailLogs(String? containerid, bool follow, int? lines, bool nginx,
+      bool certbot, bool? access, bool? error, bool debug) {
     // var docker_cmd = 'docker exec -it ${containerid} /home/bin/logs';
     // if (follow) docker_cmd += ' --follow';
     // docker_cmd += ' --lines $lines';
@@ -120,8 +120,8 @@ class LogsCommand extends Command<void> {
     // if (error) docker_cmd += ' --error';
     // if (debug) docker_cmd += ' --debug';
 
-    if (nginx && (certbot || access || error)) {
-      if (argResults.wasParsed('nginx')) {
+    if (nginx && (certbot || access! || error!)) {
+      if (argResults!.wasParsed('nginx')) {
         printerr(red('You cannot combine nginx with any other log file'));
         exit(1);
       } else {
@@ -130,12 +130,12 @@ class LogsCommand extends Command<void> {
       }
     }
     try {
-      if (certbot || access || error) {
-        logInternals(containerid, follow, lines, certbot, access, error, debug);
+      if (certbot || access! || error!) {
+        logInternals(containerid, follow, lines, certbot, access!, error!, debug);
       }
 
       if (nginx) {
-        logNginx(containerid, lines, follow: follow);
+        logNginx(containerid!, lines!, follow: follow);
       }
     } on TailCliException catch (error) {
       printerr(error.message);
@@ -147,15 +147,15 @@ class LogsCommand extends Command<void> {
   }
 
   void logInternals(
-    String containerid,
+    String? containerid,
     bool follow,
-    int lines,
+    int? lines,
     bool certbot,
     bool access,
     bool error,
     bool debug,
   ) {
-    var cmd = 'docker exec -it ${containerid} /home/bin/logs';
+    var cmd = 'docker exec -it $containerid /home/bin/logs';
     if (follow) cmd += ' --follow';
     cmd += ' --lines $lines';
     if (certbot) cmd += ' --certbot';

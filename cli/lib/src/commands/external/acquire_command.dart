@@ -24,7 +24,7 @@ class AcquireCommand extends Command<void> {
 
   @override
   void run() {
-    var debug = argResults['debug'] as bool;
+    var debug = argResults!['debug'] as bool;
 
     Settings().setVerbose(enabled: debug);
     Environment().certbotVerbose = debug;
@@ -33,7 +33,7 @@ class AcquireCommand extends Command<void> {
 
     config.validate(() => showUsage(argParser));
 
-    if (Containers().findByContainerId(config.containerid).isRunning) {
+    if (Containers().findByContainerId(config.containerid)!.isRunning) {
       var cmd = 'docker exec -it ${config.containerid} /home/bin/acquire ';
 
       print('');

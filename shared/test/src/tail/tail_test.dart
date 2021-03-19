@@ -80,6 +80,7 @@ void main() {
   test('StreamGroup', () async {
     var syslog = Tail('/var/log/syslog', 10);
     var dmesg = Tail('/var/log/dmesg', 10);
+    touch('$HOME/testlog', create: true);
     var testlog = Tail('$HOME/testlog', 10);
 
     var group = StreamGroup<String>();
@@ -107,6 +108,7 @@ void main() {
   test('StreamGroup - with follow', () async {
     var syslog = Tail('/var/log/syslog', 10, follow: true);
     var dmesg = Tail('/var/log/dmesg', 10, follow: true);
+    touch('$HOME/testlog', create: true);
     var testlog = Tail('$HOME/testlog', 10, follow: true);
 
     var group = StreamGroup<String>();
