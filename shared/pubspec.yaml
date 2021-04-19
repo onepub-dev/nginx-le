@@ -15,10 +15,10 @@ dependencies:
   http: ^0.13.0
   intl: ^0.17.0
   isolates: ^3.0.3+7
-  mailer: ^4.0.0
+  mailer: ^5.0.0
   meta: ^1.0.0
   pedantic: ^1.0.0
-  public_suffix: ^2.0.1
+  public_suffix: ^3.0.0
   settings_yaml: ^3.0.1
   uuid: ^3.0.1
   xml: ^5.0.2
