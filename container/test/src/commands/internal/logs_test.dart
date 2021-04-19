@@ -5,7 +5,7 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('Log Command -no tail - all default logfiles', () {
+  test('Log Command -no follow - all default logfiles', () {
     setup();
 
     Settings().setVerbose(enabled: true);
@@ -13,11 +13,10 @@ void main() {
 
     logs([
       '--debug',
-      '--no-tail',
     ]);
   });
 
-  test('Log Command - no tail - just access logfile.', () {
+  test('Log Command - no follow - just access logfile.', () {
     setup();
 
     Settings().setVerbose(enabled: true);
@@ -26,11 +25,10 @@ void main() {
     logs([
       '--access',
       '--debug',
-      '--no-tail',
     ]);
   });
 
-  test('Log Command - no tail - just access and error logfile.', () {
+  test('Log Command - no follow - just access and error logfile.', () {
     setup();
 
     Settings().setVerbose(enabled: true);
@@ -40,11 +38,10 @@ void main() {
       '--access',
       '--error',
       '--debug',
-      '--no-tail',
     ]);
   });
 
-  test('Log Command - tail -  accesslogfile.', () {
+  test('Log Command - follow -  accesslogfile.', () {
     setup();
 
     Settings().setVerbose(enabled: true);
@@ -53,8 +50,10 @@ void main() {
     logs([
       '--access',
       '--debug',
+      '--follow'
     ]);
-  });
+    /// can't run this as the command will run forever.
+  }, skip: true);
 }
 
 void setup() {
