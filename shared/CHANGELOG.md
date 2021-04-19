@@ -1,4 +1,7 @@
 # 6.2.0
+Corrected the pull command to use the Images version.
+
+# 6.2.0
 upgraded to latest version of public_suffix.
 the test incorrectly check for a production cert.
 test can now be run by dcli.
