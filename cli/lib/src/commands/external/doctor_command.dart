@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
+import 'package:docker2/docker2.dart';
 import 'package:nginx_le/src/content_providers/content_providers.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
@@ -80,7 +81,7 @@ class DoctorCommand extends Command<void> {
       printerr(
           red("The image has not been configured.  Run 'nginx-le config'"));
     } else {
-      var image = Images().findByImageId(config.image!.imageid);
+      var image = Images().findByImageId(config.image!.imageid ?? '');
 
       if (image == null) {
         printerr(red('The Image ${config.image!.imageid} does not exist'));
@@ -94,7 +95,7 @@ class DoctorCommand extends Command<void> {
       printerr(
           red("The Container has not been configured. Run 'nginx-le config'"));
     } else {
-      var container = Containers().findByContainerId(config.containerid);
+      var container = Containers().findByContainerId(config.containerid!);
 
       if (container == null) {
         printerr(red('The Container ${config.containerid} does not exist'));

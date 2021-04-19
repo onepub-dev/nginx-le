@@ -1,5 +1,6 @@
 import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
+import 'package:docker2/docker2.dart';
 
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
@@ -37,7 +38,7 @@ class RevokeCommand extends Command<void> {
     var config = ConfigYaml();
     config.validate(() => showUsage(argParser));
 
-    if (Containers().findByContainerId(config.containerid)!.isRunning) {
+    if (Containers().findByContainerId(config.containerid!)!.isRunning) {
       var cmd = 'docker exec -it ${config.containerid} /home/bin/revoke';
       if (debug) cmd += ' --debug';
       cmd.run;

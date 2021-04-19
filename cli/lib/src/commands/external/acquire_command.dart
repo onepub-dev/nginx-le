@@ -2,6 +2,8 @@ import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
+import 'package:docker2/docker2.dart';
+
 import 'util.dart';
 
 class AcquireCommand extends Command<void> {
@@ -33,7 +35,7 @@ class AcquireCommand extends Command<void> {
 
     config.validate(() => showUsage(argParser));
 
-    if (Containers().findByContainerId(config.containerid)!.isRunning) {
+    if (Containers().findByContainerId(config.containerid!)!.isRunning) {
       var cmd = 'docker exec -it ${config.containerid} /home/bin/acquire ';
 
       print('');

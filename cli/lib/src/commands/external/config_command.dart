@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
+import 'package:docker2/docker2.dart';
 import 'package:nginx_le/src/content_providers/content_provider.dart';
 import 'package:nginx_le/src/content_providers/content_providers.dart';
 import 'package:nginx_le/src/util/ask_fqdn_validator.dart';
@@ -264,9 +265,16 @@ class ConfigCommand extends Command<void> {
             (image) => image.repository == 'noojee' && image.name == 'nginx-le')
         .toList();
     var latestImage = Images().findByFullname(latest);
-    var downloadLatest = Image.fromName(latest);
-    if (latestImage == null) {
-      downloadLatest.imageid = 'Download'.padRight(12);
+    Image downloadLatest;
+    if (latestImage != null) {
+      downloadLatest = Image.fromName(latest);
+    } else {
+      downloadLatest = Image(
+          repositoryAndName: '',
+          tag: '',
+          imageid: 'Download'.padRight(12),
+          created: '',
+          size: '');
       images.insert(0, downloadLatest);
     }
     Image? image = menu<Image>(
@@ -359,7 +367,7 @@ class ConfigCommand extends Command<void> {
       containers = Containers().containers();
     }
 
-    var defaultOption = Containers().findByContainerId(config.containerid);
+    var defaultOption = Containers().findByContainerId(config.containerid!);
 
     if (containers.isEmpty) {
       if (config.startMethod == ConfigYaml.START_METHOD_DOCKER_COMPOSE) {

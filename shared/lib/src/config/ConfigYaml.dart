@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dcli/dcli.dart' as d;
 import 'package:dcli/dcli.dart';
+import 'package:docker2/docker2.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
@@ -85,7 +86,7 @@ class ConfigYaml {
     startPaused = settings[Environment().startPausedKey] as bool?;
     fqdn = settings[FQDN_KEY] as String?;
     tld = settings[TLD_KEY] as String?;
-    image = Images().findByImageId(settings[IMAGE] as String?);
+    image = Images().findByImageId((settings[IMAGE] as String?)!);
     certificateType = settings[CERTIFICATE_TYPE] as String?;
     emailaddress = settings[EMAILADDRESS] as String?;
     containerid = settings[CONTAINERID] as String?;
@@ -179,12 +180,18 @@ class ConfigYaml {
       showUsage();
     }
 
-    if (!Containers().existsByContainerId(containerid)) {
+    if (containerid == null) {
+      printerr(red(
+          "Your configuration is in an inconsistent state. (containerid is null). Run 'nginx-le config'."));
+      showUsage();
+    }
+
+    if (!Containers().existsByContainerId(containerid!)) {
       printerr(red('The ngnix-le container $containerid no longer exists.'));
       printerr(red('  Run nginx-le config to change the container.'));
       exit(1);
     }
-    if (!Images().existsByImageId(imageid: image!.imageid)) {
+    if (!Images().existsByImageId(imageid: image!.imageid!)) {
       printerr(red('The ngnix-le image ${image!.imageid} no longer exists.'));
       printerr(red('  Run nginx-le config to change the image.'));
       exit(1);

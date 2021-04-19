@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
+import 'package:docker2/docker2.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /// Starts the nginx-le container.
@@ -37,7 +38,7 @@ class StartCommand extends Command<void> {
     var config = ConfigYaml();
     config.validate(() => showUsage(argParser));
 
-    var container = Containers().findByContainerId(config.containerid)!;
+    var container = Containers().findByContainerId(config.containerid ?? '')!;
     if (container.isRunning) {
       printerr(
           'The container ${config.containerid} is already running. Consider nginx-le restart');

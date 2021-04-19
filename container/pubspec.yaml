@@ -9,7 +9,7 @@ dependencies:
   args: ^2.0.0
   path: ^1.6.4
   cron: ^0.3.0
-  dcli: ^0.51.5
+  dcli: ^1.0.0
   xml: ^5.0.2
   http: ^0.13.0
   intl: ^0.17.0

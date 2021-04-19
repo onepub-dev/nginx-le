@@ -1,3 +1,4 @@
+import 'conduit.dart';
 import 'content_provider.dart';
 import 'custom.dart';
 import 'static.dart';
@@ -14,6 +15,7 @@ class ContentProviders {
     GenericProxy(),
     Static(),
     Tomcat(),
+    Conduit(),
   ];
   ContentProviders._init() {
     var names = <String, ContentProvider>{};

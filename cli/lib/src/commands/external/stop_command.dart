@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
+import 'package:docker2/docker2.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 class StopCommand extends Command<void> {
@@ -24,8 +25,8 @@ class StopCommand extends Command<void> {
 
     config.validate(() => showUsage(argParser));
 
-    var container = Containers().findByContainerId(config.containerid)!;
-    if (container.isRunning) {
+    var container = Containers().findByContainerId(config.containerid!);
+    if (container != null && container.isRunning) {
       print('Stopping...');
       container.stop();
     } else {

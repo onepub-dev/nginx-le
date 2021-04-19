@@ -1,10 +1,6 @@
 export 'src/certbot/certbot.dart';
 export 'src/certbot/certificate.dart';
 export 'src/certbot/certbot_paths.dart';
-export 'src/docker_cli/container.dart';
-export 'src/docker_cli/containers.dart';
-export 'src/docker_cli/image.dart';
-export 'src/docker_cli/images.dart';
 export 'src/nginx.dart';
 export 'src/tail/docker_logs.dart';
 export 'src/tail/tail.dart';

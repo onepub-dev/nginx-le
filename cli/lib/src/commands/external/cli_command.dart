@@ -1,5 +1,6 @@
 import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
+import 'package:docker2/docker2.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 import 'util.dart';
@@ -30,8 +31,8 @@ class CliCommand extends Command<void> {
 
     config.validate(() => showUsage(argParser));
 
-    var container = Containers().findByContainerId(config.containerid)!;
-    if (container.isRunning) {
+    var container = Containers().findByContainerId(config.containerid!);
+    if (container != null && container.isRunning) {
       'docker exec -it ${config.containerid} /bin/bash'
           .start(nothrow: true, terminal: true);
     } else {

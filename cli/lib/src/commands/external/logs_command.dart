@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
+import 'package:docker2/docker2.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /// Starts nginx and the certbot scheduler.
@@ -96,7 +97,7 @@ class LogsCommand extends Command<void> {
       print('nginx-le displaying logs. ');
     }
 
-    var container = Containers().findByContainerId(config.containerid)!;
+    var container = Containers().findByContainerId(config.containerid!)!;
     if (!container.isRunning) {
       printerr(red(
           "Nginx-LE container ${config.containerid} isn't running. Use 'nginx-le start' to start the container"));
@@ -131,7 +132,8 @@ class LogsCommand extends Command<void> {
     }
     try {
       if (certbot || access! || error!) {
-        logInternals(containerid, follow, lines, certbot, access!, error!, debug);
+        logInternals(
+            containerid, follow, lines, certbot, access!, error!, debug);
       }
 
       if (nginx) {
