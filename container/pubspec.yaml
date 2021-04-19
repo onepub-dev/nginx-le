@@ -16,7 +16,7 @@ dependencies:
   isolates: ^3.0.3+7
   meta: ^1.0.0
   pedantic: ^1.0.0
-  public_suffix: ^2.0.1
+  public_suffix: ^3.0.0
   uuid: ^3.0.1
   nginx_le_shared: ^6.0.0
 dev_dependencies: 

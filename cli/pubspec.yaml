@@ -20,7 +20,7 @@ dependencies:
   meta: ^1.0.0
   pedantic: ^1.0.0
   pub_release: ^6.0.0
-  public_suffix: ^2.0.0
+  public_suffix: ^3.0.0
   settings_yaml: ^3.0.0
   uuid: ^3.0.0
   validators2: ^3.0.0

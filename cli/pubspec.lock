@@ -266,7 +266,7 @@ packages:
       name: mailer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.0"
+    version: "5.0.0"
   matcher:
     dependency: transitive
     description:
@@ -294,7 +294,7 @@ packages:
       path: "../shared"
       relative: true
     source: path
-    version: "6.0.2"
+    version: "6.1.0"
   node_preamble:
     dependency: transitive
     description:
@@ -371,7 +371,7 @@ packages:
       name: public_suffix
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "3.0.0"
   pubspec:
     dependency: transitive
     description:
@@ -392,7 +392,7 @@ packages:
       name: punycode
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.0"
+    version: "1.0.0"
   quiver:
     dependency: transitive
     description:
