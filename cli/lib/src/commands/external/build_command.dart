@@ -79,8 +79,7 @@ class BuildCommand extends Command<void> {
     print(green('Building nginx-le docker image $imageName '));
 
     // get the latest ubuntu image before we build.
-    var unbuntuImage = Image.fromName('ubuntu:20.04');
-    unbuntuImage.pull();
+    Images().pull(fullname: 'ubuntu:20.04');
 
     /// required to give docker access to our ssh keys.
     'docker build -t $imageName .'.start(workingDirectory: dockerPath);
