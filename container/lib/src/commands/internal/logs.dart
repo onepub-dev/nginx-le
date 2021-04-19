@@ -13,9 +13,9 @@ void logs(List<String> args) {
   argParser.addFlag(
     'follow',
     abbr: 'f',
-    defaultsTo: true,
+    defaultsTo: false,
     negatable: false,
-    help: 'If set we follow the specified logs.',
+    help: 'If set, we follow the specified logs.',
   );
   argParser.addOption(
     'lines',
@@ -103,10 +103,13 @@ void logs(List<String> args) {
   }
 
   // pre-close the group as onDone won't be called until the group is closed.
-  group.close();
+  print('waitForDone - group close start');
+  waitForEx<void>(group.close());
+  print('waitForDone - group close end');
 
   var finished = Completer<void>();
   group.stream.listen((line) => print(line)).onDone(() {
+    print('waitForDone - completing');
     print('done');
 
     finished.complete();
@@ -116,8 +119,9 @@ void logs(List<String> args) {
   //   syslog.stop();
   //   dmesg.stop();
   // });
-
+  print('waitForDone -start');
   waitForEx<void>(finished.future);
+  print('waitForDone -end');
 }
 
 void showUsage(ArgParser parser) {
