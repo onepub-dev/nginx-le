@@ -44,7 +44,9 @@ void main() {
       }
     }, onDone: () {
       logger.stop();
-      complete.complete();
+      if (!complete.isCompleted) {
+        complete.complete();
+      }
     });
 
     await complete.future;
