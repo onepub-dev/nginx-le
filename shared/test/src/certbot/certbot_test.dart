@@ -1,3 +1,4 @@
+#! /usr/bin/env dcli
 @Timeout(Duration(minutes: 30))
 import 'dart:io';
 import 'package:dcli/dcli.dart' hide equals;
