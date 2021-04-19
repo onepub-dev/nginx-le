@@ -1,3 +1,11 @@
+# 6.2.0
+upgraded to latest version of public_suffix.
+the test incorrectly check for a production cert.
+test can now be run by dcli.
+updated unit tests as tail is now called follow.
+The following option now defaults to false as there was no way to turn off the follow option.
+Added check that completer hasn't already been completed.
+
 # 6.1.0
 upgrade public_suffix and mailer.
 Migrated to dcli 1.0 and docker2
