@@ -1,3 +1,6 @@
+# 6.2.1
+Upgraded packages as part of release process
+
 # 6.2.0
 Upgraded packages as part of release process
 
