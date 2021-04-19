@@ -47,11 +47,8 @@ void main() {
     Settings().setVerbose(enabled: true);
     Nginx.accesslogpath.append('Hellow world');
 
-    logs([
-      '--access',
-      '--debug',
-      '--follow'
-    ]);
+    logs(['--access', '--debug', '--follow']);
+
     /// can't run this as the command will run forever.
   }, skip: true);
 }

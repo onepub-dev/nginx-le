@@ -1,3 +1,7 @@
+# 6.2.0
+Upgraded packages as part of release process
+Toggled path to shared package
+
 # 5.1.0
 migrated to using the docker2 package and upgraded to dcli 1.0
 
