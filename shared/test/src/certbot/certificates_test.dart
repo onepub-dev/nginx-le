@@ -30,7 +30,7 @@ void main() {
           certificate.privateKeyPath,
           equals(join(CertbotPaths().letsEncryptLivePath,
               'slayer.noojee.org/privkey.pem')));
-      expect(certificate.production, equals(true));
+      expect(certificate.production, equals(false));
       expect(certificate.expiryDate,
           equals(DateTime.parse('2020-10-27 06:10:05+00:00')));
     });
