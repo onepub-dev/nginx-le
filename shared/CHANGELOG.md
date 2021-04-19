@@ -1,3 +1,6 @@
+# 6.1.0
+Migrated to dcli 1.0 and docker2
+
 # 6.0.2
 
 # 6.0.1
