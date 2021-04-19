@@ -1,3 +1,6 @@
+# 5.1.0
+migrated to using the docker2 package and upgraded to dcli 1.0
+
 # 5.0.69
 Upgraded packages as part of release process
 
