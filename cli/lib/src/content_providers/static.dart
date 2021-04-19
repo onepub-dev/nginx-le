@@ -38,7 +38,8 @@ class Static extends ContentProvider {
   }
 
   String get _locationFile => 'static.location';
-  String get _locationPath => join(ConfigYaml().hostIncludePath!, _locationFile);
+  String get _locationPath =>
+      join(ConfigYaml().hostIncludePath!, _locationFile);
 
   String get _staticRootPath =>
       ConfigYaml().settings['$name-static-wwwroot'] as String? ??
