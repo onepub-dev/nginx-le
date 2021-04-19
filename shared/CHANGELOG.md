@@ -1,4 +1,5 @@
 # 6.1.0
+upgrade public_suffix and mailer.
 Migrated to dcli 1.0 and docker2
 
 # 6.0.2
