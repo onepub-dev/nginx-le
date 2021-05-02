@@ -126,7 +126,7 @@ packages:
       name: dcli
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   docker2:
     dependency: "direct main"
     description:
@@ -225,15 +225,8 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
-  isolate:
-    dependency: "direct main"
-    description:
-      name: isolate
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.3"
   isolates:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: isolates
       url: "https://pub.dartlang.org"
@@ -291,9 +284,9 @@ packages:
   nginx_le_shared:
     dependency: "direct main"
     description:
-      name: nginx_le_shared
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../shared"
+      relative: true
+    source: path
     version: "6.2.2"
   node_preamble:
     dependency: transitive
