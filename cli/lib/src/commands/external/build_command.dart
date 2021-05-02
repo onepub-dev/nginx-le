@@ -72,7 +72,9 @@ class BuildCommand extends Command<void> {
     var pulldcli = results['update-dcli'] as bool;
 
     /// force dcli to pull the latest version.
-    if (pulldcli || !exists('update-dcli.txt')) {
+    if (pulldcli) {
+      replace(join(dockerPath, 'Dockerfile'), RegExp('# flush-cache:.*'),
+          '# flush-cache: ${Uuid().v4()}');
       'update-dcli.txt'.write(Uuid().v4());
     }
 

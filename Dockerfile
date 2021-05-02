@@ -11,13 +11,15 @@ RUN apt update  && apt install --no-install-recommends -y \
     wget 
 
 
-# install dcli
-# The `nginx-le build -u` command updates this file to force an upgrade of dcli
-COPY update-dcli.txt  /dev/nul
-RUN wget https://github.com/bsutton/dcli/releases/download/latest.linux/dcli_install
+# install dcli. 
+# nginx-le build will update the '# flush-cache' to force a new download of dcli if the -u switch is passed
+# to the build command
+RUN wget https://github.com/bsutton/dcli/releases/download/latest.linux/dcli_install # flush-cache: 2a63fddf-b3f2-47b8-9772-c4c799c41d96
 RUN chmod +x dcli_install
 RUN ./dcli_install
 ENV PATH="${PATH}:/usr/lib/dart/bin:/root/.pub-cache/bin"
+
+RUN echo $PATH
 
 RUN dcli version
 
