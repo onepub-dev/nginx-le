@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cron/cron.dart';
 import 'package:dcli/dcli.dart' hide delete;
 import 'package:dcli/dcli.dart' as dcli;
@@ -365,8 +367,14 @@ class Certbot {
   void scheduleRenews() {
     var cron = Cron();
 
+    // randomize the minute to reduce the chance
+    // of two systems trying to renew at the same time
+    // we can be an issue for wild card certs
+    // that use dns validation.
+    var minute = Random().nextInt(59);
+
     /// run cron at 1 am  everyday
-    cron.schedule(Schedule.parse('0 1 * * *'), () async {
+    cron.schedule(Schedule.parse('$minute 1 * * *'), () async {
       try {
         renew();
       } on CertbotException catch (e, st) {
