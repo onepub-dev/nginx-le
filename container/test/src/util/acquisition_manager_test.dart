@@ -58,7 +58,7 @@ void main() {
     Certbot().renew(force: true);
 
 //    'test/src/util/mock_deploy_hook'.run;
-  }, skip: false);
+  }, skip: false, tags: ['slow'], timeout: Timeout(Duration(minutes: 15)));
 
   test('Revoke Invalid certificates', () {
     setup(
