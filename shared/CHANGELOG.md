@@ -1,3 +1,7 @@
+# 6.2.4
+reveted location of yaml
+move yaml
+
 # 6.2.3
 added better error handling when invalid args passed.
 Added slow tag to slow running tests.
