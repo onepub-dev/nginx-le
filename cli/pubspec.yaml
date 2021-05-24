@@ -30,3 +30,8 @@ dev_dependencies:
   test: ^1.0.0
 executables: 
   nginx-le: nginx-le
+
+dependency_overrides:
+  nginx_le_shared:
+    path:
+      ../shared
