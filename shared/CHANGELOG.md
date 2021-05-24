@@ -1,3 +1,13 @@
+# 6.2.3
+added better error handling when invalid args passed.
+Added slow tag to slow running tests.
+added pubrelease_multi.yaml to support multi package releases via pub_release.
+Randomize the minute for renewals schedules to avoid conflicts when multiple servers
+  are using wildcards and dsn validation.
+Updated dependencies to released version (post nnbd).
+Modified the method we use to force docker to download the lastest dcli version as the original technique wasn't working.
+Added instructions on how to delete the acquision block file.
+
 # 6.2.2
 
 # 6.2.1
