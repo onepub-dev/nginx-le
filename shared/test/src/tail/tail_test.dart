@@ -125,9 +125,10 @@ void main() {
       finished.complete();
     });
 
-    Future<void>.delayed(Duration(seconds: 30), () {
+    Future<void>.delayed(Duration(seconds: 10), () {
       syslog.stop();
       dmesg.stop();
+      testlog.stop();
     });
 
     waitForEx<void>(finished.future);
