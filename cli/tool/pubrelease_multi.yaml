@@ -1,0 +1,3 @@
+shared: ../shared
+container: ../container
+cli: ../cli
