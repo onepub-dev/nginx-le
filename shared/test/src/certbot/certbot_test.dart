@@ -75,7 +75,9 @@ void main() {
       cert.revoke();
     }, timeout: Timeout(Duration(minutes: 5)), skip: true);
 
-    test('renew', () {
+    test(
+        'renew - this can take > 10 min as certbot intentionally slows this call down.',
+        () {
       prepareCertHooks();
 
       var certificates = Certificate.load();
@@ -116,7 +118,7 @@ void main() {
       //     production: false,
       //     wildcard: false,
       //     emailaddress: Environment().emailaddress);
-    }, timeout: Timeout(Duration(minutes: 10)));
+    }, timeout: Timeout(Duration(minutes: 15)), tags: ['slow']);
 
     test('parse', () {
       print('parse');
