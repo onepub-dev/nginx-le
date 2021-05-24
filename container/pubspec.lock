@@ -270,9 +270,9 @@ packages:
   nginx_le_shared:
     dependency: "direct main"
     description:
-      path: "../shared"
-      relative: true
-    source: path
+      name: nginx_le_shared
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "6.2.5"
   node_preamble:
     dependency: transitive
