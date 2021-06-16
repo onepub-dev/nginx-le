@@ -30,5 +30,5 @@ void main() {
   print(
       'certbotDeployHookRenewedLineagePath: ${Environment().certbotDeployHookRenewedLineagePath}');
 
-  deploy_hook();
+  deploy_hook(reload: false);
 }

@@ -1,3 +1,7 @@
+@Timeout(Duration(minutes: 30))
+
+/// certificate renewals can take 20 minutes hence the long timeout above.
+
 import 'package:nginx_le_shared/src/certbot/certbot_paths.dart';
 import 'package:nginx_le_shared/src/certbot/certificate.dart';
 import 'package:test/test.dart';

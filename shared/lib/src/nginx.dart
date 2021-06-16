@@ -1,3 +1,5 @@
+import 'package:dcli/dcli.dart';
+
 import '../nginx_le_shared.dart';
 
 class Nginx {
@@ -21,5 +23,14 @@ class Nginx {
     var path = Environment().nginxErrorLogPath;
     path ??= '/var/log/nginx/error.log';
     return path;
+  }
+
+  static void reload() {
+    if (exists('/var/run/nginx.pid')) {
+      /// force nginx to reload its config.
+      'nginx -s reload'.run;
+    } else {
+      Settings().verbose('Nginx reload ignored as nginx is not running');
+    }
   }
 }

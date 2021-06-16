@@ -49,7 +49,7 @@ class AcquisitionManager {
 
   void enterAcquisitionMode({bool show = false, required bool reload}) {
     /// symlink in the http configs which only permit certbot access
-    final _created = _createSymlink(CertbotPaths().WWW_PATH_ACQUIRE);
+    final _created = createContentSymlink(acquisitionMode: true);
 
     if (!inAcquisitionMode && show) {
       print(red('*') * 120);
@@ -61,13 +61,13 @@ class AcquisitionManager {
 
     /// only reload if things changed
     if (reload && _created) {
-      print('reloading nginx');
-      _reloadNginx();
+      print('Reloading nginx as we entered acquisition mode.');
+      Nginx.reload();
     }
   }
 
   void leaveAcquistionMode({bool show = false, required bool reload}) {
-    final _created = _createSymlink(CertbotPaths().WWW_PATH_OPERATING);
+    final _created = createContentSymlink(acquisitionMode: false);
 
     if (inAcquisitionMode) {
       if (show) {
@@ -80,17 +80,8 @@ class AcquisitionManager {
     }
 
     if (reload && _created) {
-      print('reloading nginx');
-      _reloadNginx();
-    }
-  }
-
-  void _reloadNginx() {
-    if (exists('/var/run/nginx.pid')) {
-      /// force nginx to reload its config.
-      'nginx -s reload'.run;
-    } else {
-      Settings().verbose('Nginx reload ignored as nginx is not running');
+      print('Reloading nginx as we left acquisition mode.');
+      Nginx.reload();
     }
   }
 
@@ -190,36 +181,6 @@ class AcquisitionManager {
         exists(CertbotPaths().WWW_PATH_LIVE, followLinks: true) &&
         resolveSymLink(CertbotPaths().WWW_PATH_LIVE) ==
             CertbotPaths().WWW_PATH_ACQUIRE;
-  }
-
-  /// returns true if the correct link didn't exists and had to be created.
-  bool _createSymlink(String targetPath) {
-    var created = false;
-
-    var validTarget = false;
-    var existing = false;
-    // we are about to recreate the symlink to the appropriate path
-    if (exists(CertbotPaths().WWW_PATH_LIVE, followLinks: false)) {
-      existing = true;
-      if (exists(CertbotPaths().WWW_PATH_LIVE)) {
-        validTarget = true;
-      }
-    }
-
-    if (validTarget) {
-      if (resolveSymLink(CertbotPaths().WWW_PATH_LIVE) != targetPath) {
-        deleteSymlink(CertbotPaths().WWW_PATH_LIVE);
-        symlink(targetPath, CertbotPaths().WWW_PATH_LIVE);
-        created = true;
-      }
-      // else the symlink already points at the target.
-    } else {
-      /// the current target is invalid so recreate the link.
-      if (existing) deleteSymlink(CertbotPaths().WWW_PATH_LIVE);
-      symlink(targetPath, CertbotPaths().WWW_PATH_LIVE);
-      created = true;
-    }
-    return created;
   }
 }
 

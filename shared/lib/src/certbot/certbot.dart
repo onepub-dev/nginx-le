@@ -207,21 +207,8 @@ class Certbot {
   }
 
   void deployCertificatesDirect(String certificateRootPath,
-      {bool revoking = false, bool reload = true}) {
-    if (exists(CertbotPaths().WWW_PATH_LIVE, followLinks: false)) {
-      deleteSymlink(CertbotPaths().WWW_PATH_LIVE);
-    }
-
-    if (!revoking) {
-      print(orange('Deploying certificates'));
-
-      /// symlink the user's operational content
-      symlink(CertbotPaths().WWW_PATH_OPERATING, CertbotPaths().WWW_PATH_LIVE);
-      _deploy(certificateRootPath);
-      print(green('*') * 120);
-      print(green('* Nginx-LE is running with an active Certificate.'));
-      print(green('*') * 120);
-    } else {
+      {bool revoking = false, required bool reload}) {
+    if (revoking) {
       print(red('*') * 120);
       print(red('Certificates Revoked.'));
       print(red(
@@ -229,8 +216,21 @@ class Certbot {
       print(red('*') * 120);
 
       /// symlink in the http configs which only permit certbot access
+      createContentSymlink(acquisitionMode: true);
+    } else {
+      print(orange('Deploying certificates'));
 
-      symlink(CertbotPaths().WWW_PATH_ACQUIRE, CertbotPaths().WWW_PATH_LIVE);
+      /// symlink the user's operational content
+      createContentSymlink(acquisitionMode: false);
+      _deploy(certificateRootPath);
+      print(green('*') * 120);
+      print(green('* Nginx-LE is running with an active Certificate.'));
+      print(green('*') * 120);
+    }
+
+    if (reload) {
+      print(orange('Reloading nginx so new certificates are activated'));
+      Nginx.reload();
     }
   }
 
