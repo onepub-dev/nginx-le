@@ -63,14 +63,14 @@ class Certificate {
   }
 
   static List<Certificate?> load() {
-    Settings().verbose(
+    verbose(() =>
         'Loading certificates from ${CertbotPaths().letsEncryptConfigPath}');
 
-    // Settings().verbose('directory tree of certs');
+    // verbose(() => 'directory tree of certs');
     // find('*',
     //         root: CertbotPaths().letsEncryptConfigPath,
     //         types: [Find.directory, Find.file, Find.link])
-    //     .forEach((file) => Settings().verbose(file));
+    //     .forEach((file) => verbose(() => file));
 
     var lines = <String>[];
     NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
@@ -81,10 +81,10 @@ class Certificate {
 
       lines = cmd.toList(nothrow: true);
 
-      Settings().verbose('output from certbot certificates');
+      verbose(() => 'output from certbot certificates');
 
       for (var line in lines) {
-        Settings().verbose('Certificate Load: $line');
+        verbose(() => 'Certificate Load: $line');
       }
     });
     return parse(lines);
@@ -136,10 +136,10 @@ class Certificate {
   /// by [asAt]. If [asAt] is null then 'now' is used.
   bool hasExpired({DateTime? asAt}) {
     asAt ??= DateTime.now();
-    Settings().verbose('expiry date $expiryDate asAt: $asAt');
+    verbose(() => 'expiry date $expiryDate asAt: $asAt');
     var expired = (expiryDate!.isBefore(asAt));
 
-    Settings().verbose('expired=$expired');
+    verbose(() => 'expired=$expired');
     return expired;
   }
 

@@ -4,6 +4,7 @@ import 'dart:isolate';
 
 import 'package:dcli/dcli.dart';
 
+import '../../nginx_le_shared.dart';
 import 'isolate_source.dart';
 
 class TailCliInIsolate {
@@ -25,7 +26,7 @@ class TailCliInIsolate {
   /// Returns the last [lines] of [containerid]  and then
   /// follows the file.
   Stream<String> _cliStream(String cli) {
-    Settings().verbose('tail cli:  $cli  ${Isolate.current.debugName}');
+    verbose(() => 'tail cli:  $cli  ${Isolate.current.debugName}');
 
     return cli.stream();
   }

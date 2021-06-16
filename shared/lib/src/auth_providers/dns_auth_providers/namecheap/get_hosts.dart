@@ -1,6 +1,6 @@
-import 'package:dcli/dcli.dart';
 import 'package:xml/xml.dart';
 
+import '../../../../nginx_le_shared.dart';
 import 'dns_record.dart';
 import 'get_url.dart';
 
@@ -31,9 +31,9 @@ List<DNSRecord> getHosts(
   var url =
       '$apiEndPoint?ApiUser=$apiUser&ApiKey=$apiKey&UserName=$username&Command=$getHostsCommand&ClientIp=$clientIP&SLD=$domainPart&TLD=$tld';
 
-  Settings().verbose('Requesting $url');
+  verbose(() => 'Requesting $url');
   var result = getUrl(url);
-  Settings().verbose('Namecheap getHosts: $result');
+  verbose(() => 'Namecheap getHosts: $result');
 
   final document = XmlDocument.parse(result);
 
@@ -58,17 +58,17 @@ List<DNSRecord> getHosts(
   /// No errors so extract the host names.
   var xmlResult = document.findAllElements('DomainDNSGetHostsResult').first;
   for (var xmlHost in xmlResult.children) {
-    Settings().verbose('node: $xmlHost');
+    verbose(() => 'node: $xmlHost');
     // skip empty nodes.
     if (xmlHost.attributes.isEmpty) continue;
 
     if ((xmlHost as XmlElement).name.local != 'host') {
-      Settings().verbose(
+      verbose(() =>
           "Skipping Invalid NodeType: ${xmlHost.nodeType} expected a 'host' node.");
       continue;
     }
     var record = DNSRecord.fromXmlHost(xmlHost);
-    Settings().verbose('Found record: $record');
+    verbose(() => 'Found record: $record');
     records.add(record);
   }
   return records;

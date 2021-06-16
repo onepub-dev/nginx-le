@@ -5,6 +5,7 @@ import 'dart:isolate';
 import 'package:dcli/dcli.dart';
 import 'package:meta/meta.dart';
 
+import '../../nginx_le_shared.dart';
 import 'isolate_source.dart';
 
 class DockerLogsInIsolate {
@@ -28,7 +29,7 @@ class DockerLogsInIsolate {
   @visibleForTesting
   Stream<String> dockerLog(String containerid,
       {int lines = 100, bool follow = false}) {
-    Settings().verbose('docker logs:  $lines  ${Isolate.current.debugName}');
+    verbose(() => 'docker logs:  $lines  ${Isolate.current.debugName}');
 
     var cmd = 'docker logs --tail $lines $containerid';
 

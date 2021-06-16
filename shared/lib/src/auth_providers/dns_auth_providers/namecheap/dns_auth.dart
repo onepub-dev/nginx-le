@@ -22,10 +22,10 @@ void namecheap_dns_auth() {
   ///
   /// Get the environment vars passed to use
   ///
-  var verbose = Environment().certbotVerbose;
-  Certbot().log('verbose: $verbose');
+  var isVerbose = Environment().certbotVerbose;
+  Certbot().log('verbose: $isVerbose');
 
-  Settings().setVerbose(enabled: verbose);
+  Settings().setVerbose(enabled: isVerbose);
 
   /// Certbot generated envs.
   // ignore: unnecessary_cast
@@ -74,10 +74,10 @@ void namecheap_dns_auth() {
     ///
     /// Create the required DNS entry for the Certbot challenge.
     ///
-    Settings().verbose('Creating challenge');
+    verbose(() => 'Creating challenge');
     var challenge = Challenge.simple(
         apiKey: apiKey, username: username, apiUsername: username);
-    Settings().verbose('calling challenge.present');
+    verbose(() => 'calling challenge.present');
 
     ///
     /// Writes the DNS record and waits for it to be visible.

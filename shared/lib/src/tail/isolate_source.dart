@@ -5,6 +5,7 @@ import 'dart:isolate';
 import 'package:async/async.dart';
 import 'package:dcli/dcli.dart';
 
+import '../../nginx_le_shared.dart';
 import 'messages.dart';
 
 /// Provides a library to stream data to and from an isolate.
@@ -119,7 +120,7 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
   IsolateSource();
 
   void stop() {
-    Settings().verbose('Sending StopMessage');
+    verbose(() => 'Sending StopMessage');
     sendToIsolatePort.send(StopMessage(onStop));
     if (_isolate != null) {
       _isolate!.kill();
@@ -131,13 +132,13 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
   }
 
   void start(ARG1 arg1, ARG2 arg2, ARG3 arg3) async {
-    Settings().verbose('start for $arg1, $arg2, $arg3');
+    verbose(() => 'start for $arg1, $arg2, $arg3');
     initIsolate();
     await initialised.future;
 
     var message = StartMessage<R, ARG1, ARG2, ARG3>(onStart, arg1, arg2, arg3);
 
-    Settings().verbose('sending start message for $arg1, $arg2, $arg3');
+    verbose(() => 'sending start message for $arg1, $arg2, $arg3');
     sendToIsolatePort.send(message);
   }
 
@@ -161,7 +162,7 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
       }
 
       if (data is StoppedMessage) {
-        Settings().verbose('Received StoppedMessage killing isolate');
+        verbose(() => 'Received StoppedMessage killing isolate');
         receiveFromIsolatePort!.close();
         _isolate!.kill();
         _controller.close();
@@ -178,10 +179,10 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
       } else {
         /// We recieve the stream of data from the isolate here.
         /// So now send it up to our master.
-        Settings().verbose('forwarding: ${++forwardCount} $data');
+        verbose(() => 'forwarding: ${++forwardCount} $data');
         _controller.sink.add(data as R?);
       }
-    }, onDone: (() => Settings().verbose('IsolatePort done')));
+    }, onDone: (() => verbose(() => 'IsolatePort done')));
 
     _isolate = await Isolate.spawn<SendPort>(
         spawnEntryPoint, receiveFromIsolatePort!.sendPort,
@@ -209,7 +210,7 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
         if (message.stopFunction != null) {
           message.stopFunction!();
         }
-        Settings().verbose('sending StoppedMessage');
+        verbose(() => 'sending StoppedMessage');
         sendToMainPort.send(StoppedMessage());
         return;
       }
@@ -224,13 +225,13 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
         final argument1 = currentMessage.argument1;
         final argument2 = currentMessage.argument2;
         final argument3 = currentMessage.argument3;
-        Settings().verbose(
+        verbose(() =>
             'Isolate recieved Start Message $argument1 $argument2 $argument3');
         startFunction(argument1, argument2, argument3).listen((dynamic event) {
-          Settings().verbose('Sending ${++sentCount} $event');
+          verbose(() => 'Sending ${++sentCount} $event');
           sendToMainPort.send(event);
         }).onDone(() {
-          Settings().verbose('onDone returned by controller');
+          verbose(() => 'onDone returned by controller');
 
           /// notify upstream that we are done.
           sendToMainPort.send(StoppedMessage());

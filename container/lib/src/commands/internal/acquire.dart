@@ -16,15 +16,15 @@ void acquire(List<String> args) {
   Settings().setVerbose(enabled: debug);
 
   /// these are used by the certbot auth and clenaup hooks.
-  Settings().verbose('${Environment().hostnameKey}:${Environment().hostname}');
+  verbose(() => '${Environment().hostnameKey}:${Environment().hostname}');
 
-  Settings().verbose('${Environment().domainKey}:${Environment().domain}');
+  verbose(() => '${Environment().domainKey}:${Environment().domain}');
   Settings()
       .verbose('${Environment().productionKey}:${Environment().production}');
-  Settings().verbose(
+  verbose(() =>
       '${Environment().domainWildcardKey}:${Environment().domainWildcard}');
-  Settings().verbose(
-      '${Environment().authProviderKey}:${Environment().authProvider}');
+  verbose(
+      () => '${Environment().authProviderKey}:${Environment().authProvider}');
 
   /// if auto acquisition has been blocked a manual call to acquire will clear the flag.
   Certbot().clearBlockFlag;

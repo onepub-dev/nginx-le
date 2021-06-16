@@ -50,7 +50,7 @@ abstract class GenericAuthProvider extends AuthProvider {
 
     hostname = wildcard ? '*' : hostname;
 
-    Settings().verbose('Starting cerbot with authProvider: $name');
+    verbose(() => 'Starting cerbot with authProvider: $name');
 
     NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
       var certbot = 'certbot certonly '

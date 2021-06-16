@@ -71,10 +71,10 @@ class CloudFlareProvider extends GenericAuthProvider {
 
     hostname = wildcard ? '*' : hostname;
 
-    Settings().verbose('Starting cerbot with authProvider: $name to acquire a '
+    verbose(() => 'Starting cerbot with authProvider: $name to acquire a '
         '${production ? 'production' : 'staging'} certificate for $hostname.$domain');
 
-    Settings().verbose(
+    verbose(() =>
         'Cloudflare api token. Env:${AuthProvider.AUTH_PROVIDER_TOKEN}: $envToken');
 
     NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {

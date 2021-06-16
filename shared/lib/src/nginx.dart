@@ -30,7 +30,7 @@ class Nginx {
       /// force nginx to reload its config.
       'nginx -s reload'.run;
     } else {
-      Settings().verbose('Nginx reload ignored as nginx is not running');
+      verbose(() => 'Nginx reload ignored as nginx is not running');
     }
   }
 }

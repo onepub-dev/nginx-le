@@ -127,7 +127,7 @@ class HTTPAuthProvider extends AuthProvider {
     ArgumentError.checkNotNull(cleanup_hook,
         'Environment variable: CERTBOT_HTTP_CLEANUP_HOOK_PATH missing');
 
-    Settings().verbose('Starting cerbot with authProvider: $name');
+    verbose(() => 'Starting cerbot with authProvider: $name');
 
     NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
       var certbot = 'certbot certonly '

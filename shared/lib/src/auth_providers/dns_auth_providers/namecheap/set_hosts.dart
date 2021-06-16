@@ -1,4 +1,3 @@
-import 'package:dcli/dcli.dart';
 import 'package:xml/xml.dart';
 
 import '../../../../nginx_le_shared.dart';
@@ -37,9 +36,9 @@ void setHost(
 
   url += bulidRecords(records);
 
-  Settings().verbose('Requesting $url');
+  verbose(() => 'Requesting $url');
   var result = getUrl(url);
-  Settings().verbose('Namecheap setHosts: $result');
+  verbose(() => 'Namecheap setHosts: $result');
 
   final document = XmlDocument.parse(result);
 

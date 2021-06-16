@@ -47,26 +47,26 @@ void _start() {
   dumpEnvironmentVariables();
 
   var hostname = Environment().hostname!;
-  Settings().verbose('${Environment().hostnameKey}=$hostname');
+  verbose(() => '${Environment().hostnameKey}=$hostname');
   var domain = Environment().domain!;
-  Settings().verbose('${Environment().domainKey}=$domain');
+  verbose(() => '${Environment().domainKey}=$domain');
   var tld = Environment().tld;
-  Settings().verbose('${Environment().tldKey}=$tld');
+  verbose(() => '${Environment().tldKey}=$tld');
 
   var wildcard = Environment().domainWildcard;
-  Settings().verbose('${Environment().domainWildcardKey}=$wildcard');
+  verbose(() => '${Environment().domainWildcardKey}=$wildcard');
 
   var emailaddress = Environment().emailaddress;
-  Settings().verbose('${Environment().emailaddressKey}=$emailaddress');
+  verbose(() => '${Environment().emailaddressKey}=$emailaddress');
 
   var production = Environment().production;
-  Settings().verbose('${Environment().productionKey}=$production');
+  verbose(() => '${Environment().productionKey}=$production');
 
   var autoAcquire = Environment().autoAcquire;
-  Settings().verbose('${Environment().autoAcquireKey}=$autoAcquire');
+  verbose(() => '${Environment().autoAcquireKey}=$autoAcquire');
 
   var certbotAuthProvider = Environment().authProvider;
-  Settings().verbose('${Environment().authProviderKey}=$certbotAuthProvider');
+  verbose(() => '${Environment().authProviderKey}=$certbotAuthProvider');
 
   _clearLocks();
 

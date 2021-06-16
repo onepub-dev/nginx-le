@@ -4,6 +4,7 @@ import 'dart:isolate';
 
 import 'package:dcli/dcli.dart';
 
+import '../../nginx_le_shared.dart';
 import 'isolate_source.dart';
 
 class TailInIsolate {
@@ -25,7 +26,7 @@ class TailInIsolate {
   /// Returns the last [lines] of [filename]  and then
   /// follows the file.
   Stream<String> tail(String filename, {int lines = 100, bool follow = false}) {
-    Settings().verbose('tail: $filename $lines  ${Isolate.current.debugName}');
+    verbose(() => 'tail: $filename $lines  ${Isolate.current.debugName}');
 
     var cmd = 'tail -n $lines';
 

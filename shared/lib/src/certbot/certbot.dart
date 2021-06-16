@@ -19,7 +19,7 @@ class Certbot {
       join(CertbotPaths().letsEncryptLogPath, CertbotPaths().LOG_FILE_NAME);
 
   Certbot._internal() {
-    Settings().verbose('Logging to $logfile');
+    verbose(() => 'Logging to $logfile');
 
     if (!exists(CertbotPaths().letsEncryptLogPath)) {
       createDir(CertbotPaths().letsEncryptLogPath, recursive: true);
@@ -348,14 +348,14 @@ class Certbot {
   /// has expired
   bool hasExpired(String hostname, String domain) {
     var certificatelist = certificates();
-    Settings().verbose(
+    verbose(() =>
         red('HasExpired evaluating ${certificatelist.length} certificates'));
     if (certificatelist.isEmpty) {
       return true;
     }
 
     var certificate = certificatelist[0]!;
-    Settings().verbose('testing expiry for $certificate');
+    verbose(() => 'testing expiry for $certificate');
     return certificate.hasExpired();
   }
 

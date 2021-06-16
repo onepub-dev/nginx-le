@@ -18,8 +18,8 @@ void revoke(List<String> args) {
   var debug = results['debug'] as bool;
 
   Settings().setVerbose(enabled: debug);
-  Settings().verbose('${Environment().hostnameKey}:${Environment().hostname}');
-  Settings().verbose('${Environment().domainKey}:${Environment().domain}');
+  verbose(() => '${Environment().hostnameKey}:${Environment().hostname}');
+  verbose(() => '${Environment().domainKey}:${Environment().domain}');
 
   Certbot().revokeAll();
 

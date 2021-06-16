@@ -3,6 +3,7 @@
 import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/src/certbot/certbot.dart';
 
+import '../../../../nginx_le_shared.dart';
 import 'dns_record.dart';
 import 'get_hosts.dart';
 import 'get_url.dart';
@@ -139,9 +140,9 @@ class Challenge {
     var found = false;
     var newRecords = <DNSRecord>[];
     var challengeName = challengeHost(hostname: hostname, wildcard: wildcard);
-    Settings().verbose('Cleaning $challengeName');
+    verbose(() => 'Cleaning $challengeName');
     for (var h in records) {
-      Settings().verbose('Found DNS: hostname=${h.name}');
+      verbose(() => 'Found DNS: hostname=${h.name}');
       if (h.name == challengeName &&
           h.address == certbotValidationString &&
           h.type == 'TXT') {
