@@ -1,3 +1,14 @@
+# 6.3.0
+## Fixes
+- Fixed a dead lock issue with the log group future.
+- Fixed a bug where after a renewal we were not reloading nginx.
+
+## Improvements
+- upgraded dcli version.
+- removed the deprecated flag --manual-public-ip-logging-ok  which is now treated as a noop.
+- Added critical_test pre_hook to install the needed cerbot hooks.
+- replaced Settings().verbose with verbose(() to improve logging performance.
+
 # 6.2.5
 
 # 6.2.2
