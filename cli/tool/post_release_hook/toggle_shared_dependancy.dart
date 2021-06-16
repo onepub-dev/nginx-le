@@ -6,7 +6,7 @@ import 'package:dcli/dcli.dart';
 
 void main(List<String> args) {
   var exe = join(
-      Script.current.pathToProjectRoot, 'tool',  'toggle_shared_location.dart');
+      DartScript.self.pathToProjectRoot, 'tool',  'toggle_shared_location.dart');
 
   '$exe local'.run;
 }

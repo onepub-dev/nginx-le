@@ -35,9 +35,9 @@ void main(List<String> args) {
 
   var command = parsed.rest[0];
 
-  var cliPubspec = Script.current.pathToPubSpec;
+  var cliPubspec = DartScript.self.pathToPubSpec;
   var containerPubspec =
-      join(Script.current.pathToProjectRoot, '..', 'container', 'pubspec.yaml');
+      join(DartScript.self.pathToProjectRoot, '..', 'container', 'pubspec.yaml');
 
   if (command == 'local') {
     makeLocal(cliPubspec, containerPubspec);

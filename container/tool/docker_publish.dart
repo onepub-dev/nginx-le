@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:dcli/dcli.dart';
 
 void main(List<String> args) {
-  var script = Script.fromFile(Platform.script.toFilePath());
+  var script = DartScript.fromFile(Platform.script.toFilePath());
 
   var root = script.pathToProjectRoot;
 
