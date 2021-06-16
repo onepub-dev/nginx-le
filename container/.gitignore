@@ -1,2 +1,3 @@
 test/src/util/cloudflare.yaml
 test/src/util/namecheap.yaml.failed_tracker
+.failed_tracker
