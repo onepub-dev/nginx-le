@@ -10,7 +10,7 @@ dependencies:
   path: ^1.6.4
   cron: ^0.3.0
   docker2: ^1.0.0
-  dcli: ^1.0.0
+  dcli: ^1.5.7
   instant: ^0.4.1
   http: ^0.13.0
   intl: ^0.17.0
