@@ -3,3 +3,4 @@
 .history
 .vscode/launch.json
 letsencrypt
+.failed_tracker
