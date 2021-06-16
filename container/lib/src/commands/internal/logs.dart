@@ -110,10 +110,7 @@ void logs(List<String> args) {
     exit(1);
   }
 
-  // pre-close the group as onDone won't be called until the group is closed.
-  print('waitForDone - group close start');
-  waitForEx<void>(group.close());
-  print('waitForDone - group close end');
+  group.close();
 
   var finished = Completer<void>();
   group.stream.listen((line) => print(line)).onDone(() {
@@ -123,13 +120,16 @@ void logs(List<String> args) {
     finished.complete();
   });
 
+  verbose(() => 'waitForDone - group close start');
+  waitForEx<void>(group.close());
+  verbose(() => 'waitForDone - group close end');
   // Future<void>.delayed(Duration(seconds: 30), () {
   //   syslog.stop();
   //   dmesg.stop();
   // });
-  print('waitForDone -start');
+  verbose(() => 'waitForDone -start');
   waitForEx<void>(finished.future);
-  print('waitForDone -end');
+  verbose(() => 'waitForDone -end');
 }
 
 void showUsage(ArgParser parser) {
