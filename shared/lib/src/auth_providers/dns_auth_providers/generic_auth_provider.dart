@@ -59,7 +59,6 @@ abstract class GenericAuthProvider extends AuthProvider {
           ' -m $emailaddress  '
           ' -d $hostname.$domain '
           ' --agree-tos '
-          ' --manual-public-ip-logging-ok '
           ' --non-interactive '
           ' --manual-auth-hook="$auth_hook_path" '
           ' --manual-cleanup-hook="$cleanup_hook_path" '

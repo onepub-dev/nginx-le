@@ -136,7 +136,6 @@ class HTTPAuthProvider extends AuthProvider {
           ' -m $emailaddress  '
           ' -d $hostname.$domain '
           ' --agree-tos '
-          ' --manual-public-ip-logging-ok '
           ' --non-interactive '
           ' --manual-auth-hook="$auth_hook" '
           ' --manual-cleanup-hook="$cleanup_hook" '

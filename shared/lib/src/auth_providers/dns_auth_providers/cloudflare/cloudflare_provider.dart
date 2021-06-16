@@ -84,7 +84,6 @@ class CloudFlareProvider extends GenericAuthProvider {
           ' -m $emailaddress '
           ' -d $hostname.$domain '
           ' --agree-tos '
-          ' --manual-public-ip-logging-ok '
           ' --non-interactive '
           ' --work-dir=$workDir '
           ' --config-dir=$configDir '
