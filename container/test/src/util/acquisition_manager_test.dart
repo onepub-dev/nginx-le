@@ -93,6 +93,16 @@ void main() {
             production: false),
         equals(2));
   });
+
+  test('Acquire robtest5.noojee.org via namecheap', () {
+    _acquire(
+        hostname: 'robtest5',
+        domain: 'noojee.org',
+        tld: 'org',
+        wildcard: false,
+        settingFilename: 'namecheap.yaml',
+        revoke: false);
+  });
   test('Revoke All certificate', () {
     Certbot().revokeAll();
     expect(Certificate.load().length, equals(0));
@@ -390,7 +400,7 @@ void setup(
 void config_mock_deploy_hook() {
   var path = 'test/src/util/mock_deploy_hook';
   if (!exists(path)) {
-    var script = Script.fromFile('$path.dart');
+    var script = DartScript.fromFile('$path.dart');
     script.compile();
   }
 
