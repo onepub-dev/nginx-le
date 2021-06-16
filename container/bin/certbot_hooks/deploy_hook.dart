@@ -8,7 +8,7 @@ import 'package:nginx_le_container/src/commands/internal/deploy_hook.dart';
 ///
 /// Its job is to deploy the renewed certificates.
 ///
-/// During renewal Cerbot only calls the deploy hook if the certificates were
+/// During renewal, Cerbot only calls the deploy hook if the certificates were
 /// renewed.
 ///
 /// As there is no other simple way to detect a successful renewal

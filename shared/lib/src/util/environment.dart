@@ -153,7 +153,7 @@ class Environment {
   set certbotDeployHookPath(String certbotDeployHookPath) =>
       env[certbotDeployHookPathKey] = certbotDeployHookPath;
 
-  /// when the deploy_hook is called as part of a renewal certbot passed
+  /// when the deploy_hook is called as part of a renewal, certbot passes
   /// the path to the directory containing the new certificate files.
   String get certbotDeployHookRenewedLineageKey => 'RENEWED_LINEAGE';
   String? get certbotDeployHookRenewedLineagePath =>
