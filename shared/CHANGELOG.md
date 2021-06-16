@@ -1,3 +1,6 @@
+# 6.3.2
+Fixed missing reload after a certificate renewal.
+
 # 6.2.5
 
 # 6.2.4
