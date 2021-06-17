@@ -14,12 +14,16 @@ RUN apt update  && apt install --no-install-recommends -y \
 # install dcli. 
 # nginx-le build will update the '# flush-cache' to force a new download of dcli if the -u switch is passed
 # to the build command
-RUN wget https://github.com/bsutton/dcli/releases/download/latest.linux/dcli_install # flush-cache: 2a63fddf-b3f2-47b8-9772-c4c799c41d96
+RUN wget https://github.com/bsutton/dcli/releases/download/latest.linux/dcli_install # flush-cache: 0051cdfa-9672-42fe-bbb3-3e85a2fd360a
 RUN chmod +x dcli_install
-RUN ./dcli_install
 ENV PATH="${PATH}:/usr/lib/dart/bin:/root/.pub-cache/bin"
-
 RUN echo $PATH
+RUN ./dcli_install
+
+# looks like there is a problem with the dart archive
+# not setting the execute bit on the utils which
+# causes dcli compile to fail
+RUN chmod +x /usr/lib/dart/bin/utils/*
 
 RUN dcli version
 
