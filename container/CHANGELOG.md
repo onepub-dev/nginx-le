@@ -1,3 +1,7 @@
+# 6.3.2
+Fixed missing reload of nginx after certificate renewal.
+
+
 # 6.2.5
 
 # 6.2.2
