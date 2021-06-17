@@ -294,7 +294,7 @@ packages:
       path: "../shared"
       relative: true
     source: path
-    version: "6.2.5"
+    version: "6.3.2"
   node_preamble:
     dependency: transitive
     description:

@@ -1,3 +1,7 @@
+# 6.3.2
+Fixed missing reload of nginx after certificate renewal.
+
+
 # 6.3.0
 ## Fixes
 - Fixed a dead lock issue with the log group future.
