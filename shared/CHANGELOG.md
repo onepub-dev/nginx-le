@@ -1,3 +1,6 @@
+# 7.0.1
+upgraded to docker2.
+
 # 6.3.2
 Fixed missing reload after a certificate renewal.
 
