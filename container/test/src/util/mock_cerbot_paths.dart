@@ -43,6 +43,18 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
   }
 
   void _wirePaths() {
+    if (!exists(Environment().certbotRootPath)) {
+      createDir(Environment().certbotRootPath, recursive: true);
+    }
+
+    if (!exists(CertbotPaths().letsEncryptConfigPath)) {
+      createDir(CertbotPaths().letsEncryptConfigPath, recursive: true);
+    }
+
+    if (!exists(CertbotPaths().letsEncryptLivePath)) {
+      createDir(CertbotPaths().letsEncryptLivePath, recursive: true);
+    }
+
     if (!exists(_mockPath(CertbotPaths().WWW_PATH_ACQUIRE))) {
       createDir(_mockPath(CertbotPaths().WWW_PATH_ACQUIRE), recursive: true);
     }
@@ -137,6 +149,7 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
 
   void mockPossibleCertPath(PossibleCert possibleCert) {
     print('Creating mocks for: $possibleCert');
+
     var rootPathHost = CertbotPaths().certificatePathRoot(
         possibleCert.hostname, possibleCert.domain,
         wildcard: possibleCert.wildcard);

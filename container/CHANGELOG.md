@@ -1,3 +1,7 @@
+# 7.0.0
+Upgraded to latest from of dcli and docker2.
+Fixed a problem with the downloaded dart archive not having the execute bit set on the util directory.
+
 # 6.3.2
 Fixed missing reload of nginx after certificate renewal.
 

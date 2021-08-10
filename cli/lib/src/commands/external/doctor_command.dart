@@ -101,7 +101,7 @@ class DoctorCommand extends Command<void> {
       } else {
         _colprint([
           'Container Name',
-          container.names,
+          container.name,
           'Running',
           container.isRunning.toString()
         ]);

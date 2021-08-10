@@ -58,7 +58,7 @@ class BuildCommand extends Command<void> {
     }
 
     // check for an existing image.
-    var image = Images().findByFullname(imageName);
+    var image = Images().findByName(imageName);
     if (image != null) {
       if (!overwrite!) {
         printerr(
@@ -87,8 +87,7 @@ class BuildCommand extends Command<void> {
     'docker build -t $imageName .'.start(workingDirectory: dockerPath);
 
     /// get the new image.
-    Images().flushCache();
-    image = Images().findByFullname(imageName);
+    image = Images().findByName(imageName);
     var config = ConfigYaml();
     config.image = image;
     config.save();
@@ -122,8 +121,8 @@ class BuildCommand extends Command<void> {
       /// if the container is running ask to stop it.
       if (container.isRunning) {
         print(orange(
-            'The container ${container.containerid} ${container.names} is running. To delete the container it must be stopped.'));
-        if (confirm('Stop ${container.containerid} ${container.names}')) {
+            'The container ${container.containerid} ${container.name} is running. To delete the container it must be stopped.'));
+        if (confirm('Stop ${container.containerid} ${container.name}')) {
           container.stop();
         } else {
           printerr(

@@ -36,7 +36,7 @@ String containerOrName(ArgParser argParser, ArgResults argResults) {
     var container = menu<Container>(
         options: containers,
         prompt: 'Please select a container to run:',
-        format: (item) => '${item.imageid} ${item.names}');
+        format: (item) => '${item.imageid} ${item.name}');
     containerid = container.containerid;
   }
 

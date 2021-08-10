@@ -141,7 +141,6 @@ class ConfigCommand extends Command<void> {
         ' ${config.image!.imageid}';
 
     cmd.start(nothrow: true, progress: progress);
-    Containers().flushCache();
 
     if (progress.exitCode != 0) {
       printerr(red('docker create failed with exitCode ${progress.exitCode}'));
@@ -264,7 +263,7 @@ class ConfigCommand extends Command<void> {
         .where(
             (image) => image.repository == 'noojee' && image.name == 'nginx-le')
         .toList();
-    var latestImage = Images().findByFullname(latest);
+    var latestImage = Images().findByName(latest);
     Image downloadLatest;
     if (latestImage != null) {
       downloadLatest = Image.fromName(latest);
@@ -291,8 +290,7 @@ class ConfigCommand extends Command<void> {
 
       /// after pulling the image additional information will be available
       /// so replace the image with the fully detailed version.
-      Images().flushCache();
-      image = Images().findByFullname(latest);
+      image = Images().findByName(latest);
     }
     return image;
   }
@@ -360,7 +358,7 @@ class ConfigCommand extends Command<void> {
     /// try for the default container name.
     var containers = Containers()
         .containers()
-        .where((container) => container.names == 'nginx-le')
+        .where((container) => container.name == 'nginx-le')
         .toList();
 
     if (containers.isEmpty) {
@@ -388,7 +386,7 @@ class ConfigCommand extends Command<void> {
           options: containers,
           defaultOption: defaultOption,
           format: (container) =>
-              '${container.names.padRight(30)} ${container.image?.fullname}');
+              '${container.name.padRight(30)} ${container.image?.fullname}');
       config.containerid = container.containerid;
     }
   }

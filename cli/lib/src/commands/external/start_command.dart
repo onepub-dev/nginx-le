@@ -47,7 +47,7 @@ class StartCommand extends Command<void> {
 
     print('Starting nginx container ${config.containerid}');
 
-    container.start(interactive: interactive);
+    container.start(daemon: !interactive);
 
     sleep(3);
 
