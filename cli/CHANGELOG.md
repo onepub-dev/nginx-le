@@ -1,3 +1,6 @@
+# 7.0.1
+upgraded to dcli 1.7.1 and docker2.
+
 # 6.3.2
 Fixed missing reload of nginx after certificate renewal.
 
