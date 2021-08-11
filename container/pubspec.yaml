@@ -1,8 +1,8 @@
 name: nginx_le_container
-version: 7.0.1
+version: 7.0.2
+documentation: https://nginxle.noojee.dev/
 description: Commands that live in the nginx-le docker container.
 repository: https://github.com/bsutton/nginx-le
-documentation: https://nginxle.noojee.dev/
 environment: 
   sdk: '>=2.12.0 <3.0.0'
 dependencies: 
