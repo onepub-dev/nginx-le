@@ -1,8 +1,8 @@
 name: nginx_le_shared
-version: 7.0.1
+version: 7.0.2
 homepage: https://github.com/bsutton/nginx-le
-description: shared library used by Nginx-LE
 documentation: https://nginxle.noojee.dev/
+description: shared library used by Nginx-LE
 environment: 
   sdk: '>=2.12.0 <3.0.0'
 dependencies: 

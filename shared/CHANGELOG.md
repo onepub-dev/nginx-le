@@ -1,3 +1,6 @@
+# 7.0.2
+Improvements to documentation.
+
 # 7.0.1
 upgraded to docker2.
 
