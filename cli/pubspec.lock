@@ -301,7 +301,7 @@ packages:
       path: "../shared"
       relative: true
     source: path
-    version: "6.3.2"
+    version: "7.0.1"
   node_preamble:
     dependency: transitive
     description:

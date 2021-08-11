@@ -1,1 +1,1 @@
-See nginx_le_cli for details
+See [nginx_le](https://pub.dev/packages/nginx_le) for details.

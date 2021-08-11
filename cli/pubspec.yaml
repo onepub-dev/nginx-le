@@ -1,6 +1,7 @@
 name: nginx_le
 version: 7.0.1
 homepage: https://github.com/bsutton/nginx-le
+documentation: https://nginxle.noojee.dev/
 description: Nginx-LE provides a docker container and tools to create an Nginx web server that automatically acquires and renews HTTPS certificates.
 environment: 
   sdk: '>=2.12.0 <3.0.0'
