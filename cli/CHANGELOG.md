@@ -1,3 +1,6 @@
+# 7.0.2
+Improved documentation.
+
 # 7.0.1
 upgraded to dcli 1.7.1 and docker2.
 
