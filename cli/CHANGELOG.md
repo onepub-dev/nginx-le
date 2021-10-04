@@ -1,3 +1,6 @@
+# 7.1.1
+Upgraded packages as part of release process
+
 # 7.0.2
 Improved documentation.
 
