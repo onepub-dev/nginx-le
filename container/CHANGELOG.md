@@ -1,3 +1,6 @@
+# 7.1.1
+Toggled path to shared package
+
 # 7.0.2
 Improvements to documentation.
 
