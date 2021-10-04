@@ -8,7 +8,11 @@ import 'package:pub_release/pub_release.dart';
 void main(List<String> args) {
   var parser = ArgParser()
     ..addFlag('verbose', abbr: 'v', help: 'Adds additional logging')
-    ..addFlag('help', abbr: 'h', help: 'Prints this help message');
+    ..addFlag('help', abbr: 'h', help: 'Prints this help message')
+    ..addFlag('test',
+        abbr: 't',
+        defaultsTo: true,
+        help: 'Causes unit tests to be run as part of the release.');
 
   ArgResults parsed;
 
@@ -26,6 +30,8 @@ void main(List<String> args) {
     showUsage(parser);
     exit(1);
   }
+
+  var runTests = parsed['test'] as bool ? '--test' : '--no-test';
 
   /// We take the version from nginx-le shared as all packages must
   /// take their version no. from shared as it is the root dependency
@@ -56,7 +62,7 @@ void main(List<String> args) {
       message: 'Upgraded packages as part of release process',
       path: '../shared',
       projectRootPath: projectRootPath);
-  'pub_release --setVersion=${newVersion.toString()}'
+  'pub_release $runTests --setVersion=${newVersion.toString()} --no-test'
       .start(workingDirectory: join(projectRootPath, '../shared'));
 
   // toggle to the published version of shared.
@@ -83,7 +89,7 @@ void main(List<String> args) {
       message: 'Upgraded packages as part of release process',
       path: '../container',
       projectRootPath: projectRootPath);
-  'pub_release --setVersion=${newVersion.toString()}'
+  'pub_release $runTests --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../container'));
 
   // cli
@@ -95,7 +101,7 @@ void main(List<String> args) {
       message: 'Upgraded packages as part of release process',
       path: '../cli',
       projectRootPath: projectRootPath);
-  'pub_release --setVersion=${newVersion.toString()}'
+  'pub_release $runTests  --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../cli'));
 
   build(newVersion);
