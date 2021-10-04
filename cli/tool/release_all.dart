@@ -1,9 +1,32 @@
 #! /bin/env dcli
 
+import 'dart:io';
+
 import 'package:dcli/dcli.dart';
 import 'package:pub_release/pub_release.dart';
 
-void main() {
+void main(List<String> args) {
+  var parser = ArgParser()
+    ..addFlag('verbose', abbr: 'v', help: 'Adds additional logging')
+    ..addFlag('help', abbr: 'h', help: 'Prints this help message');
+
+  ArgResults parsed;
+
+  try {
+    parsed = parser.parse(args);
+  } on FormatException catch (e) {
+    printerr(red(e.message));
+    showUsage(parser);
+    exit(1);
+  }
+
+  Settings().setVerbose(enabled: parsed['verbose'] as bool);
+
+  if (parsed['help'] as bool) {
+    showUsage(parser);
+    exit(1);
+  }
+
   /// We take the version from nginx-le shared as all packages must
   /// take their version no. from shared as it is the root dependency
   /// and the first to get published, so if later actions fail
@@ -78,7 +101,14 @@ void main() {
   build(newVersion);
 }
 
-void conditionalCommit({String? message, String? path, String? projectRootPath}) {
+void showUsage(ArgParser parser) {
+  print(
+      'Releases all nginx-le packages to pub.dev and pushes the nginx-le docker container');
+  print(parser.usage);
+}
+
+void conditionalCommit(
+    {String? message, String? path, String? projectRootPath}) {
   final outstanding = 'git status --porcelain'.toList();
 
   if (outstanding.isNotEmpty) {
