@@ -21,7 +21,7 @@ class DoctorCommand extends Command<void> {
   void run() {
     print('');
     _colprint(['OS', '${Platform.operatingSystem}']);
-    print(Format.row(['OS Version', '${Platform.operatingSystemVersion}'],
+    print(Format().row(['OS Version', '${Platform.operatingSystemVersion}'],
         widths: [17, -1]));
     _colprint(['Path separator', '${Platform.pathSeparator}']);
     print('');
@@ -114,7 +114,7 @@ class DoctorCommand extends Command<void> {
       cols[1] = '<null>';
     }
     //cols[0] = green(cols[0]);
-    print(Format.row(cols, widths: [17, 55], delimiter: ' '));
+    print(Format().row(cols, widths: [17, 55], delimiter: ' '));
   }
 
   void _showPermissions(String label, String path) {
@@ -127,7 +127,7 @@ class DoctorCommand extends Command<void> {
 
       var username = env['USERNAME'];
       if (username != null) {
-        print(Format.row([
+        print(Format().row([
           '$label',
           '${fstat.modeString()}',
           '<user>:${(owner.group == owner.user ? '<user>' : owner.group)}',
