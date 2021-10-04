@@ -25,12 +25,9 @@ dependencies:
   settings_yaml: ^3.0.0
   uuid: ^3.0.0
   validators2: ^3.0.0
-  nginx_le_shared: ^6.0.0
+  nginx_le_shared: ^7.1.0
   yaml: ^3.0.0
 dev_dependencies: 
   test: ^1.0.0
-dependency_overrides: 
-  nginx_le_shared: 
-    path: ../shared
 executables: 
   nginx-le: nginx-le
