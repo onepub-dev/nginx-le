@@ -1,3 +1,6 @@
+# 7.1.0
+Added help and a verbose logging command line flags.
+
 # 7.0.2
 Improvements to documentation.
 
