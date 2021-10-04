@@ -678,9 +678,10 @@ Select the appropriate version no. when prompted and the release_all script will
 
 ## release details 
 
-There are four components that need to be released
+There are four components that need to be released, three dart packages and a docker container.
 
-The three dart components:
+### dart packages
+The three dart packages:
 nginx-le/cli
 nginx-le/container
 nginx-le/shared
@@ -688,7 +689,7 @@ nginx-le/shared
 You must update the version no.s so that they all match.
 
 You must also publish nginx-le/shared first as the other two packages can't be published until the `shared` package is released.
-
+### docker container
 Finally you need to publish the Nginx-LE docker image using:
 
 docker push 
