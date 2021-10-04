@@ -62,7 +62,7 @@ void main(List<String> args) {
       message: 'Upgraded packages as part of release process',
       path: '../shared',
       projectRootPath: projectRootPath);
-  'pub_release $runTests --setVersion=${newVersion.toString()} --no-test'
+  'pub_release --autoAnswer  $runTests --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../shared'));
 
   // toggle to the published version of shared.
@@ -89,7 +89,7 @@ void main(List<String> args) {
       message: 'Upgraded packages as part of release process',
       path: '../container',
       projectRootPath: projectRootPath);
-  'pub_release $runTests --setVersion=${newVersion.toString()}'
+  'pub_release --autoAnswer  $runTests --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../container'));
 
   // cli
@@ -101,7 +101,7 @@ void main(List<String> args) {
       message: 'Upgraded packages as part of release process',
       path: '../cli',
       projectRootPath: projectRootPath);
-  'pub_release $runTests  --setVersion=${newVersion.toString()}'
+  'pub_release --autoAnswer $runTests  --setVersion=${newVersion.toString()}'
       .start(workingDirectory: join(projectRootPath, '../cli'));
 
   build(newVersion);
