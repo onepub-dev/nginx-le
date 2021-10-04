@@ -126,7 +126,7 @@ packages:
       name: dcli
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.0"
+    version: "1.9.1"
   docker2:
     dependency: transitive
     description:
