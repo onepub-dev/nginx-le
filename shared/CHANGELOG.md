@@ -1,3 +1,6 @@
+# 7.1.4
+- Updated docker image to use dcli 1.9.2
+
 # 7.1.3
 
 # 7.1.2
