@@ -116,7 +116,11 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
   }
 
   void _wireEnvironment(String settingFileName) {
-    final settingsPath = truepath('test', 'src', 'util', settingFileName);
+    /// emails to mail hog which is started by a critical_test pre-hook.
+    Environment().smtpServer = 'localhost';
+    Environment().smtpServerPort = 1025;
+
+    final settingsPath = truepath('test', 'config', settingFileName);
     final settings = SettingsYaml.load(pathToSettings: settingsPath);
     Environment().authProvider = settings['AUTH_PROVIDER'] as String?;
     Environment().authProviderToken =

@@ -9,6 +9,8 @@ void main() {
 
   final certBotHookPath = join(projectRoot, 'bin', 'certbot_hooks');
 
+  'dmailhog'.start();
+
   DartScript.fromFile(join(certBotHookPath, 'auth_hook.dart'))
       .compile(install: true, overwrite: true);
   DartScript.fromFile(join(certBotHookPath, 'cleanup_hook.dart'))

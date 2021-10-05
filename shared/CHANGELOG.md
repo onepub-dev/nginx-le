@@ -1,3 +1,6 @@
+# 7.1.2
+- Upgraded packages as part of release process
+
 # 7.1.1
 upgraded the nginx_le_shared version no.
 
