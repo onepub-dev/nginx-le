@@ -133,7 +133,7 @@ packages:
       name: dcli
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.1"
+    version: "1.9.3"
   docker2:
     dependency: "direct main"
     description:
@@ -182,7 +182,7 @@ packages:
       name: github
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "8.1.2"
+    version: "8.1.3"
   glob:
     dependency: transitive
     description:
@@ -196,7 +196,7 @@ packages:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.3"
+    version: "0.13.4"
   http_multi_server:
     dependency: transitive
     description:
@@ -301,7 +301,7 @@ packages:
       name: nginx_le_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.1.1"
+    version: "7.1.3"
   node_preamble:
     dependency: transitive
     description:
@@ -364,7 +364,7 @@ packages:
       name: pub_release
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.1.14"
+    version: "7.1.16"
   pub_semver:
     dependency: "direct main"
     description:
@@ -532,7 +532,7 @@ packages:
       name: uuid
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.4"
+    version: "3.0.5"
   validators2:
     dependency: "direct main"
     description:
