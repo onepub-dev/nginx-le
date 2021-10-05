@@ -1,3 +1,6 @@
+# 7.1.4
+- Upgraded packages as part of release process
+
 # 7.1.3
 - Upgraded packages as part of release process
 
