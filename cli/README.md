@@ -647,6 +647,11 @@ AUTH_PROVIDER_USERNAME=name cheap username
 
 DOMAIN_WILDCARD=true|false
 
+To obtain a namecheap api key login to your namecheap account select Profile | Tools | Namecheap API Access 
+
+The click the Manage button.
+
+The api has a whitelist if ip addresses so you will need to update this to include the IP of the server(s) that you will be making requests from.
 
 ## Cloudflare
 
