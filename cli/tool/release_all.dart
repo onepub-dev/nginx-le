@@ -33,11 +33,15 @@ void main(List<String> args) {
 
   var runTests = parsed['test'] as bool ? '--test' : '--no-test';
 
+  var cliProject = DartProject.self;
+
   /// We take the version from nginx-le shared as all packages must
   /// take their version no. from shared as it is the root dependency
   /// and the first to get published, so if later actions fail
   /// will can only move forward with version no. if shared got published.
-  var project = DartProject.fromPath('../../shared', search: true);
+  var project = DartProject.fromPath(
+      join(cliProject.pathToProjectRoot, '../shared'),
+      search: true);
 
   var projectRootPath = project.pathToProjectRoot;
   var pubspec = project.pubSpec;
