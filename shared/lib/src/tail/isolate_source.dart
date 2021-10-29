@@ -5,7 +5,6 @@ import 'dart:isolate';
 import 'package:async/async.dart';
 import 'package:dcli/dcli.dart';
 
-import '../../nginx_le_shared.dart';
 import 'messages.dart';
 
 /// Provides a library to stream data to and from an isolate.

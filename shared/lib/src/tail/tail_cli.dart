@@ -4,7 +4,6 @@ import 'dart:isolate';
 
 import 'package:dcli/dcli.dart';
 
-import '../../nginx_le_shared.dart';
 import 'isolate_source.dart';
 
 class TailCliInIsolate {
