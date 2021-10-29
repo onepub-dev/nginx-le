@@ -98,7 +98,7 @@ packages:
       name: cron
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.2"
+    version: "0.4.0"
   crypto:
     dependency: transitive
     description:
@@ -133,7 +133,7 @@ packages:
       name: docker2
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "2.0.3"
   equatable:
     dependency: transitive
     description:
@@ -280,14 +280,14 @@ packages:
       name: mocktail
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.4"
+    version: "0.2.0"
   nginx_le_shared:
     dependency: "direct main"
     description:
       name: nginx_le_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.3.2"
+    version: "7.2.1"
   node_preamble:
     dependency: transitive
     description:
