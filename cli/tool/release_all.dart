@@ -59,7 +59,7 @@ void main(List<String> args) {
 
   /// shared
   print(green('Publishing nginx-le-shared'));
-  'pub upgrade'.start(workingDirectory: join(projectRootPath, '../shared'));
+  'pub upgrade --major-versions'.start(workingDirectory: join(projectRootPath, '../shared'));
   'git add pubspec.lock'
       .start(workingDirectory: join(projectRootPath, '../shared'));
   conditionalCommit(
@@ -86,7 +86,7 @@ void main(List<String> args) {
 
   // container
   print(green('Publishing nginx-le-container'));
-  'pub upgrade'.start(workingDirectory: join(projectRootPath, '../container'));
+  'pub upgrade --major-versions'.start(workingDirectory: join(projectRootPath, '../container'));
   'git add pubspec.lock'
       .start(workingDirectory: join(projectRootPath, '../container'));
   conditionalCommit(
@@ -98,7 +98,7 @@ void main(List<String> args) {
 
   // cli
   print(green('Publishing nginx-le-cli'));
-  'pub upgrade'.start(workingDirectory: join(projectRootPath, '../cli'));
+  'pub upgrade --major-versions'.start(workingDirectory: join(projectRootPath, '../cli'));
   'git add pubspec.lock'
       .start(workingDirectory: join(projectRootPath, '../cli'));
   conditionalCommit(

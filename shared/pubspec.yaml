@@ -1,5 +1,5 @@
 name: nginx_le_shared
-version: 7.2.0
+version: 7.2.1
 homepage: https://github.com/bsutton/nginx-le
 documentation: https://nginxle.noojee.dev/
 description: shared library used by Nginx-LE
@@ -9,7 +9,7 @@ dependencies:
   async: ^2.4.2
   args: ^2.0.0
   path: ^1.6.4
-  cron: ^0.3.0
+  cron: ^0.4.0
   docker2: ^2.0.0
   dcli: ^1.9.1
   instant: ^0.4.1

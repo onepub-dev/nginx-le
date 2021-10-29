@@ -1,3 +1,7 @@
+# 7.2.1
+- Upgraded packages as part of release process
+- Upgraded packages as part of release process
+
 # 7.2.0
 - improved doco on using namecheap api.
 - Switched to using dcli's version of verbose().
