@@ -131,6 +131,7 @@ class HTTPAuthProvider extends AuthProvider {
 
     NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
       var certbot = 'certbot certonly '
+          ' --manual-public-ip-logging-ok '
           ' --manual '
           ' --preferred-challenges=http '
           ' -m $emailaddress  '

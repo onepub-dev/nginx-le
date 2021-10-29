@@ -79,6 +79,7 @@ class CloudFlareProvider extends GenericAuthProvider {
 
     NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
       var certbot = 'certbot certonly '
+          ' --manual-public-ip-logging-ok '
           ' --dns-cloudflare '
           ' --dns-cloudflare-credentials ${CertbotPaths().CLOUD_FLARE_SETTINGS}'
           ' -m $emailaddress '

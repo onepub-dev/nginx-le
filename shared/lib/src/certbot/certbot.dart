@@ -401,6 +401,7 @@ class Certbot {
     try {
       NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
         var certbot = 'certbot renew '
+            ' --manual-public-ip-logging-ok '
             ' --agree-tos '
             ' --deploy-hook=${Environment().certbotDeployHookPath}'
             ' --work-dir=${CertbotPaths().letsEncryptWorkPath}'
