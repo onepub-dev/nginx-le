@@ -1,3 +1,11 @@
+# 7.2.0
+- improved doco on using namecheap api.
+- Switched to using dcli's version of verbose().
+- Improved the method used to find the shared project.
+- Upgraded packages as part of release process
+- Improved documentation on accessing logs.
+- Added manual-public-ip-logging-ok as suddenly certbot is generating errors when this is missing.
+
 # 7.1.4
 - Updated docker image to use dcli 1.9.2
 
