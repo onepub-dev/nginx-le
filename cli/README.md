@@ -345,8 +345,9 @@ To start Nginx-LE with docker-compose you must provide a number of configuration
 
 The following is a sample configuration:
 
+
 ```
-ginx-le:
+nginx-le:
     container_name: nginx-le
     image: noojee/nginx-le:1.0.5
     restart: on-failure
@@ -675,6 +676,23 @@ tool/release_all.dart
 ```
 
 Select the appropriate version no. when prompted and the release_all script will do the rest.
+
+# Monitoring Logs
+If you are not using the nginx-le cli tools then you will need to use an alternate method to view
+the nginx-le logs.
+
+If you have set up you docker container to use journald then you can use:
+
+```bash
+sudo journalctl CONTAINER_NAME='nginx-le' --since '1 day ago'
+```
+
+or you can directly access a docker containers logs
+
+```bash
+docker logs nginx-le
+```
+
 
 ## release details 
 
