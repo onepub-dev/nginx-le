@@ -5,7 +5,7 @@ import '../../../../nginx_le_shared.dart';
 import 'challenge.dart';
 import 'namecheap_auth_provider.dart';
 
-void namncheap_dns_cleanup() {
+void namecheapDNSCleanup() {
   Certbot().log('*' * 80);
   Certbot().log('cert_bot_dns_cleanup started');
 

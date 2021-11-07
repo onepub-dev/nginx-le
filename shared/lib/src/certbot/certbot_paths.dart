@@ -14,47 +14,47 @@ class CertbotPaths {
   /// MUST be on a persistent volume so we don't loose the
   /// certificates each time we restart nginx.
   /// The full path is /etc/letsencrypt/config/live
-  final _LIVE_PATH = 'live';
+  final _livePath = 'live';
 
   /// The directory where nginx loads its certificates from
   /// The deploy process copies certificates from the lets encrypt
-  /// [LIVE_PATH] to the [NGINX_CERT_ROOT].
-  final NGINX_CERT_ROOT = '/etc/nginx/certs/';
+  /// [LIVE_PATH] to the [nginxCertRoot].
+  final nginxCertRoot = '/etc/nginx/certs/';
 
   /// The file containing the concatenated certs.
-  final FULLCHAIN_FILE = 'fullchain.pem';
+  final fullchainFile = 'fullchain.pem';
 
-  final CHAIN_FILE = 'chain.pem';
+  final chainFile = 'chain.pem';
 
   /// our private key.
-  final PRIVATE_KEY_FILE = 'privkey.pem';
+  final privateKeyFile = 'privkey.pem';
 
   /// certificate file
-  final CERTIFICATE_FILE = 'cert.pem';
+  final certificateFile = 'cert.pem';
 
   /// The directory where lets encrypt stores its certificates.
   /// As we need to persist certificates between container restarts
   /// the CERTBOT_ROOT_DEFAULT_PATH path is mounted to a persistent volume on start up.
-  final CERTBOT_ROOT_DEFAULT_PATH = '/etc/letsencrypt';
+  final certbotRootDefaultPath = '/etc/letsencrypt';
 
   /// The name of the logfile that certbot writes to.
   /// We also write our log messages to this file.
-  final LOG_FILE_NAME = 'letsencrypt.log';
+  final logFilename = 'letsencrypt.log';
 
   /// The path that nginx takes its home directory from.
-  /// This is symlinked into either [WWW_PATH_OPERATING] or [WWW_PATH_ACQUIRE] depending
+  /// This is symlinked into either [wwwPathToOperating] or [wwwPathToAcquire] depending
   /// on whether we are in acquire or operational mode.
-  final WWW_PATH_LIVE = '/etc/nginx/live';
+  final wwwPathLive = '/etc/nginx/live';
 
-  /// When [WWW_PATH_LIVE] is symlinked to this path then
+  /// When [wwwPathLive] is symlinked to this path then
   /// we have a certificate and are running in operatational mode.
-  final WWW_PATH_OPERATING = '/etc/nginx/operating';
+  final wwwPathToOperating = '/etc/nginx/operating';
 
-  /// When [WWW_PATH_LIVE] is symlinked to this path then
+  /// When [wwwPathLive] is symlinked to this path then
   /// we DO NOT have a certificate and are running in acquistion mode.
-  final WWW_PATH_ACQUIRE = '/etc/nginx/acquire';
+  final wwwPathToAcquire = '/etc/nginx/acquire';
 
-  final CLOUD_FLARE_SETTINGS =
+  final cloudFlareSettings =
       join('/etc', 'letsencrypt', 'nj-cloudflare', 'settings.ini');
 
   factory CertbotPaths() => _self;
@@ -125,17 +125,17 @@ class CertbotPaths {
   /// The path to the active fullchain.pem file in the live directory.
   String fullChainPath(String certificateRootPath) {
 //     getLatest
-    return join(certificateRootPath, FULLCHAIN_FILE);
+    return join(certificateRootPath, fullchainFile);
   }
 
   /// The path to the active privatekey.pem file in the live directory
   String privateKeyPath(String certificateRootPath) {
-    return join(certificateRootPath, PRIVATE_KEY_FILE);
+    return join(certificateRootPath, privateKeyFile);
   }
 
   /// path to the active certificate in the live directory
   String certificatePath(String certificateRootPath) {
-    return join(certificateRootPath, CERTIFICATE_FILE);
+    return join(certificateRootPath, certificateFile);
   }
 
   String get letsEncryptRootPath {
@@ -158,13 +158,13 @@ class CertbotPaths {
   /// path to the directory where the active certificates
   /// are stored.
   String get letsEncryptLivePath {
-    return join(letsEncryptRootPath, 'config', _LIVE_PATH);
+    return join(letsEncryptRootPath, 'config', _livePath);
   }
 
   String get nginxCertPath {
     var path = Environment().nginxCertRootPathOverwrite;
 
-    path ??= CertbotPaths().NGINX_CERT_ROOT;
+    path ??= CertbotPaths().nginxCertRoot;
     return path;
   }
 

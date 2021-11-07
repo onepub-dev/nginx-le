@@ -50,8 +50,8 @@ class AuthProviders {
 
     for (var provider in providers) {
       if ((!wildcard || (wildcard && provider.supportsWildCards)) &&
-          (mode == ConfigYaml.MODE_PUBLIC ||
-              (mode == ConfigYaml.MODE_PRIVATE &&
+          (mode == ConfigYaml.modePublic ||
+              (mode == ConfigYaml.modePrivate &&
                   provider.supportsPrivateMode))) {
         valid.add(provider);
       }

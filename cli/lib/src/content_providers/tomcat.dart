@@ -16,7 +16,7 @@ class Tomcat extends ContentProvider {
     var config = ConfigYaml();
     String? fqdn;
     print('');
-    print('${green('Tomcat server details')}');
+    print(green('Tomcat server details'));
 
     var context = config.settings[contextKey] as String?;
     context ??= '';

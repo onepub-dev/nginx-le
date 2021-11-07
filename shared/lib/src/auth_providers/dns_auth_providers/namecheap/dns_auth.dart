@@ -15,7 +15,7 @@ import 'challenge.dart';
 ///
 /// Once the TXT record is available we return an let
 ///
-void namecheap_dns_auth() {
+void namecheapDNSPath() {
   Certbot().log('*' * 80);
   Certbot().log('certbot_dns_auth started');
 

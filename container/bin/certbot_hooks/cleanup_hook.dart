@@ -17,5 +17,5 @@ void main() {
   if (authProvider == null) {
     throw 'No value provided for ${Environment().authProviderKey}';
   }
-  authProvider.cleanup_hook();
+  authProvider.cleanupHook();
 }

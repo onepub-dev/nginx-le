@@ -10,39 +10,39 @@ class ConfigYaml {
   static final _self = ConfigYaml._internal();
   static const configDir = '.nginx-le';
   static const configFile = 'settings.yaml';
-  static const MODE_PUBLIC = 'public';
-  static const MODE_PRIVATE = 'private';
-  static const CERTIFICATE_TYPE_PRODUCTION = 'production';
-  static const CERTIFICATE_TYPE_STAGING = 'staging';
+  static const modePublic = 'public';
+  static const modePrivate = 'private';
+  static const certificateTypeProduction = 'production';
+  static const certificateTypeStaging = 'staging';
 
-  static const START_METHOD_NGINX_LE = 'nginx-le';
-  static const START_METHOD_DOCKER_START = 'docker start/run';
-  static const START_METHOD_DOCKER_COMPOSE = 'docker-compose';
+  static const startMethodNginxLe = 'nginx-le';
+  static const startMethodDockerStart = 'docker start/run';
+  static const startMethodDockerCompose = 'docker-compose';
 
   late SettingsYaml settings;
 
   /// keys
-  static const START_METHOD_KEY = 'start-method';
-  static const START_PAUSED = 'start-paused';
-  static const MODE_KEY = 'mode';
-  static const HOSTNAME_KEY = 'host';
-  static const FQDN_KEY = 'fqdn';
-  static const TLD_KEY = 'tld';
-  static const IMAGE = 'image';
-  static const CONTAINERID = 'containerid';
-  static const EMAILADDRESS = 'emailaddress';
-  static const CERTIFICATE_TYPE = 'certificate_type';
-  static const HOST_INCLUDE_PATH = 'host_include_path';
-  static const CONTENT_PROVIDER = 'content_provider';
-  static const AUTH_PROVIDER = 'auth_provider';
-  static const WWW_ROOT = 'www_root';
+  static const startMethodKey = 'start-method';
+  static const startPausedKey = 'start-paused';
+  static const modeKey = 'mode';
+  static const hostnameKey = 'host';
+  static const fqdnKey = 'fqdn';
+  static const tldKey = 'tld';
+  static const imageKey = 'image';
+  static const containerIDKey = 'containerid';
+  static const emailAddressKey = 'emailaddress';
+  static const certificateTypeKey = 'certificate_type';
+  static const hostIncludePathKey = 'host_include_path';
+  static const contentProviderKey = 'content_provider';
+  static const authProviderKey = 'auth_provider';
+  static const wwwRootKey = 'www_root';
 
-  static const SMTP_SERVER = 'smtp_server';
-  static const SMTP_SERVER_PORT = 'smtp_server_port';
-  static const DOMAIN_WILDCARD = 'domain_wildcard';
+  static const smtpServerKey = 'smtp_server';
+  static const smtpServerPortKey = 'smtp_server_port';
+  static const domainWildcardKey = 'domain_wildcard';
 
   // defaults:
-  static const DEFAULT_HOST_INCLUDE_PATH = '/opt/nginx/include';
+  static const deafultHostIncludePathTo = '/opt/nginx/include';
 
   String? startMethod;
   String? mode;
@@ -81,18 +81,18 @@ class ConfigYaml {
     }
 
     settings = SettingsYaml.load(pathToSettings: configPath);
-    startMethod = settings[START_METHOD_KEY] as String?;
-    mode = settings[MODE_KEY] as String?;
+    startMethod = settings[startMethodKey] as String?;
+    mode = settings[modeKey] as String?;
     startPaused = settings[Environment().startPausedKey] as bool?;
-    fqdn = settings[FQDN_KEY] as String?;
-    tld = settings[TLD_KEY] as String?;
-    image = Images().findByImageId((settings[IMAGE] as String?)!);
-    certificateType = settings[CERTIFICATE_TYPE] as String?;
-    emailaddress = settings[EMAILADDRESS] as String?;
-    containerid = settings[CONTAINERID] as String?;
-    authProvider = settings[AUTH_PROVIDER] as String?;
-    contentProvider = settings[CONTENT_PROVIDER] as String?;
-    _hostIncludePath = settings[HOST_INCLUDE_PATH] as String?;
+    fqdn = settings[fqdnKey] as String?;
+    tld = settings[tldKey] as String?;
+    image = Images().findByImageId((settings[imageKey] as String?)!);
+    certificateType = settings[certificateTypeKey] as String?;
+    emailaddress = settings[emailAddressKey] as String?;
+    containerid = settings[containerIDKey] as String?;
+    authProvider = settings[authProviderKey] as String?;
+    contentProvider = settings[contentProviderKey] as String?;
+    _hostIncludePath = settings[hostIncludePathKey] as String?;
 
     smtpServer = settings[Environment().smtpServerKey] as String?;
     smtpServerPort = settings[Environment().smtpServerPortKey] as int? ?? 25;
@@ -106,13 +106,13 @@ class ConfigYaml {
   bool get isConfigured => d.exists(configPath) && fqdn != null;
 
   bool get isProduction =>
-      certificateType == ConfigYaml.CERTIFICATE_TYPE_PRODUCTION;
+      certificateType == ConfigYaml.certificateTypeProduction;
 
-  bool get isModePrivate => mode == MODE_PRIVATE;
+  bool get isModePrivate => mode == modePrivate;
   String? get hostIncludePath {
-    _hostIncludePath ??= DEFAULT_HOST_INCLUDE_PATH;
+    _hostIncludePath ??= deafultHostIncludePathTo;
     if (_hostIncludePath!.isEmpty) {
-      _hostIncludePath = DEFAULT_HOST_INCLUDE_PATH;
+      _hostIncludePath = deafultHostIncludePathTo;
     }
     return _hostIncludePath;
   }
@@ -143,18 +143,18 @@ class ConfigYaml {
   }
 
   void save() {
-    settings[START_METHOD_KEY] = startMethod;
-    settings[MODE_KEY] = mode;
+    settings[startMethodKey] = startMethod;
+    settings[modeKey] = mode;
     settings[Environment().startPausedKey] = startPaused;
-    settings[FQDN_KEY] = fqdn;
-    settings[TLD_KEY] = tld;
-    settings[IMAGE] = '${image?.imageid}';
-    settings[CERTIFICATE_TYPE] = certificateType;
-    settings[EMAILADDRESS] = emailaddress;
-    settings[CONTAINERID] = containerid;
-    settings[AUTH_PROVIDER] = authProvider;
-    settings[CONTENT_PROVIDER] = contentProvider;
-    settings[HOST_INCLUDE_PATH] = hostIncludePath;
+    settings[fqdnKey] = fqdn;
+    settings[tldKey] = tld;
+    settings[imageKey] = '${image?.imageid}';
+    settings[certificateTypeKey] = certificateType;
+    settings[emailAddressKey] = emailaddress;
+    settings[containerIDKey] = containerid;
+    settings[authProviderKey] = authProvider;
+    settings[contentProviderKey] = contentProvider;
+    settings[hostIncludePathKey] = hostIncludePath;
 
     settings[Environment().smtpServerKey] = smtpServer;
     settings[Environment().smtpServerPortKey] = smtpServerPort;

@@ -29,5 +29,5 @@ void main() {
 
   print('email: ${Environment().emailaddress}');
 
-  start_service();
+  startService();
 }

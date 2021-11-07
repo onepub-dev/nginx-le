@@ -12,7 +12,7 @@ import '../../../nginx_le_shared.dart';
 /// in the nginx wellknown path.
 ///
 ///
-void certbot_http_auth_hook() {
+void certbotHTTPAuthHook() {
   Certbot().log('*' * 80);
   Certbot().log('certbot_http_auth_hook started');
 

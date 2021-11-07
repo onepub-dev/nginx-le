@@ -20,5 +20,5 @@ void main() {
     throw 'No value provided for ${Environment().authProviderKey}';
   }
 
-  authProvider.auth_hook();
+  authProvider.authHook();
 }

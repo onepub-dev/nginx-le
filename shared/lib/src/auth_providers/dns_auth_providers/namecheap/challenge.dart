@@ -14,7 +14,7 @@ class Challenge {
   String? apiUsername;
   String? username;
 
-  static const CHALLENGE_HOST_NAME = '_acme-challenge';
+  static const challengeHostName = '_acme-challenge';
 
   // newChallenge builds a challenge record from a fqdn name and a challenge authentication key.
   Challenge.simple(
@@ -194,9 +194,9 @@ class Challenge {
 
   String challengeHost({String? hostname, required bool wildcard}) {
     if (wildcard) {
-      return CHALLENGE_HOST_NAME;
+      return challengeHostName;
     } else {
-      return '$CHALLENGE_HOST_NAME.$hostname';
+      return '$challengeHostName.$hostname';
     }
   }
 }

@@ -2,7 +2,7 @@ import 'package:dcli/dcli.dart';
 import 'package:isolates/isolate_runner.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
-const CONFIG_FILE = '/etc/nginx/logrotate.conf';
+const configFilePathTo = '/etc/nginx/logrotate.conf';
 
 ////////////////////////////////////////////
 /// Logrotate thread
@@ -51,11 +51,11 @@ void _startScheduler(String environment) {
 }
 
 void _logrotate() {
-  if (!exists(CONFIG_FILE)) {
+  if (!exists(configFilePathTo)) {
     printerr(
-        red('The logrotate configuration file was not found at: $CONFIG_FILE'));
+        red('The logrotate configuration file was not found at: $configFilePathTo'));
   }
-  if (start('logrotate $CONFIG_FILE', nothrow: true, progress: Progress.print())
+  if (start('logrotate $configFilePathTo', nothrow: true, progress: Progress.print())
           .exitCode !=
       0) {
     print(red('Logrotate exited with a non-zero exit code.'));

@@ -4,7 +4,7 @@ import '../nginx_le_shared.dart';
 
 class Nginx {
   /// The include path within the container.
-  static const DEFAULT_CONTAINER_INCLUDE_PATH = '/etc/nginx/include';
+  static const defaultContainerIncludePathTo = '/etc/nginx/include';
 
   static String get accesslogpath {
     var path = Environment().nginxAccessLogPath;
@@ -15,7 +15,7 @@ class Nginx {
   /// The default path where nginx looks for the include files (Locations and Upstream)
   static String get containerIncludePath {
     var path = Environment().nginxLocationIncludePath;
-    path ??= DEFAULT_CONTAINER_INCLUDE_PATH;
+    path ??= defaultContainerIncludePathTo;
     return path;
   }
 

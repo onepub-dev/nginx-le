@@ -12,7 +12,7 @@ void main() {
     prepareEnvironment();
 
     var provider = HTTPAuthProvider();
-    provider.auth_hook();
+    provider.authHook();
   });
 
   test('http_cleanup_hook', () {
@@ -21,6 +21,6 @@ void main() {
     prepareEnvironment();
 
     var provider = HTTPAuthProvider();
-    provider.cleanup_hook();
+    provider.cleanupHook();
   });
 }

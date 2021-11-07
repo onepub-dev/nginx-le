@@ -12,7 +12,7 @@ void main() {
   Certbot().sendToStdout();
 
   var provider = AuthProviders().getByName(NameCheapAuthProvider().name)!;
-  provider.auth_hook();
+  provider.authHook();
 }
 
 void prepareCertHooks() {

@@ -20,10 +20,10 @@ class DoctorCommand extends Command<void> {
   @override
   void run() {
     print('');
-    _colprint(['OS', '${Platform.operatingSystem}']);
-    print(Format().row(['OS Version', '${Platform.operatingSystemVersion}'],
+    _colprint(['OS', (Platform.operatingSystem)]);
+    print(Format().row(['OS Version', (Platform.operatingSystemVersion)],
         widths: [17, -1]));
-    _colprint(['Path separator', '${Platform.pathSeparator}']);
+    _colprint(['Path separator', (Platform.pathSeparator)]);
     print('');
     _colprint(['dart version', '${DartSdk().version}']);
     print('');
@@ -51,7 +51,7 @@ class DoctorCommand extends Command<void> {
     _colprint(['ConfigPath', config.configPath]);
     _colprint(['Mode', config.mode]);
     _colprint(['FQDN', config.fqdn]);
-    _colprint(['${Environment().tldKey}', config.tld]);
+    _colprint([(Environment().tldKey), config.tld]);
     _colprint(['Docker ImageID', config.image?.imageid]);
     _colprint(['Cert Type', config.certificateType]);
     _colprint(['Docker container', config.containerid]);
@@ -128,8 +128,8 @@ class DoctorCommand extends Command<void> {
       var username = env['USERNAME'];
       if (username != null) {
         print(Format().row([
-          '$label',
-          '${fstat.modeString()}',
+          label,
+          (fstat.modeString()),
           '<user>:${(owner.group == owner.user ? '<user>' : owner.group)}',
           '${privatePath(path)} '
         ], widths: [
@@ -145,7 +145,7 @@ class DoctorCommand extends Command<void> {
         ]));
       }
     } else {
-      _colprint(['$label', '${privatePath(path)} does not exist']);
+      _colprint([label, '${privatePath(path)} does not exist']);
     }
   }
 

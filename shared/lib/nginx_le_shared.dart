@@ -9,7 +9,7 @@ export 'src/util/email.dart';
 export 'src/util/environment.dart';
 export 'src/version/version.g.dart';
 
-export 'src/config/ConfigYaml.dart';
+export 'src/config/config_yaml.dart';
 
 export 'src/auth_providers/auth_providers.dart';
 export 'src/auth_providers/auth_provider.dart';

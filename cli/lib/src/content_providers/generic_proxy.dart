@@ -10,7 +10,7 @@ class GenericProxy extends ContentProvider {
     var config = ConfigYaml();
     String? fqdn;
     print('');
-    print('${green('Web Application Server details')}');
+    print(green('Web Application Server details'));
 
     fqdn = config.settings[fqdnKey] as String?;
     fqdn ??= 'localhost';

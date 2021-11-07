@@ -14,7 +14,7 @@ String askForHostPath({String? title, String? prompt, String? defaultPath}) {
   var valid = false;
   String hostPath;
   do {
-    if (title != null) print('${green(title)}');
+    if (title != null) print(green(title));
     hostPath =
         ask('$prompt:', defaultValue: defaultPath, validator: Ask.required);
 

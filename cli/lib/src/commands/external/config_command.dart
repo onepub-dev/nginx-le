@@ -57,7 +57,7 @@ class ConfigCommand extends Command<void> {
     provider.createLocationFile();
     provider.createUpstreamFile();
 
-    if (config.startMethod != ConfigYaml.START_METHOD_DOCKER_COMPOSE) {
+    if (config.startMethod != ConfigYaml.startMethodDockerCompose) {
       deleteOldContainers(containerName, image);
       createContainer(image!, config, debug);
     } else {
@@ -161,14 +161,14 @@ class ConfigCommand extends Command<void> {
     print('');
 
     var startMethod = ConfigYaml().startMethod;
-    if (startMethod == ConfigYaml.START_METHOD_NGINX_LE) {
+    if (startMethod == ConfigYaml.startMethodNginxLe) {
       if (confirm('Would you like to start the container:',
           defaultValue: true)) {
         'docker start nginx-le'.run;
       } else {
         print(blue('Use ${orange('nginx-le start')} to start the container.'));
       }
-    } else if (startMethod == ConfigYaml.START_METHOD_DOCKER_START) {
+    } else if (startMethod == ConfigYaml.startMethodDockerStart) {
       print(blue('Use your Dockerfile to start nginx-le.'));
     } else {
       // ConfigYaml.START_METHOD_DOCKER_COMPOSE
@@ -207,10 +207,10 @@ class ConfigCommand extends Command<void> {
     print('');
     print(green('During testing please select "staging"'));
     var certTypes = [
-      ConfigYaml.CERTIFICATE_TYPE_PRODUCTION,
-      ConfigYaml.CERTIFICATE_TYPE_STAGING
+      ConfigYaml.certificateTypeProduction,
+      ConfigYaml.certificateTypeStaging
     ];
-    config.certificateType ??= ConfigYaml.CERTIFICATE_TYPE_STAGING;
+    config.certificateType ??= ConfigYaml.certificateTypeStaging;
     var certificateType = menu(
         prompt: 'Certificate Type:',
         options: certTypes,
@@ -298,8 +298,8 @@ class ConfigCommand extends Command<void> {
   void selectMode(ConfigYaml config) {
     print('');
     print(green('Select the visibility of your Web Server'));
-    config.mode ??= ConfigYaml.MODE_PRIVATE;
-    var options = [ConfigYaml.MODE_PUBLIC, ConfigYaml.MODE_PRIVATE];
+    config.mode ??= ConfigYaml.modePrivate;
+    var options = [ConfigYaml.modePublic, ConfigYaml.modePrivate];
     var mode = menu(
       prompt: 'Mode:',
       options: options,
@@ -318,11 +318,11 @@ class ConfigCommand extends Command<void> {
   }
 
   void selectStartMethod(ConfigYaml config) {
-    config.startMethod ?? ConfigYaml.START_METHOD_NGINX_LE;
+    config.startMethod ?? ConfigYaml.startMethodNginxLe;
     var startMethods = [
-      ConfigYaml.START_METHOD_NGINX_LE,
-      ConfigYaml.START_METHOD_DOCKER_START,
-      ConfigYaml.START_METHOD_DOCKER_COMPOSE
+      ConfigYaml.startMethodNginxLe,
+      ConfigYaml.startMethodDockerStart,
+      ConfigYaml.startMethodDockerCompose
     ];
 
     print('');
@@ -368,7 +368,7 @@ class ConfigCommand extends Command<void> {
     var defaultOption = Containers().findByContainerId(config.containerid!);
 
     if (containers.isEmpty) {
-      if (config.startMethod == ConfigYaml.START_METHOD_DOCKER_COMPOSE) {
+      if (config.startMethod == ConfigYaml.startMethodDockerCompose) {
         printerr(
             red('Please run docker-compose up before running nginx-le config'));
         exit(-1);

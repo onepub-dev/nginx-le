@@ -8,7 +8,7 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 import '../../util/log_manager.dart';
 
 /// The main service thread that runs within the docker container.
-void start_service() {
+void startService() {
   print('Nginx-LE starting Version:$packageVersion');
 
   /// These environment variables are set when the container is

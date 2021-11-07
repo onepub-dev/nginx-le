@@ -34,7 +34,6 @@ void main() {
       print('done');
       finished.complete();
     });
-    ;
 
     waitForEx<void>(finished.future);
   });

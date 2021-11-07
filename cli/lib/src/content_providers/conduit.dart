@@ -16,7 +16,7 @@ class Conduit extends ContentProvider {
     var config = ConfigYaml();
     String? fqdn;
     print('');
-    print('${green('Conduit server details')}');
+    print(green('Conduit server details'));
 
     fqdn = config.settings[fqdnKey] as String?;
     fqdn ??= 'localhost';

@@ -63,7 +63,7 @@ void setup() {
     createDir(CertbotPaths().letsEncryptRootPath);
   }
 
-  touch(join(CertbotPaths().letsEncryptLogPath, CertbotPaths().LOG_FILE_NAME),
+  touch(join(CertbotPaths().letsEncryptLogPath, CertbotPaths().logFilename),
       create: true);
 
   Environment().nginxAccessLogPath = '/tmp/nginx/access.log';

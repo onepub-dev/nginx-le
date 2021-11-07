@@ -30,7 +30,7 @@ class NameCheapAuthProvider extends GenericAuthProvider {
   }
 
   @override
-  void pre_auth() {
+  void preAuth() {
     ArgumentError.checkNotNull(
         envToken, 'Environment variable: AUTH_PROVIDER_TOKEN missing');
     ArgumentError.checkNotNull(
@@ -38,21 +38,21 @@ class NameCheapAuthProvider extends GenericAuthProvider {
   }
 
   @override
-  void auth_hook() {
-    namecheap_dns_auth();
+  void authHook() {
+    namecheapDNSPath();
   }
 
   @override
-  void cleanup_hook() {
-    namncheap_dns_cleanup();
+  void cleanupHook() {
+    namecheapDNSCleanup();
   }
 
   @override
   List<EnvVar> get environment {
     var vars = <EnvVar>[];
 
-    vars.add(EnvVar(AuthProvider.AUTH_PROVIDER_TOKEN, configToken));
-    vars.add(EnvVar(AuthProvider.AUTH_PROVIDER_USERNAME, configUsername));
+    vars.add(EnvVar(AuthProvider.authProviderToken, configToken));
+    vars.add(EnvVar(AuthProvider.authProviderUsername, configUsername));
 
     return vars;
   }
@@ -65,7 +65,7 @@ class NameCheapAuthProvider extends GenericAuthProvider {
 
   @override
   void dumpEnvironmentVariables() {
-    printEnv(AuthProvider.AUTH_PROVIDER_TOKEN, envToken);
-    printEnv(AuthProvider.AUTH_PROVIDER_USERNAME, envUsername);
+    printEnv(AuthProvider.authProviderToken, envToken);
+    printEnv(AuthProvider.authProviderUsername, envUsername);
   }
 }
