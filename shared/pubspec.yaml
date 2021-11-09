@@ -26,6 +26,3 @@ dependencies:
 dev_dependencies: 
   test: ^1.0.0
   lints: ^1.0.0
-dependency_overrides: 
-  dcli: 
-    path: ../../dcli
