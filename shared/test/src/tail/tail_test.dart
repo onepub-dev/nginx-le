@@ -4,7 +4,6 @@ import 'dart:async';
 import 'package:async/async.dart';
 import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/src/tail/tail.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:test/test.dart';
 
 void main() {

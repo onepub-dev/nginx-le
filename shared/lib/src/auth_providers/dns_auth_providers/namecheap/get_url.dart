@@ -18,7 +18,6 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
 import 'package:dcli/dcli.dart';
-import 'package:pedantic/pedantic.dart';
 
 const defaultBaseURL = 'https://api.namecheap.com/xml.response';
 const sandboxBaseURL = 'https://api.sandbox.namecheap.com/xml.response';
