@@ -2,14 +2,14 @@ import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/src/util/env_var.dart';
 
 import '../../nginx_le_shared.dart';
-import '../config/ConfigYaml.dart';
+import '../config/config_yaml.dart';
 
 abstract class AuthProvider {
   /// Generic AuthProvider environment variables.
-  static const AUTH_PROVIDER_TOKEN = 'AUTH_PROVIDER_TOKEN';
-  static const AUTH_PROVIDER_EMAIL_ADDRESS = 'AUTH_PROVIDER_EMAIL_ADDRESS';
-  static const AUTH_PROVIDER_USERNAME = 'AUTH_PROVIDER_USERNAME';
-  static const AUTH_PROVIDER_PASSWORD = 'AUTH_PROVIDER_PASSWORD';
+  static const authProviderToken = 'AUTH_PROVIDER_TOKEN';
+  static const authProviderEmailAddress = 'AUTH_PROVIDER_EMAIL_ADDRESS';
+  static const authProviderUsername = 'AUTH_PROVIDER_USERNAME';
+  static const authProviderPassword = 'AUTH_PROVIDER_PASSWORD';
 
   /// unique name of the provider used as the key
   String get name;
@@ -21,16 +21,16 @@ abstract class AuthProvider {
   /// the docker container when it is created.
   List<EnvVar> get environment;
 
-  void promptForSettings(ConfigYaml confi);
+  void promptForSettings(ConfigYaml config);
 
   /// Starts the process to acquire a certificate.
   void acquire();
 
   /// overload this method if your provide needs to to have a manual auth_hook called
-  void auth_hook();
+  void authHook();
 
   /// overload this method if your provide needs to to have a manual cleanup hook called
-  void cleanup_hook();
+  void cleanupHook();
 
   /// Overload this method to indicate whether the auth provider can support
   /// authentication of wildcard certificates.
@@ -42,39 +42,39 @@ abstract class AuthProvider {
 
   /// Settings stored in the configuration file
   String? get configToken =>
-      ConfigYaml().settings[AUTH_PROVIDER_TOKEN] as String?;
+      ConfigYaml().settings[authProviderToken] as String?;
   set configToken(String? token) =>
-      ConfigYaml().settings[AUTH_PROVIDER_TOKEN] = token;
+      ConfigYaml().settings[authProviderToken] = token;
 
   String? get configEmailAddress =>
-      ConfigYaml().settings[AUTH_PROVIDER_EMAIL_ADDRESS] as String?;
+      ConfigYaml().settings[authProviderEmailAddress] as String?;
   set configEmailAddress(String? emailAddress) =>
-      ConfigYaml().settings[AUTH_PROVIDER_EMAIL_ADDRESS] = emailAddress;
+      ConfigYaml().settings[authProviderEmailAddress] = emailAddress;
 
   String? get configUsername =>
-      ConfigYaml().settings[AUTH_PROVIDER_USERNAME] as String?;
+      ConfigYaml().settings[authProviderUsername] as String?;
   set configUsername(String? username) =>
-      ConfigYaml().settings[AUTH_PROVIDER_USERNAME] = username;
+      ConfigYaml().settings[authProviderUsername] = username;
 
   String? get configPassword =>
-      ConfigYaml().settings[AUTH_PROVIDER_PASSWORD] as String?;
+      ConfigYaml().settings[authProviderPassword] as String?;
   set configPassword(String? password) =>
-      ConfigYaml().settings[AUTH_PROVIDER_PASSWORD] = password;
+      ConfigYaml().settings[authProviderPassword] = password;
 
   /// Settings stored in environment variables.
-  String? get envToken => env[AUTH_PROVIDER_TOKEN];
-  set envToken(String? token) => env[AUTH_PROVIDER_TOKEN] = token;
+  String? get envToken => env[authProviderToken];
+  set envToken(String? token) => env[authProviderToken] = token;
 
   String? get envEmailAddress => Environment().authProviderEmailAddress;
 
   set envEmailAddress(String? emailAddress) =>
       Environment().authProviderEmailAddress = emailAddress;
 
-  String? get envUsername => env[AUTH_PROVIDER_USERNAME];
-  set envUsername(String? username) => env[AUTH_PROVIDER_USERNAME] = username;
+  String? get envUsername => env[authProviderUsername];
+  set envUsername(String? username) => env[authProviderUsername] = username;
 
-  String? get envPassword => env[AUTH_PROVIDER_PASSWORD];
-  set envPassword(String? password) => env[AUTH_PROVIDER_PASSWORD] = password;
+  String? get envPassword => env[authProviderPassword];
+  set envPassword(String? password) => env[authProviderPassword] = password;
 
   void dumpEnvironmentVariables();
 

@@ -1,3 +1,9 @@
+# 8.0.0
+- Upgraded packages as part of release process
+- migrated from pedantic to lints.
+- Added test for environment variable AUTH_PROVIDER.
+- Upgraded packages as part of release process
+
 # 7.2.1
 - Upgraded packages as part of release process
 - Upgraded packages as part of release process

@@ -25,3 +25,5 @@ container/test/src/util/mock_deploy_hook
 container/test/src/util/settings.yaml
 container/test/src/util/namecheap.yaml
 container/.failed_tracker
+container/.failed_tracker.bak
+shared/.failed_tracker.bak

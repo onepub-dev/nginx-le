@@ -74,7 +74,7 @@ class Certificate {
 
     var lines = <String>[];
     NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
-      var cmd = 'certbot certificates '
+      var cmd = '${Certbot.pathTo} certificates '
           ' --config-dir=${CertbotPaths().letsEncryptConfigPath}'
           ' --work-dir=${CertbotPaths().letsEncryptWorkPath}'
           ' --logs-dir=${CertbotPaths().letsEncryptLogPath}';

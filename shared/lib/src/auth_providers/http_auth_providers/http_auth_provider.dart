@@ -15,7 +15,7 @@ class HTTPAuthProvider extends AuthProvider {
       'HTTP01Auth - Standard Certbot HTTP01 Auth. Port 80 must be open';
 
   @override
-  void auth_hook(
+  void authHook(
       {String? hostname, String? domain, String? tld, String? emailaddress}) {
     Certbot().log('*' * 80);
     Certbot().log('certbot_http_auth_hook started');
@@ -74,7 +74,7 @@ class HTTPAuthProvider extends AuthProvider {
   }
 
   @override
-  void cleanup_hook(
+  void cleanupHook(
       {String? hostname, String? domain, String? tld, String? emailaddress}) {
     Certbot().log('*' * 80);
     Certbot().log('cert_bot_http_cleanup_hook started');
@@ -103,7 +103,7 @@ class HTTPAuthProvider extends AuthProvider {
   }
 
   @override
-  void promptForSettings(ConfigYaml settings) {
+  void promptForSettings(ConfigYaml config) {
     /// no op
   }
 
@@ -119,27 +119,26 @@ class HTTPAuthProvider extends AuthProvider {
     var production = Environment().production;
 
     /// These are set via in the Dockerfile
-    var auth_hook = Environment().certbotAuthHookPath;
-    var cleanup_hook = Environment().certbotCleanupHookPath;
+    var authHook = Environment().certbotAuthHookPath;
+    var cleanupHook = Environment().certbotCleanupHookPath;
 
-    ArgumentError.checkNotNull(auth_hook,
+    ArgumentError.checkNotNull(authHook,
         'Environment variable: ${Environment().certbotAuthHookPathKey} missing');
-    ArgumentError.checkNotNull(cleanup_hook,
+    ArgumentError.checkNotNull(cleanupHook,
         'Environment variable: CERTBOT_HTTP_CLEANUP_HOOK_PATH missing');
 
     verbose(() => 'Starting cerbot with authProvider: $name');
 
     NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
-      var certbot = 'certbot certonly '
-          ' --manual-public-ip-logging-ok '
+      var certbot = '${Certbot.pathTo} certonly '
           ' --manual '
           ' --preferred-challenges=http '
           ' -m $emailaddress  '
           ' -d $hostname.$domain '
           ' --agree-tos '
           ' --non-interactive '
-          ' --manual-auth-hook="$auth_hook" '
-          ' --manual-cleanup-hook="$cleanup_hook" '
+          ' --manual-auth-hook="$authHook" '
+          ' --manual-cleanup-hook="$cleanupHook" '
           ' --work-dir=$workDir '
           ' --config-dir=$configDir '
           ' --logs-dir=$logDir ';

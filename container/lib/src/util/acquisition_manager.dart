@@ -89,7 +89,11 @@ class AcquisitionManager {
   /// The [reload] flag controls whether we reload nginx after deploying
   /// certificates. This is true by default and only set to false for unit
   /// testing.
-  void acquistionCheck({bool reload = true}) {
+  /// Checks if we need to acquire a certificate and if
+  /// so acquire it.
+  /// If we end with valid and deployed certificate
+  /// we leave acquisition mode.
+  void acquireIfRequired({bool reload = true}) {
     var hostname = Environment().hostname;
     var domain = Environment().domain;
     var wildcard = Environment().domainWildcard;
@@ -177,10 +181,10 @@ class AcquisitionManager {
   /// returns true if we are currently in acquisition mode or
   /// [CertbotPaths().WWW_PATH_LIVE] doesn't exists which means we haven't been configured.
   bool get inAcquisitionMode {
-    return exists(CertbotPaths().WWW_PATH_LIVE, followLinks: false) &&
-        exists(CertbotPaths().WWW_PATH_LIVE, followLinks: true) &&
-        resolveSymLink(CertbotPaths().WWW_PATH_LIVE) ==
-            CertbotPaths().WWW_PATH_ACQUIRE;
+    return exists(CertbotPaths().wwwPathLive, followLinks: false) &&
+        exists(CertbotPaths().wwwPathLive, followLinks: true) &&
+        resolveSymLink(CertbotPaths().wwwPathLive) ==
+            CertbotPaths().wwwPathToAcquire;
   }
 }
 
@@ -199,7 +203,7 @@ void _acquireThread(String environment) {
 
     /// start the acquisition loop.
     do {
-      AcquisitionManager().acquistionCheck();
+      AcquisitionManager().acquireIfRequired();
 
       Settings().setVerbose(enabled: false);
       sleep(5, interval: Interval.minutes);

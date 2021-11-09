@@ -122,26 +122,27 @@ void main() {
 
     test('parse', () {
       print('parse');
-      var path = Directory('/tmp').createTempSync().path;
 
-      Environment().certbotRootPath = path;
-      createDir(
-          join(CertbotPaths().letsEncryptLivePath,
-              'robtest18-new.clouddialer.com.au'),
-          recursive: true);
-      var fqnd001 = join(CertbotPaths().letsEncryptLivePath,
-          'robtest18-new.clouddialer.com.au-0001');
-      createDir(fqnd001, recursive: true);
+      withTempDir((path) {
+        Environment().certbotRootPath = path;
+        createDir(
+            join(CertbotPaths().letsEncryptLivePath,
+                'robtest18-new.clouddialer.com.au'),
+            recursive: true);
+        var fqnd001 = join(CertbotPaths().letsEncryptLivePath,
+            'robtest18-new.clouddialer.com.au-0001');
+        createDir(fqnd001, recursive: true);
 
-      // noojee.org-0001
-      // noojee.org-new
-      // noojee.org-new-0001
-      var latest = CertbotPaths().latestCertificatePath(
-          'robtest18-new', 'clouddialer.com.au',
-          wildcard: false);
-      expect(latest, equals(fqnd001));
+        // noojee.org-0001
+        // noojee.org-new
+        // noojee.org-new-0001
+        var latest = CertbotPaths().latestCertificatePath(
+            'robtest18-new', 'clouddialer.com.au',
+            wildcard: false);
+        expect(latest, equals(fqnd001));
 
-      // createDir(join(path, 'robtest18.clouddialer.com.au'));
+        // createDir(join(path, 'robtest18.clouddialer.com.au'));
+      });
     });
 
     test('block flag', () {

@@ -10,7 +10,7 @@ dependencies:
   args: ^2.0.0
   path: ^1.6.4
   cron: ^0.4.0
-  dcli: ^1.9.1
+  dcli: ^1.11.0
   xml: ^5.0.2
   http: ^0.13.0
   intl: ^0.17.0
@@ -28,5 +28,5 @@ dev_dependencies:
 dependency_overrides:
   nginx_le_shared:
     path: ../shared
-  dcli:
-    path: ../../dcli    
+  # dcli:
+  #   path: ../../dcli    

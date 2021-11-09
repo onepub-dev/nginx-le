@@ -71,15 +71,23 @@ RUN apt  update && apt install --no-install-recommends -y \
     ca-certificates \
     dnsutils \
     gnupg \
+    pip \
     nginx \
     openssl \
     software-properties-common \
     tzdata \
     vim \
-    certbot \
-    python3-certbot-dns-cloudflare \
+    python3 \
+    python3-venv \
+    libaugeas0 \
     logrotate \
     gzip
+
+RUN python3 -m venv /opt/certbot/
+RUN /opt/certbot/bin/pip install --upgrade pip
+RUN /opt/certbot/bin/pip install certbot
+RUN ln -s /opt/certbot/bin/certbot /usr/bin/certbot
+RUN /opt/certbot/bin/pip install certbot-dns-cloudflare
 
 
 # config nginx 

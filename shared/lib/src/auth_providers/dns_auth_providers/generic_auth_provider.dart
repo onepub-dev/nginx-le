@@ -5,7 +5,7 @@ import '../auth_provider.dart';
 
 abstract class GenericAuthProvider extends AuthProvider {
   /// over load this method to do any checks before the acquire method is run.
-  void pre_auth() {}
+  void preAuth() {}
 
   ///
   /// Acquires a Certbot certificate using DNS Auth.
@@ -40,12 +40,12 @@ abstract class GenericAuthProvider extends AuthProvider {
     var production = Environment().production;
     var emailaddress = Environment().authProviderEmailAddress;
 
-    var auth_hook_path = Environment().certbotAuthHookPath;
-    var cleanup_hook_path = Environment().certbotCleanupHookPath;
+    var authHookPath = Environment().certbotAuthHookPath;
+    var cleanupHookPath = Environment().certbotCleanupHookPath;
 
-    ArgumentError.checkNotNull(auth_hook_path,
+    ArgumentError.checkNotNull(authHookPath,
         'Environment variable: ${Environment().certbotAuthHookPathKey} missing');
-    ArgumentError.checkNotNull(cleanup_hook_path,
+    ArgumentError.checkNotNull(cleanupHookPath,
         'Environment variable: ${Environment().certbotCleanupHookPathKey} missing');
 
     hostname = wildcard ? '*' : hostname;
@@ -53,16 +53,15 @@ abstract class GenericAuthProvider extends AuthProvider {
     verbose(() => 'Starting cerbot with authProvider: $name');
 
     NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
-      var certbot = 'certbot certonly '
-          ' --manual-public-ip-logging-ok '
+      var certbot = '${Certbot.pathTo} certonly '
           ' --manual '
           ' --preferred-challenges=dns '
           ' -m $emailaddress  '
           ' -d $hostname.$domain '
           ' --agree-tos '
           ' --non-interactive '
-          ' --manual-auth-hook="$auth_hook_path" '
-          ' --manual-cleanup-hook="$cleanup_hook_path" '
+          ' --manual-auth-hook="$authHookPath" '
+          ' --manual-cleanup-hook="$cleanupHookPath" '
           ' --work-dir=$workDir '
           ' --config-dir=$configDir '
           ' --logs-dir=$logDir ';

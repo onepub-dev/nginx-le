@@ -11,12 +11,17 @@ import '../../nginx_le_shared.dart';
 class Certbot {
   static Certbot? _self;
 
+  /// The install creates a virtual python environment
+  /// for certbot in /opt/certbot so we must run
+  /// all commands from that directory.
+  static const pathTo = '/opt/certbot/bin/certbot';
+
   bool _sendToStdout = false;
   factory Certbot() => _self ??= Certbot._internal();
 
   /// The certbot log file
   String get logfile =>
-      join(CertbotPaths().letsEncryptLogPath, CertbotPaths().LOG_FILE_NAME);
+      join(CertbotPaths().letsEncryptLogPath, CertbotPaths().logFilename);
 
   Certbot._internal() {
     verbose(() => 'Logging to $logfile');
@@ -141,9 +146,9 @@ class Certbot {
     var deployed = false;
 
     var fullchain =
-        join(CertbotPaths().nginxCertPath, CertbotPaths().FULLCHAIN_FILE);
+        join(CertbotPaths().nginxCertPath, CertbotPaths().fullchainFile);
     var private =
-        join(CertbotPaths().nginxCertPath, CertbotPaths().PRIVATE_KEY_FILE);
+        join(CertbotPaths().nginxCertPath, CertbotPaths().privateKeyFile);
     if (exists(fullchain) &&
         exists(private) &&
         wasIssuedFor(
@@ -236,23 +241,30 @@ class Certbot {
 
   /// copy the certificate files from the given root directory.
   void _deploy(String certificateRootPath) {
-    /// we need to leave the original files in place as they form part
-    /// of the letsencrypt archive
-    copy(
-        CertbotPaths().fullChainPath(certificateRootPath), '/tmp/fullchain.pem',
-        overwrite: true);
-    copy(CertbotPaths().privateKeyPath(certificateRootPath), '/tmp/privkey.pem',
-        overwrite: true);
+    // /// we need to leave the original files in place as they form part
+    // /// of the letsencrypt archive
+    // copy(
+    //     CertbotPaths().fullChainPath(certificateRootPath), '/tmp/fullchain.pem',
+    //     overwrite: true);
+    // copy(CertbotPaths().privateKeyPath(certificateRootPath), '/tmp/privkey.pem',
+    //     overwrite: true);
 
-    /// but we need to move them in place using move so that
-    /// the replace is essentially atomic so that nginx doesn't see partially
-    /// created certificates.
-    move('/tmp/fullchain.pem',
-        join(CertbotPaths().nginxCertPath, CertbotPaths().FULLCHAIN_FILE),
-        overwrite: true);
-    move('/tmp/privkey.pem',
-        join(CertbotPaths().nginxCertPath, CertbotPaths().PRIVATE_KEY_FILE),
-        overwrite: true);
+    // /// but we need to move them in place using move so that
+    // /// the replace is essentially atomic so that nginx doesn't see partially
+    // /// created certificates.
+    // move('/tmp/fullchain.pem',
+    //     join(CertbotPaths().nginxCertPath, CertbotPaths().fullchainFile),
+    //     overwrite: true);
+    // move('/tmp/privkey.pem',
+    //     join(CertbotPaths().nginxCertPath, CertbotPaths().privateKeyFile),
+    //     overwrite: true);
+
+    /// symlink the files so nginx can see the certificate
+    symlink(CertbotPaths().fullChainPath(certificateRootPath),
+        join(CertbotPaths().nginxCertPath, CertbotPaths().fullchainFile));
+
+    symlink(CertbotPaths().privateKeyPath(certificateRootPath),
+        join(CertbotPaths().nginxCertPath, CertbotPaths().privateKeyFile));
   }
 
   /// Revokes a certbot certificate.
@@ -275,14 +287,14 @@ class Certbot {
     var certFilePath = join(
         CertbotPaths()
             .certificatePathRoot(hostname, domain, wildcard: wildcard),
-        CertbotPaths().CERTIFICATE_FILE);
+        CertbotPaths().certificateFile);
     print('Revoking certificate at: $certFilePath');
     // print('isDirectory: ${isDirectory(certFilePath)}');
     // print('isFile: ${isFile(certFilePath)}');
     // print('isLink: ${isLink(certFilePath)}');
 
     NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
-      var cmd = 'certbot revoke'
+      var cmd = '${Certbot.pathTo} revoke'
           ' --cert-path $certFilePath'
           ' --non-interactive '
           ' -m $emailaddress  '
@@ -323,7 +335,7 @@ class Certbot {
     var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
 
     NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
-      var cmd = 'certbot delete'
+      var cmd = '${Certbot.pathTo} delete'
           ' --cert-name ${wildcard ? domain : '$hostname.$domain'}'
           ' --non-interactive '
           ' -m $emailaddress  '
@@ -400,8 +412,7 @@ class Certbot {
 
     try {
       NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
-        var certbot = 'certbot renew '
-            ' --manual-public-ip-logging-ok '
+        var certbot = '${Certbot.pathTo} renew '
             ' --agree-tos '
             ' --deploy-hook=${Environment().certbotDeployHookPath}'
             ' --work-dir=${CertbotPaths().letsEncryptWorkPath}'
