@@ -33,6 +33,3 @@ executables:
   nginx-le: nginx-le
 
 
-dependency_overrides:
-  nginx_le_shared:
-    path: ../shared
