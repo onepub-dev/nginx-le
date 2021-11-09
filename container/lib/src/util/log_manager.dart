@@ -52,10 +52,11 @@ void _startScheduler(String environment) {
 
 void _logrotate() {
   if (!exists(configFilePathTo)) {
-    printerr(
-        red('The logrotate configuration file was not found at: $configFilePathTo'));
+    printerr(red(
+        'The logrotate configuration file was not found at: $configFilePathTo'));
   }
-  if (start('logrotate $configFilePathTo', nothrow: true, progress: Progress.print())
+  if (start('logrotate $configFilePathTo',
+              nothrow: true, progress: Progress.print())
           .exitCode !=
       0) {
     print(red('Logrotate exited with a non-zero exit code.'));
