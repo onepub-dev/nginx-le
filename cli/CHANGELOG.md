@@ -1,3 +1,6 @@
+# 8.0.0
+- Upgraded packages as part of release process
+
 # 7.1.4
 - Upgraded packages as part of release process
 

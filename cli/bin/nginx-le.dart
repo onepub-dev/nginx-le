@@ -1,5 +1,4 @@
 #! /usr/bin/env dcli
-
 // ignore_for_file: file_names
 
 import 'dart:io';

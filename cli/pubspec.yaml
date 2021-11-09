@@ -1,5 +1,5 @@
 name: nginx_le
-version: 7.1.4
+version: 8.0.0
 homepage: https://github.com/bsutton/nginx-le
 documentation: https://nginxle.noojee.dev/
 description: Nginx-LE provides a docker container and tools to create an Nginx web server that automatically acquires and renews HTTPS certificates.
@@ -24,12 +24,10 @@ dependencies:
   settings_yaml: ^3.0.0
   uuid: ^3.0.0
   validators2: ^3.0.0
-  nginx_le_shared: ^7.1.0
+  nginx_le_shared: ^8.0.0
   yaml: ^3.0.0
 dev_dependencies: 
   test: ^1.0.0
   lints: ^1.0.0
 executables: 
   nginx-le: nginx-le
-
-
