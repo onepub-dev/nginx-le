@@ -16,7 +16,6 @@ shared/.vscode/
 .history
 container/letsencrypt
 cli/update.dcli.txt
-shared/pubspec.lock
 shared/.vscode/launch.json
 container/pubspec.yaml.bak
 cli/pubspec.yaml.bak

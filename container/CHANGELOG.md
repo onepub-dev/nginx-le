@@ -1,3 +1,6 @@
+# 8.0.1
+Migrated to lint_hard
+
 # 8.0.0
 - Upgraded packages as part of release process
 
