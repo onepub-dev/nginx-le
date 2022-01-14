@@ -1,3 +1,6 @@
+# 8.0.2
+- we no longer use release_all. we use pub_release multi
+
 # 8.0.1
 - applied fixes for lint_hard
 - fixed a bug in the config command when selecting auth provider.
