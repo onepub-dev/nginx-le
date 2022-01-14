@@ -1,3 +1,5 @@
+# 8.0.4
+- fixed dependency issue caused by release process.
 # 8.0.3
 - fixed name of setMock
 - added toggle command
