@@ -34,5 +34,4 @@ class Volume {
   Volume({required this.hostPath, required this.containerPath});
   final String? hostPath;
   final String containerPath;
-
 }

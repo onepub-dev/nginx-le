@@ -45,9 +45,9 @@ class RevokeCommand extends Command<void> {
       }
       cmd.run;
     } else {
-      printerr(red(
-          "The Nginx-LE container ${config.containerid} isn't running. "
-          "Use 'nginx-le start' to start the container."));
+      printerr(
+          red("The Nginx-LE container ${config.containerid} isn't running. "
+              "Use 'nginx-le start' to start the container."));
     }
   }
 }

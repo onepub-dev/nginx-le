@@ -15,8 +15,7 @@ docker create
       --net=host --log-driver=journald -v certificates:/etc/letsencrypt 4bbc656ae28c''';
 
   final lines = <String>[];
-  final progress =
-      Progress(lines.add, stderr: lines.add);
+  final progress = Progress(lines.add, stderr: lines.add);
 
   cmd.replaceAll('\n', ' ').start(nothrow: true, progress: progress);
 

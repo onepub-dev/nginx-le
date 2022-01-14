@@ -1,5 +1,6 @@
 # 8.0.1
-Migrated to lint_hard
+- Migrated to lint_hard
+- fixed a bug in the config command when selecting auth provider.
 
 # 8.0.0
 - Upgraded packages as part of release process
