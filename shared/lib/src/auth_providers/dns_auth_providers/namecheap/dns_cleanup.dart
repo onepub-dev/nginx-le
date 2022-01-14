@@ -63,7 +63,7 @@ void namecheapDNSCleanup() {
         tld: tld,
         wildcard: wildcard,
         certbotValidationString: certbotAuthKey);
-  // ignore: avoid_catches_without_on_clauses
+    // ignore: avoid_catches_without_on_clauses
   } catch (e) {
     printerr(e.toString());
   }

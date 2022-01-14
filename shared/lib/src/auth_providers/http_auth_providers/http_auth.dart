@@ -52,9 +52,9 @@ void certbotHTTPAuthHook() {
   final token = Environment().certbotToken;
   Certbot().log('token: "$token"');
   if (token == null || token.isEmpty) {
-    Certbot().logError(
-        'The environment variable ${Environment().certbotTokenKey} '
-        'was empty http_auth_hook ABORTED.');
+    Certbot()
+        .logError('The environment variable ${Environment().certbotTokenKey} '
+            'was empty http_auth_hook ABORTED.');
   }
   ArgumentError.checkNotNull(token,
       'The environment variable ${Environment().certbotTokenKey} was empty');

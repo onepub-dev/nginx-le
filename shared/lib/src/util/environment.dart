@@ -105,7 +105,7 @@ class Environment {
       env[authProviderEmailAddressKey] = authProviderEmailAddress;
 
   //  env['AUTH_PROVIDER_TOKEN'] = settings['AUTH_PROVIDER_TOKEN'] as String;
-  //   env['AUTH_PROVIDER_EMAIL_ADDRESS'] = settings['AUTH_PROVIDER_TOKEN'] 
+  //   env['AUTH_PROVIDER_EMAIL_ADDRESS'] = settings['AUTH_PROVIDER_TOKEN']
   //as String;
 
   /// Certbot

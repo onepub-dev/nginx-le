@@ -96,7 +96,7 @@ void namecheapDNSPath() {
     } else {
       Certbot().log('createDNSChallenged failed');
     }
-  // ignore: avoid_catches_without_on_clauses
+    // ignore: avoid_catches_without_on_clauses
   } catch (e) {
     printerr(e.toString());
   }

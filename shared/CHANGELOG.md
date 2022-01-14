@@ -1,3 +1,7 @@
+# 8.0.1
+- applied fixes for lint_hard
+- fixed a bug in the config command when selecting auth provider.
+
 # 8.0.0
 - Upgraded packages as part of release process
 - migrated from pedantic to lints.

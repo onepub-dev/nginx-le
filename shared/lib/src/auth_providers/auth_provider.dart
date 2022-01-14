@@ -26,11 +26,11 @@ abstract class AuthProvider {
   /// Starts the process to acquire a certificate.
   void acquire();
 
-  /// overload this method if your provide needs to to have a manual 
+  /// overload this method if your provide needs to to have a manual
   /// auth_hook called
   void authHook();
 
-  /// overload this method if your provide needs to to have a manual 
+  /// overload this method if your provide needs to to have a manual
   /// cleanup hook called
   void cleanupHook();
 

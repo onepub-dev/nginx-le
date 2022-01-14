@@ -6,8 +6,7 @@ import 'package:test/test.dart';
 void main() {
   group('Certificates', () {
     test('With Staging Certificate', () {
-      final lines =
-          '''
+      final lines = '''
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  Found the following certs:'
    Certificate Name: slayer.noojee.org
@@ -16,7 +15,7 @@ void main() {
      Certificate Path: /etc/letsencrypt/config/live/slayer.noojee.org/fullchain.pem
      Private Key Path: /etc/letsencrypt/config/live/slayer.noojee.org/privkey.pem
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'''
-              .split('\n');
+          .split('\n');
 
       final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(1));
@@ -37,20 +36,18 @@ void main() {
     });
 
     test('No Certificates', () {
-      final lines =
-          '''
+      final lines = '''
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  No certs found.
  - - - - - - - - - - - - - -'''
-              .split('\n');
+          .split('\n');
 
       final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(0));
     });
 
     test('Has expired', () {
-      final lines =
-          '''
+      final lines = '''
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  Found the following certs:'
    Certificate Name: slayer.noojee.org
@@ -59,7 +56,7 @@ void main() {
      Certificate Path: /etc/letsencrypt/config/live/slayer.noojee.org/fullchain.pem
      Private Key Path: /etc/letsencrypt/config/live/slayer.noojee.org/privkey.pem
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'''
-              .split('\n');
+          .split('\n');
 
       final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(1));
@@ -68,8 +65,7 @@ void main() {
     });
 
     test('Has Not expired', () {
-      final lines =
-          '''
+      final lines = '''
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  Found the following certs:'
    Certificate Name: slayer.noojee.org
@@ -78,7 +74,7 @@ void main() {
      Certificate Path: /etc/letsencrypt/config/live/slayer.noojee.org/fullchain.pem
      Private Key Path: /etc/letsencrypt/config/live/slayer.noojee.org/privkey.pem
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'''
-              .split('\n');
+          .split('\n');
 
       final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(1));
@@ -87,8 +83,7 @@ void main() {
     });
 
     test('Print Certificate', () {
-      final lines =
-          '''
+      final lines = '''
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  Found the following certs:'
    Certificate Name: slayer.noojee.org
@@ -97,7 +92,7 @@ void main() {
      Certificate Path: /etc/letsencrypt/config/live/slayer.noojee.org/fullchain.pem
      Private Key Path: /etc/letsencrypt/config/live/slayer.noojee.org/privkey.pem
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'''
-              .split('\n');
+          .split('\n');
 
       final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(1));
