@@ -156,8 +156,8 @@ class CertbotPaths {
   }
 
   @visibleForTesting
-  // ignore: avoid_setters_without_getters
-  static set moke(CertbotPaths mock) {
+  // ignore: avoid_setters_without_getters, use_setters_to_change_properties
+  static void setMock(CertbotPaths mock) {
     _self = mock;
   }
 }
