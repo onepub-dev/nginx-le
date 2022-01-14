@@ -1,3 +1,6 @@
+# 8.0.3
+Fixed dependency problem.
+
 # 8.0.1
 - Migrated to lint_hard
 - fixed a bug in the config command when selecting auth provider.
