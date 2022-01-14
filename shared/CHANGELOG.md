@@ -1,3 +1,8 @@
+# 8.0.5
+- stopped certbot_test form shutting down all tests as it was calling exit(1)
+- FIX: bug in image selection when there are several docker images with the same name. Upgraded to docker2 2.2 fixed the issue.
+- Fix: if you selected a private server we still set the default auth provider to a public auth provider which cause the menu to fail with an unrecogized provider.
+
 # 8.0.4
 - fixed dependency issue caused by release process.
 # 8.0.3
