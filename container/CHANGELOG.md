@@ -1,3 +1,5 @@
+# 8.0.6
+
 # 8.0.5
 - stopped certbot_test form shutting down all tests as it was calling exit(1)
 - FIX: bug in image selection when there are several docker images with the same name. Upgraded to docker2 2.2 fixed the issue.
