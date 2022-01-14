@@ -6,11 +6,10 @@ import '../../nginx_le_shared.dart';
 /// Provides wrappers to get/set environment variables to
 /// ensure we are consistently using the same environment keys.
 class Environment {
-  static final _self = Environment._internal();
-
   factory Environment() => _self;
-
   Environment._internal();
+
+  static final _self = Environment._internal();
 
   /// logging
   String get debugKey => 'DEBUG';
@@ -95,9 +94,9 @@ class Environment {
   String get authProviderEmailAddressKey => 'AUTH_PROVIDER_EMAIL_ADDRESS';
 
   /// returns the value in [authProviderEmailAddressKey] if this is not set
-  /// then returns [emailAddress].
+  /// then returns [authProviderEmailAddress].
   String? get authProviderEmailAddress {
-    var email = env[authProviderEmailAddressKey];
+    final email = env[authProviderEmailAddressKey];
 
     return email ?? Environment().emailaddress;
   }
@@ -106,7 +105,8 @@ class Environment {
       env[authProviderEmailAddressKey] = authProviderEmailAddress;
 
   //  env['AUTH_PROVIDER_TOKEN'] = settings['AUTH_PROVIDER_TOKEN'] as String;
-  //   env['AUTH_PROVIDER_EMAIL_ADDRESS'] = settings['AUTH_PROVIDER_TOKEN'] as String;
+  //   env['AUTH_PROVIDER_EMAIL_ADDRESS'] = settings['AUTH_PROVIDER_TOKEN'] 
+  //as String;
 
   /// Certbot
   String get certbotVerboseKey => 'CERTBOT_VERBOSE';

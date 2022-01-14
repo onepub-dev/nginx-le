@@ -1,26 +1,15 @@
-import 'package:nginx_le_shared/src/auth_providers/http_auth_providers/http_auth_provider.dart';
-
 import '../../nginx_le_shared.dart';
-import 'auth_provider.dart';
 import 'dns_auth_providers/cloudflare/cloudflare_provider.dart';
 import 'dns_auth_providers/namecheap/namecheap_auth_provider.dart';
 
 /// Each [AuthProviders] must be registered with this class.
 class AuthProviders {
-  static final AuthProviders _self = AuthProviders._init();
-
-  /// Add new auth providers to this list.
-  var providers = <AuthProvider>[
-    HTTPAuthProvider(),
-    NameCheapAuthProvider(),
-    CloudFlareProvider()
-  ];
-
   factory AuthProviders() => _self;
-  AuthProviders._init() {
-    var names = <String, AuthProvider>{};
 
-    for (var provider in providers) {
+  AuthProviders._init() {
+    final names = <String, AuthProvider>{};
+
+    for (final provider in providers) {
       if (names.containsKey(provider.name)) {
         throw ArgumentError(
             'The AuthProvider name ${provider.name} is already used.');
@@ -31,9 +20,18 @@ class AuthProviders {
     providers.sort((lhs, rhs) => lhs.name.compareTo(rhs.name));
   }
 
-  /// Finds and returns a [ContentProvider] via its name.
+  static final AuthProviders _self = AuthProviders._init();
+
+  /// Add new auth providers to this list.
+  List<AuthProvider> providers = <AuthProvider>[
+    HTTPAuthProvider(),
+    NameCheapAuthProvider(),
+    CloudFlareProvider()
+  ];
+
+  /// Finds and returns a [AuthProvider] via its name.
   AuthProvider? getByName(String name) {
-    for (var provider in providers) {
+    for (final provider in providers) {
       if (provider.name == name) {
         return provider;
       }
@@ -43,12 +41,12 @@ class AuthProviders {
 
   /// Returns a list of provides that are valid for the given configuration.
   List<AuthProvider> getValidProviders(ConfigYaml config) {
-    var mode = config.mode;
-    var wildcard = config.domainWildcard;
+    final mode = config.mode;
+    final wildcard = config.domainWildcard;
 
-    var valid = <AuthProvider>[];
+    final valid = <AuthProvider>[];
 
-    for (var provider in providers) {
+    for (final provider in providers) {
       if ((!wildcard || (wildcard && provider.supportsWildCards)) &&
           (mode == ConfigYaml.modePublic ||
               (mode == ConfigYaml.modePrivate &&

@@ -2,7 +2,8 @@
 
 import 'package:dcli/dcli.dart';
 
-/// Starts the ngix docker instance using the host subdirectory 'certs' to store acquired certificates.
+/// Starts the ngix docker instance using the host subdirectory 'certs'
+/// to store acquired certificates.
 void main(List<String> args) {
   'docker run'
           ' --net=host'

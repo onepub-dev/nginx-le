@@ -6,8 +6,9 @@ import 'package:test/test.dart';
 void main() {
   group('Certificates', () {
     test('With Staging Certificate', () {
-      var lines =
-          ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      final lines =
+          '''
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  Found the following certs:'
    Certificate Name: slayer.noojee.org
      Domains: slayer.noojee.org
@@ -17,9 +18,9 @@ void main() {
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'''
               .split('\n');
 
-      var certificates = Certificate.parse(lines);
+      final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(1));
-      var certificate = certificates[0]!;
+      final certificate = certificates[0]!;
       expect(certificate.fqdn, equals('slayer.noojee.org'));
       expect(certificate.domains, equals('slayer.noojee.org'));
       expect(
@@ -36,19 +37,21 @@ void main() {
     });
 
     test('No Certificates', () {
-      var lines =
-          ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      final lines =
+          '''
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  No certs found.
  - - - - - - - - - - - - - -'''
               .split('\n');
 
-      var certificates = Certificate.parse(lines);
+      final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(0));
     });
 
     test('Has expired', () {
-      var lines =
-          ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      final lines =
+          '''
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  Found the following certs:'
    Certificate Name: slayer.noojee.org
      Domains: slayer.noojee.org
@@ -58,15 +61,16 @@ void main() {
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'''
               .split('\n');
 
-      var certificates = Certificate.parse(lines);
+      final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(1));
-      var certificate = certificates[0]!;
+      final certificate = certificates[0]!;
       expect(certificate.hasExpired(), equals(true));
     });
 
     test('Has Not expired', () {
-      var lines =
-          ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      final lines =
+          '''
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  Found the following certs:'
    Certificate Name: slayer.noojee.org
      Domains: slayer.noojee.org
@@ -76,15 +80,16 @@ void main() {
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'''
               .split('\n');
 
-      var certificates = Certificate.parse(lines);
+      final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(1));
-      var certificate = certificates[0]!;
+      final certificate = certificates[0]!;
       expect(certificate.hasExpired(), equals(false));
     });
 
     test('Print Certificate', () {
-      var lines =
-          ''' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      final lines =
+          '''
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  Found the following certs:'
    Certificate Name: slayer.noojee.org
      Domains: slayer.noojee.org
@@ -94,9 +99,9 @@ void main() {
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'''
               .split('\n');
 
-      var certificates = Certificate.parse(lines);
+      final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(1));
-      var certificate = certificates[0];
+      final certificate = certificates[0];
 
       print(certificate);
     });

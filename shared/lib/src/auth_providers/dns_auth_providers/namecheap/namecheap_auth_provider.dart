@@ -1,8 +1,7 @@
 import 'package:dcli/dcli.dart';
-import 'package:nginx_le_shared/src/util/env_var.dart';
 
 import '../../../../nginx_le_shared.dart';
-import '../generic_auth_provider.dart';
+import '../../../util/env_var.dart';
 import 'dns_auth.dart';
 import 'dns_cleanup.dart';
 
@@ -49,10 +48,10 @@ class NameCheapAuthProvider extends GenericAuthProvider {
 
   @override
   List<EnvVar> get environment {
-    var vars = <EnvVar>[];
-
-    vars.add(EnvVar(AuthProvider.authProviderToken, configToken));
-    vars.add(EnvVar(AuthProvider.authProviderUsername, configUsername));
+    final vars = <EnvVar>[
+      EnvVar(AuthProvider.authProviderToken, configToken),
+      EnvVar(AuthProvider.authProviderUsername, configUsername)
+    ];
 
     return vars;
   }

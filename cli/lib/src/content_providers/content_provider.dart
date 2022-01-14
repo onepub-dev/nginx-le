@@ -1,3 +1,5 @@
+import 'content_providers.dart';
+
 /// Provides a base class for content source providers.
 ///
 /// For an Nginx install we need to define where it pulls its
@@ -26,10 +28,11 @@ abstract class ContentProvider {
   List<Volume> getVolumes();
 }
 
-/// Defines the paths for a Volume to be mounted into the nginx docker container.
+/// Defines the paths for a Volume to be mounted into the nginx docker
+/// container.
 class Volume {
+  Volume({required this.hostPath, required this.containerPath});
   final String? hostPath;
   final String containerPath;
 
-  Volume({required this.hostPath, required this.containerPath});
 }

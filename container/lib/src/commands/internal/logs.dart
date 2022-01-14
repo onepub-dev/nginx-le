@@ -1,56 +1,49 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:args/args.dart';
 import 'package:async/async.dart';
 import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /// Tails selected logs to the console.
 void logs(List<String> args) {
-  var argParser = ArgParser();
+  final argParser = ArgParser()
+    ..addFlag(
+      'follow',
+      abbr: 'f',
+      negatable: false,
+      help: 'If set, we follow the specified logs.',
+    )
+    ..addOption(
+      'lines',
+      abbr: 'n',
+      defaultsTo: '100',
+      help: "Displays the last 'n' lines.",
+    )
 
-  argParser.addFlag(
-    'follow',
-    abbr: 'f',
-    defaultsTo: false,
-    negatable: false,
-    help: 'If set, we follow the specified logs.',
-  );
-  argParser.addOption(
-    'lines',
-    abbr: 'n',
-    defaultsTo: '100',
-    help: "Displays the last 'n' lines.",
-  );
-
-  // default log files
-  argParser.addFlag(
-    'certbot',
-    abbr: 'c',
-    defaultsTo: true,
-    negatable: false,
-    help: 'The certbot logs are included.',
-  );
-
-  argParser.addFlag('error',
-      abbr: 'e',
+    // default log files
+    ..addFlag(
+      'certbot',
+      abbr: 'c',
       defaultsTo: true,
       negatable: false,
-      help: 'The nginx error logs are included.');
+      help: 'The certbot logs are included.',
+    )
+    ..addFlag('error',
+        abbr: 'e',
+        defaultsTo: true,
+        negatable: false,
+        help: 'The nginx error logs are included.')
 
-  // optional log files
-  argParser.addFlag('access',
-      abbr: 'a',
-      defaultsTo: false,
+    // optional log files
+    ..addFlag('access',
+        abbr: 'a',
+        negatable: false,
+        help: 'The nginx logs access logs are included.')
+    ..addFlag(
+      'debug',
       negatable: false,
-      help: 'The nginx logs access logs are included.');
-
-  argParser.addFlag(
-    'debug',
-    defaultsTo: false,
-    negatable: false,
-  );
+    );
   late ArgResults results;
   try {
     results = argParser.parse(args);
@@ -58,15 +51,15 @@ void logs(List<String> args) {
     printerr(e.message);
     showUsage(argParser);
   }
-  var debug = results['debug'] as bool;
+  final debug = results['debug'] as bool;
 
   Settings().setVerbose(enabled: debug);
 
-  var follow = results['follow'] as bool;
-  var lines = results['lines'] as String;
-  var certbot = results['certbot'] as bool;
-  var access = results['access'] as bool;
-  var error = results['error'] as bool;
+  final follow = results['follow'] as bool;
+  final lines = results['lines'] as String;
+  final certbot = results['certbot'] as bool;
+  final access = results['access'] as bool;
+  final error = results['error'] as bool;
 
   late final int lineCount;
   int? _lineCount;
@@ -76,11 +69,12 @@ void logs(List<String> args) {
   }
   lineCount = _lineCount!;
 
-  var group = StreamGroup<String>();
+  final group = StreamGroup<String>();
 
   var usedefaults = true;
 
-  /// If the user explicitly sets a logfile then we ignore all of the default logfiles.
+  /// If the user explicitly sets a logfile then we ignore all of
+  /// the default logfiles.
   if (results.wasParsed('certbot') ||
       results.wasParsed('access') ||
       results.wasParsed('error')) {
@@ -112,8 +106,8 @@ void logs(List<String> args) {
 
   group.close();
 
-  var finished = Completer<void>();
-  group.stream.listen((line) => print(line)).onDone(() {
+  final finished = Completer<void>();
+  group.stream.listen(print).onDone(() {
     print('waitForDone - completing');
     print('done');
 
@@ -135,7 +129,7 @@ void logs(List<String> args) {
 void showUsage(ArgParser parser) {
   print(parser.usage);
 
-  print(
-      'If you explictly specify any log file then the default set of log files is ignored');
+  print('If you explictly specify any log file then the default '
+      'set of log files is ignored');
   exit(-1);
 }

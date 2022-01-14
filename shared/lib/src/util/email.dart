@@ -1,13 +1,14 @@
 import 'package:dcli/dcli.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
-import 'package:nginx_le_shared/src/util/environment.dart';
+import 'environment.dart';
 
+// ignore: avoid_classes_with_only_static_members
 class Email {
   static void sendError({String? subject, String? body}) {
     if (Environment().smtpServer == null || Environment().smtpServer!.isEmpty) {
-      printerr(
-          'Error not emailed as no ${Environment().smtpServerKey} environment variable set');
+      printerr('Error not emailed as no ${Environment().smtpServerKey} '
+          'environment variable set');
       print('Subject: $subject');
       print('Body: \n$body');
       return;
@@ -30,10 +31,10 @@ class Email {
 
     try {
       final sendReport = waitForEx<SendReport>(send(message, smtpServer));
-      print('Message sent: ' + sendReport.toString());
+      print('Message sent: $sendReport');
     } on MailerException catch (e) {
       printerr('Message not sent.');
-      for (var p in e.problems) {
+      for (final p in e.problems) {
         printerr('Problem: ${p.code}: ${p.msg}');
       }
     }

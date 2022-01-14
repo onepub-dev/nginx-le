@@ -27,15 +27,16 @@ class Certificate {
   void parseName(String line) {
     /// Handle names of the form: billing.noojee.com.au-0001
     if (line.contains('-')) {
+      // ignore: parameter_assignments
       line = line.split('-')[0];
     }
 
-    var parts = line.split(':');
+    final parts = line.split(':');
     fqdn = parts[1].trim();
   }
 
   void parseDomains(String line) {
-    var parts = line.split(':');
+    final parts = line.split(':');
     domains = parts[1].trim();
 
     if (domains!.startsWith('*')) {
@@ -44,21 +45,21 @@ class Certificate {
   }
 
   void parseExpiryDate(String line) {
-    var parts = line.split('Date:');
-    var expiryDateString = parts[1].trim();
+    final parts = line.split('Date:');
+    final expiryDateString = parts[1].trim();
 
-    var datePart = expiryDateString.substring(0, 25);
+    final datePart = expiryDateString.substring(0, 25);
     expiryDate = DateTime.parse(datePart); // 'yyyy-MM-dd hh:mm:ss+');
     production = !line.contains('TEST_CERT');
   }
 
   void parseCertificatePath(String line) {
-    var parts = line.split(':');
+    final parts = line.split(':');
     certificatePath = parts[1].trim();
   }
 
   void parsePrivateKeyPath(String line) {
-    var parts = line.split(':');
+    final parts = line.split(':');
     privateKeyPath = parts[1].trim();
   }
 
@@ -73,8 +74,9 @@ class Certificate {
     //     .forEach((file) => verbose(() => file));
 
     var lines = <String>[];
-    NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
-      var cmd = '${Certbot.pathTo} certificates '
+    NamedLock(name: 'certbot', timeout: const Duration(minutes: 20))
+        .withLock(() {
+      final cmd = '${Certbot.pathTo} certificates '
           ' --config-dir=${CertbotPaths().letsEncryptConfigPath}'
           ' --work-dir=${CertbotPaths().letsEncryptWorkPath}'
           ' --logs-dir=${CertbotPaths().letsEncryptLogPath}';
@@ -83,7 +85,7 @@ class Certificate {
 
       verbose(() => 'output from certbot certificates');
 
-      for (var line in lines) {
+      for (final line in lines) {
         verbose(() => 'Certificate Load: $line');
       }
     });
@@ -92,25 +94,25 @@ class Certificate {
 
   /// When certs exist we get
   ///
-//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Found the following certs:
 //   Certificate Name: slayer.noojee.org
 //     Domains: slayer.noojee.org
 //     Expiry Date: 2020-10-27 06:10:05+00:00 (INVALID: TEST_CERT)
 //     Certificate Path: /etc/letsencrypt/config/live/slayer.noojee.org/fullchain.pem
 //     Private Key Path: /etc/letsencrypt/config/live/slayer.noojee.org/privkey.pem
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // when no certificates found.
-//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // No certs found.
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   static List<Certificate?> parse(List<String> lines) {
-    var certificates = <Certificate?>[];
+    final certificates = <Certificate?>[];
 
     Certificate? cert;
-    for (var line in lines) {
+    for (final line in lines) {
       if (line.trim().startsWith('Certificate Name:')) {
         cert = Certificate();
         certificates.add(cert);
@@ -137,7 +139,7 @@ class Certificate {
   bool hasExpired({DateTime? asAt}) {
     asAt ??= DateTime.now();
     verbose(() => 'expiry date $expiryDate asAt: $asAt');
-    var expired = (expiryDate!.isBefore(asAt));
+    final expired = expiryDate!.isBefore(asAt);
 
     verbose(() => 'expired=$expired');
     return expired;
@@ -145,9 +147,10 @@ class Certificate {
 
   @override
   String toString() {
-    var offset = DateTime.now().timeZoneOffset;
-    var hours = offset.inHours + offset.inMinutes / 60;
-    return '''Name: $fqdn 
+    final offset = DateTime.now().timeZoneOffset;
+    final hours = offset.inHours + offset.inMinutes / 60;
+    return '''
+Name: $fqdn 
     Production: $production
     Wildcard: $wildcard
     Domains: $domains 
@@ -194,21 +197,17 @@ class Certificate {
     );
   }
 
-  String? get hostname {
-    _hostname ??= hostnameFromFqdn(fqdn);
-    return _hostname;
-  }
+  String? get hostname => _hostname ??= hostnameFromFqdn(fqdn);
 
-  String? get domain {
-    _domain ??= domainFromFqdn(fqdn);
-    return _domain;
-  }
+  String? get domain => _domain ??= domainFromFqdn(fqdn);
 
   /// returns the hostname component of an fqdn
   String? hostnameFromFqdn(String? fqdn) {
-    if (wildcard) return '*';
+    if (wildcard) {
+      return '*';
+    }
 
-    var parts = fqdn!.split('.');
+    final parts = fqdn!.split('.');
 
     if (parts.isNotEmpty) {
       return parts[0];
@@ -219,9 +218,11 @@ class Certificate {
 
   /// returns the hostname component of an fqdn
   String? domainFromFqdn(String? fqdn) {
-    if (wildcard) return fqdn;
+    if (wildcard) {
+      return fqdn;
+    }
 
-    var parts = fqdn!.split('.');
+    final parts = fqdn!.split('.');
 
     if (parts.length > 1) {
       return parts.sublist(1).join('.');
@@ -232,12 +233,15 @@ class Certificate {
 
   /// Finds the matching certificate and returns it.
   static Certificate? find(
-      {String? hostname,
+      {required bool wildcard,
+      String? hostname,
       String? domain,
-      required bool wildcard,
       bool? production}) {
-    if (wildcard) hostname = '*';
-    for (var certificate in Certificate.load()) {
+    if (wildcard) {
+      // ignore: parameter_assignments
+      hostname = '*';
+    }
+    for (final certificate in Certificate.load()) {
       if (certificate!.hostname == hostname &&
           certificate.domain == domain &&
           certificate.wildcard == wildcard &&

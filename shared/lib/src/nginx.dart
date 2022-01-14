@@ -2,27 +2,26 @@ import 'package:dcli/dcli.dart';
 
 import '../nginx_le_shared.dart';
 
+// ignore: avoid_classes_with_only_static_members
 class Nginx {
   /// The include path within the container.
   static const defaultContainerIncludePathTo = '/etc/nginx/include';
 
   static String get accesslogpath {
     var path = Environment().nginxAccessLogPath;
-    path ??= '/var/log/nginx/access.log';
-    return path;
+    return path ??= '/var/log/nginx/access.log';
   }
 
-  /// The default path where nginx looks for the include files (Locations and Upstream)
+  /// The default path where nginx looks for the include files
+  /// (Locations and Upstream)
   static String get containerIncludePath {
     var path = Environment().nginxLocationIncludePath;
-    path ??= defaultContainerIncludePathTo;
-    return path;
+    return path ??= defaultContainerIncludePathTo;
   }
 
   static String get errorlogpath {
     var path = Environment().nginxErrorLogPath;
-    path ??= '/var/log/nginx/error.log';
-    return path;
+    return path ??= '/var/log/nginx/error.log';
   }
 
   static void reload() {

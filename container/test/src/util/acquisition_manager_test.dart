@@ -7,19 +7,18 @@ import 'package:test/test.dart';
 
 import 'mock_cerbot_paths.dart';
 
-var possibleCerts = <PossibleCert>[];
+List<PossibleCert> possibleCerts = <PossibleCert>[];
 void main() {
   setUpAll(() {
-    possibleCerts.add(PossibleCert('*', 'noojee.com.au', wildcard: true));
     possibleCerts
-        .add(PossibleCert('auditor', 'noojee.com.au', wildcard: false));
-    possibleCerts.add(PossibleCert('auditor', 'noojee.com.au', wildcard: true));
-
-    possibleCerts.add(PossibleCert('*', 'noojee.org', wildcard: true));
-    possibleCerts.add(PossibleCert('robtest5', 'noojee.org', wildcard: false));
-    possibleCerts.add(PossibleCert('robtest5', 'noojee.org', wildcard: true));
-    possibleCerts.add(PossibleCert('robtest', 'noojee.org', wildcard: false));
-    possibleCerts.add(PossibleCert('auditor', 'noojee.org', wildcard: false));
+      ..add(PossibleCert('*', 'noojee.com.au', wildcard: true))
+      ..add(PossibleCert('auditor', 'noojee.com.au', wildcard: false))
+      ..add(PossibleCert('auditor', 'noojee.com.au', wildcard: true))
+      ..add(PossibleCert('*', 'noojee.org', wildcard: true))
+      ..add(PossibleCert('robtest5', 'noojee.org', wildcard: false))
+      ..add(PossibleCert('robtest5', 'noojee.org', wildcard: true))
+      ..add(PossibleCert('robtest', 'noojee.org', wildcard: false))
+      ..add(PossibleCert('auditor', 'noojee.org', wildcard: false));
   });
   test('acquisition manager ...', () async {
     withTempDir((dir) {
@@ -64,7 +63,10 @@ void main() {
     });
 
 //    'test/src/util/mock_deploy_hook'.run;
-  }, skip: false, tags: ['slow'], timeout: Timeout(Duration(minutes: 15)));
+  },
+      skip: false,
+      tags: ['slow'],
+      timeout: const Timeout(Duration(minutes: 15)));
 
   test('Revoke Invalid certificates', () {
     _acquire(
@@ -79,7 +81,6 @@ void main() {
         hostname: 'robtest5',
         domain: 'noojee.org',
         tld: 'org',
-        wildcard: false,
         settingFilename: 'namecheap.yaml',
         revoke: false);
 
@@ -97,7 +98,6 @@ void main() {
         hostname: 'robtest5',
         domain: 'noojee.org',
         tld: 'org',
-        wildcard: false,
         settingFilename: 'namecheap.yaml',
         revoke: false);
   });
@@ -108,7 +108,6 @@ void main() {
     _acquire(
         hostname: 'auditor',
         domain: 'noojee.com.au',
-        wildcard: false,
         tld: 'com.au',
         settingFilename: 'cloudflare.yaml',
         revoke: false);
@@ -124,22 +123,20 @@ void main() {
     _acquire(
         hostname: 'auditor',
         domain: 'noojee.com.au',
-        wildcard: false,
         tld: 'com.au',
         settingFilename: 'cloudflare.yaml');
   });
 
-  /// this should be run infrequently as we will hit the production certbot rate limiter.
+  /// this should be run infrequently as we will hit the production certbot
+  /// rate limiter.
   test('test switch from staging to production cloudflare ...', () async {
     Certbot().revokeAll();
     _acquire(
         hostname: 'robtest',
         domain: 'noojee.org',
-        wildcard: false,
         tld: 'org',
         //emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'namecheap.yaml',
-        production: false,
         revoke: false);
 
     var cert = Certificate.find(
@@ -163,7 +160,6 @@ void main() {
     _acquire(
         hostname: 'robtest',
         domain: 'noojee.org',
-        wildcard: false,
         tld: 'org',
         // emailAddress: 'support@noojeeit.com.au',
         settingFilename: 'namecheap.yaml',
@@ -206,7 +202,6 @@ void main() {
     _acquire(
         hostname: 'robtest5',
         domain: 'noojee.org',
-        wildcard: false,
         tld: 'org',
         settingFilename: 'namecheap.yaml');
   });
@@ -320,9 +315,9 @@ void _acquire(
     {required String hostname,
     required String domain,
     required String tld,
+    required String settingFilename,
     bool wildcard = false,
     bool production = false,
-    required String settingFilename,
     bool revoke = true}) {
   withTempDir((dir) {
     setup(
@@ -343,7 +338,7 @@ void _acquire(
           wildcard: wildcard,
           production: production);
 
-      for (var certificate in Certbot().certificates()) {
+      for (final certificate in Certbot().certificates()) {
         certificate!.revoke();
       }
       expect(Certbot().hasValidCertificate(), equals(false));
@@ -370,7 +365,7 @@ void _acquire(
         equals(true));
 
     if (revoke) {
-      var cert = Certificate.find(
+      final cert = Certificate.find(
           hostname: hostname,
           domain: domain,
           wildcard: wildcard,
@@ -383,34 +378,33 @@ void _acquire(
   });
 }
 
-void setup(
-    {required String hostname,
-    required String domain,
-    required bool wildcard,
-    required String settingsFilename,
-    bool production = false,
-    String? tld,
-    required String mockPath}) {
-  var paths = MockCertbotPaths(
-      hostname: hostname,
-      domain: domain,
-      wildcard: wildcard,
-      production: production,
-      tld: tld,
-      settingsFilename: settingsFilename,
-      possibleCerts: possibleCerts,
-      rootDir: mockPath);
-
-  paths.wire();
+void setup({
+  required String hostname,
+  required String domain,
+  required bool wildcard,
+  required String settingsFilename,
+  required String mockPath,
+  bool production = false,
+  String? tld,
+}) {
+  MockCertbotPaths(
+          hostname: hostname,
+          domain: domain,
+          wildcard: wildcard,
+          production: production,
+          tld: tld,
+          settingsFilename: settingsFilename,
+          possibleCerts: possibleCerts,
+          rootDir: mockPath)
+      .wire();
 
   configMockDeployHook();
 }
 
 void configMockDeployHook() {
-  var path = 'test/src/util/mock_deploy_hook';
+  const path = 'test/src/util/mock_deploy_hook';
   if (!exists(path)) {
-    var script = DartScript.fromFile('$path.dart');
-    script.compile();
+    DartScript.fromFile('$path.dart').compile();
   }
 
   Environment().certbotDeployHookPath = path;

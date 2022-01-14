@@ -1,15 +1,6 @@
 import 'package:xml/xml.dart';
 
 class DNSRecord {
-  String? name;
-  String? type;
-  String? address;
-  String? mxPref;
-  String? ttl;
-  String? hostId;
-  bool isActive;
-  bool isDDNSEnabled;
-
   DNSRecord(
       {required this.name,
       required this.type,
@@ -30,13 +21,13 @@ class DNSRecord {
       required this.isActive,
       required this.isDDNSEnabled});
 
-  static DNSRecord fromXmlHost(XmlNode xmlHost) {
-    var hostId = xmlHost.getAttribute('HostId');
-    var name = xmlHost.getAttribute('Name');
-    var type = xmlHost.getAttribute('Type');
-    var address = xmlHost.getAttribute('Address');
-    var mxPref = xmlHost.getAttribute('MXPref');
-    var ttl = xmlHost.getAttribute('TTL');
+  factory DNSRecord.fromXmlHost(XmlNode xmlHost) {
+    final hostId = xmlHost.getAttribute('HostId');
+    final name = xmlHost.getAttribute('Name');
+    final type = xmlHost.getAttribute('Type');
+    final address = xmlHost.getAttribute('Address');
+    final mxPref = xmlHost.getAttribute('MXPref');
+    final ttl = xmlHost.getAttribute('TTL');
     // ignore: unnecessary_cast
     var isActive = xmlHost.getAttribute('IsActive') as String?;
     // ignore: unnecessary_cast
@@ -56,8 +47,18 @@ class DNSRecord {
         isDDNSEnabled: isDDNSEnabled == 'true');
   }
 
+  String? name;
+  String? type;
+  String? address;
+  String? mxPref;
+  String? ttl;
+  String? hostId;
+  bool isActive;
+  bool isDDNSEnabled;
+
   @override
-  String toString() {
-    return 'name $name, type: $type, address: $address, mxPref: $mxPref, ttl: $ttl, active: $isActive, hostId: $hostId, isDDNSEnabled: $isDDNSEnabled';
-  }
+  String toString() =>
+      'name $name, type: $type, address: $address, mxPref: $mxPref, '
+      'ttl: $ttl, active: $isActive, hostId: $hostId, '
+      'isDDNSEnabled: $isDDNSEnabled';
 }

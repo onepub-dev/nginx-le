@@ -1,10 +1,9 @@
 import 'package:dcli/dcli.dart';
-import 'package:nginx_le/src/content_providers/content_provider.dart';
-import 'package:nginx_le/src/util/ask_location_path.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:uuid/uuid.dart';
 
 import '../util/ask_location_path.dart';
+import 'content_provider.dart';
 
 class Static extends ContentProvider {
   @override
@@ -56,7 +55,8 @@ class Static extends ContentProvider {
   String get _defaultStaticRootPath => '/opt/nginx/wwwroot';
   String get _defaultHomePage => 'index.html';
 
-  String get _locationContent => '''location / {
+  String get _locationContent => '''
+location / {
     root   $_staticRootPath;
     index  $_homePage;
 }
@@ -66,7 +66,7 @@ class Static extends ContentProvider {
   void createLocationFile() {
     _backupLocationContent();
     find('*.location', workingDirectory: ConfigYaml().hostIncludePath!)
-        .forEach((file) => delete(file));
+        .forEach(delete);
 
     _locationPath.write(_locationContent);
   }
@@ -75,12 +75,12 @@ class Static extends ContentProvider {
   void createUpstreamFile() {
     /// no op as we don't require an upstream file.
     find('*.upstream', workingDirectory: ConfigYaml().hostIncludePath!)
-        .forEach((file) => delete(file));
+        .forEach(delete);
   }
 
   @override
   List<Volume> getVolumes() {
-    var config = ConfigYaml();
+    final config = ConfigYaml();
     return [
       Volume(
           hostPath: config.hostIncludePath,
@@ -92,13 +92,15 @@ class Static extends ContentProvider {
   /// before we write out the location content we check if the users has
   /// modified the content and if so back it up.
   void _backupLocationContent() {
-    if (!exists(_locationPath)) return; // nothing to backup
-    var onDiskContent = read(_locationPath).toList().join('\n');
+    if (!exists(_locationPath)) {
+      return;
+    } // nothing to backup
+    final onDiskContent = read(_locationPath).toList().join('\n');
     if (onDiskContent != _locationContent) {
       // looks like the user manually changed the contents of the file.
-      var backup = '$_locationPath.bak';
+      final backup = '$_locationPath.bak';
       if (exists(backup)) {
-        var target = '$backup.${Uuid().v4()}';
+        final target = '$backup.${const Uuid().v4()}';
         if (!isWritable(backup)) {
           'mv $backup $target'.start(privileged: true);
 
@@ -106,7 +108,7 @@ class Static extends ContentProvider {
             'chown docker:docker $target'.start(privileged: true);
           }
         } else {
-          move(backup, '$backup.${Uuid().v4()}');
+          move(backup, '$backup.${const Uuid().v4()}');
         }
       }
 
@@ -120,15 +122,17 @@ class Static extends ContentProvider {
         copy(_locationPath, backup);
       }
 
-      print(
-          'Your original location file $_locationPath has been backed up to $backup');
+      print('Your original location file $_locationPath has been backed '
+          'up to $backup');
     }
   }
 
   bool isGroupExists(String group) {
-    var lines = read('/etc/group').toList();
-    for (var line in lines) {
-      if (line.startsWith('$group:')) return true;
+    final lines = read('/etc/group').toList();
+    for (final line in lines) {
+      if (line.startsWith('$group:')) {
+        return true;
+      }
     }
     return false;
   }

@@ -1,26 +1,18 @@
 import 'conduit.dart';
 import 'content_provider.dart';
 import 'custom.dart';
-import 'static.dart';
 import 'generic_proxy.dart';
+import 'static.dart';
 import 'tomcat.dart';
 
 /// Each [ContentProvider] must be registered with this class.
 class ContentProviders {
-  static final ContentProviders _self = ContentProviders._init();
   factory ContentProviders() => _self;
 
-  var providers = <ContentProvider>[
-    Custom(),
-    GenericProxy(),
-    Static(),
-    Tomcat(),
-    Conduit(),
-  ];
   ContentProviders._init() {
-    var names = <String, ContentProvider>{};
+    final names = <String, ContentProvider>{};
 
-    for (var provider in providers) {
+    for (final provider in providers) {
       if (names.containsKey(provider.name)) {
         throw ArgumentError(
             'The ContentProvider name ${provider.name} is already used.');
@@ -31,9 +23,19 @@ class ContentProviders {
     providers.sort((lhs, rhs) => lhs.name.compareTo(rhs.name));
   }
 
+  static final ContentProviders _self = ContentProviders._init();
+
+  List<ContentProvider> providers = <ContentProvider>[
+    Custom(),
+    GenericProxy(),
+    Static(),
+    Tomcat(),
+    Conduit(),
+  ];
+
   /// Finds and returns a [ContentProvider] via its name.
   ContentProvider? getByName(String? name) {
-    for (var provider in providers) {
+    for (final provider in providers) {
       if (provider.name == name) {
         return provider;
       }

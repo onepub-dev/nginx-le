@@ -10,12 +10,12 @@ import 'isolate_source.dart';
 class DockerLogsInIsolate {
   // final _controller = StreamController<String>();
 
-  var startupCompleted = Completer<Process>();
+  Completer<Process> startupCompleted = Completer<Process>();
 
   /// Call this method to stop the tail.
   /// It kills the underlying 'tail' process.
   Future<void> stop() async {
-    var process = await startupCompleted.future;
+    final process = await startupCompleted.future;
     print('stop ${Isolate.current.debugName}');
 
     // await _controller.close();
@@ -32,25 +32,27 @@ class DockerLogsInIsolate {
 
     var cmd = 'docker logs --tail $lines $containerid';
 
-    if (follow) cmd += ' -f';
+    if (follow) {
+      cmd += ' -f';
+    }
 
     return cmd.stream();
   }
 }
 
 class DockerLogs {
-  var isoSource = IsolateSource<String, String, int, bool>();
+  DockerLogs(this.containerid, this.lines, {this.follow = false});
+  IsolateSource<String, String, int, bool> isoSource =
+      IsolateSource<String, String, int, bool>();
   String containerid;
   int lines;
   bool follow;
 
-  DockerLogs(this.containerid, this.lines, {this.follow = false});
-
   Stream<String?> start() {
-    isoSource.onStart = _dockerLog;
-    isoSource.onStop = _dockerLogsStop;
-
-    isoSource.start(containerid, lines, follow);
+    isoSource
+      ..onStart = _dockerLog
+      ..onStop = _dockerLogsStop
+      ..start(containerid, lines, follow);
 
     return isoSource.stream;
   }
@@ -75,12 +77,10 @@ void _dockerLogsStop() {
 }
 
 /// Called when the tail command is to be started
-Stream<String> _dockerLog(String containerid, int lines, bool follow) {
-  return _dockerLogsIsolate.dockerLog(containerid,
-      lines: lines, follow: follow);
-}
+Stream<String> _dockerLog(String containerid, int lines, bool follow) =>
+    _dockerLogsIsolate.dockerLog(containerid, lines: lines, follow: follow);
 
 class DockerLogsException implements Exception {
-  String message;
   DockerLogsException(this.message);
+  String message;
 }

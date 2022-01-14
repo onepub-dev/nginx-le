@@ -1,7 +1,6 @@
 import 'package:dcli/dcli.dart';
 
 import '../../../nginx_le_shared.dart';
-import '../auth_provider.dart';
 
 abstract class GenericAuthProvider extends AuthProvider {
   /// over load this method to do any checks before the acquire method is run.
@@ -26,33 +25,38 @@ abstract class GenericAuthProvider extends AuthProvider {
   ///  ```
   @override
   void acquire() {
-    var workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
-    var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
-    var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
+    final workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
+    final logDir = _createDir(CertbotPaths().letsEncryptLogPath);
+    final configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
 
     /// Pass environment vars down to the auth hook.
     Environment().logfile = join(logDir, 'letsencrypt.log');
 
     var hostname = Environment().hostname;
-    var domain = Environment().domain;
-    var wildcard = Environment().domainWildcard;
+    final domain = Environment().domain;
+    final wildcard = Environment().domainWildcard;
 
-    var production = Environment().production;
-    var emailaddress = Environment().authProviderEmailAddress;
+    final production = Environment().production;
+    final emailaddress = Environment().authProviderEmailAddress;
 
-    var authHookPath = Environment().certbotAuthHookPath;
-    var cleanupHookPath = Environment().certbotCleanupHookPath;
+    final authHookPath = Environment().certbotAuthHookPath;
+    final cleanupHookPath = Environment().certbotCleanupHookPath;
 
-    ArgumentError.checkNotNull(authHookPath,
-        'Environment variable: ${Environment().certbotAuthHookPathKey} missing');
-    ArgumentError.checkNotNull(cleanupHookPath,
-        'Environment variable: ${Environment().certbotCleanupHookPathKey} missing');
+    ArgumentError.checkNotNull(
+        authHookPath,
+        'Environment variable: '
+        '${Environment().certbotAuthHookPathKey} missing');
+    ArgumentError.checkNotNull(
+        cleanupHookPath,
+        'Environment variable: '
+        '${Environment().certbotCleanupHookPathKey} missing');
 
     hostname = wildcard ? '*' : hostname;
 
     verbose(() => 'Starting cerbot with authProvider: $name');
 
-    NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
+    NamedLock(name: 'certbot', timeout: const Duration(minutes: 20))
+        .withLock(() {
       var certbot = '${Certbot.pathTo} certonly '
           ' --manual '
           ' --preferred-challenges=dns '
@@ -66,10 +70,12 @@ abstract class GenericAuthProvider extends AuthProvider {
           ' --config-dir=$configDir '
           ' --logs-dir=$logDir ';
 
-      if (!production) certbot += ' --staging ';
+      if (!production) {
+        certbot += ' --staging ';
+      }
 
-      var lines = <String>[];
-      var progress = Progress((line) {
+      final lines = <String>[];
+      final progress = Progress((line) {
         print(line);
         lines.add(line);
       }, stderr: (line) {
@@ -80,10 +86,11 @@ abstract class GenericAuthProvider extends AuthProvider {
       certbot.start(runInShell: true, nothrow: true, progress: progress);
 
       if (progress.exitCode != 0) {
-        var system = 'hostname'.firstLine;
+        final system = 'hostname'.firstLine;
 
         throw CertbotException(
-            'certbot failed acquiring a certificate for $hostname.$domain on $system',
+            'certbot failed acquiring a certificate for '
+            '$hostname.$domain on $system',
             details: lines.join('\n'));
       }
     });

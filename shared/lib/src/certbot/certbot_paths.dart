@@ -6,11 +6,15 @@ import 'package:meta/meta.dart';
 import '../../nginx_le_shared.dart';
 
 class CertbotPaths {
+  factory CertbotPaths() => _self;
+
+  CertbotPaths._internal();
+
   static CertbotPaths _self = CertbotPaths._internal();
 
   /// The directory where lets encrypt stores its certificates.
   /// As we need to persist certificates between container restarts
-  /// [LIVE_PATH] lives under [CERTBOT_ROOT_PATH] and
+  /// [wwwPathLive] lives under [certbotRootDefaultPath] and
   /// MUST be on a persistent volume so we don't loose the
   /// certificates each time we restart nginx.
   /// The full path is /etc/letsencrypt/config/live
@@ -18,7 +22,7 @@ class CertbotPaths {
 
   /// The directory where nginx loads its certificates from
   /// The deploy process copies certificates from the lets encrypt
-  /// [LIVE_PATH] to the [nginxCertRoot].
+  /// [wwwPathLive] to the [nginxCertRoot].
   final nginxCertRoot = '/etc/nginx/certs/';
 
   /// The file containing the concatenated certs.
@@ -34,7 +38,8 @@ class CertbotPaths {
 
   /// The directory where lets encrypt stores its certificates.
   /// As we need to persist certificates between container restarts
-  /// the CERTBOT_ROOT_DEFAULT_PATH path is mounted to a persistent volume on start up.
+  /// the CERTBOT_ROOT_DEFAULT_PATH path is mounted to a persistent volume on
+  ///  start up.
   final certbotRootDefaultPath = '/etc/letsencrypt';
 
   /// The name of the logfile that certbot writes to.
@@ -42,7 +47,8 @@ class CertbotPaths {
   final logFilename = 'letsencrypt.log';
 
   /// The path that nginx takes its home directory from.
-  /// This is symlinked into either [wwwPathToOperating] or [wwwPathToAcquire] depending
+  /// This is symlinked into either [wwwPathToOperating] or [wwwPathToAcquire]
+  /// depending
   /// on whether we are in acquire or operational mode.
   final wwwPathLive = '/etc/nginx/live';
 
@@ -57,10 +63,6 @@ class CertbotPaths {
   final cloudFlareSettings =
       join('/etc', 'letsencrypt', 'nj-cloudflare', 'settings.ini');
 
-  factory CertbotPaths() => _self;
-
-  CertbotPaths._internal();
-
   /// Each time certbot creates a new certificate (excluding  the first one)
   ///  it places it in a 'number' path.
   ///
@@ -71,25 +73,25 @@ class CertbotPaths {
   @visibleForTesting
   String latestCertificatePath(String? hostname, String? domain,
       {required bool wildcard}) {
-    var livepath = join(CertbotPaths().letsEncryptLivePath);
+    final livepath = join(CertbotPaths().letsEncryptLivePath);
     // if no paths contain '-' then the base fqdn path is correct.
 
     var defaultPath =
         _liveDefaultPathForFQDN(hostname, domain, wildcard: wildcard);
 
     /// find all the dirs that begin with <fqdn> in the live directory.
-    var paths = find('$hostname.$domain*',
+    final paths = find('$hostname.$domain*',
         workingDirectory: livepath,
         types: [FileSystemEntityType.directory]).toList();
 
     var max = 0;
-    for (var path in paths) {
+    for (final path in paths) {
       if (path.contains('-')) {
         // noojee.org-0001
         // noojee.org-new
         // noojee.org-new-0001
-        var parts = path.split('-');
-        var num = int.tryParse(parts[parts.length - 1]);
+        final parts = path.split('-');
+        final num = int.tryParse(parts[parts.length - 1]);
         if (num == null) {
           if (max == 0) {
             /// a number path takes precendence over a non-numbered path
@@ -109,67 +111,53 @@ class CertbotPaths {
   /// By default the path is /config/live/<fqdn> however lets
   /// encrypt adds a number designator when new certificates are aquired.
   ///
-  /// See: [lastestCertificatePath] for details.
+  /// See: [lastestCertificatePath()] for details.
   String _liveDefaultPathForFQDN(String? hostname, String? domain,
       {required bool wildcard}) {
-    var fqdn = wildcard ? domain : '$hostname.$domain';
+    final fqdn = wildcard ? domain : '$hostname.$domain';
     return join(letsEncryptLivePath, fqdn);
   }
 
-  /// The root directory for the certificate files of the given [hostname] and [domain].
+  /// The root directory for the certificate files of the given [hostname]
+  ///  and [domain].
   String certificatePathRoot(String? hostname, String? domain,
-      {required bool wildcard}) {
-    return latestCertificatePath(hostname, domain, wildcard: wildcard);
-  }
+          {required bool wildcard}) =>
+      latestCertificatePath(hostname, domain, wildcard: wildcard);
 
   /// The path to the active fullchain.pem file in the live directory.
-  String fullChainPath(String certificateRootPath) {
-//     getLatest
-    return join(certificateRootPath, fullchainFile);
-  }
+  String fullChainPath(String certificateRootPath) =>
+      join(certificateRootPath, fullchainFile);
 
   /// The path to the active privatekey.pem file in the live directory
-  String privateKeyPath(String certificateRootPath) {
-    return join(certificateRootPath, privateKeyFile);
-  }
+  String privateKeyPath(String certificateRootPath) =>
+      join(certificateRootPath, privateKeyFile);
 
   /// path to the active certificate in the live directory
-  String certificatePath(String certificateRootPath) {
-    return join(certificateRootPath, certificateFile);
-  }
+  String certificatePath(String certificateRootPath) =>
+      join(certificateRootPath, certificateFile);
 
-  String get letsEncryptRootPath {
-    /// allows the root to be over-ridden to make testing easier.
-    return Environment().certbotRootPath;
-  }
+  String get letsEncryptRootPath => Environment().certbotRootPath;
 
-  String get letsEncryptWorkPath {
-    return join(letsEncryptRootPath, 'work');
-  }
+  String get letsEncryptWorkPath => join(letsEncryptRootPath, 'work');
 
-  String get letsEncryptLogPath {
-    return join(letsEncryptRootPath, 'logs');
-  }
+  String get letsEncryptLogPath => join(letsEncryptRootPath, 'logs');
 
-  String get letsEncryptConfigPath {
-    return join(letsEncryptRootPath, 'config');
-  }
+  String get letsEncryptConfigPath => join(letsEncryptRootPath, 'config');
 
   /// path to the directory where the active certificates
   /// are stored.
-  String get letsEncryptLivePath {
-    return join(letsEncryptRootPath, 'config', _livePath);
-  }
+  String get letsEncryptLivePath =>
+      join(letsEncryptRootPath, 'config', _livePath);
 
   String get nginxCertPath {
     var path = Environment().nginxCertRootPathOverwrite;
 
-    path ??= CertbotPaths().nginxCertRoot;
-    return path;
+    return path ??= CertbotPaths().nginxCertRoot;
   }
 
   @visibleForTesting
-  static void setMock(CertbotPaths mock) {
+  // ignore: avoid_setters_without_getters
+  static set moke(CertbotPaths mock) {
     _self = mock;
   }
 }

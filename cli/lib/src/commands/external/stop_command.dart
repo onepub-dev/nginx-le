@@ -6,12 +6,6 @@ import 'package:docker2/docker2.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 class StopCommand extends Command<void> {
-  @override
-  String get description => 'Stops the Nginx-LE container';
-
-  @override
-  String get name => 'stop';
-
   StopCommand() {
     argParser.addFlag('debug',
         abbr: 'd',
@@ -20,12 +14,16 @@ class StopCommand extends Command<void> {
   }
 
   @override
+  String get description => 'Stops the Nginx-LE container';
+
+  @override
+  String get name => 'stop';
+
+  @override
   void run() {
-    var config = ConfigYaml();
+    final config = ConfigYaml()..validate(() => showUsage(argParser));
 
-    config.validate(() => showUsage(argParser));
-
-    var container = Containers().findByContainerId(config.containerid!);
+    final container = Containers().findByContainerId(config.containerid!);
     if (container != null && container.isRunning) {
       print('Stopping...');
       container.stop();

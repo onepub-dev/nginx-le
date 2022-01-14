@@ -35,13 +35,14 @@ void _startScheduler(String environment) {
     /// keep the isolate running forever.
     while (true) {
       /// we do a log rotation every 20 minutes.
-      sleep(1200, interval: Interval.seconds);
+      sleep(1200);
 
       _logrotate();
     }
+    // ignore: avoid_catches_without_on_clauses
   } catch (e, st) {
-    printerr(red(
-        'LogManager has shutdown due to an unexpected error: ${e.runtimeType}'));
+    printerr(red('LogManager has shutdown due to an unexpected '
+        'error: ${e.runtimeType}'));
     printerr(e.toString());
     printerr(st.toString());
     Email.sendError(subject: e.toString(), body: st.toString());
@@ -52,8 +53,8 @@ void _startScheduler(String environment) {
 
 void _logrotate() {
   if (!exists(configFilePathTo)) {
-    printerr(red(
-        'The logrotate configuration file was not found at: $configFilePathTo'));
+    printerr(red('The logrotate configuration file was not found '
+        'at: $configFilePathTo'));
   }
   if (start('logrotate $configFilePathTo',
               nothrow: true, progress: Progress.print())

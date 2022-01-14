@@ -1,13 +1,14 @@
 import 'package:dcli/dcli.dart';
-import 'package:nginx_le/src/content_providers/content_provider.dart';
-import 'package:nginx_le/src/util/ask_fqdn_validator.dart';
-import 'package:nginx_le/src/util/ask_location_path.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+
+import '../util/ask_fqdn_validator.dart';
+import '../util/ask_location_path.dart';
+import 'content_provider.dart';
 
 class GenericProxy extends ContentProvider {
   @override
   void promptForSettings() {
-    var config = ConfigYaml();
+    final config = ConfigYaml();
     String? fqdn;
     print('');
     print(green('Web Application Server details'));
@@ -17,7 +18,7 @@ class GenericProxy extends ContentProvider {
 
     fqdn = ask('FQDN of web application server:',
         defaultValue: fqdn,
-        validator: Ask.all([Ask.required, AskFQDNOrLocalhost()]));
+        validator: Ask.all([Ask.required, const AskFQDNOrLocalhost()]));
 
     var port = config.settings[portKey] as int?;
     port ??= 8080;
@@ -45,12 +46,13 @@ class GenericProxy extends ContentProvider {
 
   @override
   void createLocationFile() {
-    var config = ConfigYaml();
-    var location = join(config.hostIncludePath!, '$name.location');
+    final config = ConfigYaml();
+    final location = join(config.hostIncludePath!, '$name.location');
     find('*.location', workingDirectory: config.hostIncludePath!)
-        .forEach((file) => delete(file));
+        .forEach(delete);
 
-    location.write(r'''location / {
+    location.write(r'''
+location / {
       	#try_files $uri $uri/ =404;
 
         proxy_set_header Host $host;
@@ -67,15 +69,16 @@ class GenericProxy extends ContentProvider {
 
   @override
   void createUpstreamFile() {
-    var config = ConfigYaml();
+    final config = ConfigYaml();
     find('*.upstream', workingDirectory: ConfigYaml().hostIncludePath!)
-        .forEach((file) => delete(file));
-    var location = join(config.hostIncludePath!, '$name.upstream');
+        .forEach(delete);
+    final location = join(config.hostIncludePath!, '$name.upstream');
 
-    var fqdn = config.settings[fqdnKey] as String?;
-    var port = config.settings[portKey] as int?;
+    final fqdn = config.settings[fqdnKey] as String?;
+    final port = config.settings[portKey] as int?;
 
-    location.write('''upstream generic {
+    location.write('''
+upstream generic {
     server $fqdn:$port fail_timeout=0;
 }
 ''');
@@ -83,7 +86,7 @@ class GenericProxy extends ContentProvider {
 
   @override
   List<Volume> getVolumes() {
-    var config = ConfigYaml();
+    final config = ConfigYaml();
     return [
       Volume(
           hostPath: config.hostIncludePath,

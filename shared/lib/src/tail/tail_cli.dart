@@ -9,12 +9,12 @@ import 'isolate_source.dart';
 class TailCliInIsolate {
   // final _controller = StreamController<String>();
 
-  var startupCompleted = Completer<Process>();
+  Completer<Process> startupCompleted = Completer<Process>();
 
   /// Call this method to stop the tail.
   /// It kills the underlying 'tail' process.
   Future<void> stop() async {
-    var process = await startupCompleted.future;
+    final process = await startupCompleted.future;
     print('stop ${Isolate.current.debugName}');
 
     // await _controller.close();
@@ -22,26 +22,26 @@ class TailCliInIsolate {
     process.kill();
   }
 
-  /// Returns the last [lines] of [containerid]  and then
+  /// Returns the last lines of [command] and then
   /// follows the file.
-  Stream<String> _cliStream(String cli) {
-    verbose(() => 'tail cli:  $cli  ${Isolate.current.debugName}');
+  Stream<String> _cliStream(String command) {
+    verbose(() => 'tail cli:  $command  ${Isolate.current.debugName}');
 
-    return cli.stream();
+    return command.stream();
   }
 }
 
 class TailCli {
-  var isoStream = IsolateSource<String, String, int, bool>();
+  TailCli(this.cli);
+  IsolateSource<String, String, int, bool> isoStream =
+      IsolateSource<String, String, int, bool>();
   String cli;
 
-  TailCli(this.cli);
-
   Stream<String?> start() {
-    isoStream.onStart = _dockerLog;
-    isoStream.onStop = _dockerLogsStop;
-
-    isoStream.start(cli, 0, false);
+    isoStream
+      ..onStart = _dockerLog
+      ..onStop = _dockerLogsStop
+      ..start(cli, 0, false);
 
     return isoStream.stream;
   }
@@ -66,11 +66,10 @@ void _dockerLogsStop() {
 }
 
 /// Called when the tail command is to be started
-Stream<String> _dockerLog(String cli, int _, bool __) {
-  return _dockerLogsIsolate._cliStream(cli);
-}
+Stream<String> _dockerLog(String cli, int _, bool __) =>
+    _dockerLogsIsolate._cliStream(cli);
 
 class TailCliException implements Exception {
-  String message;
   TailCliException(this.message);
+  String message;
 }

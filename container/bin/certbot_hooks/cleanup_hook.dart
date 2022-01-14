@@ -13,9 +13,9 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 /// Once the TXT record is available we return an let
 ///
 void main() {
-  var authProvider = AuthProviders().getByName(Environment().authProvider!);
+  final authProvider = AuthProviders().getByName(Environment().authProvider!);
   if (authProvider == null) {
-    throw 'No value provided for ${Environment().authProviderKey}';
+    throw Exception('No value provided for ${Environment().authProviderKey}');
   }
   authProvider.cleanupHook();
 }

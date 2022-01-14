@@ -1,35 +1,37 @@
-// A challenge represents all the data needed to specify a dns-01 challenge to lets-encrypt.
+// A challenge represents all the data needed to specify a dns-01
+//challenge to lets-encrypt.
 
 import 'package:dcli/dcli.dart';
-import 'package:nginx_le_shared/src/certbot/certbot.dart';
 
 import '../../../../nginx_le_shared.dart';
+import '../../../certbot/certbot.dart';
 import 'dns_record.dart';
 import 'get_hosts.dart';
 import 'get_url.dart';
 import 'set_hosts.dart';
 
 class Challenge {
+  // newChallenge builds a challenge record from a fqdn name and a challenge
+  //authentication key.
+  Challenge.simple(
+      {required this.apiKey,
+      required this.apiUsername,
+      required this.username});
   String? apiKey;
   String? apiUsername;
   String? username;
 
   static const challengeHostName = '_acme-challenge';
 
-  // newChallenge builds a challenge record from a fqdn name and a challenge authentication key.
-  Challenge.simple(
-      {required this.apiKey,
-      required this.apiUsername,
-      required this.username});
-
 // Present installs a TXT record for the DNS challenge.
-  bool present(
-      {required String? hostname,
-      required String domain,
-      required String tld,
-      required String certbotValidationString,
-      int retries = 20,
-      required bool wildcard}) {
+  bool present({
+    required String? hostname,
+    required String domain,
+    required String tld,
+    required String certbotValidationString,
+    required bool wildcard,
+    int retries = 20,
+  }) {
     var records = _getHosts(domain: domain, tld: tld);
 
     if (records.isEmpty) {
@@ -44,10 +46,11 @@ class Challenge {
 
     if (records.length > 10) {
       throw DNSProviderException(
-          'Your DNS server has more than 10 Host records. Please reduce the no. of records and try again.');
+          'Your DNS server has more than 10 Host records. '
+          'Please reduce the no. of records and try again.');
     }
 
-    var certRecord = DNSRecord(
+    final certRecord = DNSRecord(
         name: challengeHost(hostname: hostname, wildcard: wildcard),
         type: 'TXT',
         address: certbotValidationString,
@@ -92,17 +95,18 @@ class Challenge {
     Certbot().log('Waiting for challenge "$certBotAuthKey" be visible');
     while (!found && retryAttempts < retries!) {
       // ignore: unnecessary_cast
-      var dig =
-          'dig +short ${challengeHost(hostname: hostname, wildcard: wildcard)}.$domain TXT';
+      final dig = 'dig +short '
+          '${challengeHost(hostname: hostname, wildcard: wildcard)}'
+          '.$domain TXT';
       Certbot().log('running $dig');
-      var token = dig.toList(nothrow: true);
+      final token = dig.toList(nothrow: true);
 
       Certbot().log('dig returned token $token');
 
       if (token.isNotEmpty) {
-        var challenge = token[0];
-        Certbot().log(
-            'dig returned "$challenge" comparing $certBotAuthKey contains:  ${token.contains(certBotAuthKey)}');
+        final challenge = token[0];
+        Certbot().log('dig returned "$challenge" comparing $certBotAuthKey '
+            'contains:  ${token.contains(certBotAuthKey)}');
 
         if (challenge.contains(certBotAuthKey)) {
           found = true;
@@ -134,14 +138,14 @@ class Challenge {
       required String tld,
       required bool wildcard,
       required String? certbotValidationString}) {
-    var records = _getHosts(domain: domain, tld: tld);
+    final records = _getHosts(domain: domain, tld: tld);
 
     // Find the challenge TXT record and remove it if found.
     var found = false;
-    var newRecords = <DNSRecord>[];
-    var challengeName = challengeHost(hostname: hostname, wildcard: wildcard);
+    final newRecords = <DNSRecord>[];
+    final challengeName = challengeHost(hostname: hostname, wildcard: wildcard);
     verbose(() => 'Cleaning $challengeName');
-    for (var h in records) {
+    for (final h in records) {
       verbose(() => 'Found DNS: hostname=${h.name}');
       if (h.name == challengeName &&
           h.address == certbotValidationString &&
@@ -165,34 +169,35 @@ class Challenge {
   List<DNSRecord> _getHosts({
     required String domain,
     required String tld,
-  }) {
-    return getHosts(
-        apiKey: apiKey!,
-        apiUser: username!,
-        username: username!,
-        clientIP: '192.168.1.1',
-        domain: domain,
-        tld: tld);
-  }
+  }) =>
+      getHosts(
+          apiKey: apiKey!,
+          apiUser: username!,
+          username: username!,
+          clientIP: '192.168.1.1',
+          domain: domain,
+          tld: tld);
 
-  List<DNSRecord> removeOldChallenge(
-      {required List<DNSRecord> records,
-      String? hostname,
-      required bool wildcard}) {
-    var found = <DNSRecord>[];
-    for (var h in records) {
+  List<DNSRecord> removeOldChallenge({
+    required List<DNSRecord> records,
+    required bool wildcard,
+    String? hostname,
+  }) {
+    final found = <DNSRecord>[];
+    for (final h in records) {
       if (h.name == challengeHost(hostname: hostname, wildcard: wildcard) &&
           h.type == 'TXT') {
         found.add(h);
       }
     }
-    for (var record in found) {
-      records.remove(record);
-    }
+    found.forEach(records.remove);
     return records;
   }
 
-  String challengeHost({String? hostname, required bool wildcard}) {
+  String challengeHost({
+    required bool wildcard,
+    String? hostname,
+  }) {
     if (wildcard) {
       return challengeHostName;
     } else {

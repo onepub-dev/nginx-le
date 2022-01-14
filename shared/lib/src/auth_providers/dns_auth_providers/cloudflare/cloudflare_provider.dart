@@ -1,9 +1,7 @@
 import 'package:dcli/dcli.dart';
-import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/generic_auth_provider.dart';
-import 'package:nginx_le_shared/src/config/config_yaml.dart';
-import 'package:nginx_le_shared/src/util/env_var.dart';
 
 import '../../../../nginx_le_shared.dart';
+import '../../../util/env_var.dart';
 
 class CloudFlareProvider extends GenericAuthProvider {
   @override
@@ -43,19 +41,19 @@ class CloudFlareProvider extends GenericAuthProvider {
 
   @override
   List<EnvVar> get environment {
-    var vars = <EnvVar>[];
-
-    vars.add(EnvVar(AuthProvider.authProviderToken, configToken));
-    vars.add(EnvVar(AuthProvider.authProviderEmailAddress, configEmailAddress));
+    final vars = <EnvVar>[
+      EnvVar(AuthProvider.authProviderToken, configToken),
+      EnvVar(AuthProvider.authProviderEmailAddress, configEmailAddress)
+    ];
 
     return vars;
   }
 
   @override
   void acquire() {
-    var workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
-    var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
-    var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
+    final workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
+    final logDir = _createDir(CertbotPaths().letsEncryptLogPath);
+    final configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
 
     /// Pass environment vars down to the auth hook.
     Environment().logfile = join(logDir, 'letsencrypt.log');
@@ -63,20 +61,22 @@ class CloudFlareProvider extends GenericAuthProvider {
     _createSettings();
 
     var hostname = Environment().hostname;
-    var domain = Environment().domain;
-    var wildcard = Environment().domainWildcard;
-    var production = Environment().production;
-    var emailaddress = Environment().authProviderEmailAddress;
+    final domain = Environment().domain;
+    final wildcard = Environment().domainWildcard;
+    final production = Environment().production;
+    final emailaddress = Environment().authProviderEmailAddress;
 
     hostname = wildcard ? '*' : hostname;
 
     verbose(() => 'Starting cerbot with authProvider: $name to acquire a '
-        '${production ? 'production' : 'staging'} certificate for $hostname.$domain');
+        '${production ? 'production' : 'staging'} certificate '
+        'for $hostname.$domain');
 
-    verbose(() =>
-        'Cloudflare api token. Env:${AuthProvider.authProviderToken}: $envToken');
+    verbose(() => 'Cloudflare api token. '
+        'Env:${AuthProvider.authProviderToken}: $envToken');
 
-    NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
+    NamedLock(name: 'certbot', timeout: const Duration(minutes: 20))
+        .withLock(() {
       var certbot = '${Certbot.pathTo} certonly '
           ' --dns-cloudflare '
           ' --dns-cloudflare-credentials ${CertbotPaths().cloudFlareSettings}'
@@ -88,10 +88,12 @@ class CloudFlareProvider extends GenericAuthProvider {
           ' --config-dir=$configDir '
           ' --logs-dir=$logDir ';
 
-      if (!production) certbot += ' --staging ';
+      if (!production) {
+        certbot += ' --staging ';
+      }
 
-      var lines = <String>[];
-      var progress = Progress((line) {
+      final lines = <String>[];
+      final progress = Progress((line) {
         print(line);
         lines.add(line);
       }, stderr: (line) {
@@ -107,10 +109,11 @@ class CloudFlareProvider extends GenericAuthProvider {
       //deleteSettings();
 
       if (progress.exitCode != 0) {
-        var system = 'hostname'.firstLine;
+        final system = 'hostname'.firstLine;
 
         throw CertbotException(
-            'certbot failed acquiring a certificate for $hostname.$domain on $system',
+            'certbot failed acquiring a certificate for '
+            '$hostname.$domain on $system',
             details: lines.join('\n'));
       } else {
         print('Certificate acquired.');
@@ -139,10 +142,9 @@ class CloudFlareProvider extends GenericAuthProvider {
 
     'chmod 600 ${CertbotPaths().cloudFlareSettings}'.run;
 
-    var logfile = Environment().logfile!;
-
-    logfile.append('Created certbot settings.ini: ');
-    logfile.append(read(CertbotPaths().cloudFlareSettings).toList().join('\n'));
+    Environment().logfile!
+      ..append('Created certbot settings.ini: ')
+      ..append(read(CertbotPaths().cloudFlareSettings).toList().join('\n'));
   }
 
   // void deleteSettings() {

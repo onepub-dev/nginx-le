@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dcli/dcli.dart';
 
@@ -7,17 +8,14 @@ import 'package:dcli/dcli.dart';
 /// passed to an isolate.
 class IsolateEnvironment {
   String encodeEnviroment() {
-    var envMap = <String, String>{};
-    envMap.addEntries(env.entries.toSet());
+    final envMap = <String, String>{}..addEntries(env.entries.toSet());
     return JsonEncoder(_toEncodable).convert(envMap);
   }
 
   void restoreEnvironment(String environment) {
     env.addAll(Map<String, String>.from(
-        JsonDecoder().convert(environment) as Map<dynamic, dynamic>));
+        const JsonDecoder().convert(environment) as Map<dynamic, dynamic>));
   }
 
-  String _toEncodable(Object? object) {
-    return object.toString();
-  }
+  String _toEncodable(Object? object) => object.toString();
 }

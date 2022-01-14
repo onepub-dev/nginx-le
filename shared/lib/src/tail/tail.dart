@@ -9,12 +9,12 @@ import 'isolate_source.dart';
 class TailInIsolate {
   // final _controller = StreamController<String>();
 
-  var startupCompleted = Completer<Process>();
+  Completer<Process> startupCompleted = Completer<Process>();
 
   /// Call this method to stop the tail.
   /// It kills the underlying 'tail' process.
   Future<void> stop() async {
-    var process = await startupCompleted.future;
+    final process = await startupCompleted.future;
     print('stop ${Isolate.current.debugName}');
 
     // await _controller.close();
@@ -31,7 +31,9 @@ class TailInIsolate {
 
     /// We use -F as certbot log rotates the files and -F is specifically used
     /// in this situation.
-    if (follow) cmd += ' -F';
+    if (follow) {
+      cmd += ' -F';
+    }
 
     cmd += ' $filename';
 
@@ -40,22 +42,22 @@ class TailInIsolate {
 }
 
 class Tail {
-  var isoStream = IsolateSource<String, String, int, bool>();
-  String filename;
-  int lines;
-  bool follow;
-
   Tail(this.filename, this.lines, {this.follow = false}) {
     if (!exists(filename)) {
       throw TailException('The file $filename does not exist');
     }
   }
+  IsolateSource<String, String, int, bool> isoStream =
+      IsolateSource<String, String, int, bool>();
+  String filename;
+  int lines;
+  bool follow;
 
   Stream<String?> start() {
-    isoStream.onStart = tail;
-    isoStream.onStop = tailStop;
-
-    isoStream.start(filename, lines, follow);
+    isoStream
+      ..onStart = tail
+      ..onStop = tailStop
+      ..start(filename, lines, follow);
 
     // set up the handler to recieve the stream data
     // process it and return.
@@ -71,7 +73,7 @@ class Tail {
   }
 }
 
-var tallTail = TailInIsolate();
+TailInIsolate tallTail = TailInIsolate();
 Stream<String>? tailStream;
 
 /////////////////////////////////////////////////
@@ -87,11 +89,11 @@ void tailStop() {
 }
 
 /// Called when the tail command is to be started
-Stream<String> tail(String filename, int lines, bool follow) {
-  return tallTail.tail(filename, lines: lines, follow: follow);
-}
+// ignore: avoid_positional_boolean_parameters
+Stream<String> tail(String filename, int lines, bool follow) =>
+    tallTail.tail(filename, lines: lines, follow: follow);
 
 class TailException implements Exception {
-  String message;
   TailException(this.message);
+  String message;
 }

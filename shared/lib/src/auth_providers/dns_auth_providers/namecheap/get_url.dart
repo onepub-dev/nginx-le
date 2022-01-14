@@ -1,4 +1,5 @@
-// Package namecheap implements a DNS provider for solving the DNS-01 challenge using namecheap DNS.
+// Package namecheap implements a DNS provider for solving the DNS-01
+//challenge using namecheap DNS.
 
 // Notes about namecheap's tool API:
 // 1. Using the API requires registration. Once registered, use your account
@@ -29,15 +30,13 @@ String getUrl(
   String url,
 ) {
   // announce we are starting.
-  var completer = Completer<String>();
+  final completer = Completer<String>();
 
-  var client = HttpClient();
-  unawaited(client.getUrl(Uri.parse(url)).then((request) {
-    /// we have connected
-    /// we can added headers here if we need.
-    /// send the request
-    return request.close();
-  }).then((response) async {
+  final client = HttpClient();
+  unawaited(client
+      .getUrl(Uri.parse(url))
+      .then((request) => request.close())
+      .then((response) async {
     // we have a response.
     print('have response');
 
@@ -46,8 +45,10 @@ String getUrl(
     var result = '';
 
     StreamSubscription<String>? subscription;
-    subscription =
-        response.transform(Utf8Decoder()).transform(LineSplitter()).listen(
+    subscription = response
+        .transform(const Utf8Decoder())
+        .transform(const LineSplitter())
+        .listen(
       (line) async {
         result += line;
       },
@@ -73,8 +74,8 @@ String getUrl(
 }
 
 class DNSProviderException implements Exception {
-  String message;
   DNSProviderException(this.message);
+  String message;
 
   @override
   String toString() => message;

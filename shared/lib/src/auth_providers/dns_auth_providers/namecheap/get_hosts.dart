@@ -4,7 +4,7 @@ import 'package:xml/xml.dart';
 import 'dns_record.dart';
 import 'get_url.dart';
 
-var getHostsCommand = 'namecheap.domains.dns.getHosts';
+String getHostsCommand = 'namecheap.domains.dns.getHosts';
 
 /// [domain] - the domain e.g. noojee.com
 /// [tld] - the Top Level Domain e.g. com
@@ -25,49 +25,55 @@ List<DNSRecord> getHosts(
   }
 
   /// strip the tld as the api call only wants the domain.
-  var domainPart = domain.replaceAll('.$tld', '');
+  final domainPart = domain.replaceAll('.$tld', '');
   // var apiEndPoint = sandboxBaseURL;
-  var apiEndPoint = defaultBaseURL;
-  var url =
-      '$apiEndPoint?ApiUser=$apiUser&ApiKey=$apiKey&UserName=$username&Command=$getHostsCommand&ClientIp=$clientIP&SLD=$domainPart&TLD=$tld';
+  const apiEndPoint = defaultBaseURL;
+  final url = '$apiEndPoint?ApiUser=$apiUser&ApiKey=$apiKey&'
+      'UserName=$username&Command=$getHostsCommand&'
+      'ClientIp=$clientIP&SLD=$domainPart&TLD=$tld';
 
   verbose(() => 'Requesting $url');
-  var result = getUrl(url);
+  final result = getUrl(url);
   verbose(() => 'Namecheap getHosts: $result');
 
   final document = XmlDocument.parse(result);
 
-  var records = <DNSRecord>[];
+  final records = <DNSRecord>[];
 
   /// Check for any errors.
-  var xmlErrors = document.findAllElements('Errors').first;
-  var hasError = false;
+  final xmlErrors = document.findAllElements('Errors').first;
+  const hasError = false;
   if (xmlErrors.children.isNotEmpty) {
-    for (var xmlError in xmlErrors.children) {
-      if (xmlError.attributes.isEmpty) continue;
+    for (final xmlError in xmlErrors.children) {
+      if (xmlError.attributes.isEmpty) {
+        continue;
+      }
 
       if (!hasError) {}
-      var errorNo = xmlError.getAttribute('Number');
-      var description = xmlError.innerText;
+      final errorNo = xmlError.getAttribute('Number');
+      final description = xmlError.innerText;
 
       throw DNSProviderException(
-          'An error occured fetching the host list for $domain with tld: $tld: errorNo $errorNo - $description');
+          'An error occured fetching the host list for $domain with '
+          'tld: $tld: errorNo $errorNo - $description');
     }
   }
 
   /// No errors so extract the host names.
-  var xmlResult = document.findAllElements('DomainDNSGetHostsResult').first;
-  for (var xmlHost in xmlResult.children) {
+  final xmlResult = document.findAllElements('DomainDNSGetHostsResult').first;
+  for (final xmlHost in xmlResult.children) {
     verbose(() => 'node: $xmlHost');
     // skip empty nodes.
-    if (xmlHost.attributes.isEmpty) continue;
-
-    if ((xmlHost as XmlElement).name.local != 'host') {
-      verbose(() =>
-          "Skipping Invalid NodeType: ${xmlHost.nodeType} expected a 'host' node.");
+    if (xmlHost.attributes.isEmpty) {
       continue;
     }
-    var record = DNSRecord.fromXmlHost(xmlHost);
+
+    if ((xmlHost as XmlElement).name.local != 'host') {
+      verbose(() => 'Skipping Invalid NodeType: ${xmlHost.nodeType} '
+          "expected a 'host' node.");
+      continue;
+    }
+    final record = DNSRecord.fromXmlHost(xmlHost);
     verbose(() => 'Found record: $record');
     records.add(record);
   }

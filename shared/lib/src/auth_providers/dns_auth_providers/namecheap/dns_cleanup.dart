@@ -1,5 +1,4 @@
 import 'package:dcli/dcli.dart';
-import 'package:nginx_le_shared/src/util/environment.dart';
 
 import '../../../../nginx_le_shared.dart';
 import 'challenge.dart';
@@ -12,32 +11,32 @@ void namecheapDNSCleanup() {
   ///
   /// Get the environment vars passed to use
   ///
-  var isVerbose = Environment().certbotVerbose;
+  final isVerbose = Environment().certbotVerbose;
   Certbot().log('isVerbose: $isVerbose');
 
   Settings().setVerbose(enabled: isVerbose);
 
   /// Certbot generated envs.
   // ignore: unnecessary_cast
-  var fqdn = Environment().certbotDomain;
+  final fqdn = Environment().certbotDomain;
   Certbot().log('fqdn: $fqdn');
 
-  var wildcard = Environment().domainWildcard;
+  final wildcard = Environment().domainWildcard;
   Certbot().log('wildcard: $wildcard');
 
-  var certbotAuthKey = Environment().certbotValidation;
+  final certbotAuthKey = Environment().certbotValidation;
   Certbot().log('CertbotAuthKey: $certbotAuthKey');
 
-  var authProvider = AuthProviders().getByName(NameCheapAuthProvider().name)!;
+  final authProvider = AuthProviders().getByName(NameCheapAuthProvider().name)!;
 
   /// our own envs.
-  var domain = Environment().domain!;
-  var hostname = Environment().hostname;
-  var tld = Environment().tld!;
+  final domain = Environment().domain!;
+  final hostname = Environment().hostname;
+  final tld = Environment().tld!;
   Certbot().log('tld: $tld');
-  var username = authProvider.envUsername;
+  final username = authProvider.envUsername;
   Certbot().log('username: $username');
-  var apiKey = authProvider.envToken;
+  final apiKey = authProvider.envToken;
   Certbot().log('apiKey: $apiKey');
 
   if (fqdn == null || fqdn.isEmpty) {
@@ -51,7 +50,7 @@ void namecheapDNSCleanup() {
     /// Create the required DNS entry for the Certbot challenge.
     ///
     verbose(() => 'Creating challenge');
-    var challenge = Challenge.simple(
+    final challenge = Challenge.simple(
         apiKey: apiKey, username: username, apiUsername: username);
     verbose(() => 'calling challenge.present');
 
@@ -64,6 +63,7 @@ void namecheapDNSCleanup() {
         tld: tld,
         wildcard: wildcard,
         certbotValidationString: certbotAuthKey);
+  // ignore: avoid_catches_without_on_clauses
   } catch (e) {
     printerr(e.toString());
   }

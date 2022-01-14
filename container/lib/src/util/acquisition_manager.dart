@@ -7,11 +7,11 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 /////////////////////////////////////////////
 ///
 class AcquisitionManager {
-  static AcquisitionManager? _self;
-
   factory AcquisitionManager() => _self ??= AcquisitionManager._internal();
 
   AcquisitionManager._internal();
+
+  static AcquisitionManager? _self;
 
   void start() {
     print(orange('AcquisitionManager is starting'));
@@ -37,7 +37,7 @@ class AcquisitionManager {
       enterAcquisitionMode(show: true, reload: false);
     }
 
-    var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
+    final iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
     try {
       iso.run(_acquireThread, Env().toJson());
@@ -47,15 +47,18 @@ class AcquisitionManager {
     }
   }
 
-  void enterAcquisitionMode({bool show = false, required bool reload}) {
+  void enterAcquisitionMode({
+    required bool reload,
+    bool show = false,
+  }) {
     /// symlink in the http configs which only permit certbot access
     final _created = createContentSymlink(acquisitionMode: true);
 
     if (!inAcquisitionMode && show) {
       print(red('*') * 120);
       print(red('No valid certificates Found!!'));
-      print(red(
-          "* Nginx-LE is running in 'Certificate Acquisition' mode. It will only respond to CertBot validation requests."));
+      print(red("* Nginx-LE is running in 'Certificate Acquisition' mode. "
+          'It will only respond to CertBot validation requests.'));
       print(red('*') * 120);
     }
 
@@ -66,7 +69,10 @@ class AcquisitionManager {
     }
   }
 
-  void leaveAcquistionMode({bool show = false, required bool reload}) {
+  void leaveAcquistionMode({
+    required bool reload,
+    bool show = false,
+  }) {
     final _created = createContentSymlink(acquisitionMode: false);
 
     if (inAcquisitionMode) {
@@ -94,16 +100,17 @@ class AcquisitionManager {
   /// If we end with valid and deployed certificate
   /// we leave acquisition mode.
   void acquireIfRequired({bool reload = true}) {
-    var hostname = Environment().hostname;
-    var domain = Environment().domain;
-    var wildcard = Environment().domainWildcard;
-    var production = Environment().production;
+    final hostname = Environment().hostname;
+    final domain = Environment().domain;
+    final wildcard = Environment().domainWildcard;
+    final production = Environment().production;
 
     try {
       if (Certbot().isDeployed()) {
         leaveAcquistionMode(reload: reload);
       } else {
-        /// Places the server into acquire mode if certificates are not deployed.
+        /// Places the server into acquire mode if certificates
+        /// are not deployed.
         enterAcquisitionMode(reload: reload);
 
         if (Certbot().hasValidCertificate()) {
@@ -111,8 +118,8 @@ class AcquisitionManager {
             leaveAcquistionMode(reload: reload);
             print(orange('AcquisitionManager completed successfully.'));
           } else {
-            print(orange(
-                'AcquisitionManager failed to deploy certificates. Will remain in acquistion mode.'));
+            print(orange('AcquisitionManager failed to deploy certificates. '
+                'Will remain in acquistion mode.'));
           }
         } else {
           ///
@@ -121,11 +128,12 @@ class AcquisitionManager {
                 'Acquisition is blocked due to a prior error. Nginx-le will try again at ${Certbot().blockedUntil}. Alternately resolve the error and then run nginx-le acquire or delete /etc/letsencrypt/block_acquistion.flag.'));
           } else {
             Settings().setVerbose(enabled: Environment().debug);
-            var authProvider =
+            final authProvider =
                 AuthProviders().getByName(Environment().authProvider!);
             if (authProvider == null) {
-              throw CertbotException(
-                  'No valid auth provider was found for ${Environment().authProvider}. Check ${Environment().authProviderKey}');
+              throw CertbotException('No valid auth provider was found for '
+                  '${Environment().authProvider}. '
+                  'Check ${Environment().authProviderKey}');
             }
 
             /// Acquire a new certificate
@@ -134,7 +142,7 @@ class AcquisitionManager {
             authProvider.acquire();
 
             /// find the cert we just acquired.
-            var cert = Certificate.find(
+            final cert = Certificate.find(
                 hostname: hostname,
                 domain: domain,
                 wildcard: wildcard,
@@ -147,8 +155,9 @@ class AcquisitionManager {
               print(orange(
                   'AcquisitionManager successfully deployed the certficate.'));
             } else {
-              print(orange(
-                  'AcquisitionManager failed to acquire a certificate. Will remain in acquistion mode.'));
+              print(
+                  orange('AcquisitionManager failed to acquire a certificate. '
+                      'Will remain in acquistion mode.'));
             }
           }
         }
@@ -157,8 +166,8 @@ class AcquisitionManager {
       Certbot().blockAcquisitions();
       print('');
       print('*' * 80);
-      print(red(
-          'Acquisition has failed. Retries will be blocked for fifteen minutes.'));
+      print(red('Acquisition has failed. '
+          'Retries will be blocked for fifteen minutes.'));
       print('*' * 80);
       print('');
 
@@ -168,10 +177,11 @@ class AcquisitionManager {
       print('${'*' * 30} Cerbot Error details end: ${'*' * 30}');
       Email.sendError(
           subject: e.message, body: '${e.details}\n ${st.toString()}');
+      // ignore: avoid_catches_without_on_clauses
     } catch (e, st) {
       Certbot().blockAcquisitions();
-      print(red(
-          'Acquisition has failed due to an unexpected error: ${e.runtimeType}'));
+      print(red('Acquisition has failed due to an unexpected '
+          'error: ${e.runtimeType}'));
       print(e.toString());
       print(st.toString());
       Email.sendError(subject: e.toString(), body: st.toString());
@@ -179,13 +189,13 @@ class AcquisitionManager {
   }
 
   /// returns true if we are currently in acquisition mode or
-  /// [CertbotPaths().WWW_PATH_LIVE] doesn't exists which means we haven't been configured.
-  bool get inAcquisitionMode {
-    return exists(CertbotPaths().wwwPathLive, followLinks: false) &&
-        exists(CertbotPaths().wwwPathLive, followLinks: true) &&
-        resolveSymLink(CertbotPaths().wwwPathLive) ==
-            CertbotPaths().wwwPathToAcquire;
-  }
+  /// [CertbotPaths().WWW_PATH_LIVE] doesn't exists which means
+  /// we haven't been configured.
+  bool get inAcquisitionMode =>
+      exists(CertbotPaths().wwwPathLive, followLinks: false) &&
+      exists(CertbotPaths().wwwPathLive) &&
+      resolveSymLink(CertbotPaths().wwwPathLive) ==
+          CertbotPaths().wwwPathToAcquire;
 }
 
 /// Global function required for isolate.
@@ -193,8 +203,8 @@ void _acquireThread(String environment) {
   Env().fromJson(environment);
 
   if (!Environment().autoAcquire) {
-    print(
-        "AUTO_ACQUIRE=false please use 'nginx-le acquire' to acquire a certificate");
+    print("AUTO_ACQUIRE=false please use 'nginx-le acquire' "
+        'to acquire a certificate');
   } else {
     // we give nginx a little time to start so we don't deploy and
     // attempt a reload before its running.
@@ -202,6 +212,7 @@ void _acquireThread(String environment) {
     sleep(10);
 
     /// start the acquisition loop.
+    // ignore: literal_only_boolean_expressions
     do {
       AcquisitionManager().acquireIfRequired();
 

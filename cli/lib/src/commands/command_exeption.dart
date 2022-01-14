@@ -1,6 +1,6 @@
 class CommandException implements Exception {
-  String message;
   CommandException(this.message);
+  String message;
 
   @override
   String toString() => message;

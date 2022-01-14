@@ -7,41 +7,38 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /// Starts the nginx-le container.
 class StartCommand extends Command<void> {
+  StartCommand() {
+    argParser
+      ..addFlag('debug',
+          abbr: 'd',
+          negatable: false,
+          help: 'Outputs additional logging information')
+      ..addFlag('interactive',
+          abbr: 'i',
+          negatable: false,
+          help: 'Starts the container in the foreground so you can '
+              'see all output');
+  }
+
   @override
   String get description => 'starts the ngix server';
 
   @override
   String get name => 'start';
 
-  StartCommand() {
-    argParser.addFlag('debug',
-        defaultsTo: false,
-        abbr: 'd',
-        negatable: false,
-        help: 'Outputs additional logging information');
-
-    argParser.addFlag('interactive',
-        defaultsTo: false,
-        abbr: 'i',
-        negatable: false,
-        help:
-            'Starts the container in the foreground so you can see all output');
-  }
-
   @override
   void run() {
-    var debug = argResults!['debug'] as bool;
+    final debug = argResults!['debug'] as bool;
     Settings().setVerbose(enabled: debug);
 
-    var interactive = argResults!['interactive'] as bool;
+    final interactive = argResults!['interactive'] as bool;
 
-    var config = ConfigYaml();
-    config.validate(() => showUsage(argParser));
+    final config = ConfigYaml()..validate(() => showUsage(argParser));
 
-    var container = Containers().findByContainerId(config.containerid ?? '')!;
+    final container = Containers().findByContainerId(config.containerid ?? '')!;
     if (container.isRunning) {
-      printerr(
-          'The container ${config.containerid} is already running. Consider nginx-le restart');
+      printerr('The container ${config.containerid} is already running. '
+          'Consider nginx-le restart');
       showUsage(argParser);
     }
 

@@ -5,13 +5,13 @@ import 'dart:io';
 import 'package:dcli/dcli.dart';
 
 void main(List<String> args) {
-  var script = DartScript.fromFile(Platform.script.toFilePath());
+  final script = DartScript.fromFile(Platform.script.toFilePath());
 
-  var root = script.pathToProjectRoot;
+  final root = script.pathToProjectRoot;
 
-  var pubspec = PubSpec.fromFile(join(root, 'pubspec.yaml'));
+  final pubspec = PubSpec.fromFile(join(root, 'pubspec.yaml'));
 
-  var version = pubspec.version;
+  final version = pubspec.version;
 
   print('Version: $version');
 

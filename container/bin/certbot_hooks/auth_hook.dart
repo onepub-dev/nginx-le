@@ -10,14 +10,14 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 /// which is set via the environment variable: [Environment().authProvider]
 ///
 void main() {
-  var providerName = Environment().authProvider;
+  final providerName = Environment().authProvider;
   if (providerName == null) {
-    throw 'No value provided for environment variable AUTH_PROVIDER';
+    throw Exception('No value provided for environment variable AUTH_PROVIDER');
   }
-  var authProvider = AuthProviders().getByName(providerName);
+  final authProvider = AuthProviders().getByName(providerName);
 
   if (authProvider == null) {
-    throw 'No value provided for ${Environment().authProviderKey}';
+    throw Exception('No value provided for ${Environment().authProviderKey}');
   }
 
   authProvider.authHook();

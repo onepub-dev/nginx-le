@@ -6,17 +6,17 @@ import 'package:dcli/dcli.dart';
 void main(List<String> args) {
   final version = args[0];
 
-  var project = DartProject.fromPath('.', search: true);
+  final project = DartProject.fromPath('.');
 
-  var projectRootPath = project.pathToProjectRoot;
+  final projectRootPath = project.pathToProjectRoot;
   print('projectRoot $projectRootPath');
 
   print('Activate the just published version');
   'pub global activate nginx_le'.run;
 
   print('Pushing Docker image.');
-  var name = 'noojee/nginx-le';
-  var imageTag = '$name:$version';
+  const name = 'noojee/nginx-le';
+  final imageTag = '$name:$version';
 
   print('docker path: ${findDockerFilePath()}');
   print(green('Building nginx-le docker image'));
@@ -24,7 +24,7 @@ void main(List<String> args) {
       .start(workingDirectory: findDockerFilePath());
 
   print(green('Pushing docker image: $imageTag and latest'));
-  var latestTag = '$name:latest';
+  const latestTag = '$name:latest';
   'docker image tag $imageTag $latestTag'.run;
 
   'docker push $imageTag'.run;

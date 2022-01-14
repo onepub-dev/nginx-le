@@ -14,8 +14,9 @@ void main() {
   group('certbot', () {
     setUpAll(() {
       if (which('auth_hook').notfound) {
-        printerr(red(
-            'Compile and install auth_hook, cleanup_hook and deploy_hook before running this test'));
+        printerr(
+            red('Compile and install auth_hook, cleanup_hook and deploy_hook '
+                'before running this test'));
         exit(1);
       }
       print('setupall called');
@@ -33,7 +34,7 @@ void main() {
     test('acquire', () {
       prepareCertHooks();
 
-      var authProvider =
+      final authProvider =
           AuthProviders().getByName(NameCheapAuthProvider().name)!;
       print('acquire me');
 
@@ -46,13 +47,12 @@ void main() {
       // authProvider.envUsername = username;
       // authProvider.envToken = apiKey;
 
-      var config = ConfigYaml();
-      authProvider.promptForSettings(config);
-
-      authProvider.envToken = authProvider.configToken;
-      authProvider.envUsername = authProvider.configUsername;
-
-      authProvider.acquire();
+      final config = ConfigYaml();
+      authProvider
+        ..promptForSettings(config)
+        ..envToken = authProvider.configToken
+        ..envUsername = authProvider.configUsername
+        ..acquire();
 
       var cert = Certificate.find(
         hostname: 'slayer',
@@ -73,37 +73,38 @@ void main() {
       )!;
       expect(cert, equals(isNotNull));
       cert.revoke();
-    }, timeout: Timeout(Duration(minutes: 5)), skip: true);
+    }, timeout: const Timeout(Duration(minutes: 5)), skip: true);
 
     test(
-        'renew - this can take > 10 min as certbot intentionally slows this call down.',
-        () {
+        'renew - this can take > 10 min as certbot intentionally slows '
+        'this call down.', () {
       prepareCertHooks();
 
-      var certificates = Certificate.load();
+      final certificates = Certificate.load();
 
-      for (var cert in certificates) {
+      for (final cert in certificates) {
         print(cert.toString());
       }
 
-      var authProvider =
+      final authProvider =
           AuthProviders().getByName(NameCheapAuthProvider().name)!;
 
       print('renew');
-      authProvider.promptForSettings(ConfigYaml());
-      authProvider.envToken = authProvider.configToken;
-      authProvider.envUsername = authProvider.configUsername;
+      authProvider
+        ..promptForSettings(ConfigYaml())
+        ..envToken = authProvider.configToken
+        ..envUsername = authProvider.configUsername;
 
       print(orange('calling acquire'));
       authProvider.acquire();
 
       print(orange('calling revoke'));
-      var cert = Certificate.find(
-          hostname: 'slayer',
-          domain: 'noojee.org',
-          production: false,
-          wildcard: false)!;
-      cert.revoke();
+      Certificate.find(
+              hostname: 'slayer',
+              domain: 'noojee.org',
+              production: false,
+              wildcard: false)!
+          .revoke();
 
       print(orange('calling acquire'));
       authProvider.acquire();
@@ -118,7 +119,7 @@ void main() {
       //     production: false,
       //     wildcard: false,
       //     emailaddress: Environment().emailaddress);
-    }, timeout: Timeout(Duration(minutes: 15)), tags: ['slow']);
+    }, timeout: const Timeout(Duration(minutes: 15)), tags: ['slow']);
 
     test('parse', () {
       print('parse');
@@ -129,14 +130,14 @@ void main() {
             join(CertbotPaths().letsEncryptLivePath,
                 'robtest18-new.clouddialer.com.au'),
             recursive: true);
-        var fqnd001 = join(CertbotPaths().letsEncryptLivePath,
+        final fqnd001 = join(CertbotPaths().letsEncryptLivePath,
             'robtest18-new.clouddialer.com.au-0001');
         createDir(fqnd001, recursive: true);
 
         // noojee.org-0001
         // noojee.org-new
         // noojee.org-new-0001
-        var latest = CertbotPaths().latestCertificatePath(
+        final latest = CertbotPaths().latestCertificatePath(
             'robtest18-new', 'clouddialer.com.au',
             wildcard: false);
         expect(latest, equals(fqnd001));
@@ -150,14 +151,15 @@ void main() {
       //var flag = '/tmp/test.flag';
       //var flag = join(HOME, '.dcli');
       Environment().certbotRootPath = '/tmp';
-      var flag = '/tmp/block_acquisitions.flag';
+      const flag = '/tmp/block_acquisitions.flag';
 
       touch(flag, create: true);
-      var flagStat = stat(flag);
+      final flagStat = stat(flag);
       print(flagStat.changed);
-      print(flagStat.changed.add(Duration(minutes: 15)));
-      print(
-          flagStat.changed.add(Duration(minutes: 15)).isAfter(DateTime.now()));
+      print(flagStat.changed.add(const Duration(minutes: 15)));
+      print(flagStat.changed
+          .add(const Duration(minutes: 15))
+          .isAfter(DateTime.now()));
 
       print('isblocked ${Certbot().isBlocked}');
     });

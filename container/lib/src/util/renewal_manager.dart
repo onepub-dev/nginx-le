@@ -9,7 +9,7 @@ class RenewalManager {
   void start() {
     print('Starting the certificate renewal scheduler.');
 
-    var iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
+    final iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
     try {
       iso.run(startScheduler, Env().toJson());
@@ -40,9 +40,10 @@ void startScheduler(String environment) {
       sleep(10);
       Settings().setVerbose(enabled: Environment().debug);
     }
+    // ignore: avoid_catches_without_on_clauses
   } catch (e, st) {
-    printerr(red(
-        'RenewalManager has shutdown due to an unexpected error: ${e.runtimeType}'));
+    printerr(red('RenewalManager has shutdown due to an unexpected '
+        'error: ${e.runtimeType}'));
     printerr(e.toString());
     printerr(st.toString());
     Email.sendError(subject: e.toString(), body: st.toString());

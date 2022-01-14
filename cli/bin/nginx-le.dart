@@ -20,21 +20,20 @@ enum Mode { public, private }
 
 /// Starts the ngix docker instance
 void main(List<String> args) {
-  var runner = CommandRunner<void>('nginx-le',
-      'Cli tools to manage your nginx-le server. Version: $packageVersion');
-
-  runner.addCommand(BuildCommand());
-  runner.addCommand(ConfigCommand());
-  runner.addCommand(StartCommand());
-  runner.addCommand(RestartCommand());
-  runner.addCommand(AcquireCommand());
-  runner.addCommand(RevokeCommand());
-  runner.addCommand(RenewCommand());
-  runner.addCommand(CliCommand());
-  runner.addCommand(StopCommand());
-  runner.addCommand(LogsCommand());
-  runner.addCommand(DoctorCommand());
-  runner.addCommand(CertificatesCommand());
+  final runner = CommandRunner<void>('nginx-le',
+      'Cli tools to manage your nginx-le server. Version: $packageVersion')
+    ..addCommand(BuildCommand())
+    ..addCommand(ConfigCommand())
+    ..addCommand(StartCommand())
+    ..addCommand(RestartCommand())
+    ..addCommand(AcquireCommand())
+    ..addCommand(RevokeCommand())
+    ..addCommand(RenewCommand())
+    ..addCommand(CliCommand())
+    ..addCommand(StopCommand())
+    ..addCommand(LogsCommand())
+    ..addCommand(DoctorCommand())
+    ..addCommand(CertificatesCommand());
 
   if (args.isEmpty) {
     printerr('No command was passed.');
@@ -42,7 +41,7 @@ void main(List<String> args) {
     exit(1);
   }
 
-  runner.run(args).catchError((Object e) {
+  runner.run(args).catchError((dynamic e) {
     printerr(e.toString());
     print(runner.usage);
     exit(1);

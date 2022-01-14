@@ -4,17 +4,28 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
 class PossibleCert {
+  PossibleCert(this.hostname, this.domain, {required this.wildcard});
+
   String hostname;
   String domain;
   bool wildcard;
-
-  PossibleCert(this.hostname, this.domain, {required this.wildcard});
 
   @override
   String toString() => '$hostname.$domain wildcard: $wildcard';
 }
 
 class MockCertbotPaths extends Mock implements CertbotPaths {
+  MockCertbotPaths({
+    required this.hostname,
+    required this.domain,
+    required this.tld,
+    required this.wildcard,
+    required this.settingsFilename,
+    required this.possibleCerts,
+    required this.rootDir,
+    this.production = false,
+  });
+
   String hostname;
   String domain;
   String? tld;
@@ -24,17 +35,8 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
 
   String rootDir;
 
-  var possibleCerts = <PossibleCert>[];
+  List<PossibleCert> possibleCerts = <PossibleCert>[];
 
-  MockCertbotPaths(
-      {required this.hostname,
-      required this.domain,
-      required this.tld,
-      required this.wildcard,
-      required this.settingsFilename,
-      required this.possibleCerts,
-      this.production = false,
-      required this.rootDir});
   void wire() {
     throwOnMissingStub(this); // , (invocation) => buildException(invocation));
     Environment().certbotRootPath = rootDir;
@@ -79,9 +81,7 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
     when(() => wwwPathToOperating)
         .thenReturn(_mockPath(CertbotPaths().wwwPathToOperating));
 
-    for (var possibleCert in possibleCerts) {
-      mockPossibleCertPath(possibleCert);
-    }
+    possibleCerts.forEach(mockPossibleCertPath);
 
     when(() => wwwPathToAcquire)
         .thenReturn(_mockPath(CertbotPaths().wwwPathToAcquire));
@@ -142,6 +142,7 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
 
   String _mockPath(String path) {
     if (path.startsWith(rootPath)) {
+      // ignore: parameter_assignments
       path = path.substring(1);
     }
     final result = join(rootDir, path);
@@ -155,13 +156,13 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
   void mockPossibleCertPath(PossibleCert possibleCert) {
     print('Creating mocks for: $possibleCert');
 
-    var rootPathHost = CertbotPaths().certificatePathRoot(
+    final rootPathHost = CertbotPaths().certificatePathRoot(
         possibleCert.hostname, possibleCert.domain,
         wildcard: possibleCert.wildcard);
 
-    var _fullChainPathHost = CertbotPaths().fullChainPath(rootPathHost);
+    final _fullChainPathHost = CertbotPaths().fullChainPath(rootPathHost);
 
-    var _privateKeyPathHost = CertbotPaths().privateKeyPath(rootPathHost);
+    final _privateKeyPathHost = CertbotPaths().privateKeyPath(rootPathHost);
 
     // when(privateKeyPath(_mockPath(rootPathHost)))
     //     .thenReturn(_mockPath(_privateKeyPathHost));

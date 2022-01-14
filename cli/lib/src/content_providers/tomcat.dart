@@ -1,8 +1,9 @@
 import 'package:dcli/dcli.dart';
-import 'package:nginx_le/src/content_providers/content_provider.dart';
-import 'package:nginx_le/src/util/ask_fqdn_validator.dart';
-import 'package:nginx_le/src/util/ask_location_path.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+
+import '../util/ask_fqdn_validator.dart';
+import '../util/ask_location_path.dart';
+import 'content_provider.dart';
 
 class Tomcat extends ContentProvider {
   @override
@@ -13,7 +14,7 @@ class Tomcat extends ContentProvider {
 
   @override
   void promptForSettings() {
-    var config = ConfigYaml();
+    final config = ConfigYaml();
     String? fqdn;
     print('');
     print(green('Tomcat server details'));
@@ -29,7 +30,7 @@ class Tomcat extends ContentProvider {
 
     fqdn = ask('FQDN of Tomcat server:',
         defaultValue: fqdn,
-        validator: Ask.all([Ask.required, AskFQDNOrLocalhost()]));
+        validator: Ask.all([Ask.required, const AskFQDNOrLocalhost()]));
 
     var port = config.settings[portKey] as int?;
     port ??= 8080;
@@ -42,8 +43,8 @@ class Tomcat extends ContentProvider {
     config.settings[portKey] = port;
     config.settings[contextKey] = context;
 
-    askForLocationPath(
-        'Host directory for generated tomcat `.location` and `.upstream` files');
+    askForLocationPath('Host directory for generated tomcat `.location` and '
+        '`.upstream` files');
   }
 
   String get portKey => '$name-port';
@@ -54,11 +55,11 @@ class Tomcat extends ContentProvider {
 
   @override
   void createLocationFile() {
-    var config = ConfigYaml();
+    final config = ConfigYaml();
 
     find('*.location', workingDirectory: config.hostIncludePath!)
-        .forEach((file) => delete(file));
-    var location = join(config.hostIncludePath!, 'tomcat.location');
+        .forEach(delete);
+    final location = join(config.hostIncludePath!, 'tomcat.location');
 
     var context = config.settings[contextKey] as String?;
 
@@ -72,7 +73,9 @@ class Tomcat extends ContentProvider {
       context += '/';
     }
 
-    location.write('''location / {
+    location
+      ..write('''
+location / {
       	#try_files \$uri \$uri/ =404;
 
         proxy_set_header Host \$host;
@@ -84,9 +87,9 @@ class Tomcat extends ContentProvider {
         proxy_pass http://tomcat/$context;
         proxy_read_timeout 300;
 }
-''');
-
-    location.append('''location /$context {
+''')
+      ..append('''
+location /$context {
       	#try_files \$uri \$uri/ =404;
 
         proxy_set_header Host \$host;
@@ -104,14 +107,15 @@ class Tomcat extends ContentProvider {
   @override
   void createUpstreamFile() {
     find('*.upstream', workingDirectory: ConfigYaml().hostIncludePath!)
-        .forEach((file) => delete(file));
-    var config = ConfigYaml();
-    var location = join(ConfigYaml().hostIncludePath!, 'tomcat.upstream');
+        .forEach(delete);
+    final config = ConfigYaml();
+    final location = join(ConfigYaml().hostIncludePath!, 'tomcat.upstream');
 
-    var fqdn = config.settings[fqdnKey] as String?;
-    var port = config.settings[portKey] as int?;
+    final fqdn = config.settings[fqdnKey] as String?;
+    final port = config.settings[portKey] as int?;
 
-    location.write('''upstream tomcat {
+    location.write('''
+upstream tomcat {
     server $fqdn:$port fail_timeout=0;
 }
 ''');
@@ -119,7 +123,7 @@ class Tomcat extends ContentProvider {
 
   @override
   List<Volume> getVolumes() {
-    var config = ConfigYaml();
+    final config = ConfigYaml();
     return [
       Volume(
           hostPath: config.hostIncludePath,

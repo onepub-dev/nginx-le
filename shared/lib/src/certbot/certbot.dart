@@ -3,25 +3,11 @@ import 'dart:math';
 import 'package:cron/cron.dart';
 import 'package:dcli/dcli.dart' hide delete;
 import 'package:dcli/dcli.dart' as dcli;
-import 'package:nginx_le_shared/src/util/email.dart';
-import 'package:path/path.dart';
 
 import '../../nginx_le_shared.dart';
 
 class Certbot {
-  static Certbot? _self;
-
-  /// The install creates a virtual python environment
-  /// for certbot in /opt/certbot so we must run
-  /// all commands from that directory.
-  static const pathTo = '/opt/certbot/bin/certbot';
-
-  bool _sendToStdout = false;
   factory Certbot() => _self ??= Certbot._internal();
-
-  /// The certbot log file
-  String get logfile =>
-      join(CertbotPaths().letsEncryptLogPath, CertbotPaths().logFilename);
 
   Certbot._internal() {
     verbose(() => 'Logging to $logfile');
@@ -39,6 +25,19 @@ class Certbot {
     }
   }
 
+  static Certbot? _self;
+
+  /// The install creates a virtual python environment
+  /// for certbot in /opt/certbot so we must run
+  /// all commands from that directory.
+  static const pathTo = '/opt/certbot/bin/certbot';
+
+  bool _sendToStdout = false;
+
+  /// The certbot log file
+  String get logfile =>
+      join(CertbotPaths().letsEncryptLogPath, CertbotPaths().logFilename);
+
   /// Check that we have valid certificate and deploy it to nginx.
   ///
   ///
@@ -48,12 +47,12 @@ class Certbot {
   ///
   /// returns true if we deployed a valid certificate
   bool deployCertificate() {
-    var hostname = Environment().hostname;
-    var domain = Environment().domain;
-    var wildcard = Environment().domainWildcard;
+    final hostname = Environment().hostname;
+    final domain = Environment().domain;
+    final wildcard = Environment().domainWildcard;
 
     print('Checking for valid certificate');
-    var hasValidCerts = Certbot().hasValidCertificate();
+    final hasValidCerts = Certbot().hasValidCertificate();
 
     var deployed = false;
 
@@ -76,13 +75,13 @@ class Certbot {
   /// true if we have a valid certificate for the given arguments
   /// and it has not expired.
   bool hasValidCertificate() {
-    var hostname = Environment().hostname;
-    var domain = Environment().domain;
-    var wildcard = Environment().domainWildcard;
-    var production = Environment().production;
+    final hostname = Environment().hostname;
+    final domain = Environment().domain;
+    final wildcard = Environment().domainWildcard;
+    final production = Environment().production;
     var foundValidCertificate = false;
 
-    for (var certificate in certificates()) {
+    for (final certificate in certificates()) {
       print('Certificate found:\n $certificate');
       if (certificate!.wasIssuedFor(
           hostname: hostname,
@@ -110,14 +109,15 @@ class Certbot {
     var count = 0;
 
     /// First try non-expired certificates
-    for (var certificate in certificates()) {
+    for (final certificate in certificates()) {
       if (!certificate!.wasIssuedFor(
           hostname: hostname,
           domain: domain,
           wildcard: wildcard,
           production: production)) {
-        print(
-            'Found certificate that does not match the required settings. host: $hostname domain: $domain wildard: $wildcard production: $production. Deleting certificate.');
+        print('Found certificate that does not match the required settings. '
+            'host: $hostname domain: $domain wildard: $wildcard '
+            'production: $production. Deleting certificate.');
 
         certificate.delete();
         count++;
@@ -125,9 +125,10 @@ class Certbot {
 
       /// revoke any really old certificates
       if (certificate.hasExpired(
-          asAt: DateTime.now().subtract(Duration(days: 90)))) {
-        print(
-            'Found certificate that expired more than 90 days ago. host: $hostname domain: $domain wildard: $wildcard production: $production. Deleting certificate.');
+          asAt: DateTime.now().subtract(const Duration(days: 90)))) {
+        print('Found certificate that expired more than 90 days ago. '
+            'host: $hostname domain: $domain wildard: $wildcard '
+            'production: $production. Deleting certificate.');
 
         certificate.delete();
         count++;
@@ -139,15 +140,15 @@ class Certbot {
 
   /// true if we have a valid certificate and it has been deployed
   bool isDeployed() {
-    var hostname = Environment().hostname;
-    var domain = Environment().domain;
-    var wildcard = Environment().domainWildcard;
-    var production = Environment().production;
+    final hostname = Environment().hostname;
+    final domain = Environment().domain;
+    final wildcard = Environment().domainWildcard;
+    final production = Environment().production;
     var deployed = false;
 
-    var fullchain =
+    final fullchain =
         join(CertbotPaths().nginxCertPath, CertbotPaths().fullchainFile);
-    var private =
+    final private =
         join(CertbotPaths().nginxCertPath, CertbotPaths().privateKeyFile);
     if (exists(fullchain) &&
         exists(private) &&
@@ -177,8 +178,10 @@ class Certbot {
       required bool wildcard,
       required bool production}) {
     /// First try non-expired certificates
-    for (var certificate in certificates()) {
-      if (certificate!.hasExpired()) continue;
+    for (final certificate in certificates()) {
+      if (certificate!.hasExpired()) {
+        continue;
+      }
 
       if (certificate.wasIssuedFor(
           hostname: hostname,
@@ -187,13 +190,15 @@ class Certbot {
           production: production)) {
         return true;
       } else {
-        print(red(
-            'Ignored Certificate that was not issued to expected domain: expected $hostname.$domain, wildcard: $wildcard found ${certificate.fqdn}, wildcard: ${certificate.wildcard}'));
+        print(red('Ignored Certificate that was not issued to expected '
+            'domain: expected $hostname.$domain, '
+            'wildcard: $wildcard found ${certificate.fqdn}, '
+            'wildcard: ${certificate.wildcard}'));
       }
     }
 
     /// now consider expired certificates
-    for (var certificate in certificates()) {
+    for (final certificate in certificates()) {
       if (!certificate!.wasIssuedFor(
           hostname: hostname,
           domain: domain,
@@ -202,8 +207,10 @@ class Certbot {
         continue;
       }
       if (certificate.hasExpired()) {
-        print(red(
-            'Found expired certificate that was not issued to expected domain: expected $hostname.$domain, wildcard: $wildcard found ${certificate.fqdn}, wildcard: ${certificate.wildcard}'));
+        print(red('Found expired certificate that was not issued to expected '
+            'domain: expected $hostname.$domain, '
+            'wildcard: $wildcard found ${certificate.fqdn}, '
+            'wildcard: ${certificate.wildcard}'));
 
         return false;
       }
@@ -212,12 +219,12 @@ class Certbot {
   }
 
   void deployCertificatesDirect(String certificateRootPath,
-      {bool revoking = false, required bool reload}) {
+      {required bool reload, bool revoking = false}) {
     if (revoking) {
       print(red('*') * 120);
       print(red('Certificates Revoked.'));
-      print(red(
-          "* Nginx-LE is running in 'Certificate Acquisition' mode. It will only respond to CertBot validation requests."));
+      print(red("* Nginx-LE is running in 'Certificate Acquisition' mode. "
+          'It will only respond to CertBot validation requests.'));
       print(red('*') * 120);
 
       /// symlink in the http configs which only permit certbot access
@@ -280,11 +287,11 @@ class Certbot {
       required bool? production,
       required bool wildcard,
       required String? emailaddress}) {
-    var workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
-    var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
-    var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
+    final workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
+    final logDir = _createDir(CertbotPaths().letsEncryptLogPath);
+    final configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
 
-    var certFilePath = join(
+    final certFilePath = join(
         CertbotPaths()
             .certificatePathRoot(hostname, domain, wildcard: wildcard),
         CertbotPaths().certificateFile);
@@ -293,7 +300,8 @@ class Certbot {
     // print('isFile: ${isFile(certFilePath)}');
     // print('isLink: ${isLink(certFilePath)}');
 
-    NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
+    NamedLock(name: 'certbot', timeout: const Duration(minutes: 20))
+        .withLock(() {
       var cmd = '${Certbot.pathTo} revoke'
           ' --cert-path $certFilePath'
           ' --non-interactive '
@@ -304,11 +312,13 @@ class Certbot {
           ' --logs-dir=$logDir '
           ' --delete-after-revoke';
 
-      if (!production!) cmd += ' --staging ';
+      if (!production!) {
+        cmd += ' --staging ';
+      }
 
-      var progress = Progress(
-        (line) => print(line),
-        stderr: (line) => print(line),
+      final progress = Progress(
+        print,
+        stderr: print,
       );
       cmd.start(
         runInShell: true,
@@ -318,72 +328,72 @@ class Certbot {
 
       if (progress.exitCode != 0) {
         throw CertbotException(
-            'Revocation of certificate: $hostname.$domain failed. See logs for details');
+            'Revocation of certificate: $hostname.$domain failed. '
+            'See logs for details');
       }
     });
   }
 
   /// used by revoke to delete certificates after they have been revoked
   /// If we don't do this then the revoked certificates will still be renewed.
-  void delete(
-      {String? hostname,
-      String? domain,
-      required bool wildcard,
-      required String? emailaddress}) {
-    var workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
-    var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
-    var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
+  void delete({
+    required bool wildcard,
+    required String? emailaddress,
+    String? hostname,
+    String? domain,
+  }) {
+    final workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
+    final logDir = _createDir(CertbotPaths().letsEncryptLogPath);
+    final configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
 
-    NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
-      var cmd = '${Certbot.pathTo} delete'
-          ' --cert-name ${wildcard ? domain : '$hostname.$domain'}'
-          ' --non-interactive '
-          ' -m $emailaddress  '
-          ' --agree-tos '
-          ' --work-dir=$workDir '
-          ' --config-dir=$configDir '
-          ' --logs-dir=$logDir ';
-
-      cmd.start(
-          runInShell: true,
-          nothrow: true,
-          progress: Progress((line) {
-            if (!line.startsWith('- - - -') &&
-                !line.startsWith('Saving debug ')) {
-              print(line);
-            }
-          }, stderr: (line) => print(line)));
+    NamedLock(name: 'certbot', timeout: const Duration(minutes: 20))
+        .withLock(() {
+      '${Certbot.pathTo} delete'
+              ' --cert-name ${wildcard ? domain : '$hostname.$domain'}'
+              ' --non-interactive '
+              ' -m $emailaddress  '
+              ' --agree-tos '
+              ' --work-dir=$workDir '
+              ' --config-dir=$configDir '
+              ' --logs-dir=$logDir '
+          .start(
+              runInShell: true,
+              nothrow: true,
+              progress: Progress((line) {
+                if (!line.startsWith('- - - -') &&
+                    !line.startsWith('Saving debug ')) {
+                  print(line);
+                }
+              }, stderr: print));
     });
   }
 
   /// Checks if the certificate for the given hostname.domain
   /// has expired
   bool hasExpired(String hostname, String domain) {
-    var certificatelist = certificates();
+    final certificatelist = certificates();
     verbose(() =>
         red('HasExpired evaluating ${certificatelist.length} certificates'));
     if (certificatelist.isEmpty) {
       return true;
     }
 
-    var certificate = certificatelist[0]!;
+    final certificate = certificatelist[0]!;
     verbose(() => 'testing expiry for $certificate');
     return certificate.hasExpired();
   }
 
   /// Obtain the list of active certificates
-  List<Certificate?> certificates() {
-    return Certificate.load();
-  }
+  List<Certificate?> certificates() => Certificate.load();
 
   void scheduleRenews() {
-    var cron = Cron();
+    final cron = Cron();
 
     // randomize the minute to reduce the chance
     // of two systems trying to renew at the same time
     // we can be an issue for wild card certs
     // that use dns validation.
-    var minute = Random().nextInt(59);
+    final minute = Random().nextInt(59);
 
     /// run cron at 1 am  everyday
     cron.schedule(Schedule.parse('$minute 1 * * *'), () async {
@@ -395,6 +405,7 @@ class Certbot {
         print(st.toString());
         Email.sendError(
             subject: e.message, body: '${e.details}\n ${st.toString()}');
+        // ignore: avoid_catches_without_on_clauses
       } catch (e, st) {
         /// we don't rethrow as we don't want to shutdown the scheduler.
         /// as this may be a temporary error.
@@ -407,11 +418,12 @@ class Certbot {
   }
 
   void renew({bool force = false}) {
-    print(
-        'Attempting renew using deploy-hook at: ${Environment().certbotDeployHookPath}');
+    print('Attempting renew using deploy-hook at: '
+        '${Environment().certbotDeployHookPath}');
 
     try {
-      NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
+      NamedLock(name: 'certbot', timeout: const Duration(minutes: 20))
+          .withLock(() {
         var certbot = '${Certbot.pathTo} renew '
             ' --agree-tos '
             ' --deploy-hook=${Environment().certbotDeployHookPath}'
@@ -423,8 +435,8 @@ class Certbot {
           certbot += ' --force-renewal';
         }
 
-        var lines = <String>[];
-        var progress = Progress((line) {
+        final lines = <String>[];
+        final progress = Progress((line) {
           print(line);
           lines.add(line);
         }, stderr: (line) {
@@ -435,13 +447,15 @@ class Certbot {
         certbot.start(runInShell: true, nothrow: true, progress: progress);
 
         if (progress.exitCode != 0) {
-          var system = 'hostname'.firstLine;
+          final system = 'hostname'.firstLine;
 
           throw CertbotException(
-              'certbot failed renewing a certificate for ${Environment().fqdn} on $system',
+              'certbot failed renewing a certificate for '
+              '${Environment().fqdn} on $system',
               details: lines.join('\n'));
         }
       });
+      // ignore: avoid_catches_without_on_clauses
     } catch (e, _) {
       print(red('Renew failed as certbot was busy. Will try again later.'));
     }
@@ -456,11 +470,12 @@ class Certbot {
   }
 
   void logError(String message) {
-    logfile.append('*' * 80);
-    logfile.append('*');
-    logfile.append('*    ERROR: $message');
-    logfile.append('*');
-    logfile.append('*' * 80);
+    logfile
+      ..append('*' * 80)
+      ..append('*')
+      ..append('*    ERROR: $message')
+      ..append('*')
+      ..append('*' * 80);
   }
 
   String _createDir(String dir) {
@@ -479,7 +494,7 @@ class Certbot {
     /// we revoke all the certs we have.
     /// We should only have one but if things go wrong we might have old ones
     /// lying around so this cleans things up.
-    for (var cert in Certbot().certificates()) {
+    for (final cert in Certbot().certificates()) {
       print('Revoking ${cert!.fqdn}');
       cert.revoke();
     }
@@ -494,20 +509,21 @@ class Certbot {
     touch(pathToBlockFlag, create: true);
   }
 
-  bool get isBlocked {
-    return _hasValidBlockFlag && !Environment().certbotIgnoreBlock;
-  }
+  bool get isBlocked => _hasValidBlockFlag && !Environment().certbotIgnoreBlock;
 
-  /// returns true if the block flag file exists and it is no more than 15 minutes old
-  /// Essentially we allow an acquisition to retry every 15 minutes on the assumption
+  /// returns true if the block flag file exists and it is no more than
+  /// 15 minutes old
+  /// Essentially we allow an acquisition to retry every 15 minutes on the
+  ///  assumption
   /// that it was a temporary failure and the user has had time to fix it.
   bool get _hasValidBlockFlag =>
       _blockFlagExists && blockedUntil.isAfter(DateTime.now());
 
-  /// If acquisitions are blocked returns the time at which it will be unblocked.
+  /// If acquisitions are blocked returns the time at which it
+  /// will be unblocked.
   /// If acquistions are not blocked returns the curren time.
   DateTime get blockedUntil => _blockFlagExists
-      ? stat(pathToBlockFlag).changed.add(Duration(minutes: 15))
+      ? stat(pathToBlockFlag).changed.add(const Duration(minutes: 15))
       : DateTime.now();
 
   bool get _blockFlagExists => exists(pathToBlockFlag);
@@ -523,9 +539,9 @@ class Certbot {
 }
 
 class CertbotException implements Exception {
+  CertbotException(this.message, {this.details});
   String message;
   String? details;
-  CertbotException(this.message, {this.details});
 
   @override
   String toString() => message;

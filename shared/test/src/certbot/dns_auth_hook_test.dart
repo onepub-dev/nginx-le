@@ -11,12 +11,11 @@ void main() {
 
   Certbot().sendToStdout();
 
-  var provider = AuthProviders().getByName(NameCheapAuthProvider().name)!;
-  provider.authHook();
+  AuthProviders().getByName(NameCheapAuthProvider().name)!.authHook();
 }
 
 void prepareCertHooks() {
-  var letsencryptDir = '/tmp/letsencrypt';
+  const letsencryptDir = '/tmp/letsencrypt';
 
   Environment().production = false;
   Environment().certbotRootPath = letsencryptDir;

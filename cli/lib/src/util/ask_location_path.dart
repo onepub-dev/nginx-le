@@ -2,7 +2,7 @@ import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 void askForLocationPath(String prompt) {
-  var hostIncludePath = askForHostPath(
+  final hostIncludePath = askForHostPath(
       title: 'Location of nginx include files',
       prompt: prompt,
       defaultPath: ConfigYaml().hostIncludePath);
@@ -14,7 +14,9 @@ String askForHostPath({String? title, String? prompt, String? defaultPath}) {
   var valid = false;
   String hostPath;
   do {
-    if (title != null) print(green(title));
+    if (title != null) {
+      print(green(title));
+    }
     hostPath =
         ask('$prompt:', defaultValue: defaultPath, validator: Ask.required);
 

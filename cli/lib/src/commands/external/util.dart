@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:docker2/docker2.dart';
 
@@ -11,7 +10,7 @@ import 'package:docker2/docker2.dart';
 /// Returns the selected container by name or containerid.
 String containerOrName(ArgParser argParser, ArgResults argResults) {
   var containerid = argResults['containerid'] as String?;
-  var name = argResults['name'] as String?;
+  final name = argResults['name'] as String?;
 
   if (name != null && containerid != null) {
     printerr('You may only pass one of "name" and "containerid');
@@ -27,13 +26,13 @@ String containerOrName(ArgParser argParser, ArgResults argResults) {
   }
 
   if (containerid == null && name == null) {
-    var containers = Containers().containers();
+    final containers = Containers().containers();
 
     if (containers.isEmpty) {
       printerr(orange('No docker containers are running.'));
       exit(1);
     }
-    var container = menu<Container>(
+    final container = menu<Container>(
         options: containers,
         prompt: 'Please select a container to run:',
         format: (item) => '${item.imageid} ${item.name}');

@@ -5,6 +5,7 @@ class AskFQDNOrLocalhost extends AskValidator {
   const AskFQDNOrLocalhost();
   @override
   String validate(String line) {
+    // ignore: parameter_assignments
     line = line.trim().toLowerCase();
 
     if (!isFQDN(line) && line != 'localhost') {

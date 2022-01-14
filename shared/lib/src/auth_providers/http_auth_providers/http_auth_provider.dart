@@ -1,10 +1,7 @@
 import 'package:dcli/dcli.dart';
-import 'package:nginx_le_shared/src/util/env_var.dart';
-import 'package:nginx_le_shared/src/util/environment.dart';
 
 import '../../../nginx_le_shared.dart';
-import '../../certbot/certbot.dart';
-import '../auth_provider.dart';
+import '../../util/env_var.dart';
 
 class HTTPAuthProvider extends AuthProvider {
   @override
@@ -23,7 +20,7 @@ class HTTPAuthProvider extends AuthProvider {
     ///
     /// Get the environment vars passed to use
     ///
-    var verbose = Environment().certbotVerbose;
+    final verbose = Environment().certbotVerbose;
     Certbot().log('verbose: $verbose');
     print('VERBOSE=$verbose');
 
@@ -31,31 +28,35 @@ class HTTPAuthProvider extends AuthProvider {
 
     /// Certbot generated envs.
     // ignore: unnecessary_cast
-    var fqdn = Environment().certbotDomain;
+    final fqdn = Environment().certbotDomain;
     Certbot().log('fqdn: $fqdn');
     Certbot()
         .log('${Environment().certbotTokenKey}: ${Environment().certbotToken}');
     print('${Environment().certbotTokenKey}: ${Environment().certbotToken}');
-    Certbot().log(
-        '${Environment().certbotValidationKey}: ${Environment().certbotValidation}');
-    print(
-        '${Environment().certbotValidationKey}: ${Environment().certbotValidation}');
+    Certbot().log('${Environment().certbotValidationKey}: '
+        '${Environment().certbotValidation}');
+    print('${Environment().certbotValidationKey}: '
+        '${Environment().certbotValidation}');
 
     // ignore: unnecessary_cast
-    var certbotAuthKey = Environment().certbotValidation;
+    final certbotAuthKey = Environment().certbotValidation;
     Certbot().log('CertbotAuthKey: "$certbotAuthKey"');
     if (certbotAuthKey == null || certbotAuthKey.isEmpty) {
       Certbot().logError(
-          'The environment variable ${Environment().certbotValidationKey} was empty http_auth_hook ABORTED.');
+          'The environment variable ${Environment().certbotValidationKey} '
+          'was empty http_auth_hook ABORTED.');
     }
-    ArgumentError.checkNotNull(certbotAuthKey,
-        'The environment variable ${Environment().certbotValidationKey} was empty');
+    ArgumentError.checkNotNull(
+        certbotAuthKey,
+        'The environment variable ${Environment().certbotValidationKey} '
+        'was empty');
 
-    var token = Environment().certbotToken;
+    final token = Environment().certbotToken;
     Certbot().log('token: "$token"');
     if (token == null || token.isEmpty) {
       Certbot().logError(
-          'The environment variable ${Environment().certbotTokenKey} was empty http_auth_hook ABORTED.');
+          'The environment variable ${Environment().certbotTokenKey} was '
+          'empty http_auth_hook ABORTED.');
     }
     ArgumentError.checkNotNull(certbotAuthKey,
         'The environment variable ${Environment().certbotTokenKey} was empty');
@@ -63,7 +64,7 @@ class HTTPAuthProvider extends AuthProvider {
     /// This path MUST match the path set in the nginx config files:
     /// /etc/nginx/operating/default.conf
     /// /etc/nginx/acquire/default.conf
-    var path = join('/', 'opt', 'letsencrypt', 'wwwroot', '.well-known',
+    final path = join('/', 'opt', 'letsencrypt', 'wwwroot', '.well-known',
         'acme-challenge', token);
     print('writing token to $path');
     Certbot().log('writing token to $path');
@@ -82,7 +83,7 @@ class HTTPAuthProvider extends AuthProvider {
     ///
     /// Get the environment vars passed to use
     ///
-    var verbose = Environment().certbotVerbose;
+    final verbose = Environment().certbotVerbose;
     Certbot().log('verbose: $verbose');
 
     Settings().setVerbose(enabled: verbose);
@@ -92,7 +93,7 @@ class HTTPAuthProvider extends AuthProvider {
     /// This path MUST match the path set in the nginx config files:
     /// /etc/nginx/operating/default.conf
     /// /etc/nginx/acquire/default.conf
-    var path = join('/', 'opt', 'letsencrypt', 'wwwroot', '.well-known',
+    final path = join('/', 'opt', 'letsencrypt', 'wwwroot', '.well-known',
         Environment().certbotToken);
     if (exists(path)) {
       delete(path);
@@ -109,27 +110,30 @@ class HTTPAuthProvider extends AuthProvider {
 
   @override
   void acquire() {
-    var workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
-    var logDir = _createDir(CertbotPaths().letsEncryptLogPath);
-    var configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
+    final workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
+    final logDir = _createDir(CertbotPaths().letsEncryptLogPath);
+    final configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
 
-    var emailaddress = Environment().authProviderEmailAddress;
-    var hostname = Environment().hostname;
-    var domain = Environment().domain;
-    var production = Environment().production;
+    final emailaddress = Environment().authProviderEmailAddress;
+    final hostname = Environment().hostname;
+    final domain = Environment().domain;
+    final production = Environment().production;
 
     /// These are set via in the Dockerfile
-    var authHook = Environment().certbotAuthHookPath;
-    var cleanupHook = Environment().certbotCleanupHookPath;
+    final authHook = Environment().certbotAuthHookPath;
+    final cleanupHook = Environment().certbotCleanupHookPath;
 
-    ArgumentError.checkNotNull(authHook,
-        'Environment variable: ${Environment().certbotAuthHookPathKey} missing');
+    ArgumentError.checkNotNull(
+        authHook,
+        'Environment variable: ${Environment().certbotAuthHookPathKey} '
+        'missing');
     ArgumentError.checkNotNull(cleanupHook,
         'Environment variable: CERTBOT_HTTP_CLEANUP_HOOK_PATH missing');
 
     verbose(() => 'Starting cerbot with authProvider: $name');
 
-    NamedLock(name: 'certbot', timeout: Duration(minutes: 20)).withLock(() {
+    NamedLock(name: 'certbot', timeout: const Duration(minutes: 20))
+        .withLock(() {
       var certbot = '${Certbot.pathTo} certonly '
           ' --manual '
           ' --preferred-challenges=http '
@@ -143,10 +147,12 @@ class HTTPAuthProvider extends AuthProvider {
           ' --config-dir=$configDir '
           ' --logs-dir=$logDir ';
 
-      if (!production) certbot += ' --staging ';
+      if (!production) {
+        certbot += ' --staging ';
+      }
 
-      var lines = <String>[];
-      var progress = Progress((line) {
+      final lines = <String>[];
+      final progress = Progress((line) {
         print(line);
         lines.add(line);
       }, stderr: (line) {
@@ -157,10 +163,11 @@ class HTTPAuthProvider extends AuthProvider {
       certbot.start(runInShell: true, nothrow: true, progress: progress);
 
       if (progress.exitCode != 0) {
-        var system = 'hostname'.firstLine;
+        final system = 'hostname'.firstLine;
 
         throw CertbotException(
-            'certbot failed acquiring a certificate for $hostname.$domain on $system',
+            'certbot failed acquiring a certificate for $hostname.$domain '
+            'on $system',
             details: lines.join('\n'));
       }
     });

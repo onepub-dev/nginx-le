@@ -10,7 +10,7 @@ import 'mock_cerbot_paths.dart';
 /// but mocks the paths to /tmp.
 void main() {
   withTempDir((dir) {
-    var paths = MockCertbotPaths(
+    MockCertbotPaths(
         hostname: 'auditor',
         domain: 'noojee.com.au',
         wildcard: false,
@@ -19,9 +19,7 @@ void main() {
         rootDir: dir,
         possibleCerts: [
           PossibleCert('auditor', 'noojee.com.au', wildcard: false)
-        ]);
-
-    paths.wire();
+        ]).wire();
 
     /// /tmp/etc/letsencrypt/config/live/auditor.noojee.com.au
     // Environment().certbotDeployHookRenewedLineagePath =
@@ -31,8 +29,8 @@ void main() {
 
     print('rootpath: ${CertbotPaths().letsEncryptRootPath}');
     print('logpath: ${CertbotPaths().letsEncryptLogPath}');
-    print(
-        'certbotDeployHookRenewedLineagePath: ${Environment().certbotDeployHookRenewedLineagePath}');
+    print('certbotDeployHookRenewedLineagePath: '
+        '${Environment().certbotDeployHookRenewedLineagePath}');
 
     deployHook(reload: false);
   });

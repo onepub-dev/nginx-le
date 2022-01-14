@@ -3,10 +3,40 @@ import 'dart:io';
 import 'package:dcli/dcli.dart' as d;
 import 'package:dcli/dcli.dart';
 import 'package:docker2/docker2.dart';
-import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
+import '../../nginx_le_shared.dart';
+
 class ConfigYaml {
+  factory ConfigYaml() => _self;
+
+  ConfigYaml._internal() {
+    if (!d.exists(d.dirname(configPath))) {
+      d.createDir(d.dirname(configPath), recursive: true);
+    }
+
+    settings = SettingsYaml.load(pathToSettings: configPath);
+    startMethod = settings[startMethodKey] as String?;
+    mode = settings[modeKey] as String?;
+    startPaused = settings[Environment().startPausedKey] as bool?;
+    fqdn = settings[fqdnKey] as String?;
+    tld = settings[tldKey] as String?;
+    image = Images().findByImageId((settings[imageKey] as String?)!);
+    certificateType = settings[certificateTypeKey] as String?;
+    emailaddress = settings[emailAddressKey] as String?;
+    containerid = settings[containerIDKey] as String?;
+    authProvider = settings[authProviderKey] as String?;
+    contentProvider = settings[contentProviderKey] as String?;
+    _hostIncludePath = settings[hostIncludePathKey] as String?;
+
+    smtpServer = settings[Environment().smtpServerKey] as String?;
+    smtpServerPort = settings[Environment().smtpServerPortKey] as int? ?? 25;
+
+    /// If true we are using a wildcard dns (e.g. *.clouddialer.com.au)
+    domainWildcard =
+        (settings[Environment().domainWildcardKey] as bool?) ?? false;
+  }
+
   static final _self = ConfigYaml._internal();
   static const configDir = '.nginx-le';
   static const configFile = 'settings.yaml';
@@ -67,40 +97,12 @@ class ConfigYaml {
   // The name of the selected [ContentProvider]
   String? contentProvider;
 
-  /// host path which is mounted into ngix and contains .location and .upstream files from.
+  /// host path which is mounted into ngix and contains .location
+  /// and .upstream files from.
   String? _hostIncludePath;
 
   /// the DNS authentication provider to be used by certbot
   String? authProvider;
-
-  factory ConfigYaml() => _self;
-
-  ConfigYaml._internal() {
-    if (!d.exists(d.dirname(configPath))) {
-      d.createDir(d.dirname(configPath), recursive: true);
-    }
-
-    settings = SettingsYaml.load(pathToSettings: configPath);
-    startMethod = settings[startMethodKey] as String?;
-    mode = settings[modeKey] as String?;
-    startPaused = settings[Environment().startPausedKey] as bool?;
-    fqdn = settings[fqdnKey] as String?;
-    tld = settings[tldKey] as String?;
-    image = Images().findByImageId((settings[imageKey] as String?)!);
-    certificateType = settings[certificateTypeKey] as String?;
-    emailaddress = settings[emailAddressKey] as String?;
-    containerid = settings[containerIDKey] as String?;
-    authProvider = settings[authProviderKey] as String?;
-    contentProvider = settings[contentProviderKey] as String?;
-    _hostIncludePath = settings[hostIncludePathKey] as String?;
-
-    smtpServer = settings[Environment().smtpServerKey] as String?;
-    smtpServerPort = settings[Environment().smtpServerPortKey] as int? ?? 25;
-
-    /// If true we are using a wildcard dns (e.g. *.clouddialer.com.au)
-    domainWildcard =
-        ((settings[Environment().domainWildcardKey] as bool?) ?? false);
-  }
 
   ///
   bool get isConfigured => d.exists(configPath) && fqdn != null;
@@ -118,7 +120,9 @@ class ConfigYaml {
   }
 
   String? get domain {
-    if (fqdn == null) return '';
+    if (fqdn == null) {
+      return '';
+    }
 
     if (fqdn!.contains('.')) {
       /// return everything but the first part (hostname).
@@ -129,7 +133,9 @@ class ConfigYaml {
   }
 
   String? get hostname {
-    if (fqdn == null) return '';
+    if (fqdn == null) {
+      return '';
+    }
 
     if (fqdn!.contains('.')) {
       return fqdn!.split('.')[0];
@@ -163,26 +169,26 @@ class ConfigYaml {
     settings.save();
   }
 
-  String get configPath {
-    return d.join(d.HOME, configDir, configFile);
-  }
+  String get configPath => d.join(d.HOME, configDir, configFile);
 
   void validate(void Function() showUsage) {
     if (!isConfigured) {
-      printerr(red(
-          "A saved configuration doesn't exist. You must use first run 'nginx-le config."));
+      printerr(
+          red("A saved configuration doesn't exist. You must use first run "
+              "'nginx-le config."));
       showUsage();
     }
 
     if (image == null) {
       printerr(red(
-          "Your configuration is in an inconsistent state. (image is null). Run 'nginx-le config'."));
+          'Your configuration is in an inconsistent state. (image is null). '
+          "Run 'nginx-le config'."));
       showUsage();
     }
 
     if (containerid == null) {
-      printerr(red(
-          "Your configuration is in an inconsistent state. (containerid is null). Run 'nginx-le config'."));
+      printerr(red('Your configuration is in an inconsistent state. '
+          "(containerid is null). Run 'nginx-le config'."));
       showUsage();
     }
 

@@ -11,9 +11,9 @@ import '../util/prepare.dart';
 void main() {
   test('certificate ...', () async {
     prepareEnvironment();
-    var certificates = Certificate.load();
+    final certificates = Certificate.load();
 
-    for (var cert in certificates) {
+    for (final cert in certificates) {
       print(cert.toString());
     }
   });
@@ -22,11 +22,11 @@ void main() {
     prepareEnvironment();
 
     print('loading certificates from: ${CertbotPaths().letsEncryptConfigPath}');
-    var certificates = Certificate.load();
+    final certificates = Certificate.load();
 
     print('Found ${certificates.length} certificates');
 
-    for (var cert in certificates) {
+    for (final cert in certificates) {
       print(cert.toString());
       // if (cert.wasIssuedFor())
 
@@ -34,7 +34,7 @@ void main() {
   });
 
   test('parse', () {
-    var cert = '''
+    const cert = '''
    Certificate Name: robtest5.noojee.org
      Domains: robtest5.noojee.org
      Expiry Date: 2021-05-13 04:36:22+00:00 (INVALID: TEST_CERT)
@@ -42,7 +42,7 @@ void main() {
      Private Key Path: /etc/letsencrypt/config/live/robtest5.noojee.org/privkey.pem
 ''';
 
-    var certificate = Certificate.parse(cert.split('\n'));
+    final certificate = Certificate.parse(cert.split('\n'));
 
     print(certificate);
 

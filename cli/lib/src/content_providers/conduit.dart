@@ -1,8 +1,9 @@
 import 'package:dcli/dcli.dart';
-import 'package:nginx_le/src/content_providers/content_provider.dart';
-import 'package:nginx_le/src/util/ask_fqdn_validator.dart';
-import 'package:nginx_le/src/util/ask_location_path.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+
+import '../util/ask_fqdn_validator.dart';
+import '../util/ask_location_path.dart';
+import 'content_provider.dart';
 
 class Conduit extends ContentProvider {
   @override
@@ -13,7 +14,7 @@ class Conduit extends ContentProvider {
 
   @override
   void promptForSettings() {
-    var config = ConfigYaml();
+    final config = ConfigYaml();
     String? fqdn;
     print('');
     print(green('Conduit server details'));
@@ -23,7 +24,7 @@ class Conduit extends ContentProvider {
 
     fqdn = ask('FQDN of Conduit server:',
         defaultValue: fqdn,
-        validator: Ask.all([Ask.required, AskFQDNOrLocalhost()]));
+        validator: Ask.all([Ask.required, const AskFQDNOrLocalhost()]));
 
     var port = config.settings[portKey] as int?;
     port ??= 8888;
@@ -35,8 +36,8 @@ class Conduit extends ContentProvider {
     config.settings[fqdnKey] = fqdn;
     config.settings[portKey] = port;
 
-    askForLocationPath(
-        'Host directory for generated conduit `.location` and `.upstream` files');
+    askForLocationPath('Host directory for generated conduit `.location` '
+        'and `.upstream` files');
   }
 
   String get portKey => '$name-port';
@@ -45,26 +46,27 @@ class Conduit extends ContentProvider {
 
   @override
   void createLocationFile() {
-    var config = ConfigYaml();
+    final config = ConfigYaml();
 
     find('*.location', workingDirectory: config.hostIncludePath!)
-        .forEach((file) => delete(file));
-    var location = join(config.hostIncludePath!, 'conduit.location');
+        .forEach(delete);
+    final location = join(config.hostIncludePath!, 'conduit.location');
 
-    var fqdn = config.settings[fqdnKey] as String?;
-    var port = config.settings[portKey] as int?;
+    final fqdn = config.settings[fqdnKey] as String?;
+    final port = config.settings[portKey] as int?;
 
-    location.write('''location / {
-      	#try_files \$uri \$uri/ =404;
+    location.write('''
+location / {
+    #try_files \$uri \$uri/ =404;
 
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-Proto https;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_redirect off;
-        proxy_max_temp_file_size 0;
-        proxy_pass http://$fqdn:$port;
-        proxy_read_timeout 300;
+    proxy_set_header Host \$host;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_redirect off;
+    proxy_max_temp_file_size 0;
+    proxy_pass http://$fqdn:$port;
+    proxy_read_timeout 300;
 }
 ''');
   }
@@ -72,14 +74,15 @@ class Conduit extends ContentProvider {
   @override
   void createUpstreamFile() {
     find('*.upstream', workingDirectory: ConfigYaml().hostIncludePath!)
-        .forEach((file) => delete(file));
-    var config = ConfigYaml();
-    var location = join(ConfigYaml().hostIncludePath!, 'conduit.upstream');
+        .forEach(delete);
+    final config = ConfigYaml();
+    final location = join(ConfigYaml().hostIncludePath!, 'conduit.upstream');
 
-    var fqdn = config.settings[fqdnKey] as String?;
-    var port = config.settings[portKey] as int?;
+    final fqdn = config.settings[fqdnKey] as String?;
+    final port = config.settings[portKey] as int?;
 
-    location.write('''upstream conduit {
+    location.write('''
+upstream conduit {
     server $fqdn:$port fail_timeout=0;
 }
 ''');
@@ -87,7 +90,7 @@ class Conduit extends ContentProvider {
 
   @override
   List<Volume> getVolumes() {
-    var config = ConfigYaml();
+    final config = ConfigYaml();
     return [
       Volume(
           hostPath: config.hostIncludePath,

@@ -8,73 +8,69 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /// Starts nginx and the certbot scheduler.
 class LogsCommand extends Command<void> {
+  LogsCommand() {
+    // argParser.addOption('containerid',
+    //     abbr: 'c',
+    //     help:
+    //         'The docker containerid to attach to in the form
+    //    -containerid="XXXXX"');
+    // argParser.addOption('name',
+    //     abbr: 'n', help: 'The name of the docker container to attach to');
+    argParser
+      ..addFlag(
+        'nginx',
+        abbr: 'x',
+        defaultsTo: true,
+        help: 'The nginx console output is included.',
+      )
+      ..addFlag(
+        'certbot',
+        abbr: 'b',
+        help: 'The certbot logs are included.',
+      )
+      ..addFlag(
+        'access',
+        abbr: 'a',
+        help: 'The nginx access logs are included.',
+      )
+      ..addFlag(
+        'error',
+        abbr: 'e',
+        help: 'The nginx error logs are included.',
+      )
+      ..addFlag(
+        'follow',
+        abbr: 'f',
+        defaultsTo: true,
+        help: 'Follows the selected log files."',
+      )
+      ..addOption(
+        'lines',
+        abbr: 'l',
+        defaultsTo: '100',
+        help: "Displays the last 'n' lines.",
+      )
+      ..addFlag('debug', negatable: false);
+  }
   @override
   String get description => 'Tails the log file';
 
   @override
   String get name => 'logs';
 
-  LogsCommand() {
-    // argParser.addOption('containerid',
-    //     abbr: 'c',
-    //     help:
-    //         'The docker containerid to attach to in the form --containerid="XXXXX"');
-    // argParser.addOption('name',
-    //     abbr: 'n', help: 'The name of the docker container to attach to');
-    argParser.addFlag(
-      'nginx',
-      abbr: 'x',
-      defaultsTo: true,
-      help: 'The nginx console output is included.',
-    );
-    argParser.addFlag(
-      'certbot',
-      abbr: 'b',
-      defaultsTo: false,
-      help: 'The certbot logs are included.',
-    );
-    argParser.addFlag(
-      'access',
-      abbr: 'a',
-      defaultsTo: false,
-      help: 'The nginx access logs are included.',
-    );
-    argParser.addFlag(
-      'error',
-      abbr: 'e',
-      defaultsTo: false,
-      help: 'The nginx error logs are included.',
-    );
-    argParser.addFlag(
-      'follow',
-      abbr: 'f',
-      defaultsTo: true,
-      help: 'Follows the selected log files."',
-    );
-    argParser.addOption(
-      'lines',
-      abbr: 'l',
-      defaultsTo: '100',
-      help: "Displays the last 'n' lines.",
-    );
-
-    argParser.addFlag('debug', negatable: false, defaultsTo: false);
-  }
-
   @override
   void run() {
-    var follow = argResults!['follow'] as bool;
-    var lines = argResults!['lines'] as String;
-    var certbot = argResults!['certbot'] as bool;
-    var nginx = argResults!['nginx'] as bool;
-    var access = argResults!['access'] as bool?;
-    var error = argResults!['error'] as bool?;
-    var debug = argResults!['debug'] as bool;
+    final follow = argResults!['follow'] as bool;
+    final lines = argResults!['lines'] as String;
+    final certbot = argResults!['certbot'] as bool;
+    final nginx = argResults!['nginx'] as bool;
+    final access = argResults!['access'] as bool?;
+    final error = argResults!['error'] as bool?;
+    final debug = argResults!['debug'] as bool;
 
     Settings().setVerbose(enabled: debug);
 
-    var config = ConfigYaml();
-    config.validate(() => showUsage(argParser));
+    final config = ConfigYaml()..validate(() => showUsage(argParser));
 
     int? lineCount = 0;
     if ((lineCount = int.tryParse(lines)) == null) {
@@ -97,22 +93,37 @@ class LogsCommand extends Command<void> {
       print('nginx-le displaying logs. ');
     }
 
-    var container = Containers().findByContainerId(config.containerid!)!;
+    final container = Containers().findByContainerId(config.containerid!)!;
     if (!container.isRunning) {
-      printerr(red(
-          "Nginx-LE container ${config.containerid} isn't running. Use 'nginx-le start' to start the container"));
+      printerr(red("Nginx-LE container ${config.containerid} isn't running. "
+          "Use 'nginx-le start' to start the container"));
       exit(1);
     }
 
-    print(
-        'Logging Nginx-LE follow=$follow lines=$lineCount certbot=$certbot nginx=$nginx error=$error access=$access');
+    print('Logging Nginx-LE follow=$follow lines=$lineCount certbot=$certbot '
+        'nginx=$nginx error=$error access=$access');
 
-    tailLogs(config.containerid, follow, lineCount, nginx, certbot, access,
-        error, debug);
+    tailLogs(
+        containerid: config.containerid,
+        follow: follow,
+        lines: lineCount,
+        nginx: nginx,
+        certbot: certbot,
+        access: access,
+        error: error,
+        debug: debug);
   }
 
-  void tailLogs(String? containerid, bool follow, int? lines, bool nginx,
-      bool certbot, bool? access, bool? error, bool debug) {
+  void tailLogs({
+    required bool follow,
+    required bool nginx,
+    required bool certbot,
+    required bool debug,
+    String? containerid,
+    int? lines,
+    bool? access,
+    bool? error,
+  }) {
     // var docker_cmd = 'docker exec -it ${containerid} /home/bin/logs';
     // if (follow) docker_cmd += ' --follow';
     // docker_cmd += ' --lines $lines';
@@ -127,13 +138,20 @@ class LogsCommand extends Command<void> {
         exit(1);
       } else {
         /// it was here by default so just turn it off.
+        // ignore: parameter_assignments
         nginx = false;
       }
     }
     try {
       if (certbot || access! || error!) {
         logInternals(
-            containerid, follow, lines, certbot, access!, error!, debug);
+            containerid: containerid,
+            follow: follow,
+            lines: lines,
+            certbot: certbot,
+            access: access!,
+            error: error!,
+            debug: debug);
       }
 
       if (nginx) {
@@ -148,34 +166,44 @@ class LogsCommand extends Command<void> {
     }
   }
 
-  void logInternals(
+  void logInternals({
+    required bool follow,
+    required bool certbot,
+    required bool access,
+    required bool error,
+    required bool debug,
     String? containerid,
-    bool follow,
     int? lines,
-    bool certbot,
-    bool access,
-    bool error,
-    bool debug,
-  ) {
+  }) {
     var cmd = 'docker exec -it $containerid /home/bin/logs';
-    if (follow) cmd += ' --follow';
+    if (follow) {
+      cmd += ' --follow';
+    }
     cmd += ' --lines $lines';
-    if (certbot) cmd += ' --certbot';
-    if (access) cmd += ' --access';
-    if (error) cmd += ' --error';
-    if (debug) cmd += ' --debug';
+    if (certbot) {
+      cmd += ' --certbot';
+    }
+    if (access) {
+      cmd += ' --access';
+    }
+    if (error) {
+      cmd += ' --error';
+    }
+    if (debug) {
+      cmd += ' --debug';
+    }
 
     cmd.run;
   }
 
   void logNginx(String containerid, int lines, {bool follow = false}) {
-    var stream = DockerLogs(containerid, lines, follow: follow)
+    final stream = DockerLogs(containerid, lines, follow: follow)
         .start()
         .map((line) => 'nginx: $line');
 
     // pre-close the group as onDone won't be called until the group is closed.
-    var finished = Completer<void>();
-    stream.listen((line) => print(line)).onDone(() {
+    final finished = Completer<void>();
+    stream.listen(print).onDone(() {
       print('done');
 
       finished.complete();

@@ -260,13 +260,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.3.0"
-  lints:
+  lint_hard:
     dependency: "direct dev"
     description:
-      name: lints
+      name: lint_hard
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.4"
   logging:
     dependency: transitive
     description:

@@ -6,7 +6,7 @@ import 'certbot/certbot_paths.dart';
 /// to the active web server content.
 /// If [acquisitionMode] is true then this will be the page
 /// we ship informing the user we are in acquistion mode.
-/// If we [acquistionMode] is false then this will be the website's
+/// If we [acquisitionMode] is false then this will be the website's
 /// actual content.
 /// returns true if the correct link didn't exists and had to be created.
 bool createContentSymlink({required bool acquisitionMode}) {
@@ -37,7 +37,9 @@ bool createContentSymlink({required bool acquisitionMode}) {
     // else the symlink already points at the target.
   } else {
     /// the current target is invalid so recreate the link.
-    if (existing) deleteSymlink(CertbotPaths().wwwPathLive);
+    if (existing) {
+      deleteSymlink(CertbotPaths().wwwPathLive);
+    }
     symlink(targetPath, CertbotPaths().wwwPathLive);
     created = true;
   }

@@ -1,6 +1,7 @@
-import 'package:nginx_le/src/content_providers/content_provider.dart';
-import 'package:nginx_le/src/util/ask_location_path.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+
+import '../util/ask_location_path.dart';
+import 'content_provider.dart';
 
 class Custom extends ContentProvider {
   @override
@@ -16,7 +17,7 @@ class Custom extends ContentProvider {
 
   @override
   List<Volume> getVolumes() {
-    var config = ConfigYaml();
+    final config = ConfigYaml();
     return [
       Volume(
           hostPath: config.hostIncludePath,

@@ -6,7 +6,8 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 import '../../util/prepare.dart';
 
-/// Starts the ngix docker instance using the host subdirectory 'certs' to store acquired certificates.
+/// Starts the ngix docker instance using the host subdirectory 'certs'
+/// to store acquired certificates.
 void main() {
   prepareEnvironment();
   env['DEBUG'] = 'false';

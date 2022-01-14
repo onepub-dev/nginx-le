@@ -7,11 +7,11 @@ import 'package:test/test.dart';
 
 void main() {
   test('dockerLog', () async {
-    var complete = Completer<void>();
+    final complete = Completer<void>();
 
     var linesSeen = 0;
 
-    var logger = DockerLogsInIsolate();
+    final logger = DockerLogsInIsolate();
 
     logger.dockerLog(findDockerContainer(), follow: true).listen((event) {
       print(event);
@@ -26,14 +26,14 @@ void main() {
   });
 
   test('DockerLogs.start', () async {
-    var complete = Completer<void>();
+    final complete = Completer<void>();
 
-    var containerid = findDockerContainer();
+    final containerid = findDockerContainer();
 
-    var lines = 'docker logs --tail 1000 $containerid'.toList().length;
+    final lines = 'docker logs --tail 1000 $containerid'.toList().length;
 
     var linesSeen = 0;
-    var logger = DockerLogs(findDockerContainer(), lines, follow: true);
+    final logger = DockerLogs(findDockerContainer(), lines, follow: true);
     logger.start().listen((event) {
       print('test: ${linesSeen + 1} $event');
 
@@ -55,9 +55,9 @@ void main() {
 
 String findDockerContainer() {
   /// find a random docker container to tail.
-  var containers = 'docker container ls'.toList(skipLines: 1);
+  final containers = 'docker container ls'.toList(skipLines: 1);
   if (containers.isEmpty) {
-    throw ('No containers available to tail');
+    throw Exception('No containers available to tail');
   }
 
   /// extract container id.

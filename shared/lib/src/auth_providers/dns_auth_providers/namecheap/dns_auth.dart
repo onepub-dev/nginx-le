@@ -1,10 +1,10 @@
 #! /usr/bin/env dcli
 
 import 'package:dcli/dcli.dart';
-import 'package:nginx_le_shared/nginx_le_shared.dart';
-import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/namecheap/namecheap_auth_provider.dart';
 
+import '../../../../nginx_le_shared.dart';
 import 'challenge.dart';
+import 'namecheap_auth_provider.dart';
 
 ///
 /// This app is called by Certbot to provide the DNS validation.
@@ -22,46 +22,49 @@ void namecheapDNSPath() {
   ///
   /// Get the environment vars passed to use
   ///
-  var isVerbose = Environment().certbotVerbose;
+  final isVerbose = Environment().certbotVerbose;
   Certbot().log('verbose: $isVerbose');
 
   Settings().setVerbose(enabled: isVerbose);
 
   /// Certbot generated envs.
   // ignore: unnecessary_cast
-  var fqdn = Environment().certbotDomain;
+  final fqdn = Environment().certbotDomain;
   Certbot().log('fqdn: $fqdn');
 
   // ignore: unnecessary_cast
-  var certbotValidation = Environment().certbotValidation;
+  final certbotValidation = Environment().certbotValidation;
   Certbot().log('CertbotAuthKey: "$certbotValidation"');
 
   if (certbotValidation == null || certbotValidation.isEmpty) {
     Certbot().logError(
-        'The environment variable ${Environment().certbotValidationKey} was empty dns_auth_hook ABORTED.');
+        'The environment variable ${Environment().certbotValidationKey} '
+        'was empty dns_auth_hook ABORTED.');
   }
-  ArgumentError.checkNotNull(certbotValidation,
-      'The environment variable ${Environment().certbotValidationKey} was empty');
+  ArgumentError.checkNotNull(
+      certbotValidation,
+      'The environment variable ${Environment().certbotValidationKey} '
+      'was empty');
 
-  var authProvider = AuthProviders().getByName(NameCheapAuthProvider().name)!;
+  final authProvider = AuthProviders().getByName(NameCheapAuthProvider().name)!;
 
   /// our own envs.
-  var domain = Environment().domain!;
+  final domain = Environment().domain!;
   Certbot().log('${Environment().domainKey}: $domain');
-  var hostname = Environment().hostname;
+  final hostname = Environment().hostname;
   Certbot().log('${Environment().hostnameKey}: $hostname');
-  var tld = Environment().tld!;
+  final tld = Environment().tld!;
   Certbot().log('tld: $tld');
-  var wildcard = Environment().domainWildcard;
+  final wildcard = Environment().domainWildcard;
   Certbot().log('wildcard: $wildcard');
 
-  var username = authProvider.envUsername;
+  final username = authProvider.envUsername;
   Certbot().log('username: $username');
-  var apiKey = authProvider.envToken;
+  final apiKey = authProvider.envToken;
   Certbot().log('apiKey: $apiKey');
 
   /// the number of times we look to see if the DNS challenge is resolving.
-  var retries = Environment().certbotDNSRetries;
+  final retries = Environment().certbotDNSRetries;
   Certbot().log('${Environment().certbotDNSRetriesKey}: $retries');
 
   if (fqdn == null || fqdn.isEmpty) {
@@ -75,24 +78,25 @@ void namecheapDNSPath() {
     /// Create the required DNS entry for the Certbot challenge.
     ///
     verbose(() => 'Creating challenge');
-    var challenge = Challenge.simple(
+    final challenge = Challenge.simple(
         apiKey: apiKey, username: username, apiUsername: username);
     verbose(() => 'calling challenge.present');
 
     ///
     /// Writes the DNS record and waits for it to be visible.
     ///
-    if ((challenge.present(
+    if (challenge.present(
         hostname: hostname,
         domain: domain,
         tld: tld,
         wildcard: wildcard,
         certbotValidationString: certbotValidation!,
-        retries: retries))) {
+        retries: retries)) {
       Certbot().log('createDNSChallenged SUCCESS');
     } else {
       Certbot().log('createDNSChallenged failed');
     }
+  // ignore: avoid_catches_without_on_clauses
   } catch (e) {
     printerr(e.toString());
   }

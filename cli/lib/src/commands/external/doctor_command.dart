@@ -3,19 +3,20 @@ import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
 import 'package:docker2/docker2.dart';
-import 'package:nginx_le/src/content_providers/content_providers.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+
+import '../../content_providers/content_providers.dart';
 
 /// Starts nginx and the certbot scheduler.
 class DoctorCommand extends Command<void> {
+  DoctorCommand();
+
   @override
   String get description =>
       'Displays current config and diagnostic information';
 
   @override
   String get name => 'doctor';
-
-  DoctorCommand();
 
   @override
   void run() {
@@ -31,7 +32,7 @@ class DoctorCommand extends Command<void> {
     print('');
 
     print('PATH');
-    for (var path in PATH) {
+    for (final path in PATH) {
       _colprint(['', privatePath(path)]);
     }
 
@@ -44,7 +45,7 @@ class DoctorCommand extends Command<void> {
     _showPermissions('HOME', HOME);
     _showPermissions('.dcli', Settings().pathToDCli);
 
-    var config = ConfigYaml();
+    final config = ConfigYaml();
 
     print('');
     print(green('Nginx-LE configuration file'));
@@ -57,16 +58,16 @@ class DoctorCommand extends Command<void> {
     _colprint(['Docker container', config.containerid]);
     _colprint(['Auth Provider', config.authProvider]);
 
-    var authProvider = AuthProviders().getByName(config.authProvider!)!;
-    var envs = authProvider.environment;
-    for (var env in envs) {
+    final authProvider = AuthProviders().getByName(config.authProvider!)!;
+    final envs = authProvider.environment;
+    for (final env in envs) {
       _colprint([env.name, env.value]);
     }
 
-    var provider = ContentProviders().getByName(config.contentProvider)!;
+    final provider = ContentProviders().getByName(config.contentProvider)!;
     print('');
     _colprint(['Content Provider', config.contentProvider]);
-    for (var volume in provider.getVolumes()) {
+    for (final volume in provider.getVolumes()) {
       _colprint([
         'Volume',
         'host: ${volume.hostPath}',
@@ -80,7 +81,7 @@ class DoctorCommand extends Command<void> {
       printerr(
           red("The image has not been configured.  Run 'nginx-le config'"));
     } else {
-      var image = Images().findByImageId(config.image!.imageid ?? '');
+      final image = Images().findByImageId(config.image!.imageid ?? '');
 
       if (image == null) {
         printerr(red('The Image ${config.image!.imageid} does not exist'));
@@ -94,7 +95,7 @@ class DoctorCommand extends Command<void> {
       printerr(
           red("The Container has not been configured. Run 'nginx-le config'"));
     } else {
-      var container = Containers().findByContainerId(config.containerid!);
+      final container = Containers().findByContainerId(config.containerid!);
 
       if (container == null) {
         printerr(red('The Container ${config.containerid} does not exist'));
@@ -119,18 +120,19 @@ class DoctorCommand extends Command<void> {
 
   void _showPermissions(String label, String path) {
     if (exists(path)) {
-      var fstat = stat(path);
+      final fstat = stat(path);
 
-      var owner = _Owner(path);
+      final owner = _Owner(path);
 
+      // ignore: parameter_assignments
       label = label.padRight(20);
 
-      var username = env['USERNAME'];
+      final username = env['USERNAME'];
       if (username != null) {
         print(Format().row([
           label,
           (fstat.modeString()),
-          '<user>:${(owner.group == owner.user ? '<user>' : owner.group)}',
+          '<user>:${owner.group == owner.user ? '<user>' : owner.group}',
           '${privatePath(path)} '
         ], widths: [
           17,
@@ -156,28 +158,25 @@ class DoctorCommand extends Command<void> {
 }
 
 class _Owner {
-  String? user;
-  String? group;
-
   _Owner(String path) {
     if (Settings().isWindows) {
       user = 'Unknown';
       group = 'Unknown';
     } else {
-      var lsLine = 'ls -alFd $path'.firstLine;
+      final lsLine = 'ls -alFd $path'.firstLine;
 
       if (lsLine == null) {
         throw DCliException('No file/directory matched ${absolute(path)}');
       }
 
-      var parts = lsLine.split(' ');
+      final parts = lsLine.split(' ');
       user = parts[2];
       group = parts[3];
     }
   }
+  String? user;
+  String? group;
 
   @override
-  String toString() {
-    return '$user:$group';
-  }
+  String toString() => '$user:$group';
 }

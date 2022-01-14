@@ -10,22 +10,23 @@ void main() {
   test('Log - simple no tail', () {
     Settings().setVerbose(enabled: true);
 
-    var log = '/tmp/nginx/access.log';
+    const log = '/tmp/nginx/access.log';
 
     if (!exists(dirname(log))) {
       createDir(dirname(log), recursive: true);
     }
     touch(join(log), create: true);
 
-    log.write('Line 1/4 of log');
-    log.append('Line 2/4 of log');
-    log.append('Line 3/4 of log');
-    log.append('Last line of log');
+    log
+      ..write('Line 1/4 of log')
+      ..append('Line 2/4 of log')
+      ..append('Line 3/4 of log')
+      ..append('Last line of log');
 
-    var tail = Tail('/tmp/nginx/access.log', 100, follow: false);
-    var stream = tail.start();
+    final tail = Tail('/tmp/nginx/access.log', 100);
+    final stream = tail.start();
 
-    var finished = Completer<void>();
+    final finished = Completer<void>();
 
     stream.listen((line) {
       print('tail: $line');
@@ -40,22 +41,23 @@ void main() {
   test('Log - simple  tail', () {
     Settings().setVerbose(enabled: true);
 
-    var log = '/tmp/nginx/access.log';
+    const log = '/tmp/nginx/access.log';
 
     if (!exists(dirname(log))) {
       createDir(dirname(log), recursive: true);
     }
     touch(join(log), create: true);
 
-    log.write('Line 1/4 of log');
-    log.append('Line 2/4 of log');
-    log.append('Line 3/4 of log');
-    log.append('Last line of log');
+    log
+      ..write('Line 1/4 of log')
+      ..append('Line 2/4 of log')
+      ..append('Line 3/4 of log')
+      ..append('Last line of log');
 
-    var tail = Tail('/tmp/nginx/access.log', 100, follow: true);
-    var stream = tail.start();
+    final tail = Tail('/tmp/nginx/access.log', 100, follow: true);
+    final stream = tail.start();
 
-    var finished = Completer<void>();
+    final finished = Completer<void>();
 
     stream.listen((line) {
       print('tail: $line');
@@ -76,26 +78,26 @@ void main() {
     waitForEx<void>(finished.future);
   });
   test('StreamGroup', () async {
-    var syslog = Tail('/var/log/syslog', 10);
-    var dmesg = Tail('/var/log/dmesg', 10);
+    final syslog = Tail('/var/log/syslog', 10);
+    final dmesg = Tail('/var/log/dmesg', 10);
     touch('$HOME/testlog', create: true);
-    var testlog = Tail('$HOME/testlog', 10);
+    final testlog = Tail('$HOME/testlog', 10);
 
-    var group = StreamGroup<String>();
+    final group = StreamGroup<String>();
 
     await group.add(syslog.start().map((line) => 'syslog: $line'));
     await group.add(dmesg.start().map((line) => 'dmsg: $line'));
     await group.add(testlog.start().map((line) => 'testlog: $line'));
 
     unawaited(group.close());
-    var finished = Completer<void>();
-    group.stream.listen((line) => print(line)).onDone(() {
+    final finished = Completer<void>();
+    group.stream.listen(print).onDone(() {
       print('done');
 
       finished.complete();
     });
 
-    Future<void>.delayed(Duration(seconds: 30), () {
+    Future<void>.delayed(const Duration(seconds: 30), () {
       syslog.stop();
       dmesg.stop();
     });
@@ -104,26 +106,26 @@ void main() {
   });
 
   test('StreamGroup - with follow', () async {
-    var syslog = Tail('/var/log/syslog', 10, follow: true);
-    var dmesg = Tail('/var/log/dmesg', 10, follow: true);
+    final syslog = Tail('/var/log/syslog', 10, follow: true);
+    final dmesg = Tail('/var/log/dmesg', 10, follow: true);
     touch('$HOME/testlog', create: true);
-    var testlog = Tail('$HOME/testlog', 10, follow: true);
+    final testlog = Tail('$HOME/testlog', 10, follow: true);
 
-    var group = StreamGroup<String>();
+    final group = StreamGroup<String>();
 
     await group.add(syslog.start().map((line) => 'syslog: $line'));
     await group.add(dmesg.start().map((line) => 'dmsg: $line'));
     await group.add(testlog.start().map((line) => 'testlog: $line'));
 
     unawaited(group.close());
-    var finished = Completer<void>();
-    group.stream.listen((line) => print(line)).onDone(() {
+    final finished = Completer<void>();
+    group.stream.listen(print).onDone(() {
       print('done');
 
       finished.complete();
     });
 
-    Future<void>.delayed(Duration(seconds: 10), () {
+    Future<void>.delayed(const Duration(seconds: 10), () {
       syslog.stop();
       dmesg.stop();
       testlog.stop();
