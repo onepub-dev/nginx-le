@@ -1,3 +1,7 @@
+# 8.0.3
+- fixed name of setMock
+- added toggle command
+
 # 8.0.2
 - we no longer use release_all. we use pub_release multi
 
