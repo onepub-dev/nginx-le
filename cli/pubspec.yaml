@@ -10,7 +10,7 @@ dependencies:
   async: ^2.4.2
   cron: ^0.4.0
   dcli: ^1.11.0
-  docker2: ^2.0.0
+  docker2: ^2.2.0
   encrypt: ^5.0.0
   http: ^0.13.0
   intl: ^0.17.0
