@@ -1,3 +1,5 @@
+# 8.0.4
+Fixed dependancy issue cause by release process.
 # 8.0.1
 migrated to lint hard 
 
