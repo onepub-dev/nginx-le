@@ -1,7 +1,5 @@
 #! /usr/bin/env dcli
 
-@Timeout(Duration(minutes: 30))
-import 'dart:io';
 import 'package:dcli/dcli.dart' hide equals;
 
 import 'package:nginx_le_shared/nginx_le_shared.dart';
@@ -17,7 +15,7 @@ void main() {
         printerr(
             red('Compile and install auth_hook, cleanup_hook and deploy_hook '
                 'before running this test'));
-        exit(1);
+        throw Exception('run dcli compile -i -o container/bin/certbot_hooks ');
       }
       print('setupall called');
       Environment().hostname = 'slayer';
