@@ -5,8 +5,8 @@ import 'package:dcli/dcli.dart';
 /// Changed the shared dependency to be published
 
 void main(List<String> args) {
-  var exe = join(
-      DartScript.self.pathToProjectRoot, 'tool',  'toggle_shared_location.dart');
+  final exe = join(
+      DartScript.self.pathToProjectRoot, 'tool', 'toggle_shared_location.dart');
 
   '$exe local'.run;
 }
