@@ -1,3 +1,8 @@
+# 8.0.7
+- updated the readme to reflect the change to using pub_release multi
+- made the start logs clearer.
+- fixed the restart message.
+
 # 8.0.6
 - Released 8.0.5.
 
