@@ -14,14 +14,14 @@ class RestartCommand extends Command<void> {
   }
   @override
   String get description =>
-      'starts the ngix server after it has been started at least once';
+      're-starts the ngix server after it has been started at least once';
 
   @override
   String get name => 'restart';
 
   @override
   void run() {
-    print('nginx-le container is starting.');
+    print('nginx-le container is re-starting.');
 
     var debug = argResults!['debug'] as bool?;
     debug ??= false;
