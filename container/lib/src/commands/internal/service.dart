@@ -9,7 +9,9 @@ import '../../util/renewal_manager.dart';
 
 /// The main service thread that runs within the docker container.
 void startService() {
+  print(red('*' * 80));
   print('Nginx-LE starting Version:$packageVersion');
+  print(red('*' * 80));
 
   /// These environment variables are set when the container is
   /// created via nginx-le config or by docker-compose.
@@ -93,14 +95,14 @@ void _start() {
 
   AcquisitionManager().start();
 
-  print('Starting nginx daemon.');
+  print(orange('Starting nginx daemon.'));
 
   try {
     /// run nginx in the foreground.
     /// As such this call won't return until nginx shutsdown.
     "nginx -g 'daemon off;'".start();
   } finally {
-    print('Nginx has shutdown');
+    print(red('Nginx has shutdown'));
   }
 }
 
