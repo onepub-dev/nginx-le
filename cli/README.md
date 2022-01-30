@@ -673,11 +673,13 @@ DOMAIN_WILDCARD=true|false
 # Releasing Nginx-le
 If you are involved in developing Nginx-LE you will get to the point where you need to make a release.
 
-The easiest way to release Nginx-LE is to use the release-all.dart script in cli/tools
+The easiest way to release Nginx-LE is to use pub_release
 
 ```
+
 cd cli
-tool/release_all.dart
+dart pub global activate pub_release
+pub_release multi
 ```
 
 Select the appropriate version no. when prompted and the release_all script will do the rest.
