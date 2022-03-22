@@ -673,7 +673,8 @@ DOMAIN_WILDCARD=true|false
 # Releasing Nginx-le
 If you are involved in developing Nginx-LE you will get to the point where you need to make a release.
 
-The easiest way to release Nginx-LE is to use pub_release
+The easiest way to release Nginx-LE is to use 'pub_release multi'.
+This publishes each of the packages and then does a docker build and push.
 
 ```
 
