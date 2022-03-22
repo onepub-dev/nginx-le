@@ -33,8 +33,17 @@ abstract class GenericAuthProvider extends AuthProvider {
     Environment().logfile = join(logDir, 'letsencrypt.log');
 
     var hostname = Environment().hostname;
-    final domain = Environment().domain;
+    final domain = Environment().domain!;
     final wildcard = Environment().domainWildcard;
+
+    hostname = wildcard ? '*' : hostname;
+
+    String fqdn;
+    if (hostname == null || hostname.isEmpty) {
+      fqdn = domain;
+    } else {
+      fqdn = '$hostname.$domain';
+    }
 
     final production = Environment().production;
     final emailaddress = Environment().authProviderEmailAddress;
@@ -51,8 +60,6 @@ abstract class GenericAuthProvider extends AuthProvider {
         'Environment variable: '
         '${Environment().certbotCleanupHookPathKey} missing');
 
-    hostname = wildcard ? '*' : hostname;
-
     verbose(() => 'Starting cerbot with authProvider: $name');
 
     NamedLock(name: 'certbot', timeout: const Duration(minutes: 20))
@@ -61,7 +68,7 @@ abstract class GenericAuthProvider extends AuthProvider {
           ' --manual '
           ' --preferred-challenges=dns '
           ' -m $emailaddress  '
-          ' -d $hostname.$domain '
+          ' -d $fqdn '
           ' --agree-tos '
           ' --non-interactive '
           ' --manual-auth-hook="$authHookPath" '
@@ -90,7 +97,7 @@ abstract class GenericAuthProvider extends AuthProvider {
 
         throw CertbotException(
             'certbot failed acquiring a certificate for '
-            '$hostname.$domain on $system',
+            '$fqdn on $system',
             details: lines.join('\n'));
       }
     });

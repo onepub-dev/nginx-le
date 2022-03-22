@@ -61,16 +61,23 @@ class CloudFlareProvider extends GenericAuthProvider {
     _createSettings();
 
     var hostname = Environment().hostname;
-    final domain = Environment().domain;
+    final domain = Environment().domain!;
     final wildcard = Environment().domainWildcard;
     final production = Environment().production;
     final emailaddress = Environment().authProviderEmailAddress;
 
     hostname = wildcard ? '*' : hostname;
 
+    String fqdn;
+    if (hostname == null || hostname.isEmpty) {
+      fqdn = domain;
+    } else {
+      fqdn = '$hostname.$domain';
+    }
+
     verbose(() => 'Starting cerbot with authProvider: $name to acquire a '
         '${production ? 'production' : 'staging'} certificate '
-        'for $hostname.$domain');
+        'for $fqdn');
 
     verbose(() => 'Cloudflare api token. '
         'Env:${AuthProvider.authProviderToken}: $envToken');
@@ -79,9 +86,10 @@ class CloudFlareProvider extends GenericAuthProvider {
         .withLock(() {
       var certbot = '${Certbot.pathTo} certonly '
           ' --dns-cloudflare '
+          ' --dns-cloudflare-propagation-seconds 180'
           ' --dns-cloudflare-credentials ${CertbotPaths().cloudFlareSettings}'
           ' -m $emailaddress '
-          ' -d $hostname.$domain '
+          ' -d $fqdn '
           ' --agree-tos '
           ' --non-interactive '
           ' --work-dir=$workDir '
@@ -113,7 +121,7 @@ class CloudFlareProvider extends GenericAuthProvider {
 
         throw CertbotException(
             'certbot failed acquiring a certificate for '
-            '$hostname.$domain on $system',
+            '$fqdn on $system',
             details: lines.join('\n'));
       } else {
         print('Certificate acquired.');

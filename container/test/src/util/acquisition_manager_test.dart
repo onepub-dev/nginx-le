@@ -18,7 +18,8 @@ void main() {
       ..add(PossibleCert('robtest5', 'noojee.org', wildcard: false))
       ..add(PossibleCert('robtest5', 'noojee.org', wildcard: true))
       ..add(PossibleCert('robtest', 'noojee.org', wildcard: false))
-      ..add(PossibleCert('auditor', 'noojee.org', wildcard: false));
+      ..add(PossibleCert('auditor', 'noojee.org', wildcard: false))
+      ..add(PossibleCert('', 'onepub.dev', wildcard: false));
   });
   test('acquisition manager ...', () async {
     withTempDir((dir) {
@@ -101,6 +102,7 @@ void main() {
         settingFilename: 'namecheap.yaml',
         revoke: false);
   });
+
   test('Revoke All certificate', () {
     Certbot().revokeAll();
     expect(Certificate.load().length, equals(0));
@@ -122,6 +124,14 @@ void main() {
   test('acquire certificate cloudflare ...', () async {
     _acquire(
         hostname: 'auditor',
+        domain: 'noojee.com.au',
+        tld: 'com.au',
+        settingFilename: 'cloudflare.yaml');
+  });
+
+  test('Acquire onepub.dev via cloudflare', () {
+    _acquire(
+        hostname: '',
         domain: 'noojee.com.au',
         tld: 'com.au',
         settingFilename: 'cloudflare.yaml');

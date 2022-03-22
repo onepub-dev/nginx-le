@@ -1,3 +1,8 @@
+# 8.1.0
+- improved the acquisition blocked message.
+- add support for a domain certificate e.g. onepub.doc rather than www.onepub.doc
+  set the HOSTNAME environment var to blank and DOMAIN to the domain name (e.g. onepub.doc)
+
 # 8.0.7
 
 # 8.0.6

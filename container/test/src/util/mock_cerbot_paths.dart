@@ -11,7 +11,13 @@ class PossibleCert {
   bool wildcard;
 
   @override
-  String toString() => '$hostname.$domain wildcard: $wildcard';
+  String toString() {
+    if (hostname.isEmpty) {
+      return '$domain wildcard: $wildcard';
+    } else {
+      return '$hostname.$domain wildcard: $wildcard';
+    }
+  }
 }
 
 class MockCertbotPaths extends Mock implements CertbotPaths {
