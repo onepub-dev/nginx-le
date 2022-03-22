@@ -1,5 +1,5 @@
 name: nginx_le_shared
-version: 8.0.7
+version: 8.1.0
 homepage: https://github.com/bsutton/nginx-le
 documentation: https://nginxle.noojee.dev/
 description: shared library used by Nginx-LE
