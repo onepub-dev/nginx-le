@@ -1,3 +1,5 @@
+# 8.1.1
+- second attempt at 8.1 release
 # 8.1.0
 - improved the acquisition blocked message.
 - add support for a domain certificate e.g. onepub.doc rather than www.onepub.doc
