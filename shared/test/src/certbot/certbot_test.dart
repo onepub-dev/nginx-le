@@ -30,7 +30,11 @@ void main() {
     });
 
     test('acquire', () {
-      prepareCertHooks();
+      prepareNameCheapCertHooks(
+          hostname: 'slayer',
+          domain: 'noojee.org',
+          tld: 'org',
+          wildcard: false);
 
       final authProvider =
           AuthProviders().getByName(NameCheapAuthProvider().name)!;
@@ -76,7 +80,11 @@ void main() {
     test(
         'renew - this can take > 10 min as certbot intentionally slows '
         'this call down.', () {
-      prepareCertHooks();
+      prepareNameCheapCertHooks(
+          hostname: 'slayer',
+          domain: 'noojee.org',
+          tld: 'org',
+          wildcard: false);
 
       final certificates = Certificate.load();
 

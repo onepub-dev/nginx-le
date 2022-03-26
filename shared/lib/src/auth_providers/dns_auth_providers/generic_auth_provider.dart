@@ -33,17 +33,12 @@ abstract class GenericAuthProvider extends AuthProvider {
     Environment().logfile = join(logDir, 'letsencrypt.log');
 
     var hostname = Environment().hostname;
-    final domain = Environment().domain!;
+    final domain = Environment().domain;
     final wildcard = Environment().domainWildcard;
 
     hostname = wildcard ? '*' : hostname;
 
-    String fqdn;
-    if (hostname == null || hostname.isEmpty) {
-      fqdn = domain;
-    } else {
-      fqdn = '$hostname.$domain';
-    }
+    final fqdn = Certificate.buildFQDN(hostname, domain);
 
     final production = Environment().production;
     final emailaddress = Environment().authProviderEmailAddress;

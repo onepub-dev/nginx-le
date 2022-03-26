@@ -32,7 +32,7 @@ void acquire(List<String> args) {
 
   Certbot().deleteInvalidCertificates(
       hostname: Environment().hostname!,
-      domain: Environment().domain!,
+      domain: Environment().domain,
       wildcard: Environment().domainWildcard,
       production: Environment().production);
 

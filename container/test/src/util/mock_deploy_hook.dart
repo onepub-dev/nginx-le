@@ -4,22 +4,20 @@ import 'package:dcli/dcli.dart';
 import 'package:nginx_le_container/src/commands/internal/deploy_hook.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
-import 'mock_cerbot_paths.dart';
-
 /// Used by unit tests. This code runs the same logic as deploy_hook
 /// but mocks the paths to /tmp.
 void main() {
   withTempDir((dir) {
-    MockCertbotPaths(
-        hostname: 'auditor',
-        domain: 'noojee.com.au',
-        wildcard: false,
-        tld: 'com.au',
-        settingsFilename: 'cloudflare.yaml',
-        rootDir: dir,
-        possibleCerts: [
-          PossibleCert('auditor', 'noojee.com.au', wildcard: false)
-        ]).wire();
+    // MockCertbotPaths(
+    //     hostname: 'auditor',
+    //     domain: 'noojee.com.au',
+    //     wildcard: false,
+    //     tld: 'com.au',
+    //     settingsFilename: 'cloudflare.yaml',
+    //     rootDir: dir,
+    //     possibleCerts: [
+    //       PossibleCert('auditor', 'noojee.com.au', wildcard: false)
+    //     ]).wire();
 
     /// /tmp/etc/letsencrypt/config/live/auditor.noojee.com.au
     // Environment().certbotDeployHookRenewedLineagePath =

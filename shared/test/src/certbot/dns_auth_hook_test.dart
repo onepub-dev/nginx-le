@@ -7,22 +7,27 @@ import 'package:test/test.dart';
 /// You must run this test app in vscode with the console option.
 void main() {
   Settings().setVerbose(enabled: true);
-  prepareCertHooks();
+  prepareNameCheapCertHooks(
+      hostname: 'slayer', domain: 'noojee.org', tld: 'org', wildcard: false);
 
   Certbot().sendToStdout();
 
   AuthProviders().getByName(NameCheapAuthProvider().name)!.authHook();
 }
 
-void prepareCertHooks() {
+void prepareNameCheapCertHooks(
+    {required String hostname,
+    required String domain,
+    required String tld,
+    required bool wildcard}) {
   const letsencryptDir = '/tmp/letsencrypt';
 
   Environment().production = false;
   Environment().certbotRootPath = letsencryptDir;
-  Environment().certbotDomain = 'noojee.org';
-  Environment().hostname = 'slayer';
-  Environment().domain = 'noojee.org';
-  Environment().tld = 'org';
+  Environment().certbotDomain = domain;
+  Environment().hostname = hostname;
+  Environment().domain = domain;
+  Environment().tld = tld;
   Environment().domainWildcard = false;
   Environment().certbotValidation = 'TEST_TOKEN_ABC134';
   Environment().nginxCertRootPathOverwrite = '/tmp/nginx/certs';

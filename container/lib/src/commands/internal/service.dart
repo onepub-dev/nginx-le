@@ -10,7 +10,7 @@ import '../../util/renewal_manager.dart';
 /// The main service thread that runs within the docker container.
 void startService() {
   print(red('*' * 80));
-  print('Nginx-LE starting Version:$packageVersion');
+  print('Nginx-LE starting Version: $packageVersion');
   print(red('*' * 80));
 
   /// These environment variables are set when the container is
@@ -54,7 +54,7 @@ void _start() {
 
   final hostname = Environment().hostname!;
   verbose(() => '${Environment().hostnameKey}=$hostname');
-  final domain = Environment().domain!;
+  final domain = Environment().domain;
   verbose(() => '${Environment().domainKey}=$domain');
   final tld = Environment().tld;
   verbose(() => '${Environment().tldKey}=$tld');

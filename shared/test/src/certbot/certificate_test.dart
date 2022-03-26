@@ -47,7 +47,7 @@ void main() {
     print(certificate);
 
     expect(
-        certificate[0]!.wasIssuedFor(
+        certificate[0].wasIssuedFor(
             hostname: 'robtest5',
             domain: 'noojee.org',
             wildcard: false,

@@ -19,7 +19,7 @@ void main() {
 
       final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(1));
-      final certificate = certificates[0]!;
+      final certificate = certificates[0];
       expect(certificate.fqdn, equals('slayer.noojee.org'));
       expect(certificate.domains, equals('slayer.noojee.org'));
       expect(
@@ -60,7 +60,7 @@ void main() {
 
       final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(1));
-      final certificate = certificates[0]!;
+      final certificate = certificates[0];
       expect(certificate.hasExpired(), equals(true));
     });
 
@@ -78,7 +78,7 @@ void main() {
 
       final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(1));
-      final certificate = certificates[0]!;
+      final certificate = certificates[0];
       expect(certificate.hasExpired(), equals(false));
     });
 

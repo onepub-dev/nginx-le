@@ -138,7 +138,7 @@ class HTTPAuthProvider extends AuthProvider {
           ' --manual '
           ' --preferred-challenges=http '
           ' -m $emailaddress  '
-          ' -d $hostname.$domain '
+          ' -d ${Certificate.buildFQDN(hostname, domain)} '
           ' --agree-tos '
           ' --non-interactive '
           ' --manual-auth-hook="$authHook" '
@@ -166,7 +166,8 @@ class HTTPAuthProvider extends AuthProvider {
         final system = 'hostname'.firstLine;
 
         throw CertbotException(
-            'certbot failed acquiring a certificate for $hostname.$domain '
+            'certbot failed acquiring a certificate for '
+            '${Certificate.buildFQDN(hostname, domain)} '
             'on $system',
             details: lines.join('\n'));
       }

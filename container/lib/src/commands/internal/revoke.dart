@@ -21,10 +21,5 @@ void revoke(List<String> args) {
   verbose(() => '${Environment().domainKey}:${Environment().domain}');
 
   Certbot().revokeAll();
-
-  if (Certbot().deployCertificate()) {
-    AcquisitionManager().leaveAcquistionMode(reload: true);
-  } else {
-    AcquisitionManager().enterAcquisitionMode(reload: true);
-  }
+  AcquisitionManager().enterAcquisitionMode(reload: true);
 }

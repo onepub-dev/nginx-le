@@ -17,6 +17,7 @@ dependencies:
   nginx_le_shared: ^8.0.4
   path: ^1.6.4
   public_suffix: ^3.0.0
+  scope: ^2.2.1
   uuid: ^3.0.1
   xml: ^5.0.2
 dev_dependencies: 

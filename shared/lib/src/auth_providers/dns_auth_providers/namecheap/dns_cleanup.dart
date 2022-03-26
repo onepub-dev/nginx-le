@@ -30,7 +30,7 @@ void namecheapDNSCleanup() {
   final authProvider = AuthProviders().getByName(NameCheapAuthProvider().name)!;
 
   /// our own envs.
-  final domain = Environment().domain!;
+  final domain = Environment().domain;
   final hostname = Environment().hostname;
   final tld = Environment().tld!;
   Certbot().log('tld: $tld');

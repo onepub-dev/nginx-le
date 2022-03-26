@@ -65,10 +65,6 @@ class Certbot {
       print('No valid certificates found during deploy');
     }
 
-    if (deployed) {
-      print('Deploy complete.');
-    }
-
     return deployed;
   }
 
@@ -174,7 +170,7 @@ class Certbot {
   /// On start up if we find a bad certificate.
   bool wasIssuedFor(
       {required String? hostname,
-      required String? domain,
+      required String domain,
       required bool wildcard,
       required bool production}) {
     /// First try non-expired certificates
@@ -191,7 +187,7 @@ class Certbot {
         return true;
       } else {
         print(red('Ignored Certificate that was not issued to expected '
-            'domain: expected $hostname.$domain, '
+            'domain: expected ${Certificate.buildFQDN(hostname, domain)}, '
             'wildcard: $wildcard found ${certificate.fqdn}, '
             'wildcard: ${certificate.wildcard}'));
       }
@@ -208,7 +204,7 @@ class Certbot {
       }
       if (certificate.hasExpired()) {
         print(red('Found expired certificate that was not issued to expected '
-            'domain: expected $hostname.$domain, '
+            'domain: expected ${Certificate.buildFQDN(hostname, domain)}, '
             'wildcard: $wildcard found ${certificate.fqdn}, '
             'wildcard: ${certificate.wildcard}'));
 
@@ -247,7 +243,7 @@ class Certbot {
   }
 
   /// copy the certificate files from the given root directory.
-  void _deploy(String certificateRootPath) {
+  void _deploy(String nginxCertificateRootPath) {
     // /// we need to leave the original files in place as they form part
     // /// of the letsencrypt archive
     // copy(
@@ -267,10 +263,10 @@ class Certbot {
     //     overwrite: true);
 
     /// symlink the files so nginx can see the certificate
-    symlink(CertbotPaths().fullChainPath(certificateRootPath),
+    symlink(CertbotPaths().fullChainPath(nginxCertificateRootPath),
         join(CertbotPaths().nginxCertPath, CertbotPaths().fullchainFile));
 
-    symlink(CertbotPaths().privateKeyPath(certificateRootPath),
+    symlink(CertbotPaths().privateKeyPath(nginxCertificateRootPath),
         join(CertbotPaths().nginxCertPath, CertbotPaths().privateKeyFile));
   }
 
@@ -283,7 +279,7 @@ class Certbot {
   /// acquistion mode otherwise nginx may shutdown.
   void revoke(
       {required String? hostname,
-      required String? domain,
+      required String domain,
       required bool? production,
       required bool wildcard,
       required String? emailaddress}) {
@@ -327,8 +323,8 @@ class Certbot {
       );
 
       if (progress.exitCode != 0) {
-        throw CertbotException(
-            'Revocation of certificate: $hostname.$domain failed. '
+        throw CertbotException('Revocation of certificate: '
+            '${Certificate.buildFQDN(hostname, domain)} failed. '
             'See logs for details');
       }
     });
@@ -339,8 +335,8 @@ class Certbot {
   void delete({
     required bool wildcard,
     required String? emailaddress,
+    required String domain,
     String? hostname,
-    String? domain,
   }) {
     final workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
     final logDir = _createDir(CertbotPaths().letsEncryptLogPath);
@@ -349,7 +345,8 @@ class Certbot {
     NamedLock(name: 'certbot', timeout: const Duration(minutes: 20))
         .withLock(() {
       '${Certbot.pathTo} delete'
-              ' --cert-name ${wildcard ? domain : '$hostname.$domain'}'
+              ' --cert-name '
+              '${wildcard ? domain : Certificate.buildFQDN(hostname, domain)}'
               ' --non-interactive '
               ' -m $emailaddress  '
               ' --agree-tos '

@@ -14,8 +14,8 @@ RUN apt update  && apt install --no-install-recommends -y \
 # install dcli. 
 # nginx-le build will update the '# flush-cache' to force a new download of dcli if the -u switch is passed
 # to the build command
-#RUN wget https://github.com/noojee/dcli/releases/download/latest.linux/dcli_install # flush-cache: 0051cdfa-9672-42fe-bbb3-3e85a2fd360a
-RUN wget https://github.com/noojee/dcli/releases/download/1.18.1/dcli_install # flush-cache: 0051cdfa-9672-42fe-bbb3-3e85a2fd360a
+#RUN wget https://github.com/noojee/dcli/releases/download/latest.linux/dcli_install # flush-cache: 4a94d0b7-9d53-4f67-b5b9-56eebfd3d41c
+RUN wget https://github.com/noojee/dcli/releases/download/1.18.1/dcli_install # flush-cache: 4a94d0b7-9d53-4f67-b5b9-56eebfd3d41c
 RUN chmod +x dcli_install
 ENV PATH="${PATH}:/usr/lib/dart/bin:/root/.pub-cache/bin"
 RUN echo $PATH
@@ -32,7 +32,9 @@ RUN dcli version
 RUN mkdir -p /home/build/container/bin/cerbot_hooks
 RUN mkdir -p /home/build/container/lib
 
-COPY container/bin /home/build/container/bin/
+RUN echo 'forcing source update' # update-source: a08a8255-3498-40f2-a8be-1d59e6170796
+
+COPY container/bin /home/build/container/bin/ 
 COPY container/lib /home/build/container/lib/
 COPY container/pubspec.yaml /home/build/container
 COPY container/analysis_options.yaml /home/build/container
@@ -135,9 +137,6 @@ RUN openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048
 
 # location for the .well-know folder certbot will interact with.
 RUN mkdir -p /opt/letsencrypt/wwwroot/.well-known/acme-challenge
-
-
-
 
 #
 # Install the nginx-le components.

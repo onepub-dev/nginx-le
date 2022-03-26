@@ -3,6 +3,7 @@ import 'package:dcli/dcli.dart' hide equals;
 
 import 'package:nginx_le_container/src/util/acquisition_manager.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+import 'package:settings_yaml/settings_yaml.dart';
 import 'package:test/test.dart';
 
 import 'mock_cerbot_paths.dart';
@@ -20,15 +21,17 @@ void main() {
       ..add(PossibleCert('robtest', 'noojee.org', wildcard: false))
       ..add(PossibleCert('auditor', 'noojee.org', wildcard: false))
       ..add(PossibleCert('', 'onepub.dev', wildcard: false));
+
+    Environment().certbotDNSWaitTime = 10;
   });
   test('acquisition manager ...', () async {
     withTempDir((dir) {
-      setup(
-          hostname: 'auditor',
-          domain: 'noojee.com.au',
-          wildcard: false,
-          settingsFilename: 'cloudflare.yaml',
-          mockPath: dir);
+      // setup(
+      //     hostname: 'auditor',
+      //     domain: 'noojee.com.au',
+      //     wildcard: false,
+      //     settingsFilename: 'cloudflare.yaml',
+      //     mockPath: dir);
 
       AcquisitionManager().enterAcquisitionMode(reload: false);
       expect(AcquisitionManager().inAcquisitionMode, equals(true));
@@ -46,13 +49,13 @@ void main() {
 
   test('Renew certificate', () {
     withTempDir((dir) {
-      setup(
-          hostname: 'auditor',
-          domain: 'noojee.com.au',
-          tld: 'com.au',
-          wildcard: false,
-          settingsFilename: 'cloudflare.yaml',
-          mockPath: dir);
+      // setup(
+      //     hostname: 'auditor',
+      //     domain: 'noojee.com.au',
+      //     tld: 'com.au',
+      //     wildcard: false,
+      //     settingsFilename: 'cloudflare.yaml',
+      //     mockPath: dir);
 
       Certbot().clearBlockFlag();
 
@@ -237,13 +240,13 @@ void main() {
   /// The second attempt to acquire a certificate should do nothing.
   test('double acquire wildcard certificate ...', () async {
     withTempDir((dir) {
-      setup(
-          hostname: 'auditor',
-          domain: 'noojee.com.au',
-          tld: 'com.au',
-          wildcard: true,
-          settingsFilename: 'cloudflare.yaml',
-          mockPath: dir);
+      // setup(
+      //     hostname: 'auditor',
+      //     domain: 'noojee.com.au',
+      //     tld: 'com.au',
+      //     wildcard: true,
+      //     settingsFilename: 'cloudflare.yaml',
+      //     mockPath: dir);
 
       Certbot().clearBlockFlag();
 
@@ -329,86 +332,97 @@ void _acquire(
     bool wildcard = false,
     bool production = false,
     bool revoke = true}) {
+  final settingsPath = truepath('test', 'config', settingFilename);
+  final settings = SettingsYaml.load(pathToSettings: settingsPath);
+
+  Settings().setVerbose(enabled: true);
+  configMockDeployHook();
+
   withTempDir((dir) {
-    setup(
-        hostname: hostname,
-        domain: domain,
-        wildcard: wildcard,
-        tld: tld,
-        production: production,
-        settingsFilename: settingFilename,
-        mockPath: dir);
-
-    Certbot().clearBlockFlag();
-
-    if (revoke) {
-      Certbot().deleteInvalidCertificates(
-          hostname: hostname,
-          domain: domain,
-          wildcard: wildcard,
-          production: production);
-
-      for (final certificate in Certbot().certificates()) {
-        certificate!.revoke();
-      }
-      expect(Certbot().hasValidCertificate(), equals(false));
-      expect(Certbot().isDeployed(), equals(false));
-    }
-
-    AcquisitionManager().enterAcquisitionMode(reload: false);
-
-    /// acquire the certificate
-    AcquisitionManager().acquireIfRequired(reload: false);
-
-    expect(AcquisitionManager().inAcquisitionMode, equals(false));
-    expect(Certbot().hasValidCertificate(), equals(true));
-
-    Settings().setVerbose(enabled: true);
-
-    expect(Certbot().isDeployed(), equals(true));
-    expect(
-        Certbot().wasIssuedFor(
-            hostname: hostname,
-            domain: domain,
-            wildcard: wildcard,
-            production: production),
-        equals(true));
-
-    if (revoke) {
-      final cert = Certificate.find(
-          hostname: hostname,
-          domain: domain,
-          wildcard: wildcard,
-          production: production)!;
-
-      expect(cert, equals(isNotNull));
-
-      cert.revoke();
-    }
+    withEnvironment(() {
+      CertbotPaths.withTestScope(
+          dir,
+          () => _runAcquire(
+              hostname: hostname,
+              domain: domain,
+              tld: tld,
+              wildcard: wildcard,
+              production: production,
+              revoke: revoke));
+    }, environment: {
+      Environment().hostnameKey: hostname,
+      Environment().domainKey: domain,
+      Environment().domainWildcardKey: '$wildcard',
+      Environment().productionKey: '$production',
+      Environment().authProviderEmailAddressKey:
+          settings['AUTH_PROVIDER_EMAIL_ADDRESS'] as String,
+      Environment().smtpServerKey: 'localhost',
+      Environment().smtpServerPortKey: '1025',
+      Environment().emailaddressKey: 'test@noojee.com.au',
+      Environment().authProviderKey: settings['AUTH_PROVIDER'] as String,
+      Environment().authProviderTokenKey:
+          settings[AuthProvider.authProviderToken] as String,
+      Environment().authProviderUsernameKey:
+          settings[AuthProvider.authProviderUsername] as String,
+      Environment().authProviderEmailAddressKey:
+          settings[AuthProvider.authProviderEmailAddress] as String
+    });
   });
 }
 
-void setup({
-  required String hostname,
-  required String domain,
-  required bool wildcard,
-  required String settingsFilename,
-  required String mockPath,
-  bool production = false,
-  String? tld,
-}) {
-  MockCertbotPaths(
+void _runAcquire(
+    {required String hostname,
+    required String domain,
+    required String tld,
+    bool wildcard = false,
+    bool production = false,
+    bool revoke = true}) {
+  Certbot().clearBlockFlag();
+
+  if (revoke) {
+    Certbot().deleteInvalidCertificates(
+        hostname: hostname,
+        domain: domain,
+        wildcard: wildcard,
+        production: production);
+
+    for (final certificate in Certbot().certificates()) {
+      certificate!.revoke();
+    }
+    expect(Certbot().hasValidCertificate(), equals(false));
+    expect(Certbot().isDeployed(), equals(false));
+  }
+
+  AcquisitionManager().enterAcquisitionMode(reload: false);
+
+  /// acquire the certificate
+  AcquisitionManager().acquireIfRequired(reload: false);
+
+  expect(AcquisitionManager().inAcquisitionMode, equals(false));
+  expect(Certbot().hasValidCertificate(), equals(true));
+
+  Settings().setVerbose(enabled: true);
+
+  expect(Certbot().isDeployed(), equals(true));
+  expect(
+      Certbot().wasIssuedFor(
           hostname: hostname,
           domain: domain,
           wildcard: wildcard,
-          production: production,
-          tld: tld,
-          settingsFilename: settingsFilename,
-          possibleCerts: possibleCerts,
-          rootDir: mockPath)
-      .wire();
+          production: production),
+      equals(true));
 
-  configMockDeployHook();
+  if (revoke) {
+    final cert = Certificate.find(
+        hostname: hostname,
+        domain: domain,
+        wildcard: wildcard,
+        production: production)!;
+
+    expect(cert, equals(isNotNull));
+
+    cert.revoke();
+  }
 }
 
 void configMockDeployHook() {

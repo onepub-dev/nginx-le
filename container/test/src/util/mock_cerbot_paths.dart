@@ -1,7 +1,5 @@
-import 'package:dcli/dcli.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
-import 'package:settings_yaml/settings_yaml.dart';
 
 class PossibleCert {
   PossibleCert(this.hostname, this.domain, {required this.wildcard});
@@ -15,7 +13,7 @@ class PossibleCert {
     if (hostname.isEmpty) {
       return '$domain wildcard: $wildcard';
     } else {
-      return '$hostname.$domain wildcard: $wildcard';
+      return '${Certificate.buildFQDN(hostname, domain)} wildcard: $wildcard';
     }
   }
 }
@@ -43,159 +41,148 @@ class MockCertbotPaths extends Mock implements CertbotPaths {
 
   List<PossibleCert> possibleCerts = <PossibleCert>[];
 
-  void wire() {
-    throwOnMissingStub(this); // , (invocation) => buildException(invocation));
-    Environment().certbotRootPath = rootDir;
+  // void wire() {
+  //   throwOnMissingStub(this); // , (invocation) => buildException(invocation));
+  //   Environment().certbotRootPath = rootDir;
 
-    _wirePaths();
-    _wireEnvironment(settingsFilename);
+  //   _wirePaths();
+  //   _wireEnvironment(settingsFilename);
 
-    _setMock();
-  }
+  //   _setMock();
+  // }
 
-  void _wirePaths() {
-    if (!exists(Environment().certbotRootPath)) {
-      createDir(Environment().certbotRootPath, recursive: true);
-    }
+  // void _wirePaths() {
+  //   if (!exists(Environment().certbotRootPath)) {
+  //     createDir(Environment().certbotRootPath, recursive: true);
+  //   }
 
-    if (!exists(CertbotPaths().letsEncryptConfigPath)) {
-      createDir(CertbotPaths().letsEncryptConfigPath, recursive: true);
-    }
+  //   if (!exists(CertbotPaths().letsEncryptConfigPath)) {
+  //     createDir(CertbotPaths().letsEncryptConfigPath, recursive: true);
+  //   }
 
-    if (!exists(CertbotPaths().letsEncryptLivePath)) {
-      createDir(CertbotPaths().letsEncryptLivePath, recursive: true);
-    }
+  //   if (!exists(CertbotPaths().letsEncryptLivePath)) {
+  //     createDir(CertbotPaths().letsEncryptLivePath, recursive: true);
+  //   }
 
-    if (!exists(_mockPath(CertbotPaths().wwwPathToAcquire))) {
-      createDir(_mockPath(CertbotPaths().wwwPathToAcquire), recursive: true);
-    }
-    if (!exists(_mockPath(CertbotPaths().wwwPathToOperating))) {
-      createDir(_mockPath(CertbotPaths().wwwPathToOperating), recursive: true);
-    }
+  //   if (!exists(_mockPath(CertbotPaths().wwwPathToAcquire))) {
+  //     createDir(_mockPath(CertbotPaths().wwwPathToAcquire), recursive: true);
+  //   }
+  //   if (!exists(_mockPath(CertbotPaths().wwwPathToOperating))) {
+  //     createDir(_mockPath(CertbotPaths().wwwPathToOperating),
+  //recursive: true);
+  //   }
 
-    if (!exists(_mockPath(CertbotPaths().nginxCertPath))) {
-      createDir(_mockPath(CertbotPaths().nginxCertPath), recursive: true);
-    }
+  //   if (!exists(_mockPath(CertbotPaths().nginxCertPath))) {
+  //     createDir(_mockPath(CertbotPaths().nginxCertPath), recursive: true);
+  //   }
 
-    when(() => cloudFlareSettings)
-        .thenReturn(_mockPath(CertbotPaths().cloudFlareSettings));
-    when(() => wwwPathToAcquire)
-        .thenReturn(_mockPath(CertbotPaths().wwwPathToAcquire));
+  //   when(() => cloudFlareSettings)
+  //       .thenReturn(_mockPath(CertbotPaths().cloudFlareSettings));
+  //   when(() => wwwPathToAcquire)
+  //       .thenReturn(_mockPath(CertbotPaths().wwwPathToAcquire));
 
-    when(() => wwwPathLive).thenReturn(_mockPath(CertbotPaths().wwwPathLive));
+  //   when(() => wwwPathLive).thenReturn(_mockPath(CertbotPaths()
+  // .wwwPathLive));
 
-    when(() => wwwPathToOperating)
-        .thenReturn(_mockPath(CertbotPaths().wwwPathToOperating));
+  //   when(() => wwwPathToOperating)
+  //       .thenReturn(_mockPath(CertbotPaths().wwwPathToOperating));
 
-    possibleCerts.forEach(mockPossibleCertPath);
+  //   possibleCerts.forEach(mockPossibleCertPath);
 
-    when(() => wwwPathToAcquire)
-        .thenReturn(_mockPath(CertbotPaths().wwwPathToAcquire));
+  //   when(() => wwwPathToAcquire)
+  //       .thenReturn(_mockPath(CertbotPaths().wwwPathToAcquire));
 
-    when(() => wwwPathLive).thenReturn(_mockPath(CertbotPaths().wwwPathLive));
+  //   when(() => wwwPathLive).thenReturn(_mockPath(CertbotPaths()
+  // .wwwPathLive));
 
-    when(() => wwwPathToOperating)
-        .thenReturn(_mockPath(CertbotPaths().wwwPathToOperating));
+  //   when(() => wwwPathToOperating)
+  //       .thenReturn(_mockPath(CertbotPaths().wwwPathToOperating));
 
-    when(() => fullchainFile).thenReturn(CertbotPaths().fullchainFile);
-    when(() => certificateFile).thenReturn(CertbotPaths().certificateFile);
-    when(() => privateKeyFile).thenReturn(CertbotPaths().privateKeyFile);
+  //   when(() => fullchainFile).thenReturn(CertbotPaths().fullchainFile);
+  //   when(() => certificateFile).thenReturn(CertbotPaths().certificateFile);
+  //   when(() => privateKeyFile).thenReturn(CertbotPaths().privateKeyFile);
 
-    when(() => logFilename).thenReturn(CertbotPaths().logFilename);
+  //   when(() => logFilename).thenReturn(CertbotPaths().logFilename);
 
-    when(() => letsEncryptRootPath)
-        .thenReturn(CertbotPaths().letsEncryptRootPath);
+  //   when(() => letsEncryptRootPath)
+  //       .thenReturn(CertbotPaths().letsEncryptRootPath);
 
-    when(() => letsEncryptLogPath)
-        .thenReturn(CertbotPaths().letsEncryptLogPath);
+  //   when(() => letsEncryptLogPath)
+  //       .thenReturn(CertbotPaths().letsEncryptLogPath);
 
-    when(() => letsEncryptWorkPath)
-        .thenReturn(CertbotPaths().letsEncryptWorkPath);
+  //   when(() => letsEncryptWorkPath)
+  //       .thenReturn(CertbotPaths().letsEncryptWorkPath);
 
-    when(() => letsEncryptConfigPath)
-        .thenReturn(CertbotPaths().letsEncryptConfigPath);
+  //   when(() => letsEncryptConfigPath)
+  //       .thenReturn(CertbotPaths().letsEncryptConfigPath);
 
-    when(() => letsEncryptLivePath)
-        .thenReturn(CertbotPaths().letsEncryptLivePath);
+  //   when(() => letsEncryptLivePath)
+  //       .thenReturn(CertbotPaths().letsEncryptLivePath);
 
-    when(() => nginxCertPath)
-        .thenReturn(_mockPath(CertbotPaths().nginxCertPath));
-  }
+  //   when(() => nginxCertPath)
+  //       .thenReturn(_mockPath(CertbotPaths().nginxCertPath));
+  //   when(() => certificatePathRoot(hostname, domain, wildcard: wildcard))
+  //       .thenReturn(_mockPath(CertbotPaths().nginxCertPath));
+  // }
 
-  void _wireEnvironment(String settingFileName) {
-    /// emails to mail hog which is started by a critical_test pre-hook.
-    Environment().smtpServer = 'localhost';
-    Environment().smtpServerPort = 1025;
-    Environment().emailaddress = 'test@noojee.com.au';
+  // String _mockPath(String path) {
+  //   if (path.startsWith(rootPath)) {
+  //     // ignore: parameter_assignments
+  //     path = path.substring(1);
+  //   }
+  //   final result = join(rootDir, path);
+  //   return result;
+  // }
 
-    final settingsPath = truepath('test', 'config', settingFileName);
-    final settings = SettingsYaml.load(pathToSettings: settingsPath);
-    Environment().authProvider = settings['AUTH_PROVIDER'] as String?;
-    Environment().authProviderToken =
-        settings[AuthProvider.authProviderToken] as String?;
-    Environment().authProviderUsername =
-        settings[AuthProvider.authProviderUsername] as String?;
-    Environment().authProviderEmailAddress =
-        settings[AuthProvider.authProviderEmailAddress] as String?;
+  // void _setMock() {
+  //   CertbotPaths.setMock(this);
+  // }
 
-    Environment().hostname = hostname;
-    Environment().domain = domain;
-    Environment().tld = tld;
-    Environment().domainWildcard = wildcard;
+  // void mockPossibleCertPath(PossibleCert possibleCert) {
+  //   print('Creating mocks for: $possibleCert');
 
-    Environment().production = production;
-  }
+  //   final rootPathHost = CertbotPaths().certificatePathRoot(
+  //       possibleCert.hostname, possibleCert.domain,
+  //       wildcard: possibleCert.wildcard);
 
-  String _mockPath(String path) {
-    if (path.startsWith(rootPath)) {
-      // ignore: parameter_assignments
-      path = path.substring(1);
-    }
-    final result = join(rootDir, path);
-    return result;
-  }
+  //   final _fullChainPathHost = CertbotPaths().fullChainPath(rootPathHost);
 
-  void _setMock() {
-    CertbotPaths.setMock(this);
-  }
+  //   final _nginxFullChainPath =
+  //       CertbotPaths().fullChainPath(CertbotPaths().nginxCertPath);
 
-  void mockPossibleCertPath(PossibleCert possibleCert) {
-    print('Creating mocks for: $possibleCert');
+  //   final _privateKeyPathHost = CertbotPaths().privateKeyPath(rootPathHost);
 
-    final rootPathHost = CertbotPaths().certificatePathRoot(
-        possibleCert.hostname, possibleCert.domain,
-        wildcard: possibleCert.wildcard);
+  //   // when(privateKeyPath(_mockPath(rootPathHost)))
+  //   //     .thenReturn(_mockPath(_privateKeyPathHost));
 
-    final _fullChainPathHost = CertbotPaths().fullChainPath(rootPathHost);
+  //   // when(privateKeyPath(_mockPath(rootPathWildcard)))
+  //   //     .thenReturn(_mockPath(_privateKeyPathWildcard));
 
-    final _privateKeyPathHost = CertbotPaths().privateKeyPath(rootPathHost);
+  //   when(() => certificatePathRoot(hostname, domain, wildcard: false))
+  //       .thenReturn(_mockPath(rootPathHost));
 
-    // when(privateKeyPath(_mockPath(rootPathHost)))
-    //     .thenReturn(_mockPath(_privateKeyPathHost));
+  //   // when(certificatePathRoot(hostname, domain, wildcard: true))
+  //   //     .thenReturn(_mockPath(rootPathWildcard));
 
-    // when(privateKeyPath(_mockPath(rootPathWildcard)))
-    //     .thenReturn(_mockPath(_privateKeyPathWildcard));
+  //   // when(certificatePathRoot('*', domain, wildcard: true))
+  //   //     .thenReturn(_mockPath(rootPathWildcard));
 
-    // when(certificatePathRoot(hostname, domain, wildcard: false))
-    //     .thenReturn(_mockPath(rootPathHost));
+  //   // /etc/nginx/certs/
+  //   when(() => fullChainPath(_mockPath(CertbotPaths().nginxCertPath)))
+  //       .thenReturn(_mockPath(_nginxFullChainPath));
 
-    // when(certificatePathRoot(hostname, domain, wildcard: true))
-    //     .thenReturn(_mockPath(rootPathWildcard));
+  //   when(() => fullChainPath(_mockPath(rootPathHost)))
+  //       .thenReturn(_mockPath(_fullChainPathHost));
 
-    // when(certificatePathRoot('*', domain, wildcard: true))
-    //     .thenReturn(_mockPath(rootPathWildcard));
+  //   // when(() => fullChainPath(_mockPath(rootPathWildcard)))
+  //   //     .thenReturn(_mockPath(_fullChainPathWildcard));
 
-    // when(fullChainPath(_mockPath(rootPathHost)))
-    //     .thenReturn(_mockPath(_fullChainPathHost));
+  //   when(() => privateKeyPath(rootPathHost)).thenReturn(_privateKeyPathHost);
 
-    // when(fullChainPath(_mockPath(rootPathWildcard)))
-    //     .thenReturn(_mockPath(_fullChainPathWildcard));
+  //   when(() => certificatePathRoot(possibleCert.hostname,
+  // possibleCert.domain,
+  //       wildcard: possibleCert.wildcard)).thenReturn(rootPathHost);
 
-    when(() => privateKeyPath(rootPathHost)).thenReturn(_privateKeyPathHost);
-
-    when(() => certificatePathRoot(possibleCert.hostname, possibleCert.domain,
-        wildcard: possibleCert.wildcard)).thenReturn(rootPathHost);
-
-    when(() => fullChainPath(rootPathHost)).thenReturn(_fullChainPathHost);
-  }
+  //   when(() => fullChainPath(rootPathHost)).thenReturn(_fullChainPathHost);
+  // }
 }

@@ -26,7 +26,7 @@ class DoctorCommand extends Command<void> {
         widths: [17, -1]));
     _colprint(['Path separator', (Platform.pathSeparator)]);
     print('');
-    _colprint(['dart version', '${DartSdk().version}']);
+    _colprint(['dart version', (DartSdk().version)]);
     print('');
 
     print('');

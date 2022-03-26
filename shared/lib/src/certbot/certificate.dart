@@ -4,7 +4,7 @@ import 'package:instant/instant.dart';
 import '../../nginx_le_shared.dart';
 
 class Certificate {
-  String? fqdn;
+  late final String fqdn;
 
   String? _hostname;
   String? _domain;
@@ -63,7 +63,7 @@ class Certificate {
     privateKeyPath = parts[1].trim();
   }
 
-  static List<Certificate?> load() {
+  static List<Certificate> load() {
     verbose(() =>
         'Loading certificates from ${CertbotPaths().letsEncryptConfigPath}');
 
@@ -108,8 +108,8 @@ class Certificate {
 // No certs found.
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  static List<Certificate?> parse(List<String> lines) {
-    final certificates = <Certificate?>[];
+  static List<Certificate> parse(List<String> lines) {
+    final certificates = <Certificate>[];
 
     Certificate? cert;
     for (final line in lines) {
@@ -164,20 +164,16 @@ Name: $fqdn
   /// Returns true if this certificate was issued for the given [hostname],
   /// [domain] and is or isn't a [wildcard] certificate.
   bool wasIssuedFor(
-      {required String? hostname,
-      required String? domain,
-      required bool wildcard,
-      required bool production}) {
-    if (wildcard) {
-      return this.wildcard == wildcard &&
-          this.production == production &&
-          '$domain' == fqdn;
-    } else {
-      return this.wildcard == wildcard &&
-          this.production == production &&
-          '$hostname.$domain' == fqdn;
-    }
-  }
+          {required String? hostname,
+          required String domain,
+          required bool wildcard,
+          required bool production}) =>
+      matches(
+          certificate: this,
+          wildcard: wildcard,
+          hostname: hostname,
+          domain: domain,
+          production: production);
 
   void revoke() {
     Certbot().revoke(
@@ -199,7 +195,15 @@ Name: $fqdn
 
   String? get hostname => _hostname ??= hostnameFromFqdn(fqdn);
 
-  String? get domain => _domain ??= domainFromFqdn(fqdn);
+  String get domain => _domain ??= domainFromFqdn(fqdn);
+
+  static String buildFQDN(String? hostname, String domain) {
+    if (hostname == null || hostname.trim().isEmpty) {
+      return domain;
+    } else {
+      return '$hostname.$domain';
+    }
+  }
 
   /// returns the hostname component of an fqdn
   String? hostnameFromFqdn(String? fqdn) {
@@ -217,12 +221,12 @@ Name: $fqdn
   }
 
   /// returns the hostname component of an fqdn
-  String? domainFromFqdn(String? fqdn) {
+  String domainFromFqdn(String fqdn) {
     if (wildcard) {
       return fqdn;
     }
 
-    final parts = fqdn!.split('.');
+    final parts = fqdn.split('.');
 
     if (parts.length > 1) {
       return parts.sublist(1).join('.');
@@ -234,22 +238,43 @@ Name: $fqdn
   /// Finds the matching certificate and returns it.
   static Certificate? find(
       {required bool wildcard,
+      required String domain,
       String? hostname,
-      String? domain,
       bool? production}) {
     if (wildcard) {
       // ignore: parameter_assignments
       hostname = '*';
     }
     for (final certificate in Certificate.load()) {
-      if (certificate!.hostname == hostname &&
-          certificate.domain == domain &&
-          certificate.wildcard == wildcard &&
-          certificate.production == production) {
+      if (matches(
+          certificate: certificate,
+          wildcard: wildcard,
+          hostname: hostname,
+          domain: domain,
+          production: production)) {
         return certificate;
       }
     }
 
     return null;
+  }
+
+  // returns true if the passed values match the certificate.
+  static bool matches(
+      {required Certificate certificate,
+      required bool wildcard,
+      required String domain,
+      String? hostname,
+      bool? production}) {
+    if (wildcard) {
+      return certificate.wildcard == wildcard &&
+          certificate.production == production &&
+          domain == certificate.fqdn;
+    } else {
+      final expectedFqdn = Certificate.buildFQDN(hostname, domain);
+      return certificate.wildcard == wildcard &&
+          certificate.production == production &&
+          expectedFqdn == certificate.fqdn;
+    }
   }
 }

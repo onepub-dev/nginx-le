@@ -28,14 +28,21 @@ class Environment {
   bool get domainWildcard => (env[domainWildcardKey] ?? 'false') == 'true';
   set domainWildcard(bool wildcard) => env[domainWildcardKey] = '$wildcard';
 
-  String get fqdn => '$hostname.$domain';
+  String get fqdn => Certificate.buildFQDN(hostname, domain);
 
   String get hostnameKey => 'HOSTNAME';
   String? get hostname => env[hostnameKey];
   set hostname(String? _hostname) => env[hostnameKey] = _hostname;
 
   String get domainKey => 'DOMAIN';
-  String? get domain => env[domainKey];
+  String get domain {
+    final dom = env[domainKey];
+    if (dom == null) {
+      throw CertbotException('The environment variable $domainKey was null');
+    }
+    return dom;
+  }
+
   set domain(String? domain) => env[domainKey] = domain;
 
   String get tldKey => 'TLD';
@@ -104,10 +111,6 @@ class Environment {
   set authProviderEmailAddress(String? authProviderEmailAddress) =>
       env[authProviderEmailAddressKey] = authProviderEmailAddress;
 
-  //  env['AUTH_PROVIDER_TOKEN'] = settings['AUTH_PROVIDER_TOKEN'] as String;
-  //   env['AUTH_PROVIDER_EMAIL_ADDRESS'] = settings['AUTH_PROVIDER_TOKEN']
-  //as String;
-
   /// Certbot
   String get certbotVerboseKey => 'CERTBOT_VERBOSE';
   bool get certbotVerbose => env[certbotVerboseKey] == 'true';
@@ -166,7 +169,16 @@ class Environment {
   String get certbotDNSRetriesKey => 'DNS_RETRIES';
   int get certbotDNSRetries =>
       int.tryParse(env[certbotDNSRetriesKey] ?? '20') ?? 20;
-  set certbotDNSRetries(int retries) => env[certbotDNSRetriesKey] = 'retries';
+  set certbotDNSRetries(int retries) => env[certbotDNSRetriesKey] = '$retries';
+
+  // the amount of time (in seconds) to wait for dns changes to propergate
+  // Used when doing DNS auth so that certbot doesn't try to auth before
+  // the dns settings have propergated.
+  String get certbotDNSWaitTimeKey => 'DNS_WAITTIME';
+  int get certbotDNSWaitTime =>
+      int.tryParse(env[certbotDNSWaitTimeKey] ?? '20') ?? 20;
+  set certbotDNSWaitTime(int seconds) =>
+      env[certbotDNSWaitTimeKey] = '$seconds';
 
   /// NGINX
   ///

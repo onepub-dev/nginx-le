@@ -61,19 +61,13 @@ class CloudFlareProvider extends GenericAuthProvider {
     _createSettings();
 
     var hostname = Environment().hostname;
-    final domain = Environment().domain!;
+    final domain = Environment().domain;
     final wildcard = Environment().domainWildcard;
     final production = Environment().production;
     final emailaddress = Environment().authProviderEmailAddress;
 
     hostname = wildcard ? '*' : hostname;
-
-    String fqdn;
-    if (hostname == null || hostname.isEmpty) {
-      fqdn = domain;
-    } else {
-      fqdn = '$hostname.$domain';
-    }
+    final fqdn = Certificate.buildFQDN(hostname, domain);
 
     verbose(() => 'Starting cerbot with authProvider: $name to acquire a '
         '${production ? 'production' : 'staging'} certificate '
@@ -86,7 +80,8 @@ class CloudFlareProvider extends GenericAuthProvider {
         .withLock(() {
       var certbot = '${Certbot.pathTo} certonly '
           ' --dns-cloudflare '
-          ' --dns-cloudflare-propagation-seconds 180'
+          ' --dns-cloudflare-propagation-seconds '
+          '${Environment().certbotDNSWaitTime}'
           ' --dns-cloudflare-credentials ${CertbotPaths().cloudFlareSettings}'
           ' -m $emailaddress '
           ' -d $fqdn '

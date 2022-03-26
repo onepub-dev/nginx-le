@@ -75,6 +75,11 @@ class BuildCommand extends Command<void> {
       'update-dcli.txt'.write(const Uuid().v4());
     }
 
+    // make certain we always have the latest source
+    replace(join(dockerPath, 'Dockerfile'), RegExp('# update-source:.*'),
+        '# update-source: ${const Uuid().v4()}');
+    'update-source.txt'.write(const Uuid().v4());
+
     print(green('Building nginx-le docker image $imageName '));
 
     // get the latest ubuntu image before we build.

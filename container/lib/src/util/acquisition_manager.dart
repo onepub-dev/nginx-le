@@ -152,10 +152,17 @@ delete /etc/letsencrypt/block_acquistion.flag from within the container.'''));
                 wildcard: wildcard,
                 production: production);
 
-            print('${orange('Acquired certificate:')}\n $cert');
+            var success = false;
+            if (cert != null) {
+              print('${orange('Acquired certificate:')}\n $cert');
 
-            if (Certbot().deployCertificate()) {
-              leaveAcquistionMode(reload: reload);
+              if (Certbot().deployCertificate()) {
+                leaveAcquistionMode(reload: reload);
+                success = true;
+              }
+            }
+
+            if (success) {
               print(orange(
                   'AcquisitionManager successfully deployed the certficate.'));
             } else {
@@ -176,9 +183,11 @@ delete /etc/letsencrypt/block_acquistion.flag from within the container.'''));
       print('');
 
       print(red(e.message));
-      print('${'*' * 30} Cerbot Error details begin: ${'*' * 30}');
-      print(e.details);
-      print('${'*' * 30} Cerbot Error details end: ${'*' * 30}');
+      if (e.details != null) {
+        print('${'*' * 30} Cerbot Error details begin: ${'*' * 30}');
+        print(e.details);
+        print('${'*' * 30} Cerbot Error details end: ${'*' * 30}');
+      }
       Email.sendError(
           subject: e.message, body: '${e.details}\n ${st.toString()}');
       // ignore: avoid_catches_without_on_clauses

@@ -4,7 +4,6 @@
 import 'package:dcli/dcli.dart';
 
 import '../../../../nginx_le_shared.dart';
-import '../../../certbot/certbot.dart';
 import 'dns_record.dart';
 import 'get_hosts.dart';
 import 'get_url.dart';
@@ -35,8 +34,8 @@ class Challenge {
     var records = _getHosts(domain: domain, tld: tld);
 
     if (records.isEmpty) {
-      throw DNSProviderException(
-          'No Hosts returned from NameCheap domain $hostname.$domain.');
+      throw DNSProviderException('No Hosts returned from NameCheap domain '
+          '${Certificate.buildFQDN(hostname, domain)}.');
     }
 
     /// certbot wont' be happy if it finds to TXT records so remove any old

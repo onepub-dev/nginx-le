@@ -5,7 +5,11 @@ import 'dns_auth_hook_test.dart';
 
 void main() {
   test('deploy certificates ...', () {
-    prepareCertHooks();
+    prepareNameCheapCertHooks(
+        hostname: 'auditor',
+        domain: 'noojee.com.au',
+        tld: 'com.au',
+        wildcard: false);
 
     Environment().hostname = 'auditor';
     Environment().domain = 'noojee.com.au';

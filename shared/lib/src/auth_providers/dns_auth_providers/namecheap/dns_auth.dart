@@ -49,7 +49,7 @@ void namecheapDNSPath() {
   final authProvider = AuthProviders().getByName(NameCheapAuthProvider().name)!;
 
   /// our own envs.
-  final domain = Environment().domain!;
+  final domain = Environment().domain;
   Certbot().log('${Environment().domainKey}: $domain');
   final hostname = Environment().hostname;
   Certbot().log('${Environment().hostnameKey}: $hostname');
