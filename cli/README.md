@@ -569,12 +569,12 @@ If you use `nginx-le config` to create the docker container then it automaticall
 | Name | Type | Domain | Description |
 | ----- | ---- | ---- | ---- |
 | DEBUG | bool |  true\|false | Controls the logging level of Nginx-LE.
-| HOSTNAME | String | A valid host name| The host name of the web server. e.g. www
+| HOSTNAME | String | A valid host name| The host name of the web server. e.g. www. To obtain a cert based on just the domain (e.g. microsoft.com) or a wildcard cert leave this blank.
 | DOMAIN | String | A valid domain name | The domain name of the web server. e.g. microsoft.com.au
 | TLD | String | Top level domain name | The top level domain name of the web server. e.g. com.au
+| DOMAIN_WILDCARD|bool| true \|false| Controls whether we acquire a single FQDN certificate or a domain wildcard certificate. Set to true to obtain a wild card domain. If you use this option on a number of servers which use the same domain then you will quickly hit the Certbot rate limits. When creating a wildcard cert leave HOSTNAME blank.
 | EMAIL_ADDRESS | String | valid email address| The email address that errors are sent to and also passed to Certbot which will use the email address to send renewal reminders to.
 | PRODUCTION | bool | true\|false| True to use a 'production' certbot certificate. False will acquire a Staging (test) certificate. We recommend that you set this to false during testing.
-| DOMAIN_WILDCARD|bool| true \|false| Controls whether we acquire a single FQDN certificate or a domain wildcard certificate. Set to true to obtain a wild card domain. If you use this option on a number of servers which use the same domain then you will quickly hit the Certbot rate limits.
 | AUTO_ACQUIRE | bool| true\|false| Defaults to true. If true Nginx-LE will automatically acquire a certificate.
 | AUTH_PROVIDER | String |  HTTP01Auth \| cloudflare \| namecheap| Select the Certbot Authentication method. 
 | SMTP_SERVER| String | FQDN or IP| The FQDN or IP of the SMTP server Nginx-LE is to use to send error emails via. Currently we only support email servers that don't require authentication.
