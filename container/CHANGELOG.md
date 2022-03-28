@@ -1,3 +1,6 @@
+# 8.2.0
+Added support for hostless fqdn.
+
 # 8.1.1
 - second attempt at 8.1 release
 
