@@ -1,5 +1,5 @@
 name: nginx_le_container
-version: 8.2.1
+version: 8.2.2
 documentation: https://nginxle.noojee.dev/
 description: Commands that live in the nginx-le docker container.
 repository: https://github.com/bsutton/nginx-le
