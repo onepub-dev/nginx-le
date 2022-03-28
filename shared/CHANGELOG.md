@@ -1,3 +1,6 @@
+# 8.2.1
+- Failed pub release
+
 # 8.2.0
 - updated the notes on domain name certs.
 - Added support for hostless fqdn's
