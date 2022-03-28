@@ -1,3 +1,7 @@
+# 8.2.0
+- updated the notes on domain name certs.
+- Added support for hostless fqdn's
+
 # 8.1.1
 - re-attempt at release.
 # 8.1.0
