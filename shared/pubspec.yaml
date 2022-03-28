@@ -19,6 +19,7 @@ dependencies:
   meta: ^1.0.0
   path: ^1.6.4
   public_suffix: ^3.0.0
+  scope: ^2.2.1
   settings_yaml: ^3.0.1
   uuid: ^3.0.1
   xml: ^5.0.2

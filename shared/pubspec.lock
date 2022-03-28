@@ -415,7 +415,7 @@ packages:
     source: hosted
     version: "2.3.1"
   scope:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: scope
       url: "https://pub.dartlang.org"
