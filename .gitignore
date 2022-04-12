@@ -26,3 +26,5 @@ container/test/src/util/namecheap.yaml
 container/.failed_tracker
 container/.failed_tracker.bak
 shared/.failed_tracker.bak
+update-source.txt
+cli/update-source.txt

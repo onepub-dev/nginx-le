@@ -47,11 +47,14 @@ class BuildCommand extends Command<void> {
 
     if (imageName == null) {
       final repo = ask('ImageName:', defaultValue: 'noojee/nginx-le');
-      print('Current version: $packageVersion');
+      final currentVersion = DartProject.self.pubSpec.version!.toString();
+      print('Current version: $currentVersion');
       final version = ask('Version:',
-          defaultValue: packageVersion, validator: Ask.required);
+          defaultValue: currentVersion, validator: Ask.required);
       imageName = '$repo:$version';
     }
+
+    final latest = genLatestTag(imageName);
 
     // check for an existing image.
     var image = Images().findByName(imageName);
@@ -86,7 +89,11 @@ class BuildCommand extends Command<void> {
     Images().pull(fullname: 'ubuntu:20.04');
 
     /// required to give docker access to our ssh keys.
-    'docker build -t $imageName .'.start(workingDirectory: dockerPath);
+    'docker build -t $imageName -t $latest .'
+        .start(workingDirectory: dockerPath);
+
+    'docker push $imageName'.run;
+    'docker push $latest'.run;
 
     /// get the new image.
     image = Images().findByName(imageName);
@@ -94,6 +101,7 @@ class BuildCommand extends Command<void> {
       ..image = image
       ..save();
 
+    print('');
     print(green(
         "Build Complete. You should now run 'nginx-le config' to reconfigure "
         'your system to use the new image'));
@@ -144,5 +152,14 @@ class BuildCommand extends Command<void> {
   void showUsage(ArgParser parser) {
     print(parser.usage);
     exit(-1);
+  }
+}
+
+String genLatestTag(String imageName) {
+  if (imageName.contains(':')) {
+    final parts = imageName.split(':');
+    return '${parts[0]}:latest';
+  } else {
+    return '$imageName:latest';
   }
 }
