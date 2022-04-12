@@ -82,17 +82,13 @@ class Environment {
 
   /// These environments variables are nomally set by the dockerfile
   /// We have these here for testing purposes only
-  @visibleForTesting
   String get authProviderTokenKey => 'AUTH_PROVIDER_TOKEN';
-  @visibleForTesting
   String? get authProviderToken => env[authProviderTokenKey];
   @visibleForTesting
   set authProviderToken(String? authProviderToken) =>
       env[authProviderTokenKey] = authProviderToken;
 
-  @visibleForTesting
   String get authProviderUsernameKey => 'AUTH_PROVIDER_USERNAME';
-  @visibleForTesting
   String? get authProviderUsername => env[authProviderTokenKey];
   @visibleForTesting
   set authProviderUsername(String? authProviderUsername) =>

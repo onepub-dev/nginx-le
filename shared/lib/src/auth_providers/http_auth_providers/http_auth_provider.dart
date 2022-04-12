@@ -191,7 +191,8 @@ class HTTPAuthProvider extends AuthProvider {
   bool get supportsWildCards => false;
 
   @override
-  void dumpEnvironmentVariables() {
-    /// none.
+  void validateEnvironmentVariables() {
+    printEnv(Environment().certbotAuthHookPathKey,
+        Environment().certbotAuthHookPath);
   }
 }

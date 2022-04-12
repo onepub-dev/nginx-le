@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dcli/dcli.dart';
 
 import '../../../../nginx_le_shared.dart';
@@ -161,8 +163,20 @@ class CloudFlareProvider extends GenericAuthProvider {
   bool get supportsWildCards => true;
 
   @override
-  void dumpEnvironmentVariables() {
+  void validateEnvironmentVariables() {
     printEnv(AuthProvider.authProviderToken, envToken);
     printEnv(AuthProvider.authProviderEmailAddress, envEmailAddress);
+
+    if (Environment().authProviderToken == null) {
+      printerr(red('No Auth Provider Token has been set. '
+          'Check ${Environment().authProviderTokenKey} has been set'));
+      exit(1);
+    }
+
+    if (Environment().authProviderEmailAddress == null) {
+      printerr(red('No Auth Provider Email address has been set. '
+          'Check ${Environment().authProviderEmailAddressKey} has been set'));
+      exit(1);
+    }
   }
 }

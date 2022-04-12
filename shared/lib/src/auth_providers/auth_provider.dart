@@ -78,7 +78,7 @@ abstract class AuthProvider {
   String? get envPassword => env[authProviderPassword];
   set envPassword(String? password) => env[authProviderPassword] = password;
 
-  void dumpEnvironmentVariables();
+  void validateEnvironmentVariables();
 
   void printEnv(String key, String? value) {
     print('ENV: $key=$value');

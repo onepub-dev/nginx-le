@@ -132,22 +132,23 @@ void dumpEnvironmentVariables() {
       Environment().smtpServerPortKey, Environment().smtpServerPort.toString());
   printEnv(Environment().startPausedKey, Environment().startPaused.toString());
   printEnv(Environment().authProviderKey, Environment().authProvider);
+  printEnv(Environment().authProviderEmailAddressKey,
+      Environment().authProviderEmailAddress);
   printEnv(Environment().certbotIgnoreBlockKey,
       Environment().certbotIgnoreBlock.toString());
 
   if (Environment().authProvider == null) {
     printerr(red('No Auth Provider has been set. '
-        'Check ${Environment().authProviderKey} as been set'));
+        'Check ${Environment().authProviderKey} has been set'));
     exit(1);
   }
-
   final authProvider = AuthProviders().getByName(Environment().authProvider!);
   if (authProvider == null) {
     printerr(red('No Auth Provider has been set. '
         'Check ${Environment().authProviderKey} as been set'));
     exit(1);
   }
-  authProvider.dumpEnvironmentVariables();
+  authProvider.validateEnvironmentVariables();
 
   print('Internal environment variables');
   printEnv(Environment().certbotRootPathKey, Environment().certbotRootPath);
