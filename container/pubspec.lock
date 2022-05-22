@@ -322,7 +322,7 @@ packages:
       path: "../shared"
       relative: true
     source: path
-    version: "8.2.3"
+    version: "8.2.4"
   node_preamble:
     dependency: transitive
     description:
