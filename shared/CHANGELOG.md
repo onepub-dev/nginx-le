@@ -1,3 +1,5 @@
+# 8.2.4
+
 # 8.2.3
 - Updated code so we consistently use the same environment keys.
 - we now use the pubspec to determine the latest version.
