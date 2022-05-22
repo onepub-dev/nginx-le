@@ -1,3 +1,8 @@
+# 8.2.3
+- Updated code so we consistently use the same environment keys.
+- we now use the pubspec to determine the latest version.
+- Added additonal validation checks for missing environment vars.
+
 # 8.2.2
 
 # 8.2.1

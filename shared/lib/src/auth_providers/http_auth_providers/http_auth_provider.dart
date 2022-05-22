@@ -192,7 +192,7 @@ class HTTPAuthProvider extends AuthProvider {
 
   @override
   void validateEnvironmentVariables() {
-    printEnv(Environment.certbotAuthHookPathKey,
-        Environment().certbotAuthHookPath);
+    printEnv(
+        Environment.certbotAuthHookPathKey, Environment().certbotAuthHookPath);
   }
 }
