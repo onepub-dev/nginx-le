@@ -51,8 +51,8 @@ class NameCheapAuthProvider extends GenericAuthProvider {
   @override
   List<EnvVar> get environment {
     final vars = <EnvVar>[
-      EnvVar(AuthProvider.authProviderToken, configToken),
-      EnvVar(AuthProvider.authProviderUsername, configUsername)
+      EnvVar(Environment.authProviderTokenKey, configToken),
+      EnvVar(Environment.authProviderUsernameKey, configUsername)
     ];
 
     return vars;
@@ -66,18 +66,18 @@ class NameCheapAuthProvider extends GenericAuthProvider {
 
   @override
   void validateEnvironmentVariables() {
-    printEnv(AuthProvider.authProviderToken, envToken);
-    printEnv(AuthProvider.authProviderUsername, envUsername);
+    printEnv(Environment.authProviderTokenKey, envToken);
+    printEnv(Environment.authProviderUsernameKey, envUsername);
 
     if (Environment().authProviderToken == null) {
       printerr(red('No Auth Provider Token has been set. '
-          'Check ${Environment().authProviderTokenKey} has been set'));
+          'Check ${Environment.authProviderTokenKey} has been set'));
       exit(1);
     }
 
     if (Environment().authProviderUsername == null) {
       printerr(red('No Auth Provider Username has been set. '
-          'Check ${Environment().authProviderUsernameKey} has been set'));
+          'Check ${Environment.authProviderUsernameKey} has been set'));
       exit(1);
     }
   }

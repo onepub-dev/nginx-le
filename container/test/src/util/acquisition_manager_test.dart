@@ -350,22 +350,20 @@ void _acquire(
               production: production,
               revoke: revoke));
     }, environment: {
-      Environment().hostnameKey: hostname,
-      Environment().domainKey: domain,
-      Environment().domainWildcardKey: '$wildcard',
+      Environment.hostnameKey: hostname,
+      Environment.domainKey: domain,
+      Environment.domainWildcardKey: '$wildcard',
       Environment().productionKey: '$production',
-      Environment().authProviderEmailAddressKey:
-          settings['AUTH_PROVIDER_EMAIL_ADDRESS'] as String,
-      Environment().smtpServerKey: 'localhost',
-      Environment().smtpServerPortKey: '1025',
-      Environment().emailaddressKey: 'test@noojee.com.au',
-      Environment().authProviderKey: settings['AUTH_PROVIDER'] as String,
-      Environment().authProviderTokenKey:
-          settings[AuthProvider.authProviderToken] as String,
-      Environment().authProviderUsernameKey:
-          settings[AuthProvider.authProviderUsername] as String,
-      Environment().authProviderEmailAddressKey:
-          settings[AuthProvider.authProviderEmailAddress] as String
+      Environment.smtpServerKey: 'localhost',
+      Environment.smtpServerPortKey: '1025',
+      Environment.emailaddressKey: 'test@noojee.com.au',
+      Environment.authProviderKey: settings['AUTH_PROVIDER'] as String,
+      Environment.authProviderTokenKey:
+          settings[Environment.authProviderTokenKey] as String,
+      Environment.authProviderUsernameKey:
+          settings[Environment.authProviderUsernameKey] as String,
+      Environment.authProviderEmailAddressKey:
+          settings[Environment.authProviderEmailAddressKey] as String
     });
   });
 }

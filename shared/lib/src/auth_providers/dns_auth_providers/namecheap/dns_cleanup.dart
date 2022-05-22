@@ -42,7 +42,7 @@ void namecheapDNSCleanup() {
   if (fqdn == null || fqdn.isEmpty) {
     printerr('Throwing exception: fqdn is empty');
     throw ArgumentError(
-        'No fqdn found in env var ${Environment().certbotDomainKey}');
+        'No fqdn found in env var ${Environment.certbotDomainKey}');
   }
 
   try {

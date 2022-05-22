@@ -17,8 +17,8 @@ void revoke(List<String> args) {
   final debug = results['debug'] as bool;
 
   Settings().setVerbose(enabled: debug);
-  verbose(() => '${Environment().hostnameKey}:${Environment().hostname}');
-  verbose(() => '${Environment().domainKey}:${Environment().domain}');
+  verbose(() => '${Environment.hostnameKey}:${Environment().hostname}');
+  verbose(() => '${Environment.domainKey}:${Environment().domain}');
 
   Certbot().revokeAll();
   AcquisitionManager().enterAcquisitionMode(reload: true);

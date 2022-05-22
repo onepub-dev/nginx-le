@@ -18,7 +18,7 @@ class ConfigYaml {
     settings = SettingsYaml.load(pathToSettings: configPath);
     startMethod = settings[startMethodKey] as String?;
     mode = settings[modeKey] as String?;
-    startPaused = settings[Environment().startPausedKey] as bool?;
+    startPaused = settings[Environment.startPausedKey] as bool?;
     fqdn = settings[fqdnKey] as String?;
     tld = settings[tldKey] as String?;
     image = Images().findByImageId((settings[imageKey] as String?)!);
@@ -29,12 +29,12 @@ class ConfigYaml {
     contentProvider = settings[contentProviderKey] as String?;
     _hostIncludePath = settings[hostIncludePathKey] as String?;
 
-    smtpServer = settings[Environment().smtpServerKey] as String?;
-    smtpServerPort = settings[Environment().smtpServerPortKey] as int? ?? 25;
+    smtpServer = settings[Environment.smtpServerKey] as String?;
+    smtpServerPort = settings[Environment.smtpServerPortKey] as int? ?? 25;
 
     /// If true we are using a wildcard dns (e.g. *.clouddialer.com.au)
     domainWildcard =
-        (settings[Environment().domainWildcardKey] as bool?) ?? false;
+        (settings[Environment.domainWildcardKey] as bool?) ?? false;
   }
 
   static final _self = ConfigYaml._internal();
@@ -151,7 +151,7 @@ class ConfigYaml {
   void save() {
     settings[startMethodKey] = startMethod;
     settings[modeKey] = mode;
-    settings[Environment().startPausedKey] = startPaused;
+    settings[Environment.startPausedKey] = startPaused;
     settings[fqdnKey] = fqdn;
     settings[tldKey] = tld;
     settings[imageKey] = '${image?.imageid}';
@@ -162,9 +162,9 @@ class ConfigYaml {
     settings[contentProviderKey] = contentProvider;
     settings[hostIncludePathKey] = hostIncludePath;
 
-    settings[Environment().smtpServerKey] = smtpServer;
-    settings[Environment().smtpServerPortKey] = smtpServerPort;
-    settings[Environment().domainWildcardKey] = domainWildcard;
+    settings[Environment.smtpServerKey] = smtpServer;
+    settings[Environment.smtpServerPortKey] = smtpServerPort;
+    settings[Environment.domainWildcardKey] = domainWildcard;
 
     settings.save();
   }

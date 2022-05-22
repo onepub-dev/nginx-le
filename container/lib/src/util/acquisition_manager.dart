@@ -137,7 +137,7 @@ delete /etc/letsencrypt/block_acquistion.flag from within the container.'''));
             if (authProvider == null) {
               throw CertbotException('No valid auth provider was found for '
                   '${Environment().authProvider}. '
-                  'Check ${Environment().authProviderKey}');
+                  'Check ${Environment.authProviderKey}');
             }
 
             /// Acquire a new certificate

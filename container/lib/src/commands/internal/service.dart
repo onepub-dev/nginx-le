@@ -53,26 +53,26 @@ void _start() {
   dumpEnvironmentVariables();
 
   final hostname = Environment().hostname!;
-  verbose(() => '${Environment().hostnameKey}=$hostname');
+  verbose(() => '${Environment.hostnameKey}=$hostname');
   final domain = Environment().domain;
-  verbose(() => '${Environment().domainKey}=$domain');
+  verbose(() => '${Environment.domainKey}=$domain');
   final tld = Environment().tld;
   verbose(() => '${Environment().tldKey}=$tld');
 
   final wildcard = Environment().domainWildcard;
-  verbose(() => '${Environment().domainWildcardKey}=$wildcard');
+  verbose(() => '${Environment.domainWildcardKey}=$wildcard');
 
   final emailaddress = Environment().emailaddress;
-  verbose(() => '${Environment().emailaddressKey}=$emailaddress');
+  verbose(() => '${Environment.emailaddressKey}=$emailaddress');
 
   final production = Environment().production;
   verbose(() => '${Environment().productionKey}=$production');
 
   final autoAcquire = Environment().autoAcquire;
-  verbose(() => '${Environment().autoAcquireKey}=$autoAcquire');
+  verbose(() => '${Environment.autoAcquireKey}=$autoAcquire');
 
   final certbotAuthProvider = Environment().authProvider;
-  verbose(() => '${Environment().authProviderKey}=$certbotAuthProvider');
+  verbose(() => '${Environment.authProviderKey}=$certbotAuthProvider');
 
   _clearLocks();
 
@@ -118,42 +118,42 @@ void _clearLocks() {
 }
 
 void dumpEnvironmentVariables() {
-  printEnv(Environment().debugKey, Environment().debug.toString());
-  printEnv(Environment().hostnameKey, Environment().hostname);
-  printEnv(Environment().domainKey, Environment().domain);
+  printEnv(Environment.debugKey, Environment().debug.toString());
+  printEnv(Environment.hostnameKey, Environment().hostname);
+  printEnv(Environment.domainKey, Environment().domain);
   printEnv(Environment().tldKey, Environment().tld);
-  printEnv(Environment().emailaddressKey, Environment().emailaddress);
+  printEnv(Environment.emailaddressKey, Environment().emailaddress);
   printEnv(Environment().productionKey, Environment().production.toString());
   printEnv(
-      Environment().domainWildcardKey, Environment().domainWildcard.toString());
-  printEnv(Environment().autoAcquireKey, Environment().autoAcquire.toString());
-  printEnv(Environment().smtpServerKey, Environment().smtpServer);
+      Environment.domainWildcardKey, Environment().domainWildcard.toString());
+  printEnv(Environment.autoAcquireKey, Environment().autoAcquire.toString());
+  printEnv(Environment.smtpServerKey, Environment().smtpServer);
   printEnv(
-      Environment().smtpServerPortKey, Environment().smtpServerPort.toString());
-  printEnv(Environment().startPausedKey, Environment().startPaused.toString());
-  printEnv(Environment().authProviderKey, Environment().authProvider);
-  printEnv(Environment().authProviderEmailAddressKey,
+      Environment.smtpServerPortKey, Environment().smtpServerPort.toString());
+  printEnv(Environment.startPausedKey, Environment().startPaused.toString());
+  printEnv(Environment.authProviderKey, Environment().authProvider);
+  printEnv(Environment.authProviderEmailAddressKey,
       Environment().authProviderEmailAddress);
-  printEnv(Environment().certbotIgnoreBlockKey,
+  printEnv(Environment.certbotIgnoreBlockKey,
       Environment().certbotIgnoreBlock.toString());
 
   if (Environment().authProvider == null) {
     printerr(red('No Auth Provider has been set. '
-        'Check ${Environment().authProviderKey} has been set'));
+        'Check ${Environment.authProviderKey} has been set'));
     exit(1);
   }
   final authProvider = AuthProviders().getByName(Environment().authProvider!);
   if (authProvider == null) {
     printerr(red('No Auth Provider has been set. '
-        'Check ${Environment().authProviderKey} as been set'));
+        'Check ${Environment.authProviderKey} as been set'));
     exit(1);
   }
   authProvider.validateEnvironmentVariables();
 
   print('Internal environment variables');
-  printEnv(Environment().certbotRootPathKey, Environment().certbotRootPath);
-  printEnv(Environment().logfileKey, Environment().logfile);
-  printEnv(Environment().nginxCertRootPathOverwriteKey,
+  printEnv(Environment.certbotRootPathKey, Environment().certbotRootPath);
+  printEnv(Environment.logfileKey, Environment().logfile);
+  printEnv(Environment.nginxCertRootPathOverwriteKey,
       Environment().nginxCertRootPathOverwrite);
 }
 

@@ -5,10 +5,10 @@ import '../util/env_var.dart';
 
 abstract class AuthProvider {
   /// Generic AuthProvider environment variables.
-  static const authProviderToken = 'AUTH_PROVIDER_TOKEN';
-  static const authProviderEmailAddress = 'AUTH_PROVIDER_EMAIL_ADDRESS';
-  static const authProviderUsername = 'AUTH_PROVIDER_USERNAME';
-  static const authProviderPassword = 'AUTH_PROVIDER_PASSWORD';
+  // static const authProviderToken = 'AUTH_PROVIDER_TOKEN';
+  // static const authProviderEmailAddress = 'AUTH_PROVIDER_EMAIL_ADDRESS';
+  // static const authProviderUsername = 'AUTH_PROVIDER_USERNAME';
+  // static const authProviderPassword = 'AUTH_PROVIDER_PASSWORD';
 
   /// unique name of the provider used as the key
   String get name;
@@ -44,39 +44,38 @@ abstract class AuthProvider {
 
   /// Settings stored in the configuration file
   String? get configToken =>
-      ConfigYaml().settings[authProviderToken] as String?;
+      ConfigYaml().settings[Environment.authProviderTokenKey] as String?;
   set configToken(String? token) =>
-      ConfigYaml().settings[authProviderToken] = token;
+      ConfigYaml().settings[Environment.authProviderTokenKey] = token;
 
   String? get configEmailAddress =>
-      ConfigYaml().settings[authProviderEmailAddress] as String?;
+      ConfigYaml().settings[Environment.authProviderEmailAddressKey] as String?;
   set configEmailAddress(String? emailAddress) =>
-      ConfigYaml().settings[authProviderEmailAddress] = emailAddress;
+      ConfigYaml().settings[Environment.authProviderEmailAddressKey] =
+          emailAddress;
 
   String? get configUsername =>
-      ConfigYaml().settings[authProviderUsername] as String?;
+      ConfigYaml().settings[Environment.authProviderUsernameKey] as String?;
   set configUsername(String? username) =>
-      ConfigYaml().settings[authProviderUsername] = username;
+      ConfigYaml().settings[Environment.authProviderUsernameKey] = username;
 
   String? get configPassword =>
-      ConfigYaml().settings[authProviderPassword] as String?;
+      ConfigYaml().settings[Environment.authProviderTokenKey] as String?;
   set configPassword(String? password) =>
-      ConfigYaml().settings[authProviderPassword] = password;
+      ConfigYaml().settings[Environment.authProviderTokenKey] = password;
 
   /// Settings stored in environment variables.
-  String? get envToken => env[authProviderToken];
-  set envToken(String? token) => env[authProviderToken] = token;
+  String? get envToken => env[Environment.authProviderTokenKey];
+  set envToken(String? token) => env[Environment.authProviderTokenKey] = token;
 
   String? get envEmailAddress => Environment().authProviderEmailAddress;
 
   set envEmailAddress(String? emailAddress) =>
       Environment().authProviderEmailAddress = emailAddress;
 
-  String? get envUsername => env[authProviderUsername];
-  set envUsername(String? username) => env[authProviderUsername] = username;
-
-  String? get envPassword => env[authProviderPassword];
-  set envPassword(String? password) => env[authProviderPassword] = password;
+  String? get envUsername => env[Environment.authProviderUsernameKey];
+  set envUsername(String? username) =>
+      env[Environment.authProviderUsernameKey] = username;
 
   void validateEnvironmentVariables();
 

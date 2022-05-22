@@ -29,35 +29,35 @@ void certbotHTTPAuthHook() {
   final fqdn = Environment().certbotDomain;
   Certbot().log('fqdn: $fqdn');
   Certbot()
-      .log('${Environment().certbotTokenKey}: ${Environment().certbotToken}');
-  print('${Environment().certbotTokenKey}: ${Environment().certbotToken}');
-  Certbot().log('${Environment().certbotValidationKey}: '
+      .log('${Environment.certbotTokenKey}: ${Environment().certbotToken}');
+  print('${Environment.certbotTokenKey}: ${Environment().certbotToken}');
+  Certbot().log('${Environment.certbotValidationKey}: '
       '${Environment().certbotValidation}');
-  print('${Environment().certbotValidationKey}: '
+  print('${Environment.certbotValidationKey}: '
       '${Environment().certbotValidation}');
 
   // ignore: unnecessary_cast
   final certbotValidation = Environment().certbotValidation;
-  Certbot().log('${Environment().certbotValidationKey}: "$certbotValidation"');
+  Certbot().log('${Environment.certbotValidationKey}: "$certbotValidation"');
   if (certbotValidation == null || certbotValidation.isEmpty) {
     Certbot().logError(
-        'The environment variable ${Environment().certbotValidationKey} '
+        'The environment variable ${Environment.certbotValidationKey} '
         'was empty http_auth_hook ABORTED.');
   }
   ArgumentError.checkNotNull(
       certbotValidation,
-      'The environment variable ${Environment().certbotValidationKey} '
+      'The environment variable ${Environment.certbotValidationKey} '
       'was empty');
 
   final token = Environment().certbotToken;
   Certbot().log('token: "$token"');
   if (token == null || token.isEmpty) {
     Certbot()
-        .logError('The environment variable ${Environment().certbotTokenKey} '
+        .logError('The environment variable ${Environment.certbotTokenKey} '
             'was empty http_auth_hook ABORTED.');
   }
   ArgumentError.checkNotNull(token,
-      'The environment variable ${Environment().certbotTokenKey} was empty');
+      'The environment variable ${Environment.certbotTokenKey} was empty');
 
   /// This path MUST match the path set in the nginx config files:
   /// /etc/nginx/operating/default.conf

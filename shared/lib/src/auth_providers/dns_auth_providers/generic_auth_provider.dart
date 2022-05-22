@@ -49,11 +49,11 @@ abstract class GenericAuthProvider extends AuthProvider {
     ArgumentError.checkNotNull(
         authHookPath,
         'Environment variable: '
-        '${Environment().certbotAuthHookPathKey} missing');
+        '${Environment.certbotAuthHookPathKey} missing');
     ArgumentError.checkNotNull(
         cleanupHookPath,
         'Environment variable: '
-        '${Environment().certbotCleanupHookPathKey} missing');
+        '${Environment.certbotCleanupHookPathKey} missing');
 
     verbose(() => 'Starting cerbot with authProvider: $name');
 

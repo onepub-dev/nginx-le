@@ -38,21 +38,21 @@ void namecheapDNSPath() {
 
   if (certbotValidation == null || certbotValidation.isEmpty) {
     Certbot().logError(
-        'The environment variable ${Environment().certbotValidationKey} '
+        'The environment variable ${Environment.certbotValidationKey} '
         'was empty dns_auth_hook ABORTED.');
   }
   ArgumentError.checkNotNull(
       certbotValidation,
-      'The environment variable ${Environment().certbotValidationKey} '
+      'The environment variable ${Environment.certbotValidationKey} '
       'was empty');
 
   final authProvider = AuthProviders().getByName(NameCheapAuthProvider().name)!;
 
   /// our own envs.
   final domain = Environment().domain;
-  Certbot().log('${Environment().domainKey}: $domain');
+  Certbot().log('${Environment.domainKey}: $domain');
   final hostname = Environment().hostname;
-  Certbot().log('${Environment().hostnameKey}: $hostname');
+  Certbot().log('${Environment.hostnameKey}: $hostname');
   final tld = Environment().tld!;
   Certbot().log('tld: $tld');
   final wildcard = Environment().domainWildcard;
@@ -65,12 +65,12 @@ void namecheapDNSPath() {
 
   /// the number of times we look to see if the DNS challenge is resolving.
   final retries = Environment().certbotDNSRetries;
-  Certbot().log('${Environment().certbotDNSRetriesKey}: $retries');
+  Certbot().log('${Environment.certbotDNSRetriesKey}: $retries');
 
   if (fqdn == null || fqdn.isEmpty) {
     printerr('Throwing exception: fqdn is empty');
     throw ArgumentError(
-        'No fqdn found in env var ${Environment().certbotDomainKey}');
+        'No fqdn found in env var ${Environment.certbotDomainKey}');
   }
 
   try {

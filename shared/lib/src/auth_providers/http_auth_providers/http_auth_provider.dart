@@ -31,11 +31,11 @@ class HTTPAuthProvider extends AuthProvider {
     final fqdn = Environment().certbotDomain;
     Certbot().log('fqdn: $fqdn');
     Certbot()
-        .log('${Environment().certbotTokenKey}: ${Environment().certbotToken}');
-    print('${Environment().certbotTokenKey}: ${Environment().certbotToken}');
-    Certbot().log('${Environment().certbotValidationKey}: '
+        .log('${Environment.certbotTokenKey}: ${Environment().certbotToken}');
+    print('${Environment.certbotTokenKey}: ${Environment().certbotToken}');
+    Certbot().log('${Environment.certbotValidationKey}: '
         '${Environment().certbotValidation}');
-    print('${Environment().certbotValidationKey}: '
+    print('${Environment.certbotValidationKey}: '
         '${Environment().certbotValidation}');
 
     // ignore: unnecessary_cast
@@ -43,23 +43,23 @@ class HTTPAuthProvider extends AuthProvider {
     Certbot().log('CertbotAuthKey: "$certbotAuthKey"');
     if (certbotAuthKey == null || certbotAuthKey.isEmpty) {
       Certbot().logError(
-          'The environment variable ${Environment().certbotValidationKey} '
+          'The environment variable ${Environment.certbotValidationKey} '
           'was empty http_auth_hook ABORTED.');
     }
     ArgumentError.checkNotNull(
         certbotAuthKey,
-        'The environment variable ${Environment().certbotValidationKey} '
+        'The environment variable ${Environment.certbotValidationKey} '
         'was empty');
 
     final token = Environment().certbotToken;
     Certbot().log('token: "$token"');
     if (token == null || token.isEmpty) {
       Certbot().logError(
-          'The environment variable ${Environment().certbotTokenKey} was '
+          'The environment variable ${Environment.certbotTokenKey} was '
           'empty http_auth_hook ABORTED.');
     }
     ArgumentError.checkNotNull(certbotAuthKey,
-        'The environment variable ${Environment().certbotTokenKey} was empty');
+        'The environment variable ${Environment.certbotTokenKey} was empty');
 
     /// This path MUST match the path set in the nginx config files:
     /// /etc/nginx/operating/default.conf
@@ -88,7 +88,7 @@ class HTTPAuthProvider extends AuthProvider {
 
     Settings().setVerbose(enabled: verbose);
     ArgumentError.checkNotNull(Environment().certbotToken,
-        'The environment variable ${Environment().certbotTokenKey} was empty');
+        'The environment variable ${Environment.certbotTokenKey} was empty');
 
     /// This path MUST match the path set in the nginx config files:
     /// /etc/nginx/operating/default.conf
@@ -125,7 +125,7 @@ class HTTPAuthProvider extends AuthProvider {
 
     ArgumentError.checkNotNull(
         authHook,
-        'Environment variable: ${Environment().certbotAuthHookPathKey} '
+        'Environment variable: ${Environment.certbotAuthHookPathKey} '
         'missing');
     ArgumentError.checkNotNull(cleanupHook,
         'Environment variable: CERTBOT_HTTP_CLEANUP_HOOK_PATH missing');
@@ -192,7 +192,7 @@ class HTTPAuthProvider extends AuthProvider {
 
   @override
   void validateEnvironmentVariables() {
-    printEnv(Environment().certbotAuthHookPathKey,
+    printEnv(Environment.certbotAuthHookPathKey,
         Environment().certbotAuthHookPath);
   }
 }

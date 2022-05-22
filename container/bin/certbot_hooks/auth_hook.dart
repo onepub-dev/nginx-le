@@ -17,7 +17,7 @@ void main() {
   final authProvider = AuthProviders().getByName(providerName);
 
   if (authProvider == null) {
-    throw Exception('No value provided for ${Environment().authProviderKey}');
+    throw Exception('No value provided for ${Environment.authProviderKey}');
   }
 
   authProvider.authHook();

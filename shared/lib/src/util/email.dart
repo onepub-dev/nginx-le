@@ -7,7 +7,7 @@ import 'environment.dart';
 class Email {
   static void sendError({String? subject, String? body}) {
     if (Environment().smtpServer == null || Environment().smtpServer!.isEmpty) {
-      printerr('Error not emailed as no ${Environment().smtpServerKey} '
+      printerr('Error not emailed as no ${Environment.smtpServerKey} '
           'environment variable set');
       print('Subject: $subject');
       print('Body: \n$body');

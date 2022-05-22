@@ -15,7 +15,7 @@ import 'package:nginx_le_shared/nginx_le_shared.dart';
 void main() {
   final authProvider = AuthProviders().getByName(Environment().authProvider!);
   if (authProvider == null) {
-    throw Exception('No value provided for ${Environment().authProviderKey}');
+    throw Exception('No value provided for ${Environment.authProviderKey}');
   }
   authProvider.cleanupHook();
 }

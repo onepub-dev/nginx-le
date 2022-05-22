@@ -44,8 +44,8 @@ class CloudFlareProvider extends GenericAuthProvider {
   @override
   List<EnvVar> get environment {
     final vars = <EnvVar>[
-      EnvVar(AuthProvider.authProviderToken, configToken),
-      EnvVar(AuthProvider.authProviderEmailAddress, configEmailAddress)
+      EnvVar(Environment.authProviderTokenKey, configToken),
+      EnvVar(Environment.authProviderEmailAddressKey, configEmailAddress)
     ];
 
     return vars;
@@ -76,7 +76,7 @@ class CloudFlareProvider extends GenericAuthProvider {
         'for $fqdn');
 
     verbose(() => 'Cloudflare api token. '
-        'Env:${AuthProvider.authProviderToken}: $envToken');
+        'Env:${Environment.authProviderTokenKey}: $envToken');
 
     NamedLock(name: 'certbot', timeout: const Duration(minutes: 20))
         .withLock(() {
@@ -164,18 +164,18 @@ class CloudFlareProvider extends GenericAuthProvider {
 
   @override
   void validateEnvironmentVariables() {
-    printEnv(AuthProvider.authProviderToken, envToken);
-    printEnv(AuthProvider.authProviderEmailAddress, envEmailAddress);
+    printEnv(Environment.authProviderTokenKey, envToken);
+    printEnv(Environment.authProviderEmailAddressKey, envEmailAddress);
 
     if (Environment().authProviderToken == null) {
       printerr(red('No Auth Provider Token has been set. '
-          'Check ${Environment().authProviderTokenKey} has been set'));
+          'Check ${Environment.authProviderTokenKey} has been set'));
       exit(1);
     }
 
     if (Environment().authProviderEmailAddress == null) {
       printerr(red('No Auth Provider Email address has been set. '
-          'Check ${Environment().authProviderEmailAddressKey} has been set'));
+          'Check ${Environment.authProviderEmailAddressKey} has been set'));
       exit(1);
     }
   }
