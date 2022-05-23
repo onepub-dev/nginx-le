@@ -1,8 +1,5 @@
-# 8.2.4
-
-# 8.2.3
-
-# 8.2.2
+# 8.2.5
+- env var keys static consts.
 
 # 8.2.1
 Failed pub release
