@@ -57,7 +57,7 @@ void _start() {
   final domain = Environment().domain;
   verbose(() => '${Environment.domainKey}=$domain');
   final tld = Environment().tld;
-  verbose(() => '${Environment().tldKey}=$tld');
+  verbose(() => '${Environment.tldKey}=$tld');
 
   final wildcard = Environment().domainWildcard;
   verbose(() => '${Environment.domainWildcardKey}=$wildcard');
@@ -121,7 +121,7 @@ void dumpEnvironmentVariables() {
   printEnv(Environment.debugKey, Environment().debug.toString());
   printEnv(Environment.hostnameKey, Environment().hostname);
   printEnv(Environment.domainKey, Environment().domain);
-  printEnv(Environment().tldKey, Environment().tld);
+  printEnv(Environment.tldKey, Environment().tld);
   printEnv(Environment.emailaddressKey, Environment().emailaddress);
   printEnv(Environment().productionKey, Environment().production.toString());
   printEnv(

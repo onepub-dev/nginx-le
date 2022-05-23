@@ -45,7 +45,7 @@ class Environment {
 
   set domain(String? domain) => env[domainKey] = domain;
 
-  String get tldKey => 'TLD';
+  static const tldKey = 'TLD';
   String? get tld => env[tldKey];
   set tld(String? tld) => env[tldKey] = tld;
 

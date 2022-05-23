@@ -34,7 +34,7 @@ void setHost(
   final clientIP = getClientIP();
   var url = '$apiEndPoint?ApiUser=$apiUser&ApiKey=$apiKey&UserName=$username'
       '&Command=$setHostsCommand&ClientIp=$clientIP&'
-      'SLD=$domainPart&${Environment().tldKey}=$tld';
+      'SLD=$domainPart&${Environment.tldKey}=$tld';
 
   url += bulidRecords(records);
 
