@@ -1,4 +1,5 @@
-# 8.2.4
+# 8.2.5
+- env var keys static consts.
 
 # 8.2.3
 - Updated code so we consistently use the same environment keys.
