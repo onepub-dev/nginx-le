@@ -1,4 +1,4 @@
-# 8.2.5
+# 8.2.6
 - env var keys static consts.
 
 # 8.2.1
