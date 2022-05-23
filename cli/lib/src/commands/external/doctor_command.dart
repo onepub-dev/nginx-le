@@ -52,7 +52,7 @@ class DoctorCommand extends Command<void> {
     _colprint(['ConfigPath', config.configPath]);
     _colprint(['Mode', config.mode]);
     _colprint(['FQDN', config.fqdn]);
-    _colprint([(Environment().tldKey), config.tld]);
+    _colprint([(Environment.tldKey), config.tld]);
     _colprint(['Docker ImageID', config.image?.imageid]);
     _colprint(['Cert Type', config.certificateType]);
     _colprint(['Docker container', config.containerid]);
