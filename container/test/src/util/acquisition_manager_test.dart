@@ -1,4 +1,12 @@
 @Timeout(Duration(minutes: 20))
+/* Copyright (C) S. Brett Sutton - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
+ */
+
+
+
 import 'package:dcli/dcli.dart' hide equals;
 
 import 'package:nginx_le_container/src/util/acquisition_manager.dart';
@@ -25,14 +33,7 @@ void main() {
     Environment().certbotDNSWaitTime = 10;
   });
   test('acquisition manager ...', () async {
-    withTempDir((dir) {
-      // setup(
-      //     hostname: 'auditor',
-      //     domain: 'noojee.com.au',
-      //     wildcard: false,
-      //     settingsFilename: 'cloudflare.yaml',
-      //     mockPath: dir);
-
+    runInTestScope(() {
       AcquisitionManager().enterAcquisitionMode(reload: false);
       expect(AcquisitionManager().inAcquisitionMode, equals(true));
 
@@ -44,29 +45,24 @@ void main() {
 
       AcquisitionManager().leaveAcquistionMode(reload: false);
       expect(AcquisitionManager().inAcquisitionMode, equals(false));
-    });
+    },
+        hostname: 'auditor',
+        domain: 'noojee.com.au',
+        tld: 'com.au',
+        settingFilename: 'cloudflare.yaml');
   });
 
   test('Renew certificate', () {
-    withTempDir((dir) {
-      // setup(
-      //     hostname: 'auditor',
-      //     domain: 'noojee.com.au',
-      //     tld: 'com.au',
-      //     wildcard: false,
-      //     settingsFilename: 'cloudflare.yaml',
-      //     mockPath: dir);
-
+    runInTestScope(() {
       Certbot().clearBlockFlag();
-
       Certbot().revokeAll();
-
       AcquisitionManager().acquireIfRequired(reload: false);
-
       Certbot().renew(force: true);
-    });
-
-//    'test/src/util/mock_deploy_hook'.run;
+    },
+        hostname: 'auditor',
+        domain: 'noojee.com.au',
+        tld: 'com.au',
+        settingFilename: 'cloudflare.yaml');
   },
       skip: false,
       tags: ['slow'],
@@ -239,15 +235,7 @@ void main() {
 
   /// The second attempt to acquire a certificate should do nothing.
   test('double acquire wildcard certificate ...', () async {
-    withTempDir((dir) {
-      // setup(
-      //     hostname: 'auditor',
-      //     domain: 'noojee.com.au',
-      //     tld: 'com.au',
-      //     wildcard: true,
-      //     settingsFilename: 'cloudflare.yaml',
-      //     mockPath: dir);
-
+    runInTestScope(() {
       Certbot().clearBlockFlag();
 
       AcquisitionManager().acquireIfRequired(reload: false);
@@ -275,8 +263,11 @@ void main() {
               wildcard: true,
               production: false),
           equals(true));
-    });
-
+    },
+        hostname: 'auditor',
+        domain: 'noojee.com.au',
+        tld: 'com.au',
+        settingFilename: 'cloudflare.yaml');
 //   test('isdeployed...', () {
 //     setup(
 //         hostname: 'auditor',
@@ -325,6 +316,50 @@ void main() {
 }
 
 void _acquire(
+    {required String hostname,
+    required String domain,
+    required String tld,
+    required String settingFilename,
+    bool wildcard = false,
+    bool production = false,
+    bool revoke = true}) {
+  final settingsPath = truepath('test', 'config', settingFilename);
+  final settings = SettingsYaml.load(pathToSettings: settingsPath);
+
+  Settings().setVerbose(enabled: true);
+  configMockDeployHook();
+
+  withTempDir((dir) {
+    withEnvironment(() {
+      CertbotPaths.withTestScope(
+          dir,
+          () => _runAcquire(
+              hostname: hostname,
+              domain: domain,
+              tld: tld,
+              wildcard: wildcard,
+              production: production,
+              revoke: revoke));
+    }, environment: {
+      Environment.hostnameKey: hostname,
+      Environment.domainKey: domain,
+      Environment.domainWildcardKey: '$wildcard',
+      Environment().productionKey: '$production',
+      Environment.smtpServerKey: 'localhost',
+      Environment.smtpServerPortKey: '1025',
+      Environment.emailaddressKey: 'test@noojee.com.au',
+      Environment.authProviderKey: settings['AUTH_PROVIDER'] as String,
+      Environment.authProviderTokenKey:
+          settings[Environment.authProviderTokenKey] as String,
+      Environment.authProviderUsernameKey:
+          settings[Environment.authProviderUsernameKey] as String,
+      Environment.authProviderEmailAddressKey:
+          settings[Environment.authProviderEmailAddressKey] as String
+    });
+  });
+}
+
+void runInTestScope(void Function() test,
     {required String hostname,
     required String domain,
     required String tld,

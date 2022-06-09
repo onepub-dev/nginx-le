@@ -1,3 +1,10 @@
+/* Copyright (C) S. Brett Sutton - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
+ */
+
+
 export 'src/auth_providers/auth_provider.dart';
 export 'src/auth_providers/auth_providers.dart';
 export 'src/auth_providers/dns_auth_providers/generic_auth_provider.dart';
