@@ -22,7 +22,7 @@ void main(List<String> args) {
   'pub global activate nginx_le'.run;
 
   print('Pushing Docker image.');
-  const name = 'noojee/nginx-le';
+  const name = 'onepub/nginx-le';
   final imageTag = '$name:$version';
 
   print('docker path: ${findDockerFilePath()}');

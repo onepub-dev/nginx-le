@@ -5,8 +5,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
-
 import 'package:dcli/dcli.dart';
 
 /// Starts the ngix docker instance using the host subdirectory 'certs'
@@ -17,6 +15,6 @@ void main(List<String> args) {
           ' --ulimit'
           ' core=99999999999:99999999999'
           ' -v certs:/etc/nginx/certs'
-          ' noojee/nginx:1.0.0'
+          ' onepub/nginx:latest'
       .run;
 }

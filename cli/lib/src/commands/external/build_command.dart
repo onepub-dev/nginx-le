@@ -52,7 +52,7 @@ class BuildCommand extends Command<void> {
     var imageName = argResults!['image'] as String?;
 
     if (imageName == null) {
-      final repo = ask('ImageName:', defaultValue: 'noojee/nginx-le');
+      final repo = ask('ImageName:', defaultValue: 'onepub/nginx-le');
       final currentVersion = DartProject.self.pubSpec.version!.toString();
       print('Current version: $currentVersion');
       final version = ask('Version:',

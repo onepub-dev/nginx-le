@@ -267,11 +267,11 @@ class ConfigCommand extends Command<void> {
   Image? selectImage(ConfigYaml config) {
     print('');
     print(green('Select the image to utilise.'));
-    const latest = 'noojee/nginx-le:latest';
+    const latest = 'onepub/nginx-le:latest';
     final images = Images()
         .images
         .where(
-            (image) => image.repository == 'noojee' && image.name == 'nginx-le')
+            (image) => image.repository == 'onepub' && image.name == 'nginx-le')
         .toList();
     final latestImage = Images().findByName(latest);
     Image downloadLatest;
