@@ -1,3 +1,6 @@
+# 8.3.4
+- upgraded all of the dart packages.
+
 # 8.3.2
 - Added default_server directive to default_conf so a server isn't selected at random.
 - change the docker hub repository to onepub.
