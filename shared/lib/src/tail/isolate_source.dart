@@ -216,9 +216,7 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
     /// Process messages from the main isolate.
     recieveFromMainPort.listen((dynamic message) async {
       if (message is StopMessage) {
-        if (message.stopFunction != null) {
-          message.stopFunction!();
-        }
+        message.stopFunction?.call();
         verbose(() => 'sending StoppedMessage');
         sendToMainPort.send(StoppedMessage());
         return;
