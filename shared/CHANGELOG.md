@@ -1,3 +1,6 @@
+# 8.3.5
+- upgraded cli to latest dart versions.
+
 # 8.3.4
 - upgraded all of the dart packages.
 
