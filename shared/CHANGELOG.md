@@ -1,3 +1,9 @@
+# 8.3.2
+- Added default_server directive to default_conf so a server isn't selected at random.
+- change the docker hub repository to onepub.
+- added copy right notices.
+
+
 # 8.3.1
 - Added default_server directive to default_conf so a server isn't selected at random.
 - change the docker hub repository to onepub.
