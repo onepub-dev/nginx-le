@@ -8,8 +8,8 @@ environment:
 dependencies: 
   args: ^2.0.0
   async: ^2.4.2
-  cron: ^0.4.0
-  dcli: ^1.17.5
+  cron: ^0.5.0
+  dcli: ^1.33.0
   docker2: ^2.2.0
   encrypt: ^5.0.0
   http: ^0.13.0
@@ -24,7 +24,7 @@ dependencies:
   settings_yaml: ^3.0.0
   uuid: ^3.0.0
   validators2: ^3.0.0
-  xml: ^5.0.0
+  xml: ^6.1.0
   yaml: ^3.0.0
 dev_dependencies: 
   lint_hard: ^2.0.0
