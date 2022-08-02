@@ -5,9 +5,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
-
-
 import 'package:dcli/dcli.dart';
 import 'package:nginx_le_container/src/commands/internal/deploy_hook.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';

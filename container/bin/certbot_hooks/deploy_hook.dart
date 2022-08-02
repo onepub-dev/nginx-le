@@ -5,8 +5,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
-
 import 'package:nginx_le_container/src/commands/internal/deploy_hook.dart';
 
 /// Runs within the container.

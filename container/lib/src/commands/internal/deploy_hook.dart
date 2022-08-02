@@ -4,7 +4,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /// The [reload] is used for testing when we are not running nginx
