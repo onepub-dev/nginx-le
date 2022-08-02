@@ -15,7 +15,7 @@ RUN apt update  && apt install --no-install-recommends -y \
 # nginx-le build will update the '# flush-cache' to force a new download of dcli if the -u switch is passed
 # to the build command
 #RUN wget https://github.com/noojee/dcli/releases/download/latest.linux/dcli_install # flush-cache: 4a94d0b7-9d53-4f67-b5b9-56eebfd3d41c
-RUN wget https://github.com/noojee/dcli/releases/download/1.18.1/dcli_install # flush-cache: 4a94d0b7-9d53-4f67-b5b9-56eebfd3d41c
+RUN wget https://github.com/noojee/dcli/releases/download/1.33.0/dcli_install # flush-cache: 4a94d0b7-9d53-4f67-b5b9-56eebfd3d41c
 RUN chmod +x dcli_install
 ENV PATH="${PATH}:/usr/lib/dart/bin:/root/.pub-cache/bin"
 RUN echo $PATH
