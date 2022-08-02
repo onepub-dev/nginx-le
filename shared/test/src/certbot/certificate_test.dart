@@ -5,9 +5,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
-
-
 /// certificate renewals can take 20 minutes hence the long timeout above.
 
 import 'package:nginx_le_shared/src/certbot/certbot_paths.dart';

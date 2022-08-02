@@ -4,7 +4,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
 export 'src/auth_providers/auth_provider.dart';
 export 'src/auth_providers/auth_providers.dart';
 export 'src/auth_providers/dns_auth_providers/generic_auth_provider.dart';

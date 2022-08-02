@@ -5,8 +5,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
-
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:path/path.dart' hide equals;
 import 'package:test/test.dart';

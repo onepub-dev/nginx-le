@@ -4,7 +4,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
 // A challenge represents all the data needed to specify a dns-01
 //challenge to lets-encrypt.
 

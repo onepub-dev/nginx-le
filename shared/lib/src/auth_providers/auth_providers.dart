@@ -4,7 +4,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
 import '../../nginx_le_shared.dart';
 import 'dns_auth_providers/cloudflare/cloudflare_provider.dart';
 import 'dns_auth_providers/namecheap/namecheap_auth_provider.dart';

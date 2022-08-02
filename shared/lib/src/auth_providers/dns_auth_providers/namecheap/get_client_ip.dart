@@ -4,7 +4,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
 // getClientIP returns the client's public IP address.
 // It uses namecheap's IP discovery service to perform the lookup.
 import 'dart:convert';

@@ -4,7 +4,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
 /// ToFqdn converts the name into a fqdn appending a trailing dot.
 String toFQDN(String name) {
   final n = name.length;
