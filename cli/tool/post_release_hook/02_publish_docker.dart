@@ -5,7 +5,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
 // ignore_for_file: file_names
 
 import 'package:dcli/dcli.dart';
@@ -19,7 +18,7 @@ void main(List<String> args) {
   print('projectRoot $projectRootPath');
 
   print('Activate the just published version');
-  'pub global activate nginx_le'.run;
+  PubCache().globalActivate('nginx_le');
 
   print('Pushing Docker image.');
   const name = 'onepub/nginx-le';
