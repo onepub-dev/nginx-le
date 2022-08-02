@@ -14,7 +14,6 @@ void main() {
   test('Log Command -no follow - all default logfiles', () {
     setup();
 
-    Settings().setVerbose(enabled: true);
     Nginx.accesslogpath.append('Hellow world');
 
     logs([
@@ -25,7 +24,6 @@ void main() {
   test('Log Command - no follow - just access logfile.', () {
     setup();
 
-    Settings().setVerbose(enabled: true);
     Nginx.accesslogpath.append('Hellow world');
 
     logs([
@@ -37,7 +35,6 @@ void main() {
   test('Log Command - no follow - just access and error logfile.', () {
     setup();
 
-    Settings().setVerbose(enabled: true);
     Nginx.accesslogpath.append('Hellow world');
 
     logs([
@@ -50,7 +47,6 @@ void main() {
   test('Log Command - follow -  accesslogfile.', () {
     setup();
 
-    Settings().setVerbose(enabled: true);
     Nginx.accesslogpath.append('Hellow world');
 
     logs(['--access', '--debug', '--follow']);

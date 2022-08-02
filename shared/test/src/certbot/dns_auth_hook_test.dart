@@ -12,7 +12,6 @@ import 'package:test/test.dart';
 
 /// You must run this test app in vscode with the console option.
 void main() {
-  Settings().setVerbose(enabled: true);
   prepareNameCheapCertHooks(
       hostname: 'slayer', domain: 'noojee.org', tld: 'org', wildcard: false);
 

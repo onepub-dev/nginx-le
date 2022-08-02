@@ -14,8 +14,6 @@ import 'package:test/test.dart';
 
 void main() {
   test('Log - simple no tail', () {
-    Settings().setVerbose(enabled: true);
-
     const log = '/tmp/nginx/access.log';
 
     if (!exists(dirname(log))) {
@@ -45,8 +43,6 @@ void main() {
   });
 
   test('Log - simple  tail', () {
-    Settings().setVerbose(enabled: true);
-
     const log = '/tmp/nginx/access.log';
 
     if (!exists(dirname(log))) {

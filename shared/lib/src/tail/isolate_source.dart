@@ -207,7 +207,6 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
   /// static methods.
   static void spawnEntryPoint<R, ARG1, ARG2>(SendPort sendToMainPort) {
     /// we are in a different isolate so the settings don't transfer across.
-    Settings().setVerbose(enabled: true);
     final recieveFromMainPort = ReceivePort();
 
     /// Immediately Send our send port to the main thread so

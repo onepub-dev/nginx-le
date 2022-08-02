@@ -324,7 +324,6 @@ void _acquire(
   final settingsPath = truepath('test', 'config', settingFilename);
   final settings = SettingsYaml.load(pathToSettings: settingsPath);
 
-  Settings().setVerbose(enabled: true);
   configMockDeployHook();
 
   withTempDir((dir) {
@@ -368,7 +367,6 @@ void runInTestScope(void Function() test,
   final settingsPath = truepath('test', 'config', settingFilename);
   final settings = SettingsYaml.load(pathToSettings: settingsPath);
 
-  Settings().setVerbose(enabled: true);
   configMockDeployHook();
 
   withTempDir((dir) {
@@ -431,8 +429,6 @@ void _runAcquire(
 
   expect(AcquisitionManager().inAcquisitionMode, equals(false));
   expect(Certbot().hasValidCertificate(), equals(true));
-
-  Settings().setVerbose(enabled: true);
 
   expect(Certbot().isDeployed(), equals(true));
   expect(

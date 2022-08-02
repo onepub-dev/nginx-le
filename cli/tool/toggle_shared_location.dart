@@ -5,8 +5,6 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-
-
 import 'dart:io';
 import 'package:dcli/dcli.dart';
 
@@ -30,9 +28,7 @@ void main(List<String> args) {
 
   final parsed = parser.parse(args);
 
-  if (parsed.wasParsed('verbose')) {
-    Settings().setVerbose(enabled: true);
-  }
+  Settings().setVerbose(enabled: parsed.wasParsed('verbose'));
 
   if (parsed.rest.length != 1) {
     printerr(red('You must passed a command: local | published'));
