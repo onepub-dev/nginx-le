@@ -135,7 +135,7 @@ Acquisition is blocked due to a prior error.
 Nginx-le will try again at ${Certbot().blockedUntil}. 
 Alternately resolve the error and then run nginx-le acquire 
   or 
-delete /etc/letsencrypt/block_acquistion.flag from within the container.'''));
+delete /etc/letsencrypt/block_acquisitions.flag from within the container.'''));
           } else {
             Settings().setVerbose(enabled: Environment().debug);
             final authProvider =
