@@ -135,7 +135,7 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
     if (receiveFromIsolatePort != null) {
       receiveFromIsolatePort!.close();
     }
-    _controller.close();
+    unawaited(_controller.close());
   }
 
   Future<void> start(ARG1 arg1, ARG2 arg2, ARG3 arg3) async {

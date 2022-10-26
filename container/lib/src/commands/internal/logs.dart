@@ -89,28 +89,28 @@ void logs(List<String> args) {
 
   try {
     if (certbot && (usedefaults || results.wasParsed('certbot'))) {
-      group.add(Tail(Certbot().logfile, lineCount, follow: follow)
+      unawaited(group.add(Tail(Certbot().logfile, lineCount, follow: follow)
           .start()
-          .map((line) => 'certbot: $line'));
+          .map((line) => 'certbot: $line')));
     }
 
     if (access && (usedefaults || results.wasParsed('access'))) {
-      group.add(Tail(Nginx.accesslogpath, lineCount, follow: follow)
+      unawaited(group.add(Tail(Nginx.accesslogpath, lineCount, follow: follow)
           .start()
-          .map((line) => 'access: $line'));
+          .map((line) => 'access: $line')));
     }
 
     if (error && (usedefaults || results.wasParsed('error'))) {
-      group.add(Tail(Nginx.errorlogpath, lineCount, follow: follow)
+      unawaited(group.add(Tail(Nginx.errorlogpath, lineCount, follow: follow)
           .start()
-          .map((line) => 'error: $line'));
+          .map((line) => 'error: $line')));
     }
   } on TailException catch (error) {
     printerr(error.message);
     exit(1);
   }
 
-  group.close();
+  unawaited(group.close());
 
   final finished = Completer<void>();
   group.stream.listen(print).onDone(() {
@@ -121,6 +121,7 @@ void logs(List<String> args) {
   });
 
   verbose(() => 'waitForDone - group close start');
+  // ignore: discarded_futures
   waitForEx<void>(group.close());
   verbose(() => 'waitForDone - group close end');
   // Future<void>.delayed(Duration(seconds: 30), () {

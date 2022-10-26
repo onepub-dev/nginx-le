@@ -4,6 +4,8 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
+import 'dart:async';
+
 import 'package:dcli/dcli.dart';
 import 'package:isolates/isolate_runner.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
@@ -20,11 +22,13 @@ class LogManager {
   void start({bool debug = false}) {
     print('Starting the logrotate  scheduler.');
 
+    // ignore: discarded_futures
     isoLogRotate = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
     try {
-      isoLogRotate.run(_startScheduler, Env().toJson());
+      unawaited(isoLogRotate.run(_startScheduler, Env().toJson()));
     } finally {
+      // ignore: discarded_futures
       waitForEx(isoLogRotate.close());
     }
   }

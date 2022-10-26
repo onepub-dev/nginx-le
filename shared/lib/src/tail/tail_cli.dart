@@ -46,8 +46,9 @@ class TailCli {
   Stream<String?> start() {
     isoStream
       ..onStart = _dockerLog
-      ..onStop = _dockerLogsStop
-      ..start(cli, 0, false);
+      ..onStop = _dockerLogsStop;
+    // ignore: discarded_futures
+    waitForEx(isoStream.start(cli, 0, false));
 
     return isoStream.stream;
   }
@@ -68,7 +69,7 @@ var _dockerLogsIsolate = TailCliInIsolate();
 
 /// Called when the tail command is to be stopped.
 void _dockerLogsStop() {
-  _dockerLogsIsolate.stop();
+  unawaited(_dockerLogsIsolate.stop());
 }
 
 /// Called when the tail command is to be started

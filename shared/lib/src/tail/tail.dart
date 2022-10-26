@@ -62,8 +62,9 @@ class Tail {
   Stream<String?> start() {
     isoStream
       ..onStart = tail
-      ..onStop = tailStop
-      ..start(filename, lines, follow);
+      ..onStop = tailStop;
+    // ignore: discarded_futures
+    waitForEx(isoStream.start(filename, lines, follow));
 
     // set up the handler to recieve the stream data
     // process it and return.
@@ -91,7 +92,7 @@ Stream<String>? tailStream;
 
 /// Called when the tail command is to be stopped.
 void tailStop() {
-  tallTail.stop();
+  unawaited(tallTail.stop());
 }
 
 /// Called when the tail command is to be started

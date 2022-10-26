@@ -15,14 +15,17 @@ String getIPURL = 'https://dynamicdns.park-your-domain.com/getip';
 
 String? getClientIP({bool debug = false}) {
   final request =
+      // ignore: discarded_futures
       waitForEx<HttpClientRequest>(HttpClient().getUrl(Uri.parse(getIPURL)));
 
+  // ignore: discarded_futures
   final response = waitForEx<HttpClientResponse>(request.close());
 
   String? clientIP;
 
   // defer
   for (final content in waitForEx<List<String>>(
+      // ignore: discarded_futures
       response.transform(const Utf8Decoder()).toList())) {
     clientIP = content;
   }

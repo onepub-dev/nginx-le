@@ -7,6 +7,7 @@
 import 'package:dcli/dcli.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
+
 import 'environment.dart';
 
 // ignore: avoid_classes_with_only_static_members
@@ -36,6 +37,7 @@ class Email {
       ..html = '<p>$body</p>';
 
     try {
+      // ignore: discarded_futures
       final sendReport = waitForEx<SendReport>(send(message, smtpServer));
       print('Message sent: $sendReport');
     } on MailerException catch (e) {

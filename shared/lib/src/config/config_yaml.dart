@@ -172,7 +172,8 @@ class ConfigYaml {
     settings[Environment.smtpServerPortKey] = smtpServerPort;
     settings[Environment.domainWildcardKey] = domainWildcard;
 
-    settings.save();
+    // ignore: discarded_futures
+    waitForEx(settings.save());
   }
 
   String get configPath => d.join(d.HOME, configDir, configFile);

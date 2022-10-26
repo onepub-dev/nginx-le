@@ -25,7 +25,7 @@ import 'package:nginx_le/src/version/version.g.dart';
 enum Mode { public, private }
 
 /// Starts the ngix docker instance
-void main(List<String> args) {
+void main(List<String> args) async {
   final runner = CommandRunner<void>('nginx-le',
       'Cli tools to manage your nginx-le server. Version: $packageVersion')
     ..addCommand(BuildCommand())
@@ -47,7 +47,7 @@ void main(List<String> args) {
     exit(1);
   }
 
-  runner.run(args).catchError((dynamic e) {
+  await runner.run(args).catchError((dynamic e) {
     printerr(e.toString());
     print(runner.usage);
     exit(1);

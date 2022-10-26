@@ -4,6 +4,8 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
+import 'dart:async';
+
 import 'package:dcli/dcli.dart';
 import 'package:isolates/isolate_runner.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
@@ -15,11 +17,13 @@ class RenewalManager {
   void start() {
     print('Starting the certificate renewal scheduler.');
 
+    // ignore: discarded_futures
     final iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
     try {
-      iso.run(startScheduler, Env().toJson());
+      unawaited(iso.run(startScheduler, Env().toJson()));
     } finally {
+      // ignore: discarded_futures
       waitForEx(iso.close());
     }
   }

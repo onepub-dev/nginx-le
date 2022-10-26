@@ -4,6 +4,8 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
+import 'dart:async';
+
 import 'package:dcli/dcli.dart';
 import 'package:isolates/isolate_runner.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
@@ -43,12 +45,14 @@ class AcquisitionManager {
       enterAcquisitionMode(show: true, reload: false);
     }
 
+    // ignore: discarded_futures
     final iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
 
     try {
-      iso.run(_acquireThread, Env().toJson());
+      unawaited(iso.run(_acquireThread, Env().toJson()));
     } finally {
       /// let the isolate run in the background so we can return immediately.
+      // ignore: discarded_futures
       waitForEx(iso.close());
     }
   }
