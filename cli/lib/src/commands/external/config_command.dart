@@ -63,7 +63,7 @@ class ConfigCommand extends Command<void> {
 
     if (config.startMethod != ConfigYaml.startMethodDockerCompose) {
       deleteOldContainers(containerName, image);
-      createContainer(image!, config, debug: debug);
+      createContainer(image, config, debug: debug);
     } else {
       selectContainer(config);
     }
@@ -72,7 +72,7 @@ class ConfigCommand extends Command<void> {
     config.save();
   }
 
-  void deleteOldContainers(String containerName, Image? image) {
+  void deleteOldContainers(String containerName, Image image) {
     final existing = Containers().findByName(containerName);
 
     if (existing != null) {
@@ -94,7 +94,7 @@ class ConfigCommand extends Command<void> {
                 'Unable to delete container ${existing.containerid} as it is '
                 'running'));
             printerr(
-                'Delete all containers for ${image!.imageid} and try again.');
+                'Delete all containers for ${image.imageid} and try again.');
             exit(1);
           }
         }
@@ -110,12 +110,24 @@ class ConfigCommand extends Command<void> {
     final progress = Progress(lines.add, stderr: lines.add);
 
     final volumes = StringBuffer();
-    final provider = ContentProviders().getByName(config.contentProvider)!;
+    final provider = ContentProviders().getByName(config.contentProvider);
+    if (provider == null) {
+      throw ConfigurationException(
+          'Unable to load the configured contentProvider: '
+          '${config.contentProvider}');
+    }
     for (final volume in provider.getVolumes()) {
       volumes.write(' -v ${volume.hostPath}:${volume.containerPath}');
     }
 
-    final authProvider = AuthProviders().getByName(config.authProvider!)!;
+    if (Strings.isEmpty(config.authProvider)) {
+      throw ConfigurationException("The AuthProvider hasn't been configured.");
+    }
+    final authProvider = AuthProviders().getByName(config.authProvider!);
+    if (authProvider == null) {
+      throw ConfigurationException(
+          "The AuthProvider ${config.authProvider}hasn't been configured.");
+    }
     final environments = authProvider.environment;
 
     final dnsProviderEnvs = StringBuffer();
@@ -264,7 +276,7 @@ class ConfigCommand extends Command<void> {
     config.fqdn = fqdn;
   }
 
-  Image? selectImage(ConfigYaml config) {
+  Image selectImage(ConfigYaml config) {
     print('');
     print(green('Select the image to utilise.'));
     const latest = 'onepub/nginx-le:latest';
@@ -286,7 +298,7 @@ class ConfigCommand extends Command<void> {
           size: '');
       images.insert(0, downloadLatest);
     }
-    Image? image = menu<Image>(
+    var image = menu<Image>(
         prompt: 'Image:',
         options: images,
         format: (image) =>
@@ -300,7 +312,11 @@ class ConfigCommand extends Command<void> {
 
       /// after pulling the image additional information will be available
       /// so replace the image with the fully detailed version.
-      image = Images().findByName(latest);
+      final _image = Images().findByName(latest);
+      if (_image == null) {
+        throw DockerException("The selected image $latest can't be found.");
+      }
+      image = _image;
     }
     return image;
   }

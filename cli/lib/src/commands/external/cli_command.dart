@@ -33,12 +33,18 @@ class CliCommand extends Command<void> {
     Settings().setVerbose(enabled: debug);
     final config = ConfigYaml()..validate(() => showUsage(argParser));
 
-    final container = Containers().findByContainerId(config.containerid!);
+    if (Strings.isEmpty(config.containerid)) {
+      printerr('The configured containerid is empty');
+      return;
+    }
+    final containerid = config.containerid!;
+
+    final container = Containers().findByContainerId(containerid);
     if (container != null && container.isRunning) {
-      'docker exec -it ${config.containerid} /bin/bash'
+      'docker exec -it $containerid /bin/bash'
           .start(nothrow: true, terminal: true);
     } else {
-      printerr('The container ${config.containerid} is not running. '
+      printerr('The container $containerid is not running. '
           'You need to start it first.');
     }
   }

@@ -23,12 +23,17 @@ class StopCommand extends Command<void> {
   void run() {
     final config = ConfigYaml()..validate(() => showUsage(argParser));
 
-    final container = Containers().findByContainerId(config.containerid!);
+    if (Strings.isEmpty(config.containerid)) {
+      printerr('The configured containerid is empty');
+      return;
+    }
+    final containerid = config.containerid!;
+    final container = Containers().findByContainerId(containerid);
     if (container != null && container.isRunning) {
       print('Stopping...');
       container.stop();
     } else {
-      printerr('The container ${config.containerid} is not running');
+      printerr('The container $containerid is not running');
     }
   }
 

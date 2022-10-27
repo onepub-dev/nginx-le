@@ -70,21 +70,24 @@ class LogsCommand extends Command<void> {
     final lines = argResults!['lines'] as String;
     final certbot = argResults!['certbot'] as bool;
     final nginx = argResults!['nginx'] as bool;
-    final access = argResults!['access'] as bool?;
-    final error = argResults!['error'] as bool?;
+    final access = argResults!['access'] as bool;
+    final error = argResults!['error'] as bool;
     final debug = argResults!['debug'] as bool;
 
     Settings().setVerbose(enabled: debug);
 
     final config = ConfigYaml()..validate(() => showUsage(argParser));
 
-    int? lineCount = 0;
-    if ((lineCount = int.tryParse(lines)) == null) {
+    var lineCount = 0;
+    final _lineCount = int.tryParse(lines);
+    if (_lineCount == null) {
       printerr("'lines' must by an integer: found $lines");
       showUsage(argParser);
+    } else {
+      lineCount = _lineCount;
     }
 
-    if (lineCount! < 0) {
+    if (lineCount < 0) {
       printerr("'lines' must be >= 0");
       showUsage(argParser);
     }
@@ -99,9 +102,15 @@ class LogsCommand extends Command<void> {
       print('nginx-le displaying logs. ');
     }
 
-    final container = Containers().findByContainerId(config.containerid!)!;
-    if (!container.isRunning) {
-      printerr(red("Nginx-LE container ${config.containerid} isn't running. "
+    if (Strings.isEmpty(config.containerid)) {
+      printerr('The configured containerid is empty');
+      return;
+    }
+    final containerid = config.containerid!;
+
+    final container = Containers().findByContainerId(containerid);
+    if (container == null || !container.isRunning) {
+      printerr(red("Nginx-LE container $containerid isn't running. "
           "Use 'nginx-le start' to start the container"));
       exit(1);
     }
@@ -110,7 +119,7 @@ class LogsCommand extends Command<void> {
         'nginx=$nginx error=$error access=$access');
 
     tailLogs(
-        containerid: config.containerid,
+        containerid: containerid,
         follow: follow,
         lines: lineCount,
         nginx: nginx,
@@ -125,10 +134,10 @@ class LogsCommand extends Command<void> {
     required bool nginx,
     required bool certbot,
     required bool debug,
+    required bool error,
+    required bool access,
     String? containerid,
-    int? lines,
-    bool? access,
-    bool? error,
+    int lines = 0,
   }) {
     // var docker_cmd = 'docker exec -it ${containerid} /home/bin/logs';
     // if (follow) docker_cmd += ' --follow';
@@ -138,7 +147,7 @@ class LogsCommand extends Command<void> {
     // if (error) docker_cmd += ' --error';
     // if (debug) docker_cmd += ' --debug';
 
-    if (nginx && (certbot || access! || error!)) {
+    if (nginx && (certbot || access || error)) {
       if (argResults!.wasParsed('nginx')) {
         printerr(red('You cannot combine nginx with any other log file'));
         exit(1);
@@ -149,19 +158,19 @@ class LogsCommand extends Command<void> {
       }
     }
     try {
-      if (certbot || access! || error!) {
+      if (certbot || access || error) {
         logInternals(
             containerid: containerid,
             follow: follow,
             lines: lines,
             certbot: certbot,
-            access: access!,
-            error: error!,
+            access: access,
+            error: error,
             debug: debug);
       }
 
       if (nginx) {
-        logNginx(containerid!, lines!, follow: follow);
+        logNginx(containerid!, lines, follow: follow);
       }
     } on TailCliException catch (error) {
       printerr(error.message);

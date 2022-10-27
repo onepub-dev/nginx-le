@@ -31,12 +31,19 @@ class CertificatesCommand extends Command<void> {
 
     final config = ConfigYaml()..validate(() => showUsage(argParser));
 
-    final container = Containers().findByContainerId(config.containerid ?? '')!;
-    if (container.isRunning) {
-      'docker exec -it ${config.containerid} /home/bin/certificates ${config.domain}'
+    final containerid = config.containerid ?? '';
+
+    if (Strings.isEmpty(config.containerid)) {
+      printerr('The configured containerid is empty');
+      return;
+    }
+
+    final container = Containers().findByContainerId(containerid);
+    if (container != null && container.isRunning) {
+      'docker exec -it $containerid /home/bin/certificates ${config.domain}'
           .run;
     } else {
-      printerr('The container ${config.containerid} is not running. '
+      printerr('The container "$containerid" is not running. '
           'You need to start it first.');
     }
   }

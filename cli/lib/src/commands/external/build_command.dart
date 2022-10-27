@@ -45,7 +45,7 @@ class BuildCommand extends Command<void> {
     final debug = argResults!['debug'] as bool;
     Settings().setVerbose(enabled: debug);
 
-    final overwrite = results['overwrite'] as bool?;
+    final overwrite = results['overwrite'] as bool;
 
     final dockerPath = findDockerfile();
 
@@ -65,7 +65,7 @@ class BuildCommand extends Command<void> {
     // check for an existing image.
     var image = Images().findByName(imageName);
     if (image != null) {
-      if (!overwrite!) {
+      if (!overwrite) {
         printerr(
             'The image $imageName already exists. Choose a different name or '
             'use --overwrite to replace it.');

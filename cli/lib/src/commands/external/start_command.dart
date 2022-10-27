@@ -41,21 +41,27 @@ class StartCommand extends Command<void> {
 
     final config = ConfigYaml()..validate(() => showUsage(argParser));
 
-    final container = Containers().findByContainerId(config.containerid ?? '')!;
+    final containerid = config.containerid ?? '';
+    final container = Containers().findByContainerId(containerid);
+    if (container == null) {
+      printerr('Unable to find container: ');
+      return;
+    }
+
     if (container.isRunning) {
-      printerr('The container ${config.containerid} is already running. '
+      printerr('The container $containerid is already running. '
           'Consider nginx-le restart');
       showUsage(argParser);
     }
 
-    print('Starting nginx container ${config.containerid}');
+    print('Starting nginx container $containerid');
 
     container.start(daemon: !interactive);
 
     sleep(3);
 
     if (!container.isRunning) {
-      printerr(red('The container ${config.containerid} failed to start'));
+      printerr(red('The container $containerid failed to start'));
       print(green('Showing docker logs'));
       container.showLogs();
     }

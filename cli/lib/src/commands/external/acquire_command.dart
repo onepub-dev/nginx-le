@@ -36,8 +36,21 @@ class AcquireCommand extends Command<void> {
 
     final config = ConfigYaml()..validate(() => showUsage(argParser));
 
-    if (Containers().findByContainerId(config.containerid!)!.isRunning) {
-      var cmd = 'docker exec -it ${config.containerid} /home/bin/acquire ';
+    if (Strings.isEmpty(config.containerid)) {
+      printerr('The config.containerid is empty');
+      return;
+    }
+
+    final containerid = config.containerid!;
+
+    final container = Containers().findByContainerId(containerid);
+    if (container == null) {
+      printerr("Can't find container with id: $containerid");
+      return;
+    }
+
+    if (container.isRunning) {
+      var cmd = 'docker exec -it $containerid /home/bin/acquire ';
 
       print('');
       print(orange(
@@ -48,9 +61,8 @@ class AcquireCommand extends Command<void> {
       }
       cmd.run;
     } else {
-      printerr(
-          red("The Nginx-LE container ${config.containerid} isn't running. "
-              "Use 'nginx-le start' to start the container"));
+      printerr(red("The Nginx-LE container $containerid isn't running. "
+          "Use 'nginx-le start' to start the container"));
     }
   }
 }
