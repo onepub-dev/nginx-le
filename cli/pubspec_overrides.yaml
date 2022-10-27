@@ -1,0 +1,3 @@
+dependency_overrides:
+  nginx_le_shared: 
+    path: ../shared
