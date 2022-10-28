@@ -1,3 +1,13 @@
+# 8.3.6
+- path to shared
+- added an override for shared.
+- Removed a number of null ! operators and added explict tests/errors.
+- Fixed lints for unawaited async calls. Hopefully I've not created any dead locks.
+- corrected the path to the block acquisitsions flag reported when we can't get a cert.
+- Fixed lint.
+- removed verbose logging.
+- change the 'pub global' to use the PubCache api so it selects the correct version of dart.
+
 # 8.3.5
 
 # 8.3.4
