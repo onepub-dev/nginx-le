@@ -9,7 +9,7 @@ dependencies:
   args: ^2.3.0
   async: ^2.9.0
   cron: ^0.5.0
-  dcli: ^1.33.0
+  dcli: ^1.36.0
   http: ^0.13.0
   intl: ^0.17.0
   isolates: ^3.0.0
@@ -17,11 +17,11 @@ dependencies:
   nginx_le_shared: ^8.3.6
   path: ^1.8.2
   public_suffix: ^3.0.0
-  scope: ^2.2.1
+  scope: ^3.0.0
   uuid: ^3.0.1
   xml: ^6.1.0
 dev_dependencies: 
   lint_hard: ^2.0.0
   mocktail: ^0.3.0
-  settings_yaml: ^3.0.1
+  settings_yaml: ^4.0.0
   test: ^1.0.0

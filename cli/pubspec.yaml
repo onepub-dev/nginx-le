@@ -9,7 +9,7 @@ dependencies:
   args: ^2.0.0
   async: ^2.4.2
   cron: ^0.5.0
-  dcli: ^1.33.0
+  dcli: ^1.36.0
   docker2: ^2.2.0
   encrypt: ^5.0.0
   http: ^0.13.0
@@ -18,10 +18,10 @@ dependencies:
   meta: ^1.0.0
   nginx_le_shared: ^8.3.6
   path: ^1.6.4
-  pub_release: ^8.0.3
+  pub_release: ^8.2.0
   pub_semver: ^2.0.0
   public_suffix: ^3.0.0
-  settings_yaml: ^3.0.0
+  settings_yaml: ^4.0.0
   uuid: ^3.0.0
   validators2: ^3.0.0
   xml: ^6.1.0

@@ -206,7 +206,7 @@ class CertbotPaths {
           splice(testDir, CertbotPaths().wwwPathToAcquire))
       ..value(CertbotPaths.cloudFlareSettingsScopeKey,
           splice(testDir, CertbotPaths().cloudFlareSettings))
-      ..run(() {
+      ..runSync(() {
         createDir(Scope.use(certbotRootScopeKey), recursive: true);
         createDir(Scope.use(nginxCertRootScopeKey), recursive: true);
         // createDir(Scope.use(wwwPathLiveScopeKey), recursive: true);
