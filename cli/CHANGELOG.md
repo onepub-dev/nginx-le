@@ -1,3 +1,6 @@
+# 8.4.0
+- updated dependency versions
+
 # 8.3.6
 - path to shared
 - added an override for shared.
