@@ -1,3 +1,6 @@
+# 8.4.0
+- updated dependency versions
+
 # 8.3.6
 - added an override for shared.
 - Removed a number of null ! operators and added explict tests/errors.
