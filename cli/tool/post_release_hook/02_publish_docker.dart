@@ -8,6 +8,7 @@
 // ignore_for_file: file_names
 
 import 'package:dcli/dcli.dart';
+import 'package:path/path.dart';
 
 void main(List<String> args) {
   final version = args[0];

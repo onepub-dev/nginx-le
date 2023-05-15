@@ -1,12 +1,12 @@
 @Timeout(Duration(minutes: 20))
+library;
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-import 'package:dcli/dcli.dart' hide equals;
-
+import 'package:dcli/dcli.dart';
 import 'package:nginx_le_container/src/util/acquisition_manager.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:settings_yaml/settings_yaml.dart';
@@ -31,7 +31,7 @@ void main() {
     Environment().certbotDNSWaitTime = 10;
   });
   test('acquisition manager ...', () async {
-    runInTestScope(() {
+    await runInTestScope(() {
       AcquisitionManager().enterAcquisitionMode(reload: false);
       expect(AcquisitionManager().inAcquisitionMode, equals(true));
 
@@ -50,8 +50,8 @@ void main() {
         settingFilename: 'cloudflare.yaml');
   });
 
-  test('Renew certificate', () {
-    runInTestScope(() {
+  test('Renew certificate', () async {
+    await runInTestScope(() {
       Certbot().clearBlockFlag();
       Certbot().revokeAll();
       AcquisitionManager().acquireIfRequired(reload: false);
@@ -66,8 +66,8 @@ void main() {
       tags: ['slow'],
       timeout: const Timeout(Duration(minutes: 15)));
 
-  test('Revoke Invalid certificates', () {
-    _acquire(
+  test('Revoke Invalid certificates', () async {
+    await _acquire(
         hostname: 'auditor',
         domain: 'noojee.com.au',
         tld: 'com.au',
@@ -75,7 +75,7 @@ void main() {
         settingFilename: 'cloudflare.yaml',
         revoke: false);
 
-    _acquire(
+    await _acquire(
         hostname: 'robtest5',
         domain: 'noojee.org',
         tld: 'org',
@@ -91,8 +91,8 @@ void main() {
         equals(2));
   });
 
-  test('Acquire robtest5.noojee.org via namecheap', () {
-    _acquire(
+  test('Acquire robtest5.noojee.org via namecheap', () async {
+    await _acquire(
         hostname: 'robtest5',
         domain: 'noojee.org',
         tld: 'org',
@@ -100,11 +100,11 @@ void main() {
         revoke: false);
   });
 
-  test('Revoke All certificate', () {
+  test('Revoke All certificate', () async {
     Certbot().revokeAll();
     expect(Certificate.load().length, equals(0));
 
-    _acquire(
+    await _acquire(
         hostname: 'auditor',
         domain: 'noojee.com.au',
         tld: 'com.au',
@@ -119,15 +119,15 @@ void main() {
   }, skip: false);
 
   test('acquire certificate cloudflare ...', () async {
-    _acquire(
+    await _acquire(
         hostname: 'auditor',
         domain: 'noojee.com.au',
         tld: 'com.au',
         settingFilename: 'cloudflare.yaml');
   });
 
-  test('Acquire onepub.dev via cloudflare', () {
-    _acquire(
+  test('Acquire onepub.dev via cloudflare', () async {
+    await _acquire(
         hostname: '',
         domain: 'noojee.com.au',
         tld: 'com.au',
@@ -138,7 +138,7 @@ void main() {
   /// rate limiter.
   test('test switch from staging to production cloudflare ...', () async {
     Certbot().revokeAll();
-    _acquire(
+    await _acquire(
         hostname: 'robtest',
         domain: 'noojee.org',
         tld: 'org',
@@ -164,7 +164,7 @@ void main() {
         wildcard: false,
         production: true);
 
-    _acquire(
+    await _acquire(
         hostname: 'robtest',
         domain: 'noojee.org',
         tld: 'org',
@@ -188,7 +188,7 @@ void main() {
   }, skip: false);
 
   test('acquire certificate cloudflare wildcard ...', () async {
-    _acquire(
+    await _acquire(
         hostname: 'auditor',
         domain: 'noojee.com.au',
         wildcard: true,
@@ -197,7 +197,7 @@ void main() {
   });
 
   test('acquire certificate cloudflare wildcard  *...', () async {
-    _acquire(
+    await _acquire(
         hostname: '*',
         domain: 'noojee.com.au',
         wildcard: true,
@@ -206,7 +206,7 @@ void main() {
   });
 
   test('acquire certificate namecheap ...', () async {
-    _acquire(
+    await _acquire(
         hostname: 'robtest5',
         domain: 'noojee.org',
         tld: 'org',
@@ -214,7 +214,7 @@ void main() {
   });
 
   test('acquire certificate namecheap robtest5 ...', () async {
-    _acquire(
+    await _acquire(
         hostname: 'robtest5',
         domain: 'noojee.org',
         wildcard: true,
@@ -223,7 +223,7 @@ void main() {
   });
 
   test('acquire certificate namecheap wildcard  *...', () async {
-    _acquire(
+    await _acquire(
         hostname: '*',
         domain: 'noojee.org',
         wildcard: true,
@@ -233,7 +233,7 @@ void main() {
 
   /// The second attempt to acquire a certificate should do nothing.
   test('double acquire wildcard certificate ...', () async {
-    runInTestScope(() {
+    await runInTestScope(() {
       Certbot().clearBlockFlag();
 
       AcquisitionManager().acquireIfRequired(reload: false);
@@ -313,21 +313,21 @@ void main() {
   });
 }
 
-void _acquire(
+Future<void> _acquire(
     {required String hostname,
     required String domain,
     required String tld,
     required String settingFilename,
     bool wildcard = false,
     bool production = false,
-    bool revoke = true}) {
+    bool revoke = true}) async {
   final settingsPath = truepath('test', 'config', settingFilename);
   final settings = SettingsYaml.load(pathToSettings: settingsPath);
 
   configMockDeployHook();
 
-  withTempDir((dir) {
-    withEnvironment(() {
+  await withTempDir((dir) async {
+    await withEnvironment(() async {
       CertbotPaths.withTestScope(
           dir,
           () => _runAcquire(
@@ -356,21 +356,21 @@ void _acquire(
   });
 }
 
-void runInTestScope(void Function() test,
+Future<void> runInTestScope(void Function() test,
     {required String hostname,
     required String domain,
     required String tld,
     required String settingFilename,
     bool wildcard = false,
     bool production = false,
-    bool revoke = true}) {
+    bool revoke = true}) async {
   final settingsPath = truepath('test', 'config', settingFilename);
   final settings = SettingsYaml.load(pathToSettings: settingsPath);
 
   configMockDeployHook();
 
-  withTempDir((dir) {
-    withEnvironment(() {
+  await withTempDir((dir) async {
+    await withEnvironment(() async {
       CertbotPaths.withTestScope(
           dir,
           () => _runAcquire(

@@ -253,7 +253,7 @@ class IsolateSource<R, ARG1, ARG2, ARG3> {
         catch (error) {
           sendToMainPort.send(Result<R>.error(
               "can't send error with big stackTrace, error is : "
-              '${error.toString()}'));
+              '$error'));
         }
       }
     });

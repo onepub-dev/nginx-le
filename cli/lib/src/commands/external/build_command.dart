@@ -6,10 +6,12 @@
 
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
 import 'package:docker2/docker2.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+import 'package:path/path.dart';
 import 'package:uuid/uuid.dart';
 
 class BuildCommand extends Command<void> {

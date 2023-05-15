@@ -6,7 +6,9 @@
  */
 
 import 'dart:io';
+import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
+import 'package:path/path.dart';
 
 /// Run this script to toggle how nginx_le_shared is imported as a
 /// dependency in the cli and container pubspec.yaml files.

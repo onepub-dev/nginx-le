@@ -199,14 +199,14 @@ delete /etc/letsencrypt/block_acquisitions.flag from within the container.'''));
         print('${'*' * 30} Cerbot Error details end: ${'*' * 30}');
       }
       Email.sendError(
-          subject: e.message, body: '${e.details}\n ${st.toString()}');
+          subject: e.message, body: '${e.details}\n $st');
       // ignore: avoid_catches_without_on_clauses
     } catch (e, st) {
       Certbot().blockAcquisitions();
       print(red('Acquisition has failed due to an unexpected '
           'error: ${e.runtimeType}'));
-      print(e.toString());
-      print(st.toString());
+      print(e);
+      print(st);
       Email.sendError(subject: e.toString(), body: st.toString());
     }
   }

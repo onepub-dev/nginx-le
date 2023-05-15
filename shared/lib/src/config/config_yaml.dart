@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:dcli/dcli.dart' as d;
 import 'package:dcli/dcli.dart';
 import 'package:docker2/docker2.dart';
+import 'package:path/path.dart' as path;
 import 'package:settings_yaml/settings_yaml.dart';
 
 import '../../nginx_le_shared.dart';
@@ -17,8 +18,8 @@ class ConfigYaml {
   factory ConfigYaml() => _self;
 
   ConfigYaml._internal() {
-    if (!d.exists(d.dirname(configPath))) {
-      d.createDir(d.dirname(configPath), recursive: true);
+    if (!d.exists(path.dirname(configPath))) {
+      d.createDir(path.dirname(configPath), recursive: true);
     }
 
     settings = SettingsYaml.load(pathToSettings: configPath);
@@ -176,7 +177,7 @@ class ConfigYaml {
     waitForEx(settings.save());
   }
 
-  String get configPath => d.join(d.HOME, configDir, configFile);
+  String get configPath => path.join(d.HOME, configDir, configFile);
 
   void validate(void Function() showUsage) {
     if (!isConfigured) {

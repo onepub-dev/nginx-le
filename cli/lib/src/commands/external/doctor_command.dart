@@ -6,10 +6,12 @@
 
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
 import 'package:docker2/docker2.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+import 'package:path/path.dart';
 
 import '../../content_providers/content_providers.dart';
 
@@ -32,7 +34,7 @@ class DoctorCommand extends Command<void> {
         widths: [17, -1]));
     _colprint(['Path separator', (Platform.pathSeparator)]);
     print('');
-    _colprint(['dart version', (DartSdk().version)]);
+    _colprint(['dart version', DartSdk().version]);
     print('');
 
     print('');
@@ -137,7 +139,7 @@ class DoctorCommand extends Command<void> {
       if (username != null) {
         print(Format().row([
           label,
-          (fstat.modeString()),
+          fstat.modeString(),
           '<user>:${owner.group == owner.user ? '<user>' : owner.group}',
           '${privatePath(path)} '
         ], widths: [

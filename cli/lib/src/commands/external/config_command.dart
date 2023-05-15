@@ -6,6 +6,7 @@
 
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
 import 'package:docker2/docker2.dart';
@@ -142,7 +143,7 @@ class ConfigCommand extends Command<void> {
             ' --env=${Environment.domainKey}=${config.domain}'
             ' --env=${Environment.tldKey}=${config.tld}'
             ' --env='
-            '${Environment().productionKey}=${config.isProduction.toString()}'
+            '${Environment().productionKey}=${config.isProduction}'
             ' --env=${Environment.startPausedKey}=${config.startPaused}'
             ' --env=${Environment.authProviderKey}=${config.authProvider}'
             ' --env=${Environment.emailaddressKey}=${config.emailaddress}'
@@ -204,8 +205,7 @@ class ConfigCommand extends Command<void> {
 
     print('');
     print(green('Select the Auth Provider'));
-    final provider = menu<AuthProvider>(
-        prompt: 'Content Provider:',
+    final provider = menu<AuthProvider>('Content Provider:',
         options: authProviders,
         defaultOption: defaultProvider,
         format: (provider) => provider.summary);
@@ -219,8 +219,7 @@ class ConfigCommand extends Command<void> {
     print(green('Only select wildcard if the system has multiple fqdns.'));
 
     const wildcard = 'Wildcard';
-    final domainType = menu(
-        prompt: 'Certificate Type',
+    final domainType = menu('Certificate Type',
         options: ['FQDN', wildcard],
         defaultOption: config.domainWildcard ? wildcard : 'FQDN');
 
@@ -233,10 +232,8 @@ class ConfigCommand extends Command<void> {
       ConfigYaml.certificateTypeStaging
     ];
     config.certificateType ??= ConfigYaml.certificateTypeStaging;
-    final certificateType = menu(
-        prompt: 'Certificate Type:',
-        options: certTypes,
-        defaultOption: config.certificateType);
+    final certificateType = menu('Certificate Type:',
+        options: certTypes, defaultOption: config.certificateType);
     config.certificateType = certificateType;
   }
 
@@ -298,8 +295,7 @@ class ConfigCommand extends Command<void> {
           size: '');
       images.insert(0, downloadLatest);
     }
-    var image = menu<Image>(
-        prompt: 'Image:',
+    var image = menu<Image>('Image:',
         options: images,
         format: (image) =>
             '${image.imageid} - ${image.repository}/${image.name}:${image.tag}',
@@ -327,7 +323,7 @@ class ConfigCommand extends Command<void> {
     config.mode ??= ConfigYaml.modePrivate;
     final options = [ConfigYaml.modePublic, ConfigYaml.modePrivate];
     final mode = menu(
-      prompt: 'Mode:',
+      'Mode:',
       options: options,
       defaultOption: config.mode,
     );
@@ -355,7 +351,7 @@ class ConfigCommand extends Command<void> {
     print('');
     print(green('Select the method you will use to start Nginx-LE'));
     final startMethod = menu(
-      prompt: 'Start Method:',
+      'Start Method:',
       options: startMethods,
       defaultOption: config.startMethod,
     );
@@ -370,8 +366,7 @@ class ConfigCommand extends Command<void> {
         ContentProviders().getByName(config.contentProvider);
     print('');
     print(green('Select the Content Provider'));
-    final provider = menu<ContentProvider>(
-        prompt: 'Content Provider:',
+    final provider = menu<ContentProvider>('Content Provider:',
         options: contentProviders,
         defaultOption: defaultProvider,
         format: (provider) =>
@@ -409,8 +404,7 @@ class ConfigCommand extends Command<void> {
       config.containerid = containers[0].containerid;
     } else {
       print(green('Select the docker container running nginx-le'));
-      final container = menu<Container>(
-          prompt: 'Select Container:',
+      final container = menu<Container>('Select Container:',
           options: containers,
           defaultOption: defaultOption,
           format: (container) =>

@@ -1,4 +1,6 @@
 @Timeout(Duration(minutes: 30))
+library;
+
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
@@ -19,7 +21,7 @@ void main() {
     final certificates = Certificate.load();
 
     for (final cert in certificates) {
-      print(cert.toString());
+      print(cert);
     }
   });
 
@@ -32,9 +34,8 @@ void main() {
     print('Found ${certificates.length} certificates');
 
     for (final cert in certificates) {
-      print(cert.toString());
+      print(cert);
       // if (cert.wasIssuedFor())
-
     }
   });
 

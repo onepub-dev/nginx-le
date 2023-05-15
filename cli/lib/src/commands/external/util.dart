@@ -6,6 +6,7 @@
 
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:docker2/docker2.dart';
 
@@ -38,10 +39,8 @@ String containerOrName(ArgParser argParser, ArgResults argResults) {
       printerr(orange('No docker containers are running.'));
       exit(1);
     }
-    final container = menu<Container>(
-        options: containers,
-        prompt: 'Please select a container to run:',
-        format: (item) => '${item.imageid} ${item.name}');
+    final container = menu<Container>('Please select a container to run:',
+        options: containers, format: (item) => '${item.imageid} ${item.name}');
     containerid = container.containerid;
   }
 

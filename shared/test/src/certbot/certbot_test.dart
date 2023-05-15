@@ -5,10 +5,10 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-import 'package:dcli/dcli.dart' hide equals;
-
+import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/namecheap/namecheap_auth_provider.dart';
+import 'package:path/path.dart' hide equals;
 import 'package:test/test.dart';
 
 import 'dns_auth_hook_test.dart';
@@ -94,7 +94,7 @@ void main() {
       final certificates = Certificate.load();
 
       for (final cert in certificates) {
-        print(cert.toString());
+        print(cert);
       }
 
       final authProvider =

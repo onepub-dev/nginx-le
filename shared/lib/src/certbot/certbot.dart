@@ -9,6 +9,7 @@ import 'dart:math';
 import 'package:cron/cron.dart';
 import 'package:dcli/dcli.dart' hide delete;
 import 'package:dcli/dcli.dart' as dcli;
+import 'package:path/path.dart';
 
 import '../../nginx_le_shared.dart';
 
@@ -405,15 +406,14 @@ class Certbot {
       } on CertbotException catch (e, st) {
         print(e.message);
         print(e.details);
-        print(st.toString());
-        Email.sendError(
-            subject: e.message, body: '${e.details}\n ${st.toString()}');
+        print(st);
+        Email.sendError(subject: e.message, body: '${e.details}\n $st');
         // ignore: avoid_catches_without_on_clauses
       } catch (e, st) {
         /// we don't rethrow as we don't want to shutdown the scheduler.
         /// as this may be a temporary error.
-        print(e.toString());
-        print(st.toString());
+        print(e);
+        print(st);
 
         Email.sendError(subject: e.toString(), body: st.toString());
       }

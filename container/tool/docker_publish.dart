@@ -11,6 +11,7 @@
 import 'dart:io';
 
 import 'package:dcli/dcli.dart';
+import 'package:path/path.dart';
 
 void main(List<String> args) {
   final script = DartScript.fromFile(Platform.script.toFilePath());

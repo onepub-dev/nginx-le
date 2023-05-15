@@ -22,8 +22,6 @@ import 'package:nginx_le/src/commands/external/revoke_command.dart';
 import 'package:nginx_le/src/commands/external/stop_command.dart';
 import 'package:nginx_le/src/version/version.g.dart';
 
-enum Mode { public, private }
-
 /// Starts the ngix docker instance
 void main(List<String> args) async {
   final runner = CommandRunner<void>('nginx-le',

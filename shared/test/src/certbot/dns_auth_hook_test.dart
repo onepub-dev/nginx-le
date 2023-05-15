@@ -1,4 +1,6 @@
 @Timeout(Duration(minutes: 60))
+library;
+
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
@@ -8,6 +10,7 @@
 import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/namecheap/namecheap_auth_provider.dart';
+import 'package:path/path.dart';
 import 'package:test/test.dart';
 
 /// You must run this test app in vscode with the console option.

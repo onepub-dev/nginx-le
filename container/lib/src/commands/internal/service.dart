@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+import 'package:path/path.dart';
 
 import '../../util/acquisition_manager.dart';
 import '../../util/log_manager.dart';
@@ -44,8 +45,8 @@ void startService() {
       // ignore: avoid_catches_without_on_clauses
     } catch (e, s) {
       print('Nginx-LE encounted an unexpected problem and is shutting down.');
-      print('Exception: ${e.runtimeType} ${e.toString()}');
-      print('Stacktrace: ${s.toString()}');
+      print('Exception: ${e.runtimeType} $e');
+      print('Stacktrace: $s');
     } finally {
       print(orange('Nginx-le has shutdown'));
     }
