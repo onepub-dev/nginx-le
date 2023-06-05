@@ -19,23 +19,23 @@ const configFilePathTo = '/etc/nginx/logrotate.conf';
 class LogManager {
   late IsolateRunner isoLogRotate;
 
-  void start({bool debug = false}) {
+  Future<void> start({bool debug = false}) async {
     print('Starting the logrotate  scheduler.');
 
     // ignore: discarded_futures
-    isoLogRotate = waitForEx<IsolateRunner>(IsolateRunner.spawn());
+    isoLogRotate = await IsolateRunner.spawn();
 
     try {
       unawaited(isoLogRotate.run(_startScheduler, Env().toJson()));
     } finally {
       // ignore: discarded_futures
-      waitForEx(isoLogRotate.close());
+      await isoLogRotate.close();
     }
   }
 }
 
 /// Isolate callback must be a top level function.
-void _startScheduler(String environment) {
+Future<void> _startScheduler(String environment) async {
   try {
     print(orange('LogManager is starting'));
     Env().fromJson(environment);
@@ -55,7 +55,7 @@ void _startScheduler(String environment) {
         'error: ${e.runtimeType}'));
     printerr(e.toString());
     printerr(st.toString());
-    Email.sendError(subject: e.toString(), body: st.toString());
+    await Email.sendError(subject: e.toString(), body: st.toString());
   } finally {
     print(orange('LogManager has shut down.'));
   }

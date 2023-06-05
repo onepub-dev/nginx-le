@@ -41,7 +41,7 @@ class BuildCommand extends Command<void> {
   @override
   String get name => 'build';
   @override
-  void run() {
+  Future<void> run() async {
     final results = argResults!;
 
     final debug = argResults!['debug'] as bool;
@@ -105,9 +105,8 @@ class BuildCommand extends Command<void> {
 
     /// get the new image.
     image = Images().findByName(imageName);
-    ConfigYaml()
-      ..image = image
-      ..save();
+    final yaml = ConfigYaml()..image = image;
+    await yaml.save();
 
     print('');
     print(green(

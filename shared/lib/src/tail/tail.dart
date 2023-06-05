@@ -59,12 +59,12 @@ class Tail {
   int lines;
   bool follow;
 
-  Stream<String?> start() {
+  Future<Stream<String?>> start() async {
     isoStream
       ..onStart = tail
       ..onStop = tailStop;
     // ignore: discarded_futures
-    waitForEx(isoStream.start(filename, lines, follow));
+    await isoStream.start(filename, lines, follow);
 
     // set up the handler to recieve the stream data
     // process it and return.

@@ -10,7 +10,7 @@ import '../../../../nginx_le_shared.dart';
 import 'challenge.dart';
 import 'namecheap_auth_provider.dart';
 
-void namecheapDNSCleanup() {
+Future<void> namecheapDNSCleanup() async {
   Certbot().log('*' * 80);
   Certbot().log('cert_bot_dns_cleanup started');
 
@@ -38,7 +38,11 @@ void namecheapDNSCleanup() {
   /// our own envs.
   final domain = Environment().domain;
   final hostname = Environment().hostname;
-  final tld = Environment().tld!;
+  final tld = Environment().tld;
+  if (tld == null || tld.isEmpty) {
+    printerr('Throwing exception: tld is empty');
+    throw ArgumentError('No tld found in env var ${Environment.tldKey}');
+  }
   Certbot().log('tld: $tld');
   final username = authProvider.envUsername;
   Certbot().log('username: $username');
@@ -63,7 +67,7 @@ void namecheapDNSCleanup() {
     ///
     /// Writes the DNS record and waits for it to be visible.
     ///
-    challenge.cleanUp(
+    await challenge.cleanUp(
         hostname: hostname,
         domain: domain,
         tld: tld,

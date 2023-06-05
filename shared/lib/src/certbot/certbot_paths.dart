@@ -114,9 +114,9 @@ class CertbotPaths {
     var max = 0;
     for (final path in paths) {
       if (path.contains('-')) {
-        // noojee.org-0001
-        // noojee.org-new
-        // noojee.org-new-0001
+        // onepub.org-0001
+        // onepub.org-new
+        // onepub.org-new-0001
         final parts = path.split('-');
         final num = int.tryParse(parts[parts.length - 1]);
         if (num == null) {

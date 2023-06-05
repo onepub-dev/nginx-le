@@ -24,6 +24,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
+
 import 'package:dcli/dcli.dart';
 
 const defaultBaseURL = 'https://api.namecheap.com/xml.response';
@@ -32,9 +33,9 @@ const sandboxBaseURL = 'https://api.sandbox.namecheap.com/xml.response';
 ///
 /// sends a url get request and returns the resulting body.
 ///
-String getUrl(
+Future<String> getUrl(
   String url,
-) {
+) async {
   // announce we are starting.
   final completer = Completer<String>();
 
@@ -76,7 +77,7 @@ String getUrl(
     );
   }));
 
-  return waitForEx<String>(completer.future);
+  return completer.future;
 }
 
 class DNSProviderException implements Exception {

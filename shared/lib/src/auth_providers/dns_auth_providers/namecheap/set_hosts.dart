@@ -14,15 +14,15 @@ import 'get_url.dart';
 
 String setHostsCommand = 'namecheap.domains.dns.setHosts';
 
-/// [domain] - the domain e.g. noojee.com
+/// [domain] - the domain e.g. squarephone.ibz
 /// [tld] - the Top Level Domain e.g. com
-void setHost(
+Future<void> setHost(
     {required List<DNSRecord> records,
     required String? apiKey,
     required String? apiUser,
     required String? username,
     required String domain,
-    required String tld}) {
+    required String tld}) async {
   // ArgumentError.checkNotNull(fqdomainn, 'domain');
   // ArgumentError.checkNotNull(tld, 'tld');
   // ArgumentError.checkNotNull(apiUser, 'apiUser');
@@ -37,7 +37,7 @@ void setHost(
   // var apiEndPoint = sandboxBaseURL;
   const apiEndPoint = defaultBaseURL;
 
-  final clientIP = getClientIP();
+  final clientIP = await getClientIP();
   var url = '$apiEndPoint?ApiUser=$apiUser&ApiKey=$apiKey&UserName=$username'
       '&Command=$setHostsCommand&ClientIp=$clientIP&'
       'SLD=$domainPart&${Environment.tldKey}=$tld';
@@ -45,7 +45,7 @@ void setHost(
   url += bulidRecords(records);
 
   verbose(() => 'Requesting $url');
-  final result = getUrl(url);
+  final result = await getUrl(url);
   verbose(() => 'Namecheap setHosts: $result');
 
   final document = XmlDocument.parse(result);

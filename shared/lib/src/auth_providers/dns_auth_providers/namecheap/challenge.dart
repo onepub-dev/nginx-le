@@ -29,15 +29,15 @@ class Challenge {
   static const challengeHostName = '_acme-challenge';
 
 // Present installs a TXT record for the DNS challenge.
-  bool present({
+  Future<bool> present({
     required String? hostname,
     required String domain,
     required String tld,
     required String certbotValidationString,
     required bool wildcard,
     int retries = 20,
-  }) {
-    var records = _getHosts(domain: domain, tld: tld);
+  }) async {
+    var records = await _getHosts(domain: domain, tld: tld);
 
     if (records.isEmpty) {
       throw DNSProviderException('No Hosts returned from NameCheap domain '
@@ -66,7 +66,7 @@ class Challenge {
 
     records.add(certRecord);
 
-    setHost(
+    await setHost(
         records: records,
         apiKey: apiKey,
         apiUser: username,
@@ -137,13 +137,13 @@ class Challenge {
   }
 
   // CleanUp removes a TXT record used for a previous DNS challenge.
-  void cleanUp(
+  Future<void> cleanUp(
       {required String? hostname,
       required String domain,
       required String tld,
       required bool wildcard,
-      required String? certbotValidationString}) {
-    final records = _getHosts(domain: domain, tld: tld);
+      required String? certbotValidationString}) async {
+    final records = await _getHosts(domain: domain, tld: tld);
 
     // Find the challenge TXT record and remove it if found.
     var found = false;
@@ -161,7 +161,7 @@ class Challenge {
       }
     }
     if (found) {
-      setHost(
+      await setHost(
           records: newRecords,
           apiKey: apiKey,
           apiUser: username,
@@ -171,10 +171,10 @@ class Challenge {
     }
   }
 
-  List<DNSRecord> _getHosts({
+  Future<List<DNSRecord>> _getHosts({
     required String domain,
     required String tld,
-  }) =>
+  }) async =>
       getHosts(
           apiKey: apiKey!,
           apiUser: username!,

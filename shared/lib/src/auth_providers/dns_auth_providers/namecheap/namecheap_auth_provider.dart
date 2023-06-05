@@ -45,13 +45,13 @@ class NameCheapAuthProvider extends GenericAuthProvider {
   }
 
   @override
-  void authHook() {
-    namecheapDNSPath();
+  Future<void> authHook() async {
+    await namecheapDNSPath();
   }
 
   @override
-  void cleanupHook() {
-    namecheapDNSCleanup();
+  Future<void> cleanupHook() async {
+    await namecheapDNSCleanup();
   }
 
   @override

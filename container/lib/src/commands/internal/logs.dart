@@ -13,7 +13,7 @@ import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 
 /// Tails selected logs to the console.
-void logs(List<String> args) {
+Future<void> logs(List<String> args) async {
   final argParser = ArgParser()
     ..addFlag(
       'follow',
@@ -90,21 +90,21 @@ void logs(List<String> args) {
 
   try {
     if (certbot && (usedefaults || results.wasParsed('certbot'))) {
-      unawaited(group.add(Tail(Certbot().logfile, lineCount, follow: follow)
-          .start()
-          .map((line) => 'certbot: $line')));
+      unawaited(group.add(
+          (await Tail(Certbot().logfile, lineCount, follow: follow).start())
+              .map((line) => 'certbot: $line')));
     }
 
     if (access && (usedefaults || results.wasParsed('access'))) {
-      unawaited(group.add(Tail(Nginx.accesslogpath, lineCount, follow: follow)
-          .start()
-          .map((line) => 'access: $line')));
+      unawaited(group.add(
+          (await Tail(Nginx.accesslogpath, lineCount, follow: follow).start())
+              .map((line) => 'access: $line')));
     }
 
     if (error && (usedefaults || results.wasParsed('error'))) {
-      unawaited(group.add(Tail(Nginx.errorlogpath, lineCount, follow: follow)
-          .start()
-          .map((line) => 'error: $line')));
+      unawaited(group.add(
+          (await Tail(Nginx.errorlogpath, lineCount, follow: follow).start())
+              .map((line) => 'error: $line')));
     }
   } on TailException catch (error) {
     printerr(error.message);
@@ -122,15 +122,14 @@ void logs(List<String> args) {
   });
 
   verbose(() => 'waitForDone - group close start');
-  // ignore: discarded_futures
-  waitForEx<void>(group.close());
+  await group.close();
   verbose(() => 'waitForDone - group close end');
   // Future<void>.delayed(Duration(seconds: 30), () {
   //   syslog.stop();
   //   dmesg.stop();
   // });
   verbose(() => 'waitForDone -start');
-  waitForEx<void>(finished.future);
+  await finished.future;
   verbose(() => 'waitForDone -end');
 }
 

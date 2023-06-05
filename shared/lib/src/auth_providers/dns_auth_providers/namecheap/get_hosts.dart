@@ -12,15 +12,15 @@ import 'get_url.dart';
 
 String getHostsCommand = 'namecheap.domains.dns.getHosts';
 
-/// [domain] - the domain e.g. noojee.com
+/// [domain] - the domain e.g. squarephone.biz
 /// [tld] - the Top Level Domain e.g. com
-List<DNSRecord> getHosts(
+Future<List<DNSRecord>> getHosts(
     {required String apiUser,
     required String apiKey,
     required String username,
     required String clientIP,
     required String domain,
-    required String tld}) {
+    required String tld}) async {
   ArgumentError.checkNotNull(domain, 'domain');
   ArgumentError.checkNotNull(tld, 'tld');
   ArgumentError.checkNotNull(apiUser, 'apiUser');
@@ -39,7 +39,7 @@ List<DNSRecord> getHosts(
       'ClientIp=$clientIP&SLD=$domainPart&TLD=$tld';
 
   verbose(() => 'Requesting $url');
-  final result = getUrl(url);
+  final result = await getUrl(url);
   verbose(() => 'Namecheap getHosts: $result');
 
   final document = XmlDocument.parse(result);

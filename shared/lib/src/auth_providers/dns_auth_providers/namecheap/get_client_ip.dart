@@ -9,24 +9,21 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dcli/dcli.dart';
-
 String getIPURL = 'https://dynamicdns.park-your-domain.com/getip';
 
-String? getClientIP({bool debug = false}) {
+Future<String?> getClientIP({bool debug = false}) async {
   final request =
       // ignore: discarded_futures
-      waitForEx<HttpClientRequest>(HttpClient().getUrl(Uri.parse(getIPURL)));
+      await HttpClient().getUrl(Uri.parse(getIPURL));
 
   // ignore: discarded_futures
-  final response = waitForEx<HttpClientResponse>(request.close());
+  final response = await request.close();
 
   String? clientIP;
 
   // defer
-  for (final content in waitForEx<List<String>>(
-      // ignore: discarded_futures
-      response.transform(const Utf8Decoder()).toList())) {
+  for (final content
+      in await response.transform(const Utf8Decoder()).toList()) {
     clientIP = content;
   }
 

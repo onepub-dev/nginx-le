@@ -21,7 +21,7 @@ class AcquisitionManager {
 
   static AcquisitionManager? _self;
 
-  void start() {
+  Future<void> start() async {
     print(orange('AcquisitionManager is starting'));
 
     if (Certbot().hasValidCertificate()) {
@@ -46,14 +46,14 @@ class AcquisitionManager {
     }
 
     // ignore: discarded_futures
-    final iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
+    final iso = await IsolateRunner.spawn();
 
     try {
       unawaited(iso.run(_acquireThread, Env().toJson()));
     } finally {
       /// let the isolate run in the background so we can return immediately.
       // ignore: discarded_futures
-      waitForEx(iso.close());
+      await iso.close();
     }
   }
 
@@ -109,7 +109,7 @@ class AcquisitionManager {
   /// so acquire it.
   /// If we end with valid and deployed certificate
   /// we leave acquisition mode.
-  void acquireIfRequired({bool reload = true}) {
+  Future<void> acquireIfRequired({bool reload = true}) async {
     final hostname = Environment().hostname;
     final domain = Environment().domain;
     final wildcard = Environment().domainWildcard;
@@ -198,8 +198,7 @@ delete /etc/letsencrypt/block_acquisitions.flag from within the container.'''));
         print(e.details);
         print('${'*' * 30} Cerbot Error details end: ${'*' * 30}');
       }
-      Email.sendError(
-          subject: e.message, body: '${e.details}\n $st');
+      await Email.sendError(subject: e.message, body: '${e.details}\n $st');
       // ignore: avoid_catches_without_on_clauses
     } catch (e, st) {
       Certbot().blockAcquisitions();
@@ -207,7 +206,7 @@ delete /etc/letsencrypt/block_acquisitions.flag from within the container.'''));
           'error: ${e.runtimeType}'));
       print(e);
       print(st);
-      Email.sendError(subject: e.toString(), body: st.toString());
+      await Email.sendError(subject: e.toString(), body: st.toString());
     }
   }
 
@@ -222,7 +221,7 @@ delete /etc/letsencrypt/block_acquisitions.flag from within the container.'''));
 }
 
 /// Global function required for isolate.
-void _acquireThread(String environment) {
+Future<void> _acquireThread(String environment) async {
   Env().fromJson(environment);
 
   if (!Environment().autoAcquire) {
@@ -237,7 +236,7 @@ void _acquireThread(String environment) {
     /// start the acquisition loop.
     // ignore: literal_only_boolean_expressions
     do {
-      AcquisitionManager().acquireIfRequired();
+      await AcquisitionManager().acquireIfRequired();
 
       Settings().setVerbose(enabled: false);
       sleep(5, interval: Interval.minutes);

@@ -15,7 +15,7 @@ import '../../util/log_manager.dart';
 import '../../util/renewal_manager.dart';
 
 /// The main service thread that runs within the docker container.
-void startService() {
+Future<void> startService() async {
   print(red('*' * 80));
   print('Nginx-LE starting Version: $packageVersion');
   print(red('*' * 80));
@@ -41,7 +41,7 @@ void startService() {
     }
   } else {
     try {
-      _start();
+      await _start();
       // ignore: avoid_catches_without_on_clauses
     } catch (e, s) {
       print('Nginx-LE encounted an unexpected problem and is shutting down.');
@@ -53,7 +53,7 @@ void startService() {
   }
 }
 
-void _start() {
+Future<void> _start() async {
   final debug = Environment().debug;
   Settings().setVerbose(enabled: debug);
 
@@ -83,7 +83,7 @@ void _start() {
 
   _clearLocks();
 
-  LogManager().start();
+  await LogManager().start();
 
   /// In case the host, domain or wildard settings have changed.
   /// Also cleans up an old expired certificates
@@ -98,9 +98,9 @@ void _start() {
       wildcard: wildcard,
       production: production);
 
-  RenewalManager().start();
+  await RenewalManager().start();
 
-  AcquisitionManager().start();
+  await AcquisitionManager().start();
 
   print(orange('Starting nginx daemon.'));
 

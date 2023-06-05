@@ -54,12 +54,11 @@ class DockerLogs {
   int lines;
   bool follow;
 
-  Stream<String?> start() {
+  Future<Stream<String?>> start() async {
     isoSource
       ..onStart = _dockerLog
       ..onStop = _dockerLogsStop;
-    // ignore: discarded_futures
-    waitForEx(isoSource.start(containerid, lines, follow));
+    await isoSource.start(containerid, lines, follow);
 
     return isoSource.stream;
   }
@@ -79,9 +78,9 @@ var _dockerLogsIsolate = DockerLogsInIsolate();
 /// Isolate.
 
 /// Called when the tail command is to be stopped.
-void _dockerLogsStop() {
+Future<void> _dockerLogsStop() async {
   // ignore: discarded_futures
-  waitForEx(_dockerLogsIsolate.stop());
+  await _dockerLogsIsolate.stop();
 }
 
 /// Called when the tail command is to be started

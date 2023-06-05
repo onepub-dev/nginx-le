@@ -14,45 +14,45 @@ import 'package:path/path.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('Log Command -no follow - all default logfiles', () {
+  test('Log Command -no follow - all default logfiles', () async {
     setup();
 
     Nginx.accesslogpath.append('Hellow world');
 
-    logs([
+    await logs([
       '--debug',
     ]);
   });
 
-  test('Log Command - no follow - just access logfile.', () {
+  test('Log Command - no follow - just access logfile.', () async {
     setup();
 
     Nginx.accesslogpath.append('Hellow world');
 
-    logs([
+    await logs([
       '--access',
       '--debug',
     ]);
   });
 
-  test('Log Command - no follow - just access and error logfile.', () {
+  test('Log Command - no follow - just access and error logfile.', () async {
     setup();
 
     Nginx.accesslogpath.append('Hellow world');
 
-    logs([
+    await logs([
       '--access',
       '--error',
       '--debug',
     ]);
   });
 
-  test('Log Command - follow -  accesslogfile.', () {
+  test('Log Command - follow -  accesslogfile.', () async {
     setup();
 
     Nginx.accesslogpath.append('Hellow world');
 
-    logs(['--access', '--debug', '--follow']);
+    await logs(['--access', '--debug', '--follow']);
 
     /// can't run this as the command will run forever.
   }, skip: true);

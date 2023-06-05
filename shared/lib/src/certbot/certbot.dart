@@ -407,7 +407,7 @@ class Certbot {
         print(e.message);
         print(e.details);
         print(st);
-        Email.sendError(subject: e.message, body: '${e.details}\n $st');
+        await Email.sendError(subject: e.message, body: '${e.details}\n $st');
         // ignore: avoid_catches_without_on_clauses
       } catch (e, st) {
         /// we don't rethrow as we don't want to shutdown the scheduler.
@@ -415,7 +415,7 @@ class Certbot {
         print(e);
         print(st);
 
-        Email.sendError(subject: e.toString(), body: st.toString());
+        await Email.sendError(subject: e.toString(), body: st.toString());
       }
     });
   }

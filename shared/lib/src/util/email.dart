@@ -12,7 +12,7 @@ import 'environment.dart';
 
 // ignore: avoid_classes_with_only_static_members
 class Email {
-  static void sendError({String? subject, String? body}) {
+  static Future<void> sendError({String? subject, String? body}) async {
     if (Environment().smtpServer == null || Environment().smtpServer!.isEmpty) {
       printerr('Error not emailed as no ${Environment.smtpServerKey} '
           'environment variable set');
@@ -37,8 +37,7 @@ class Email {
       ..html = '<p>$body</p>';
 
     try {
-      // ignore: discarded_futures
-      final sendReport = waitForEx<SendReport>(send(message, smtpServer));
+      final sendReport = await send(message, smtpServer);
       print('Message sent: $sendReport');
     } on MailerException catch (e) {
       printerr('Message not sent.');

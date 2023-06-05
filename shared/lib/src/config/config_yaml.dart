@@ -39,7 +39,7 @@ class ConfigYaml {
     smtpServer = settings[Environment.smtpServerKey] as String?;
     smtpServerPort = settings[Environment.smtpServerPortKey] as int? ?? 25;
 
-    /// If true we are using a wildcard dns (e.g. *.clouddialer.com.au)
+    /// If true we are using a wildcard dns (e.g. *.squarephone.biz)
     domainWildcard =
         (settings[Environment.domainWildcardKey] as bool?) ?? false;
   }
@@ -98,7 +98,7 @@ class ConfigYaml {
   String? smtpServer;
   int smtpServerPort = 25;
 
-  /// If true we are using a wildcard dns (e.g. *.clouddialer.com.au)
+  /// If true we are using a wildcard dns (e.g. *.squarephone.biz)
   bool domainWildcard = false;
 
   // The name of the selected [ContentProvider]
@@ -155,7 +155,7 @@ class ConfigYaml {
     _hostIncludePath = hostIncludePath;
   }
 
-  void save() {
+  Future<void> save() async {
     settings[startMethodKey] = startMethod;
     settings[modeKey] = mode;
     settings[Environment.startPausedKey] = startPaused;
@@ -174,7 +174,7 @@ class ConfigYaml {
     settings[Environment.domainWildcardKey] = domainWildcard;
 
     // ignore: discarded_futures
-    waitForEx(settings.save());
+    await settings.save();
   }
 
   String get configPath => path.join(d.HOME, configDir, configFile);

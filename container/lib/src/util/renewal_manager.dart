@@ -14,23 +14,23 @@ class RenewalManager {
 ////////////////////////////////////////////
   /// Renewal thread
 ////////////////////////////////////////////
-  void start() {
+  Future<void> start() async {
     print('Starting the certificate renewal scheduler.');
 
     // ignore: discarded_futures
-    final iso = waitForEx<IsolateRunner>(IsolateRunner.spawn());
+    final iso = await IsolateRunner.spawn();
 
     try {
       unawaited(iso.run(startScheduler, Env().toJson()));
     } finally {
       // ignore: discarded_futures
-      waitForEx(iso.close());
+      await iso.close();
     }
   }
 }
 
 /// Isolate callback must be a top level function.
-void startScheduler(String environment) {
+Future<void> startScheduler(String environment) async {
   sleep(15);
 
   /// We do an immediate renew attempt incase this service hasn't run
@@ -56,7 +56,7 @@ void startScheduler(String environment) {
         'error: ${e.runtimeType}'));
     printerr(e.toString());
     printerr(st.toString());
-    Email.sendError(subject: e.toString(), body: st.toString());
+    await Email.sendError(subject: e.toString(), body: st.toString());
   } finally {
     print(orange('RenewManager has shut down.'));
   }

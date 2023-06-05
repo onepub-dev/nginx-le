@@ -11,14 +11,14 @@ import 'dns_auth_hook_test.dart';
 
 void main() {
   test('deploy certificates ...', () {
-    prepareNameCheapCertHooks(
+    prepareCloudflareCertHooks(
         hostname: 'auditor',
-        domain: 'noojee.com.au',
-        tld: 'com.au',
+        domain: 'squarephone.biz',
+        tld: 'biz',
         wildcard: false);
 
     Environment().hostname = 'auditor';
-    Environment().domain = 'noojee.com.au';
+    Environment().domain = 'squarephone.biz';
     Environment().domainWildcard = false;
     Environment().autoAcquire = true;
 

@@ -13,17 +13,17 @@ import '../../util/prepare.dart';
 
 /// Starts the ngix docker instance using the host subdirectory 'certs'
 /// to store acquired certificates.
-void main() {
+void main() async {
   prepareEnvironment();
   env['DEBUG'] = 'false';
   env['HOSTNAME'] = 'auditor';
-  env['DOMAIN'] = 'onepub.dev';
+  env['DOMAIN'] = 'squarephone.biz';
   env['TLD'] = 'com.au';
   env['EMAIL_ADDRESS'] = 'support@onepub.com.au';
   env['PRODUCTION'] = 'true';
   env['DOMAIN_WILDCARD'] = 'false';
   env['AUTO_ACQUIRE'] = 'true';
-  env['SMTP_SERVER'] = 'noc-gcp.clouddialer.com.au';
+  env['SMTP_SERVER'] = 'noc-gcp.onepub.dev';
   env['SMTP_SERVER_PORT'] = '25';
   env['START_PAUSED'] = 'false';
   env['AUTH_PROVIDER'] = 'HTTP01Auth';
@@ -35,5 +35,5 @@ void main() {
 
   print('email: ${Environment().emailaddress}');
 
-  startService();
+  await startService();
 }

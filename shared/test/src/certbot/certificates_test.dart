@@ -17,27 +17,27 @@ void main() {
       final lines = '''
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  Found the following certs:'
-   Certificate Name: slayer.noojee.org
-     Domains: slayer.noojee.org
+   Certificate Name: slayer.squarephone.biz
+     Domains: slayer.squarephone.biz
      Expiry Date: 2020-10-27 06:10:05+00:00 (INVALID: TEST_CERT)
-     Certificate Path: /etc/letsencrypt/config/live/slayer.noojee.org/fullchain.pem
-     Private Key Path: /etc/letsencrypt/config/live/slayer.noojee.org/privkey.pem
+     Certificate Path: /etc/letsencrypt/config/live/slayer.squarephone.biz/fullchain.pem
+     Private Key Path: /etc/letsencrypt/config/live/slayer.squarephone.biz/privkey.pem
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'''
           .split('\n');
 
       final certificates = Certificate.parse(lines);
       expect(certificates.length, equals(1));
       final certificate = certificates[0];
-      expect(certificate.fqdn, equals('slayer.noojee.org'));
-      expect(certificate.domains, equals('slayer.noojee.org'));
+      expect(certificate.fqdn, equals('slayer.squarephone.biz'));
+      expect(certificate.domains, equals('slayer.squarephone.biz'));
       expect(
           certificate.certificatePath,
           equals(join(CertbotPaths().letsEncryptLivePath,
-              'slayer.noojee.org/fullchain.pem')));
+              'slayer.squarephone.biz/fullchain.pem')));
       expect(
           certificate.privateKeyPath,
           equals(join(CertbotPaths().letsEncryptLivePath,
-              'slayer.noojee.org/privkey.pem')));
+              'slayer.squarephone.biz/privkey.pem')));
       expect(certificate.production, equals(false));
       expect(certificate.expiryDate,
           equals(DateTime.parse('2020-10-27 06:10:05+00:00')));
@@ -58,11 +58,11 @@ void main() {
       final lines = '''
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  Found the following certs:'
-   Certificate Name: slayer.noojee.org
-     Domains: slayer.noojee.org
+   Certificate Name: slayer.squarephone.biz
+     Domains: slayer.squarephone.biz
      Expiry Date: 1920-10-27 06:10:05+00:00 (INVALID: TEST_CERT)
-     Certificate Path: /etc/letsencrypt/config/live/slayer.noojee.org/fullchain.pem
-     Private Key Path: /etc/letsencrypt/config/live/slayer.noojee.org/privkey.pem
+     Certificate Path: /etc/letsencrypt/config/live/slayer.squarephone.biz/fullchain.pem
+     Private Key Path: /etc/letsencrypt/config/live/slayer.squarephone.biz/privkey.pem
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'''
           .split('\n');
 
@@ -76,11 +76,11 @@ void main() {
       final lines = '''
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  Found the following certs:'
-   Certificate Name: slayer.noojee.org
-     Domains: slayer.noojee.org
+   Certificate Name: slayer.squarephone.biz
+     Domains: slayer.squarephone.biz
      Expiry Date: 2030-10-27 06:10:05+00:00 (INVALID: TEST_CERT)
-     Certificate Path: /etc/letsencrypt/config/live/slayer.noojee.org/fullchain.pem
-     Private Key Path: /etc/letsencrypt/config/live/slayer.noojee.org/privkey.pem
+     Certificate Path: /etc/letsencrypt/config/live/slayer.squarephone.biz/fullchain.pem
+     Private Key Path: /etc/letsencrypt/config/live/slayer.squarephone.biz/privkey.pem
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'''
           .split('\n');
 
@@ -94,11 +94,11 @@ void main() {
       final lines = '''
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  Found the following certs:'
-   Certificate Name: slayer.noojee.org
-     Domains: slayer.noojee.org
+   Certificate Name: slayer.squarephone.biz
+     Domains: slayer.squarephone.biz
      Expiry Date: 2030-10-27 06:10:05+00:00 (INVALID: TEST_CERT)
-     Certificate Path: /etc/letsencrypt/config/live/slayer.noojee.org/fullchain.pem
-     Private Key Path: /etc/letsencrypt/config/live/slayer.noojee.org/privkey.pem
+     Certificate Path: /etc/letsencrypt/config/live/slayer.squarephone.biz/fullchain.pem
+     Private Key Path: /etc/letsencrypt/config/live/slayer.squarephone.biz/privkey.pem
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'''
           .split('\n');
 

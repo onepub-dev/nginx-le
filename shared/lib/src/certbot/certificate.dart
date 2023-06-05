@@ -31,7 +31,7 @@ class Certificate {
   String? privateKeyPath;
 
   void parseName(String line) {
-    /// Handle names of the form: billing.noojee.com.au-0001
+    /// Handle names of the form: billing.squarephone.biz-0001
     if (line.contains('-')) {
       // ignore: parameter_assignments
       line = line.split('-')[0];
@@ -102,11 +102,11 @@ class Certificate {
   ///
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Found the following certs:
-//   Certificate Name: slayer.noojee.org
-//     Domains: slayer.noojee.org
+//   Certificate Name: slayer.squarephone.biz
+//     Domains: slayer.squarephone.biz
 //     Expiry Date: 2020-10-27 06:10:05+00:00 (INVALID: TEST_CERT)
-//     Certificate Path: /etc/letsencrypt/config/live/slayer.noojee.org/fullchain.pem
-//     Private Key Path: /etc/letsencrypt/config/live/slayer.noojee.org/privkey.pem
+//     Certificate Path: /etc/letsencrypt/config/live/slayer.squarephone.biz/fullchain.pem
+//     Private Key Path: /etc/letsencrypt/config/live/slayer.squarephone.biz/privkey.pem
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // when no certificates found.

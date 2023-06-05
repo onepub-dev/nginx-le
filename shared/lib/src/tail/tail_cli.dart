@@ -43,12 +43,12 @@ class TailCli {
       IsolateSource<String, String, int, bool>();
   String cli;
 
-  Stream<String?> start() {
+  Future<Stream<String?>> start() async {
     isoStream
       ..onStart = _dockerLog
       ..onStop = _dockerLogsStop;
     // ignore: discarded_futures
-    waitForEx(isoStream.start(cli, 0, false));
+    await isoStream.start(cli, 0, false);
 
     return isoStream.stream;
   }

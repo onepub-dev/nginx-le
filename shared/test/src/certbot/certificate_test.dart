@@ -41,11 +41,11 @@ void main() {
 
   test('parse', () {
     const cert = '''
-   Certificate Name: robtest5.noojee.org
-     Domains: robtest5.noojee.org
+   Certificate Name: robtest5.squarephone.biz
+     Domains: robtest5.squarephone.biz
      Expiry Date: 2021-05-13 04:36:22+00:00 (INVALID: TEST_CERT)
-     Certificate Path: /etc/letsencrypt/config/live/robtest5.noojee.org/fullchain.pem
-     Private Key Path: /etc/letsencrypt/config/live/robtest5.noojee.org/privkey.pem
+     Certificate Path: /etc/letsencrypt/config/live/robtest5.squarephone.biz/fullchain.pem
+     Private Key Path: /etc/letsencrypt/config/live/robtest5.squarephone.biz/privkey.pem
 ''';
 
     final certificate = Certificate.parse(cert.split('\n'));
@@ -55,7 +55,7 @@ void main() {
     expect(
         certificate[0].wasIssuedFor(
             hostname: 'robtest5',
-            domain: 'noojee.org',
+            domain: 'squarephone.biz',
             wildcard: false,
             production: false),
         equals(true));

@@ -33,7 +33,7 @@ class ConfigCommand extends Command<void> {
   String get name => 'config';
 
   @override
-  void run() {
+  Future<void> run() async {
     print('Nginx-LE config Version:$packageVersion');
     final debug = argResults!['debug'] as bool;
     Settings().setVerbose(enabled: debug);
@@ -55,7 +55,7 @@ class ConfigCommand extends Command<void> {
 
     final image = selectImage(config);
 
-    config.save();
+    await config.save();
     print('Configuration saved.');
 
     ContentProviders().getByName(config.contentProvider)!
@@ -70,7 +70,7 @@ class ConfigCommand extends Command<void> {
     }
 
     /// save the new container id.
-    config.save();
+    await config.save();
   }
 
   void deleteOldContainers(String containerName, Image image) {

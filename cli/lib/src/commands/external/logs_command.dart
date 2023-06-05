@@ -66,7 +66,7 @@ class LogsCommand extends Command<void> {
   String get name => 'logs';
 
   @override
-  void run() {
+  Future<void> run() async {
     final follow = argResults!['follow'] as bool;
     final lines = argResults!['lines'] as String;
     final certbot = argResults!['certbot'] as bool;
@@ -119,7 +119,7 @@ class LogsCommand extends Command<void> {
     print('Logging Nginx-LE follow=$follow lines=$lineCount certbot=$certbot '
         'nginx=$nginx error=$error access=$access');
 
-    tailLogs(
+    await tailLogs(
         containerid: containerid,
         follow: follow,
         lines: lineCount,
@@ -130,7 +130,7 @@ class LogsCommand extends Command<void> {
         debug: debug);
   }
 
-  void tailLogs({
+  Future<void> tailLogs({
     required bool follow,
     required bool nginx,
     required bool certbot,
@@ -139,7 +139,7 @@ class LogsCommand extends Command<void> {
     required bool access,
     String? containerid,
     int lines = 0,
-  }) {
+  }) async {
     // var docker_cmd = 'docker exec -it ${containerid} /home/bin/logs';
     // if (follow) docker_cmd += ' --follow';
     // docker_cmd += ' --lines $lines';
@@ -171,7 +171,7 @@ class LogsCommand extends Command<void> {
       }
 
       if (nginx) {
-        logNginx(containerid!, lines, follow: follow);
+        await logNginx(containerid!, lines, follow: follow);
       }
     } on TailCliException catch (error) {
       printerr(error.message);
@@ -212,10 +212,11 @@ class LogsCommand extends Command<void> {
     cmd.run;
   }
 
-  void logNginx(String containerid, int lines, {bool follow = false}) {
-    final stream = DockerLogs(containerid, lines, follow: follow)
-        .start()
-        .map((line) => 'nginx: $line');
+  Future<void> logNginx(String containerid, int lines,
+      {bool follow = false}) async {
+    final stream =
+        (await DockerLogs(containerid, lines, follow: follow).start())
+            .map((line) => 'nginx: $line');
 
     // pre-close the group as onDone won't be called until the group is closed.
     final finished = Completer<void>();

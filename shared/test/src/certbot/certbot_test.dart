@@ -7,7 +7,7 @@
 
 import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
-import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/namecheap/namecheap_auth_provider.dart';
+import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/cloudflare/cloudflare_provider.dart';
 import 'package:path/path.dart' hide equals;
 import 'package:test/test.dart';
 
@@ -17,17 +17,17 @@ void main() {
   group('certbot', () {
     setUpAll(() {
       if (which('auth_hook').notfound) {
-        printerr(
-            red('Compile and install auth_hook, cleanup_hook and deploy_hook '
-                'before running this test'));
-        throw Exception('run dcli compile -i -o container/bin/certbot_hooks ');
+        printerr(red('dcli compile -i -o container/bin/certbot_hooks/*.dart '
+            'before running this test'));
+        throw Exception(
+            'run dcli compile -i -o container/bin/certbot_hooks/*.dart ');
       }
       print('setupall called');
       Environment().hostname = 'slayer';
 
-      Environment().domain = 'noojee.org';
-      Environment().tld = 'org';
-      Environment().emailaddress = 'bsutton@noojee.com.au';
+      Environment().domain = 'squarephone.biz';
+      Environment().tld = 'biz';
+      Environment().emailaddress = 'bsutton@squarephone.biz';
       Environment().production = false;
       // Environment().certbotDNSAuthHookPath = '/home/bsutton/git/nginx-le/container/bin/certbot_hooks/dns_auth.dart';
       // Environment().certbotDNSCleanupHookPath =
@@ -35,14 +35,14 @@ void main() {
     });
 
     test('acquire', () {
-      prepareNameCheapCertHooks(
+      prepareCloudflareCertHooks(
           hostname: 'slayer',
-          domain: 'noojee.org',
-          tld: 'org',
+          domain: 'squarephone.biz',
+          tld: 'biz',
           wildcard: false);
 
       final authProvider =
-          AuthProviders().getByName(NameCheapAuthProvider().name)!;
+          AuthProviders().getByName(CloudFlareProvider().name)!;
       print('acquire me');
 
       print('env ${env['CERTBOT_DNS_AUTH_HOOK_PATH']}');
@@ -63,7 +63,7 @@ void main() {
 
       var cert = Certificate.find(
         hostname: 'slayer',
-        domain: 'noojee.org',
+        domain: 'squarephone.biz',
         production: false,
         wildcard: false,
       )!;
@@ -74,7 +74,7 @@ void main() {
 
       cert = Certificate.find(
         hostname: 'slayer',
-        domain: 'noojee.org',
+        domain: 'squarephone.biz',
         production: false,
         wildcard: false,
       )!;
@@ -85,10 +85,10 @@ void main() {
     test(
         'renew - this can take > 10 min as certbot intentionally slows '
         'this call down.', () {
-      prepareNameCheapCertHooks(
+      prepareCloudflareCertHooks(
           hostname: 'slayer',
-          domain: 'noojee.org',
-          tld: 'org',
+          domain: 'squarephone.biz',
+          tld: 'biz',
           wildcard: false);
 
       final certificates = Certificate.load();
@@ -98,7 +98,7 @@ void main() {
       }
 
       final authProvider =
-          AuthProviders().getByName(NameCheapAuthProvider().name)!;
+          AuthProviders().getByName(CloudFlareProvider().name)!;
 
       print('renew');
       authProvider
@@ -112,7 +112,7 @@ void main() {
       print(orange('calling revoke'));
       Certificate.find(
               hostname: 'slayer',
-              domain: 'noojee.org',
+              domain: 'squarephone.biz',
               production: false,
               wildcard: false)!
           .revoke();
@@ -126,7 +126,7 @@ void main() {
       // print(orange('calling revoke'));
       // Certbot().revoke(
       //     hostname: 'slayer',
-      //     domain: 'noojee.org',
+      //     domain: 'squarephone.biz',
       //     production: false,
       //     wildcard: false,
       //     emailaddress: Environment().emailaddress);
@@ -139,21 +139,21 @@ void main() {
         Environment().certbotRootPath = path;
         createDir(
             join(CertbotPaths().letsEncryptLivePath,
-                'robtest18-new.clouddialer.com.au'),
+                'robtest18-new.squarephone.biz'),
             recursive: true);
         final fqnd001 = join(CertbotPaths().letsEncryptLivePath,
-            'robtest18-new.clouddialer.com.au-0001');
+            'robtest18-new.squarephone.biz-0001');
         createDir(fqnd001, recursive: true);
 
-        // noojee.org-0001
-        // noojee.org-new
-        // noojee.org-new-0001
+        // squarephone.biz-0001
+        // squarephone.biz-new
+        // squarephone.biz-new-0001
         final latest = CertbotPaths().latestCertificatePath(
-            'robtest18-new', 'clouddialer.com.au',
+            'robtest18-new', 'squarephone.biz',
             wildcard: false);
         expect(latest, equals(fqnd001));
 
-        // createDir(join(path, 'robtest18.clouddialer.com.au'));
+        // createDir(join(path, 'robtest18.squarephone.biz'));
       });
     });
 

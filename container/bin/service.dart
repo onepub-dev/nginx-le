@@ -9,6 +9,6 @@ import 'package:nginx_le_container/src/commands/internal/service.dart';
 
 /// The container entry point to run nginx.
 /// This starts the primary nginx service thread.
-void main() {
-  startService();
+void main() async {
+  await startService();
 }
