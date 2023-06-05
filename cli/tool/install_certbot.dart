@@ -5,9 +5,15 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
+import 'dart:io';
+
 import 'package:dcli/dcli.dart';
 
 void main(List<String> args) {
+  if (!Shell.current.isPrivilegedUser) {
+    printerr(red('You need to run this command with sudo'));
+    exit(1);
+  }
   'apt install --no-install-recommends -y python3 python3-venv'.run;
   'python3 -m venv /opt/certbot/'.run;
   '/opt/certbot/bin/pip install --upgrade pip'.run;

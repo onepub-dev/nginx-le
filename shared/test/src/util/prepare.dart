@@ -11,7 +11,7 @@ import 'package:path/path.dart';
 void prepareEnvironment() {
   const letsencryptDir = '/tmp/letsencrypt';
   Environment().certbotRootPath = letsencryptDir;
-  Environment().certbotDomain = 'noojee.org';
+  Environment().certbotDomain = 'squarephone.biz';
   Environment().tld = 'org';
   Environment().certbotValidation = 'TEST_TOKEN_ABC134';
   Environment().certbotToken = 'token_file';

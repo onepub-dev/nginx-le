@@ -14,7 +14,7 @@ void main() {
 docker create 
       --name="nginx-le" 
       --env=${Environment.hostnameKey}=www
-      --env=${Environment.domainKey}=noojee.org 
+      --env=${Environment.domainKey}=squarephone.biz
       --env=${Environment.tldKey}=org
       --env=${Environment.emailaddressKey}=bsutton@onepub.com.au 
       --env=${Environment.debugKey}=false 

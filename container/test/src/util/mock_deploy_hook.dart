@@ -15,18 +15,18 @@ void main() {
   withTempDir((dir) {
     // MockCertbotPaths(
     //     hostname: 'auditor',
-    //     domain: 'noojee.com.au',
+    //     domain: 'squarephone.biz',
     //     wildcard: false,
     //     tld: 'com.au',
     //     settingsFilename: 'cloudflare.yaml',
     //     rootDir: dir,
     //     possibleCerts: [
-    //       PossibleCert('auditor', 'noojee.com.au', wildcard: false)
+    //       PossibleCert('auditor', 'squarephone.biz', wildcard: false)
     //     ]).wire();
 
-    /// /tmp/etc/letsencrypt/config/live/auditor.noojee.com.au
+    /// /tmp/etc/letsencrypt/config/live/auditor.squarephone.biz
     // Environment().certbotDeployHookRenewedLineagePath =
-    //     '/tmp/etc/letsencrypt/config/live/auditor.noojee.com.au';
+    //     '/tmp/etc/letsencrypt/config/live/auditor.squarephone.biz';
 
 //  CertbotPaths().latestCertificatePath(hostname, domain, wildcard: wildcard);
 

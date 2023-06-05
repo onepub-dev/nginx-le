@@ -9,21 +9,24 @@ library;
 
 import 'package:dcli/dcli.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
-import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/namecheap/namecheap_auth_provider.dart';
+import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/cloudflare/cloudflare_provider.dart';
 import 'package:path/path.dart';
 import 'package:test/test.dart';
 
 /// You must run this test app in vscode with the console option.
 void main() {
-  prepareNameCheapCertHooks(
-      hostname: 'slayer', domain: 'noojee.org', tld: 'org', wildcard: false);
+  prepareCloudflareCertHooks(
+      hostname: 'slayer',
+      domain: 'squarephone.biz',
+      tld: 'biz',
+      wildcard: false);
 
   Certbot().sendToStdout();
 
-  AuthProviders().getByName(NameCheapAuthProvider().name)!.authHook();
+  AuthProviders().getByName(CloudFlareProvider().name)!.authHook();
 }
 
-void prepareNameCheapCertHooks(
+void prepareCloudflareCertHooks(
     {required String hostname,
     required String domain,
     required String tld,
@@ -39,7 +42,7 @@ void prepareNameCheapCertHooks(
   Environment().domainWildcard = false;
   Environment().certbotValidation = 'TEST_TOKEN_ABC134';
   Environment().nginxCertRootPathOverwrite = '/tmp/nginx/certs';
-  Environment().authProvider = NameCheapAuthProvider().name;
+  Environment().authProvider = CloudFlareProvider().name;
 
   _createDir(CertbotPaths().nginxCertPath);
 
@@ -47,8 +50,6 @@ void prepareNameCheapCertHooks(
   _createDir(CertbotPaths().letsEncryptLogPath);
   _createDir(CertbotPaths().letsEncryptConfigPath);
   _createDir(join(CertbotPaths().letsEncryptLivePath));
-
-  print(pwd);
 }
 
 String _createDir(String dir) {

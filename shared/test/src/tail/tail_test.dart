@@ -16,7 +16,7 @@ import 'package:path/path.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('Log - simple no tail', () {
+  test('Log - simple no tail', () async {
     const log = '/tmp/nginx/access.log';
 
     if (!exists(dirname(log))) {
@@ -31,7 +31,7 @@ void main() {
       ..append('Last line of log');
 
     final tail = Tail('/tmp/nginx/access.log', 100);
-    final stream = tail.start();
+    final stream = await tail.start();
 
     final finished = Completer<void>();
 
@@ -42,10 +42,10 @@ void main() {
       finished.complete();
     });
 
-    waitForEx<void>(finished.future);
+    await finished.future;
   });
 
-  test('Log - simple  tail', () {
+  test('Log - simple  tail', () async {
     const log = '/tmp/nginx/access.log';
 
     if (!exists(dirname(log))) {
@@ -60,7 +60,7 @@ void main() {
       ..append('Last line of log');
 
     final tail = Tail('/tmp/nginx/access.log', 100, follow: true);
-    final stream = tail.start();
+    final stream = await tail.start();
 
     final finished = Completer<void>();
 
@@ -80,7 +80,7 @@ void main() {
       sleep(2);
     }
 
-    waitForEx<void>(finished.future);
+    await finished.future;
   });
   test('StreamGroup', () async {
     final syslog = Tail('/var/log/syslog', 10);
@@ -90,9 +90,9 @@ void main() {
 
     final group = StreamGroup<String>();
 
-    await group.add(syslog.start().map((line) => 'syslog: $line'));
-    await group.add(dmesg.start().map((line) => 'dmsg: $line'));
-    await group.add(testlog.start().map((line) => 'testlog: $line'));
+    await group.add((await syslog.start()).map((line) => 'syslog: $line'));
+    await group.add((await dmesg.start()).map((line) => 'dmsg: $line'));
+    await group.add((await testlog.start()).map((line) => 'testlog: $line'));
 
     unawaited(group.close());
     final finished = Completer<void>();
@@ -107,7 +107,7 @@ void main() {
       dmesg.stop();
     });
 
-    waitForEx<void>(finished.future);
+    await finished.future;
   });
 
   test('StreamGroup - with follow', () async {
@@ -118,9 +118,9 @@ void main() {
 
     final group = StreamGroup<String>();
 
-    await group.add(syslog.start().map((line) => 'syslog: $line'));
-    await group.add(dmesg.start().map((line) => 'dmsg: $line'));
-    await group.add(testlog.start().map((line) => 'testlog: $line'));
+    await group.add((await syslog.start()).map((line) => 'syslog: $line'));
+    await group.add((await dmesg.start()).map((line) => 'dmsg: $line'));
+    await group.add((await testlog.start()).map((line) => 'testlog: $line'));
 
     unawaited(group.close());
     final finished = Completer<void>();
@@ -136,6 +136,6 @@ void main() {
       testlog.stop();
     });
 
-    waitForEx<void>(finished.future);
+    await finished.future;
   });
 }

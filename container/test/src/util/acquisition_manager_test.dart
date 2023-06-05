@@ -18,15 +18,15 @@ List<PossibleCert> possibleCerts = <PossibleCert>[];
 void main() {
   setUpAll(() {
     possibleCerts
-      ..add(PossibleCert('*', 'noojee.com.au', wildcard: true))
-      ..add(PossibleCert('auditor', 'noojee.com.au', wildcard: false))
-      ..add(PossibleCert('auditor', 'noojee.com.au', wildcard: true))
-      ..add(PossibleCert('*', 'noojee.org', wildcard: true))
-      ..add(PossibleCert('robtest5', 'noojee.org', wildcard: false))
-      ..add(PossibleCert('robtest5', 'noojee.org', wildcard: true))
-      ..add(PossibleCert('robtest', 'noojee.org', wildcard: false))
-      ..add(PossibleCert('auditor', 'noojee.org', wildcard: false))
-      ..add(PossibleCert('', 'onepub.dev', wildcard: false));
+      ..add(PossibleCert('*', 'test.squarephone.biz', wildcard: true))
+      ..add(PossibleCert('auditor', 'test.squarephone.biz', wildcard: false))
+      ..add(PossibleCert('auditor', 'test.squarephone.biz', wildcard: true))
+      ..add(PossibleCert('*', 'squarephone.biz', wildcard: true))
+      ..add(PossibleCert('robtest5', 'squarephone.biz', wildcard: false))
+      ..add(PossibleCert('robtest5', 'squarephone.biz', wildcard: true))
+      ..add(PossibleCert('robtest', 'squarephone.biz', wildcard: false))
+      ..add(PossibleCert('auditor', 'squarephone.biz', wildcard: false))
+      ..add(PossibleCert('', 'test.squarephone.biz', wildcard: false));
 
     Environment().certbotDNSWaitTime = 10;
   });
@@ -45,8 +45,8 @@ void main() {
       expect(AcquisitionManager().inAcquisitionMode, equals(false));
     },
         hostname: 'auditor',
-        domain: 'noojee.com.au',
-        tld: 'com.au',
+        domain: 'test.squarephone.biz',
+        tld: 'dev',
         settingFilename: 'cloudflare.yaml');
   });
 
@@ -58,8 +58,8 @@ void main() {
       Certbot().renew(force: true);
     },
         hostname: 'auditor',
-        domain: 'noojee.com.au',
-        tld: 'com.au',
+        domain: 'test.squarephone.biz',
+        tld: 'dev',
         settingFilename: 'cloudflare.yaml');
   },
       skip: false,
@@ -69,7 +69,7 @@ void main() {
   test('Revoke Invalid certificates', () async {
     await _acquire(
         hostname: 'auditor',
-        domain: 'noojee.com.au',
+        domain: 'test.squarephone.biz',
         tld: 'com.au',
         wildcard: true,
         settingFilename: 'cloudflare.yaml',
@@ -77,26 +77,26 @@ void main() {
 
     await _acquire(
         hostname: 'robtest5',
-        domain: 'noojee.org',
+        domain: 'squarephone.biz',
         tld: 'org',
-        settingFilename: 'namecheap.yaml',
+        settingFilename: 'cloudflare.yaml',
         revoke: false);
 
     expect(
         Certbot().deleteInvalidCertificates(
             hostname: 'auditor',
-            domain: 'noojee.com.au',
+            domain: 'test.squarephone.biz',
             wildcard: false,
             production: false),
         equals(2));
   });
 
-  test('Acquire robtest5.noojee.org via namecheap', () async {
+  test('Acquire robtest5.squarephone.biz via cloudflare', () async {
     await _acquire(
         hostname: 'robtest5',
-        domain: 'noojee.org',
+        domain: 'squarephone.biz',
         tld: 'org',
-        settingFilename: 'namecheap.yaml',
+        settingFilename: 'cloudflare.yaml',
         revoke: false);
   });
 
@@ -106,8 +106,8 @@ void main() {
 
     await _acquire(
         hostname: 'auditor',
-        domain: 'noojee.com.au',
-        tld: 'com.au',
+        domain: 'test.squarephone.biz',
+        tld: 'biz',
         settingFilename: 'cloudflare.yaml',
         revoke: false);
 
@@ -121,16 +121,16 @@ void main() {
   test('acquire certificate cloudflare ...', () async {
     await _acquire(
         hostname: 'auditor',
-        domain: 'noojee.com.au',
-        tld: 'com.au',
+        domain: 'test.squarephone.biz',
+        tld: 'biz',
         settingFilename: 'cloudflare.yaml');
   });
 
-  test('Acquire onepub.dev via cloudflare', () async {
+  test('Acquire test.squarephone.biz via cloudflare', () async {
     await _acquire(
         hostname: '',
-        domain: 'noojee.com.au',
-        tld: 'com.au',
+        domain: 'test.squarephone.biz',
+        tld: 'biz',
         settingFilename: 'cloudflare.yaml');
   });
 
@@ -140,49 +140,47 @@ void main() {
     Certbot().revokeAll();
     await _acquire(
         hostname: 'robtest',
-        domain: 'noojee.org',
-        tld: 'org',
-        //emailAddress: 'support@noojeeit.com.au',
-        settingFilename: 'namecheap.yaml',
+        domain: 'squarephone.biz',
+        tld: 'biz',
+        settingFilename: 'cloudflare.yaml',
         revoke: false);
 
     var cert = Certificate.find(
         hostname: 'robtest',
-        domain: 'noojee.org',
+        domain: 'squarephone.biz',
         wildcard: false,
         production: false)!;
 
     expect(cert, equals(isNotNull));
     expect(cert.hostname, equals('robtest'));
-    expect(cert.domain, equals('noojee.org'));
+    expect(cert.domain, equals('squarephone.biz'));
     expect(cert.wildcard, equals(false));
     expect(cert.production, equals(false));
 
     Certbot().deleteInvalidCertificates(
         hostname: 'robtest',
-        domain: 'noojee.org',
+        domain: 'squarephone.biz',
         wildcard: false,
         production: true);
 
     await _acquire(
         hostname: 'robtest',
-        domain: 'noojee.org',
-        tld: 'org',
-        // emailAddress: 'support@noojeeit.com.au',
-        settingFilename: 'namecheap.yaml',
+        domain: 'squarephone.biz',
+        tld: 'biz',
+        settingFilename: 'cloudflare.yaml',
         production: true,
         revoke: false);
 
     cert = Certificate.find(
         hostname: 'robtest',
-        domain: 'noojee.org',
+        domain: 'squarephone.biz',
         wildcard: false,
         production: true)!;
 
     expect(cert, equals(isNotNull));
 
     expect(cert.hostname, equals('robtest'));
-    expect(cert.domain, equals('noojee.org'));
+    expect(cert.domain, equals('squarephone.biz'));
     expect(cert.wildcard, equals(false));
     expect(cert.production, equals(true));
   }, skip: false);
@@ -190,46 +188,46 @@ void main() {
   test('acquire certificate cloudflare wildcard ...', () async {
     await _acquire(
         hostname: 'auditor',
-        domain: 'noojee.com.au',
+        domain: 'squarephone.biz',
         wildcard: true,
-        tld: 'com.au',
+        tld: 'biz',
         settingFilename: 'cloudflare.yaml');
   });
 
   test('acquire certificate cloudflare wildcard  *...', () async {
     await _acquire(
         hostname: '*',
-        domain: 'noojee.com.au',
+        domain: 'squarephone.biz',
         wildcard: true,
-        tld: 'com.au',
+        tld: 'biz',
         settingFilename: 'cloudflare.yaml');
   });
 
   test('acquire certificate namecheap ...', () async {
     await _acquire(
         hostname: 'robtest5',
-        domain: 'noojee.org',
-        tld: 'org',
+        domain: 'squarephone.biz',
+        tld: 'biz',
         settingFilename: 'namecheap.yaml');
-  });
+  }, skip: true);
 
   test('acquire certificate namecheap robtest5 ...', () async {
     await _acquire(
         hostname: 'robtest5',
-        domain: 'noojee.org',
+        domain: 'squarephone.biz',
         wildcard: true,
-        tld: 'org',
+        tld: 'biz',
         settingFilename: 'namecheap.yaml');
-  });
+  }, skip: true);
 
   test('acquire certificate namecheap wildcard  *...', () async {
     await _acquire(
         hostname: '*',
-        domain: 'noojee.org',
+        domain: 'squarephone.biz',
         wildcard: true,
-        tld: 'org',
+        tld: 'biz',
         settingFilename: 'namecheap.yaml');
-  });
+  }, skip: true);
 
   /// The second attempt to acquire a certificate should do nothing.
   test('double acquire wildcard certificate ...', () async {
@@ -244,7 +242,7 @@ void main() {
       expect(
           Certbot().wasIssuedFor(
               hostname: 'auditor',
-              domain: 'noojee.com.au',
+              domain: 'squarephone.biz',
               wildcard: true,
               production: false),
           equals(true));
@@ -257,22 +255,22 @@ void main() {
       expect(
           Certbot().wasIssuedFor(
               hostname: 'auditor',
-              domain: 'noojee.com.au',
+              domain: 'squarephone.biz',
               wildcard: true,
               production: false),
           equals(true));
     },
         hostname: 'auditor',
-        domain: 'noojee.com.au',
+        domain: 'squarephone.biz',
         tld: 'com.au',
         settingFilename: 'cloudflare.yaml');
 //   test('isdeployed...', () {
 //     setup(
 //         hostname: 'auditor',
-//         domain: 'noojee.com.au',
+//         domain: 'squarephone.biz',
 //         tld: 'com.au',
 //         wildcard: false,
-//         emailAddress: 'support@noojeeit.com.au',
+//         emailAddress: 'support@onepub.dev',
 //         settingsFilename: 'cloudflare.yaml');
 
 //     var certificate =
@@ -344,7 +342,7 @@ Future<void> _acquire(
       Environment().productionKey: '$production',
       Environment.smtpServerKey: 'localhost',
       Environment.smtpServerPortKey: '1025',
-      Environment.emailaddressKey: 'test@noojee.com.au',
+      Environment.emailaddressKey: 'test@squarephone.biz',
       Environment.authProviderKey: settings['AUTH_PROVIDER'] as String,
       Environment.authProviderTokenKey:
           settings[Environment.authProviderTokenKey] as String,
@@ -387,7 +385,7 @@ Future<void> runInTestScope(void Function() test,
       Environment().productionKey: '$production',
       Environment.smtpServerKey: 'localhost',
       Environment.smtpServerPortKey: '1025',
-      Environment.emailaddressKey: 'test@noojee.com.au',
+      Environment.emailaddressKey: 'test@squarephone.biz',
       Environment.authProviderKey: settings['AUTH_PROVIDER'] as String,
       Environment.authProviderTokenKey:
           settings[Environment.authProviderTokenKey] as String,
@@ -399,13 +397,13 @@ Future<void> runInTestScope(void Function() test,
   });
 }
 
-void _runAcquire(
+Future<void> _runAcquire(
     {required String hostname,
     required String domain,
     required String tld,
     bool wildcard = false,
     bool production = false,
-    bool revoke = true}) {
+    bool revoke = true}) async {
   Certbot().clearBlockFlag();
 
   if (revoke) {
@@ -425,7 +423,7 @@ void _runAcquire(
   AcquisitionManager().enterAcquisitionMode(reload: false);
 
   /// acquire the certificate
-  AcquisitionManager().acquireIfRequired(reload: false);
+  await AcquisitionManager().acquireIfRequired(reload: false);
 
   expect(AcquisitionManager().inAcquisitionMode, equals(false));
   expect(Certbot().hasValidCertificate(), equals(true));

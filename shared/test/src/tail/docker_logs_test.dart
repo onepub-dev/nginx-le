@@ -42,7 +42,7 @@ void main() {
 
     var linesSeen = 0;
     final logger = DockerLogs(findDockerContainer(), lines, follow: true);
-    logger.start().listen((event) {
+    (await logger.start()).listen((event) {
       print('test: ${linesSeen + 1} $event');
 
       linesSeen++;
