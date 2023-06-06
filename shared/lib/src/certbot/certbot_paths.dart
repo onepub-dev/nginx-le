@@ -84,7 +84,7 @@ class CertbotPaths {
       _getScopedValue(wwwPathToAcquireScopeKey, _wwwPathToAcquire);
 
   static const _cloudFlareSettings =
-      '/etc/letsencrypt/nj-cloudflare/settings.ini';
+      '/etc/letsencrypt/op-cloudflare/settings.ini';
   static final cloudFlareSettingsScopeKey =
       ScopeKey<String>('cloudFlareSettings');
   String get cloudFlareSettings =>
@@ -193,8 +193,9 @@ class CertbotPaths {
   // Used for unit testing. Changes all of the paths to be
   // relative to [testDir]
   @visibleForTesting
-  static void withTestScope(String testDir, void Function() action) {
-    Scope()
+  static Future<void> withTestScope(
+      String testDir, Future<void> Function() action) async {
+    final scope = Scope()
       ..value(CertbotPaths.certbotRootScopeKey,
           splice(testDir, CertbotPaths().certbotRootDefaultPath))
       ..value(CertbotPaths.nginxCertRootScopeKey,
@@ -206,20 +207,21 @@ class CertbotPaths {
       ..value(CertbotPaths.wwwPathToAcquireScopeKey,
           splice(testDir, CertbotPaths().wwwPathToAcquire))
       ..value(CertbotPaths.cloudFlareSettingsScopeKey,
-          splice(testDir, CertbotPaths().cloudFlareSettings))
-      ..runSync(() {
-        createDir(Scope.use(certbotRootScopeKey), recursive: true);
-        createDir(Scope.use(nginxCertRootScopeKey), recursive: true);
-        // createDir(Scope.use(wwwPathLiveScopeKey), recursive: true);
-        createDir(Scope.use(wwwPathToOperatingScopeKey), recursive: true);
-        createDir(Scope.use(wwwPathToAcquireScopeKey), recursive: true);
+          splice(testDir, CertbotPaths().cloudFlareSettings));
+    await scope.run(() async {
+      createDir(Scope.use(certbotRootScopeKey), recursive: true);
+      createDir(Scope.use(nginxCertRootScopeKey), recursive: true);
+      // createDir(Scope.use(wwwPathLiveScopeKey), recursive: true);
+      createDir(Scope.use(wwwPathToOperatingScopeKey), recursive: true);
+      createDir(Scope.use(wwwPathToAcquireScopeKey), recursive: true);
 
-        action();
-      });
+      await action();
+    });
   }
 
-// Adds [absolutePath] to [basePath] by treating [absolutePath]
-// as a relative path. We remove the leading path separator from [absolutePath]
+  /// Adds [absolutePath] to [basePath] by treating [absolutePath]
+  /// as a relative path. We remove the leading path separator from
+  /// [absolutePath]
   static String splice(String basePath, String absolutePath) {
     if (absolutePath.startsWith(rootPath)) {
       // ignore: parameter_assignments
