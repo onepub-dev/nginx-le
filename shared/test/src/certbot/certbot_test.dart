@@ -6,6 +6,7 @@
  */
 
 import 'package:dcli/dcli.dart';
+import 'package:dcli_core/dcli_core.dart' as core;
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:nginx_le_shared/src/auth_providers/dns_auth_providers/cloudflare/cloudflare_provider.dart';
 import 'package:path/path.dart' hide equals;
@@ -132,10 +133,10 @@ void main() {
       //     emailaddress: Environment().emailaddress);
     }, timeout: const Timeout(Duration(minutes: 15)), tags: ['slow']);
 
-    test('parse', () {
+    test('parse', () async {
       print('parse');
 
-      withTempDir((path) {
+      await core.withTempDir((path) async {
         Environment().certbotRootPath = path;
         createDir(
             join(CertbotPaths().letsEncryptLivePath,
