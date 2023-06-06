@@ -17,6 +17,7 @@ dependencies:
   isolates: ^3.0.0
   meta: ^1.0.0
   nginx_le_shared: ^9.0.1
+y
   path: ^1.6.4
   pub_release: ^9.0.0
   pub_semver: ^2.0.0
