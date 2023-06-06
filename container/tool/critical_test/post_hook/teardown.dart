@@ -3,5 +3,5 @@
 import 'package:dcli/dcli.dart';
 
 void main() {
-  'dmailhog --stop'.start();
+  'dmailhog --shutdown'.start();
 }
