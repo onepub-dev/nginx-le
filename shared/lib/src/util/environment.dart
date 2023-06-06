@@ -178,7 +178,7 @@ class Environment {
   // the dns settings have propergated.
   static const certbotDNSWaitTimeKey = 'DNS_WAITTIME';
   int get certbotDNSWaitTime =>
-      int.tryParse(env[certbotDNSWaitTimeKey] ?? '20') ?? 20;
+      int.tryParse(env[certbotDNSWaitTimeKey] ?? '60') ?? 20;
   set certbotDNSWaitTime(int seconds) =>
       env[certbotDNSWaitTimeKey] = '$seconds';
 
