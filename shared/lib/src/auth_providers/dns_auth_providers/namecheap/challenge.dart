@@ -44,7 +44,7 @@ class Challenge {
           '${Certificate.buildFQDN(hostname, domain)}.');
     }
 
-    /// certbot wont' be happy if it finds to TXT records so remove any old
+    /// certbot wont' be happy if it finds two TXT records so remove any old
     /// ones that might be hanging around.
     records = removeOldChallenge(
         records: records, hostname: hostname, wildcard: wildcard);
