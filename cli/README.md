@@ -678,6 +678,53 @@ You can do a test build of the docker container by running:
 ``
 cli/bin/nginx-le.dart build --image=repo/image:version
 ``
+## Unit testss
+To run unit tests on your local system you need to setup your environment.
+
+Nginx-LE uses the Dart Critical Test (CT) package to run unit tests.
+Install by running:
+
+```bash
+dart pub global activate critical_test
+```
+
+Install certbot
+```dart
+sudo dart cli/tool/install_cerbot.dart 
+```
+
+To run the unit test for each package simply run:
+```
+ct
+```
+Run the unit tests in the following order:
+* shared
+* cli
+* container
+
+
+Adding a call to `Settings().setVerbose(enabled: true)` to the setup of any unit test will
+enable DCli's logging and (which is used by nginx-le) which will then enable extensive logging.
+
+Note: the 'renew certificate' test can take up to 10 minutes to run as letsencrypt intentionally slow
+down the renewal.
+
+### container
+The container tests rely on a configuration file  test/config/cloudflare.yaml which should have  the following:
+
+```
+AUTH_PROVIDER: cloudflare
+AUTH_PROVIDER_TOKEN: XXXXXXXXXXXXXXXX
+AUTH_PROVIDER_EMAIL_ADDRESS: YYYYYYYYYYYYYYYYYYY
+AUTH_PROVIDER_USERNAME: ZZZZZZZZZZZZZZzz
+```
+
+Unit tests are logged to /tmp/critical_test/unit_test.log
+It can be useful to tail this log file.
+
+
+
+
 # Releasing Nginx-le
 If you are involved in developing Nginx-LE you will get to the point where you need to make a release.
 
@@ -686,8 +733,8 @@ This publishes each of the packages and then does a docker build and push.
 
 ```
 
-cd cli
 dart pub global activate pub_release
+cd cli
 pub_release multi
 ```
 

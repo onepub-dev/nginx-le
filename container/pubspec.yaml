@@ -1,27 +1,28 @@
 name: nginx_le_container
-version: 8.4.0
-documentation: https://nginxle.noojee.dev/
+version: 9.0.0
+documentation: https://nginxle.onepub.dev/
 description: Commands that live in the nginx-le docker container.
 repository: https://github.com/bsutton/nginx-le
 environment: 
-  sdk: '>=2.19.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 dependencies: 
   args: ^2.3.0
   async: ^2.9.0
   cron: ^0.5.0
-  dcli: ^2.2.0
+  dcli: ^3.0.0
+  dcli_core: ^3.0.0
   http: ^0.13.0
   intl: ^0.18.0
   isolates: ^3.0.0
   meta: ^1.8.0
-  nginx_le_shared: ^8.4.0
+  nginx_le_shared: ^9.0.0
   path: ^1.8.2
   public_suffix: ^3.0.0
-  scope: ^3.0.0
+  scope: ^4.0.1
   uuid: ^3.0.1
   xml: ^6.1.0
 dev_dependencies: 
   lint_hard: ^4.0.0
   mocktail: ^0.3.0
-  settings_yaml: ^6.0.0
+  settings_yaml: ^7.0.0
   test: ^1.0.0

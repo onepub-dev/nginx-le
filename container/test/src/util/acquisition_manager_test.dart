@@ -7,6 +7,7 @@ library;
  */
 
 import 'package:dcli/dcli.dart';
+import 'package:dcli_core/dcli_core.dart' as core;
 import 'package:nginx_le_container/src/util/acquisition_manager.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:settings_yaml/settings_yaml.dart';
@@ -17,6 +18,7 @@ import 'mock_cerbot_paths.dart';
 List<PossibleCert> possibleCerts = <PossibleCert>[];
 void main() {
   setUpAll(() {
+    Settings().setVerbose(enabled: true);
     possibleCerts
       ..add(PossibleCert('*', 'test.squarephone.biz', wildcard: true))
       ..add(PossibleCert('auditor', 'test.squarephone.biz', wildcard: false))
@@ -28,427 +30,415 @@ void main() {
       ..add(PossibleCert('auditor', 'squarephone.biz', wildcard: false))
       ..add(PossibleCert('', 'test.squarephone.biz', wildcard: false));
 
-    Environment().certbotDNSWaitTime = 10;
+    Environment().certbotDNSWaitTime = 60;
   });
+
   test('acquisition manager ...', () async {
-    await runInTestScope(() {
-      AcquisitionManager().enterAcquisitionMode(reload: false);
-      expect(AcquisitionManager().inAcquisitionMode, equals(true));
-
-      AcquisitionManager().leaveAcquistionMode(reload: false);
-      expect(AcquisitionManager().inAcquisitionMode, equals(false));
-
-      AcquisitionManager().enterAcquisitionMode(reload: false);
-      expect(AcquisitionManager().inAcquisitionMode, equals(true));
-
-      AcquisitionManager().leaveAcquistionMode(reload: false);
-      expect(AcquisitionManager().inAcquisitionMode, equals(false));
-    },
+    await runInTestScope(() async {
+      await forCertificate(
         hostname: 'auditor',
         domain: 'test.squarephone.biz',
-        tld: 'dev',
-        settingFilename: 'cloudflare.yaml');
+        () async {
+          AcquisitionManager().enterAcquisitionMode(reload: false);
+          expect(AcquisitionManager().inAcquisitionMode, equals(true));
+
+          AcquisitionManager().leaveAcquistionMode(reload: false);
+          expect(AcquisitionManager().inAcquisitionMode, equals(false));
+
+          AcquisitionManager().enterAcquisitionMode(reload: false);
+          expect(AcquisitionManager().inAcquisitionMode, equals(true));
+
+          AcquisitionManager().leaveAcquistionMode(reload: false);
+          expect(AcquisitionManager().inAcquisitionMode, equals(false));
+        },
+      );
+    }, settingFilename: 'cloudflare.yaml');
   });
 
   test('Renew certificate', () async {
-    await runInTestScope(() {
-      Certbot().clearBlockFlag();
-      Certbot().revokeAll();
-      AcquisitionManager().acquireIfRequired(reload: false);
-      Certbot().renew(force: true);
-    },
-        hostname: 'auditor',
-        domain: 'test.squarephone.biz',
-        tld: 'dev',
-        settingFilename: 'cloudflare.yaml');
+    await runInTestScope(
+      settingFilename: 'cloudflare.yaml',
+      () async {
+        await forCertificate(
+          hostname: 'auditor',
+          domain: 'test.squarephone.biz',
+          () async {
+            Certbot().clearBlockFlag();
+            Certbot().revokeAll();
+            await simpleAcquire();
+            Certbot().renew(force: true);
+          },
+        );
+      },
+    );
   },
       skip: false,
       tags: ['slow'],
       timeout: const Timeout(Duration(minutes: 15)));
 
   test('Revoke Invalid certificates', () async {
-    await _acquire(
-        hostname: 'auditor',
-        domain: 'test.squarephone.biz',
-        tld: 'com.au',
-        wildcard: true,
-        settingFilename: 'cloudflare.yaml',
-        revoke: false);
+    await runInTestScope(settingFilename: 'cloudflare.yaml', () async {
+      await forCertificate(
+          hostname: 'auditor',
+          domain: 'test.squarephone.biz',
+          wildcard: true, () async {
+        Certbot().revokeAll();
 
-    await _acquire(
-        hostname: 'robtest5',
-        domain: 'squarephone.biz',
-        tld: 'org',
-        settingFilename: 'cloudflare.yaml',
-        revoke: false);
+        await simpleAcquire();
 
-    expect(
-        Certbot().deleteInvalidCertificates(
-            hostname: 'auditor',
-            domain: 'test.squarephone.biz',
-            wildcard: false,
-            production: false),
-        equals(2));
+        await forCertificate(hostname: 'robtest5', domain: 'squarephone.biz',
+            () async {
+          await simpleAcquire();
+          expect(
+              Certbot().deleteInvalidCertificates(
+                  hostname: 'auditor',
+                  domain: 'test.squarephone.biz',
+                  wildcard: false,
+                  production: false),
+              equals(2));
+        });
+      });
+    });
   });
 
   test('Acquire robtest5.squarephone.biz via cloudflare', () async {
-    await _acquire(
-        hostname: 'robtest5',
-        domain: 'squarephone.biz',
-        tld: 'org',
-        settingFilename: 'cloudflare.yaml',
-        revoke: false);
+    await runInTestScope(settingFilename: 'cloudflare.yaml', () async {
+      await forCertificate(hostname: 'robtest5', domain: 'squarephone.biz',
+          () async {
+        await simpleAcquire();
+      });
+    });
   });
 
   test('Revoke All certificate', () async {
     Certbot().revokeAll();
     expect(Certificate.load().length, equals(0));
 
-    await _acquire(
-        hostname: 'auditor',
-        domain: 'test.squarephone.biz',
-        tld: 'biz',
-        settingFilename: 'cloudflare.yaml',
-        revoke: false);
+    await runInTestScope(settingFilename: 'cloudflare.yaml', () async {
+      await forCertificate(hostname: 'auditor', domain: 'test.squarephone.biz',
+          () async {
+        await simpleAcquire();
 
-    expect(Certificate.load().length, equals(1));
+        expect(Certificate.load().length, equals(1));
 
-    Certbot().revokeAll();
+        Certbot().revokeAll();
 
-    expect(Certificate.load().length, equals(0));
+        expect(Certificate.load().length, equals(0));
+      });
+    });
   }, skip: false);
 
-  test('acquire certificate cloudflare ...', () async {
-    await _acquire(
-        hostname: 'auditor',
-        domain: 'test.squarephone.biz',
-        tld: 'biz',
-        settingFilename: 'cloudflare.yaml');
-  });
+  test('Acquire squarephone.biz via cloudflare', () async {
+    Certbot().revokeAll();
+    expect(Certificate.load().length, equals(0));
 
-  test('Acquire test.squarephone.biz via cloudflare', () async {
-    await _acquire(
-        hostname: '',
-        domain: 'test.squarephone.biz',
-        tld: 'biz',
-        settingFilename: 'cloudflare.yaml');
+    await runInTestScope(settingFilename: 'cloudflare.yaml', () async {
+      await forCertificate(hostname: '', domain: 'squarephone.biz', () async {
+        await simpleAcquire();
+
+        expect(Certificate.load().length, equals(1));
+      });
+    });
   });
 
   /// this should be run infrequently as we will hit the production certbot
   /// rate limiter.
   test('test switch from staging to production cloudflare ...', () async {
     Certbot().revokeAll();
-    await _acquire(
-        hostname: 'robtest',
-        domain: 'squarephone.biz',
-        tld: 'biz',
-        settingFilename: 'cloudflare.yaml',
-        revoke: false);
 
-    var cert = Certificate.find(
-        hostname: 'robtest',
-        domain: 'squarephone.biz',
-        wildcard: false,
-        production: false)!;
+    await runInTestScope(settingFilename: 'cloudflare.yaml', () async {
+      await forCertificate(hostname: 'robtest', domain: 'squarephone.biz',
+          () async {
+        await simpleAcquire();
+        expect(Certificate.load().length, equals(1));
 
-    expect(cert, equals(isNotNull));
-    expect(cert.hostname, equals('robtest'));
-    expect(cert.domain, equals('squarephone.biz'));
-    expect(cert.wildcard, equals(false));
-    expect(cert.production, equals(false));
+        var cert = Certificate.find(
+            hostname: 'robtest',
+            domain: 'squarephone.biz',
+            wildcard: false,
+            production: false)!;
 
-    Certbot().deleteInvalidCertificates(
-        hostname: 'robtest',
-        domain: 'squarephone.biz',
-        wildcard: false,
-        production: true);
+        expect(cert, equals(isNotNull));
+        expect(cert.hostname, equals('robtest'));
+        expect(cert.domain, equals('squarephone.biz'));
+        expect(cert.wildcard, equals(false));
+        expect(cert.production, equals(false));
 
-    await _acquire(
-        hostname: 'robtest',
-        domain: 'squarephone.biz',
-        tld: 'biz',
-        settingFilename: 'cloudflare.yaml',
-        production: true,
-        revoke: false);
+        Certbot().deleteInvalidCertificates(
+            hostname: 'robtest',
+            domain: 'squarephone.biz',
+            wildcard: false,
+            production: true);
 
-    cert = Certificate.find(
-        hostname: 'robtest',
-        domain: 'squarephone.biz',
-        wildcard: false,
-        production: true)!;
+        await forCertificate(
+            hostname: 'robtest',
+            domain: 'squarephone.biz',
+            production: true, () async {
+          await simpleAcquire();
+          cert = Certificate.find(
+              hostname: 'robtest',
+              domain: 'squarephone.biz',
+              wildcard: false,
+              production: true)!;
 
-    expect(cert, equals(isNotNull));
+          expect(cert, equals(isNotNull));
 
-    expect(cert.hostname, equals('robtest'));
-    expect(cert.domain, equals('squarephone.biz'));
-    expect(cert.wildcard, equals(false));
-    expect(cert.production, equals(true));
+          expect(cert.hostname, equals('robtest'));
+          expect(cert.domain, equals('squarephone.biz'));
+          expect(cert.wildcard, equals(false));
+          expect(cert.production, equals(true));
+        });
+      });
+    });
   }, skip: false);
 
   test('acquire certificate cloudflare wildcard ...', () async {
-    await _acquire(
-        hostname: 'auditor',
-        domain: 'squarephone.biz',
-        wildcard: true,
-        tld: 'biz',
-        settingFilename: 'cloudflare.yaml');
+    await runInTestScope(settingFilename: 'cloudflare.yaml', () async {
+      await forCertificate(
+          hostname: 'auditor',
+          domain: 'squarephone.biz',
+          wildcard: true, () async {
+        await simpleAcquire();
+      });
+    });
   });
 
-  test('acquire certificate cloudflare wildcard  *...', () async {
-    await _acquire(
-        hostname: '*',
-        domain: 'squarephone.biz',
-        wildcard: true,
-        tld: 'biz',
-        settingFilename: 'cloudflare.yaml');
+  test('acquire certificate cloudflare wildcard  *.squarephone.biz', () async {
+    await runInTestScope(settingFilename: 'cloudflare.yaml', () async {
+      await forCertificate(
+          hostname: '*', domain: 'squarephone.biz', wildcard: true, () async {
+        await simpleAcquire();
+      });
+    });
   });
 
-  test('acquire certificate namecheap ...', () async {
-    await _acquire(
-        hostname: 'robtest5',
-        domain: 'squarephone.biz',
-        tld: 'biz',
-        settingFilename: 'namecheap.yaml');
+  test('acquire certificate namecheap squarephone.biz', () async {
+    await runInTestScope(settingFilename: 'namecheap.yaml', () async {
+      await forCertificate(
+          hostname: '', domain: 'squarephone.biz', wildcard: true, () async {
+        await simpleAcquire();
+      });
+    });
   }, skip: true);
 
-  test('acquire certificate namecheap robtest5 ...', () async {
-    await _acquire(
-        hostname: 'robtest5',
-        domain: 'squarephone.biz',
-        wildcard: true,
-        tld: 'biz',
-        settingFilename: 'namecheap.yaml');
+  test('acquire certificate namecheap robtest5.squarephone.biz', () async {
+    await runInTestScope(settingFilename: 'namecheap.yaml', () async {
+      await forCertificate(
+          hostname: 'robtest5',
+          domain: 'squarephone.biz',
+          wildcard: true, () async {
+        await simpleAcquire();
+      });
+    });
   }, skip: true);
 
-  test('acquire certificate namecheap wildcard  *...', () async {
-    await _acquire(
-        hostname: '*',
-        domain: 'squarephone.biz',
-        wildcard: true,
-        tld: 'biz',
-        settingFilename: 'namecheap.yaml');
+  test('acquire certificate namecheap wildcard  *.squarephone.biz', () async {
+    await runInTestScope(settingFilename: 'namecheap.yaml', () async {
+      await forCertificate(
+          hostname: '*', domain: 'squarephone.biz', wildcard: true, () async {
+        await simpleAcquire();
+      });
+    });
   }, skip: true);
 
   /// The second attempt to acquire a certificate should do nothing.
   test('double acquire wildcard certificate ...', () async {
-    await runInTestScope(() {
-      Certbot().clearBlockFlag();
-
-      AcquisitionManager().acquireIfRequired(reload: false);
-
-      expect(AcquisitionManager().inAcquisitionMode, equals(false));
-      expect(Certbot().hasValidCertificate(), equals(true));
-      expect(Certbot().isDeployed(), equals(true));
-      expect(
-          Certbot().wasIssuedFor(
-              hostname: 'auditor',
-              domain: 'squarephone.biz',
-              wildcard: true,
-              production: false),
-          equals(true));
-
-      AcquisitionManager().acquireIfRequired(reload: false);
-
-      expect(AcquisitionManager().inAcquisitionMode, equals(false));
-      expect(Certbot().hasValidCertificate(), equals(true));
-      expect(Certbot().isDeployed(), equals(true));
-      expect(
-          Certbot().wasIssuedFor(
-              hostname: 'auditor',
-              domain: 'squarephone.biz',
-              wildcard: true,
-              production: false),
-          equals(true));
-    },
+    await runInTestScope(settingFilename: 'cloudflare.yaml', () async {
+      await forCertificate(
         hostname: 'auditor',
         domain: 'squarephone.biz',
-        tld: 'com.au',
-        settingFilename: 'cloudflare.yaml');
-//   test('isdeployed...', () {
-//     setup(
-//         hostname: 'auditor',
-//         domain: 'squarephone.biz',
-//         tld: 'com.au',
-//         wildcard: false,
-//         emailAddress: 'support@onepub.dev',
-//         settingsFilename: 'cloudflare.yaml');
+        wildcard: true,
+        () async {
+          Certbot().clearBlockFlag();
+          Certbot().revokeAll();
 
-//     var certificate =
-//         join(CertbotPaths().nginxCertPath, CertbotPaths().FULLCHAIN_FILE);
-//     var privatekey =
-//         join(CertbotPaths().nginxCertPath, CertbotPaths().PRIVATE_KEY_FILE);
+          await AcquisitionManager().acquireIfRequired(reload: false);
 
-//     if (!exists(dirname(certificate))) {
-//       createDir(dirname(certificate), recursive: true);
-//     }
-//     if (!exists(dirname(privatekey))) {
-//       createDir(dirname(privatekey), recursive: true);
-//     }
+          expect(AcquisitionManager().inAcquisitionMode, equals(false));
+          expect(Certbot().hasValidCertificate(), equals(true));
+          expect(Certbot().isDeployed(), equals(true));
+          expect(
+              Certbot().wasIssuedFor(
+                  hostname: 'auditor',
+                  domain: 'squarephone.biz',
+                  wildcard: true,
+                  production: false),
+              equals(true));
 
-//     if (exists(certificate)) {
-//       delete(certificate);
-//     }
+          await AcquisitionManager().acquireIfRequired(reload: false);
 
-//     expect(Certbot().isDeployed(), equals(false));
-
-//     if (exists(privatekey)) {
-//       delete(privatekey);
-//     }
-
-//     expect(Certbot().isDeployed(), equals(false));
-
-//     touch(privatekey, create: true);
-
-//     expect(Certbot().isDeployed(), equals(false));
-
-//     touch(certificate, create: true);
-
-//     expect(Certbot().isDeployed(), equals(true));
-
-//     delete(certificate);
-//     delete(privatekey);
-//   });
-  });
-}
-
-Future<void> _acquire(
-    {required String hostname,
-    required String domain,
-    required String tld,
-    required String settingFilename,
-    bool wildcard = false,
-    bool production = false,
-    bool revoke = true}) async {
-  final settingsPath = truepath('test', 'config', settingFilename);
-  final settings = SettingsYaml.load(pathToSettings: settingsPath);
-
-  configMockDeployHook();
-
-  await withTempDir((dir) async {
-    await withEnvironment(() async {
-      CertbotPaths.withTestScope(
-          dir,
-          () => _runAcquire(
-              hostname: hostname,
-              domain: domain,
-              tld: tld,
-              wildcard: wildcard,
-              production: production,
-              revoke: revoke));
-    }, environment: {
-      Environment.hostnameKey: hostname,
-      Environment.domainKey: domain,
-      Environment.domainWildcardKey: '$wildcard',
-      Environment().productionKey: '$production',
-      Environment.smtpServerKey: 'localhost',
-      Environment.smtpServerPortKey: '1025',
-      Environment.emailaddressKey: 'test@squarephone.biz',
-      Environment.authProviderKey: settings['AUTH_PROVIDER'] as String,
-      Environment.authProviderTokenKey:
-          settings[Environment.authProviderTokenKey] as String,
-      Environment.authProviderUsernameKey:
-          settings[Environment.authProviderUsernameKey] as String,
-      Environment.authProviderEmailAddressKey:
-          settings[Environment.authProviderEmailAddressKey] as String
+          expect(AcquisitionManager().inAcquisitionMode, equals(false));
+          expect(Certbot().hasValidCertificate(), equals(true));
+          expect(Certbot().isDeployed(), equals(true));
+          expect(
+              Certbot().wasIssuedFor(
+                  hostname: 'auditor',
+                  domain: 'squarephone.biz',
+                  wildcard: true,
+                  production: false),
+              equals(true));
+        },
+      );
     });
   });
 }
 
-Future<void> runInTestScope(void Function() test,
-    {required String hostname,
-    required String domain,
-    required String tld,
-    required String settingFilename,
-    bool wildcard = false,
-    bool production = false,
-    bool revoke = true}) async {
-  final settingsPath = truepath('test', 'config', settingFilename);
-  final settings = SettingsYaml.load(pathToSettings: settingsPath);
+// Future<void> _acquire(
+//   Future<void> Function() test,
+//     {required hostname,
+//     required domain,
+//     required settingFilename,
+//     wildcard = false,
+//     production = false,
 
-  configMockDeployHook();
+// ) async {
+//        await runInTestScope(
+//       settingFilename: settingsFilename,
+//       () async {
+//         await forCertificate(
 
-  await withTempDir((dir) async {
-    await withEnvironment(() async {
-      CertbotPaths.withTestScope(
-          dir,
-          () => _runAcquire(
-              hostname: hostname,
-              domain: domain,
-              tld: tld,
-              wildcard: wildcard,
-              production: production,
-              revoke: revoke));
-    }, environment: {
-      Environment.hostnameKey: hostname,
-      Environment.domainKey: domain,
-      Environment.domainWildcardKey: '$wildcard',
-      Environment().productionKey: '$production',
-      Environment.smtpServerKey: 'localhost',
-      Environment.smtpServerPortKey: '1025',
-      Environment.emailaddressKey: 'test@squarephone.biz',
-      Environment.authProviderKey: settings['AUTH_PROVIDER'] as String,
-      Environment.authProviderTokenKey:
-          settings[Environment.authProviderTokenKey] as String,
-      Environment.authProviderUsernameKey:
-          settings[Environment.authProviderUsernameKey] as String,
-      Environment.authProviderEmailAddressKey:
-          settings[Environment.authProviderEmailAddressKey] as String
-    });
-  });
-}
+//      hostname: hostname,
+//         domain: domain,
+//         wildcard: wildcard,
+//         production: production,
 
-Future<void> _runAcquire(
-    {required String hostname,
-    required String domain,
-    required String tld,
-    bool wildcard = false,
-    bool production = false,
-    bool revoke = true}) async {
-  Certbot().clearBlockFlag();
+//          () async {
+//         await simpleAcquire();
 
-  if (revoke) {
-    Certbot().deleteInvalidCertificates(
-        hostname: hostname,
-        domain: domain,
-        wildcard: wildcard,
-        production: production);
+//           await test();
+// });
+//       });
+// }
 
-    for (final certificate in Certbot().certificates()) {
-      certificate!.revoke();
-    }
-    expect(Certbot().hasValidCertificate(), equals(false));
-    expect(Certbot().isDeployed(), equals(false));
-  }
-
+Future<void> simpleAcquire() async {
   AcquisitionManager().enterAcquisitionMode(reload: false);
-
-  /// acquire the certificate
   await AcquisitionManager().acquireIfRequired(reload: false);
-
-  expect(AcquisitionManager().inAcquisitionMode, equals(false));
-  expect(Certbot().hasValidCertificate(), equals(true));
-
-  expect(Certbot().isDeployed(), equals(true));
-  expect(
-      Certbot().wasIssuedFor(
-          hostname: hostname,
-          domain: domain,
-          wildcard: wildcard,
-          production: production),
-      equals(true));
-
-  if (revoke) {
-    final cert = Certificate.find(
-        hostname: hostname,
-        domain: domain,
-        wildcard: wildcard,
-        production: production)!;
-
-    expect(cert, equals(isNotNull));
-
-    cert.revoke();
-  }
+  AcquisitionManager().leaveAcquistionMode(reload: false);
 }
+// Future<void> _acquire(
+//     {required hostname,
+//     required domain,
+//     required settingFilename,
+//     wildcard = false,
+//     production = false,
+//     revoke = true}) async {
+//   await runInTestScope(() async {
+//     await forCertificate(
+//         hostname: hostname,
+//         domain: domain,
+//         wildcard: wildcard,
+//         production: production, () async {
+//       await _runAcquire(
+//           hostname: hostname,
+//           domain: domain,
+//           wildcard: wildcard,
+//           production: production,
+//           revoke: revoke);
+//     });
+//   });
+// }
+
+Future<void> runInTestScope(
+  void Function() test, {
+  required String settingFilename,
+}) async {
+  final settingsPath = truepath('test', 'config', settingFilename);
+  final settings = SettingsYaml.load(pathToSettings: settingsPath);
+
+  configMockDeployHook();
+
+  await core.withTempDir((dir) async {
+    await withEnvironment(() async {
+      await CertbotPaths.withTestScope(dir, () async => test());
+    }, environment: {
+      Environment.smtpServerKey: 'localhost',
+      Environment.smtpServerPortKey: '1025',
+      Environment.emailaddressKey: 'test@squarephone.biz',
+      Environment.authProviderKey: settings['AUTH_PROVIDER'] as String,
+      Environment.authProviderTokenKey:
+          settings[Environment.authProviderTokenKey] as String,
+      Environment.authProviderUsernameKey:
+          settings[Environment.authProviderUsernameKey] as String,
+      Environment.authProviderEmailAddressKey:
+          settings[Environment.authProviderEmailAddressKey] as String
+    });
+  });
+}
+
+/// Sets the domain related environment variable that
+/// control the details of the certificate being managed.
+Future<void> forCertificate(
+  Future<void> Function() test, {
+  required String hostname,
+  required String domain,
+  bool wildcard = false,
+  bool production = false,
+}) async {
+  await withEnvironment(() async {
+    await test();
+  }, environment: {
+    Environment.hostnameKey: hostname,
+    Environment.domainKey: domain,
+    Environment.domainWildcardKey: '$wildcard',
+    Environment().productionKey: '$production',
+  });
+}
+
+// Future<void> _runAcquire(
+//     {required String hostname,
+//     required String domain,
+//     bool wildcard = false,
+//     bool production = false,
+//     bool revoke = true}) async {
+//   Certbot().clearBlockFlag();
+
+//   if (revoke) {
+//     _revokeAll();
+//   }
+
+//   AcquisitionManager().enterAcquisitionMode(reload: false);
+
+//   /// acquire the certificate
+//   await AcquisitionManager().acquireIfRequired(reload: false);
+
+//   expect(AcquisitionManager().inAcquisitionMode, equals(false));
+//   expect(Certbot().hasValidCertificate(), equals(true));
+
+//   expect(Certbot().isDeployed(), equals(true));
+//   expect(
+//       Certbot().wasIssuedFor(
+//           hostname: hostname,
+//           domain: domain,
+//           wildcard: wildcard,
+//           production: production),
+//       equals(true));
+
+//   if (revoke) {
+//     final cert = Certificate.find(
+//         hostname: hostname,
+//         domain: domain,
+//         wildcard: wildcard,
+//         production: production)!;
+
+//     expect(cert, equals(isNotNull));
+
+//     cert.revoke();
+//   }
+// }
+
+// void _revokeAll() {
+//   Certbot().deleteInvalidCertificates(
+//       hostname: Environment().hostname!,
+//       domain: Environment().domain,
+//       wildcard: Environment().domainWildcard,
+//       production: Environment().production);
+
+//   for (final certificate in Certbot().certificates()) {
+//     certificate!.revoke();
+//   }
+//   expect(Certbot().hasValidCertificate(), equals(false));
+//   expect(Certbot().isDeployed(), equals(false));
+// }
 
 void configMockDeployHook() {
   const path = 'test/src/util/mock_deploy_hook';

@@ -1,16 +1,17 @@
 name: nginx_le_shared
-version: 8.4.0
+version: 9.0.0
 homepage: https://github.com/bsutton/nginx-le
-documentation: https://nginxle.noojee.dev/
+documentation: https://nginxle.onepub.dev/
 description: shared library used by Nginx-LE
 environment: 
-  sdk: '>=2.19.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 dependencies: 
   args: ^2.3.1
   async: ^2.9.0
   cron: ^0.5.0
-  dcli: ^2.2.0
-  docker2: ^3.0.0
+  dcli: ^3.0.0
+  dcli_core: ^3.0.0
+  docker2: ^4.0.1
   http: ^0.13.0
   instant: ^0.5.1
   intl: ^0.18.0
@@ -19,8 +20,8 @@ dependencies:
   meta: ^1.8.0
   path: ^1.8.2
   public_suffix: ^3.0.0
-  scope: ^3.0.0
-  settings_yaml: ^6.0.0
+  scope: ^4.0.1
+  settings_yaml: ^7.0.0
   uuid: ^3.0.6
   xml: ^6.1.0
   yaml: ^3.1.1
