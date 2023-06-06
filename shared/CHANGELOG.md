@@ -1,3 +1,12 @@
+# 9.0.1
+- change the location of the settings.ini for cloudflare from /etc/letsencrypt/nj-cloudflare to op-cloudflare. We need to check this doens't cause probelms with renews as certbot does cache some settings paths.
+- Fixed unit tests after dcli upgrade
+- fixed a bug in teardown and as it wasn't shutting down dmailhog
+- changethe DNS wait time to 60 seconds as certbot was failing due to the dns tts not having expired.
+- removed waitForEx as it is going to be deprecated.
+- tweaked the python venv install to use the lates version rather than .9 which is no longer available.
+- upgraded to dart 3.x
+
 # 8.4.0
 - updated dependency versions
 
