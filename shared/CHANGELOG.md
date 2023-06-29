@@ -1,3 +1,6 @@
+# 9.0.4
+- Fixed a bug in the 'config' mode. There was not way to clear out the tomcat context as has a default and hitting enter selects the default. Now if you enter '.' it will set the context to empty.
+
 # 9.0.1
 - change the location of the settings.ini for cloudflare from /etc/letsencrypt/nj-cloudflare to op-cloudflare. We need to check this doens't cause probelms with renews as certbot does cache some settings paths.
 - Fixed unit tests after dcli upgrade
