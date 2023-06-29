@@ -29,8 +29,11 @@ class Tomcat extends ContentProvider {
     var context = config.settings[contextKey] as String?;
     context ??= '';
 
-    context = ask('webapp context (blank for the ROOT context):',
+    context = ask('webapp context ("." for the ROOT context):',
         defaultValue: context);
+    if (context == '.') {
+      context = '';
+    }
 
     fqdn = config.settings[fqdnKey] as String?;
     fqdn ??= 'localhost';
