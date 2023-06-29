@@ -1,3 +1,6 @@
+# 9.0.4
+- Fixed a bug in the 'config' mode. There was not way to clear out the tomcat context as has a default and hitting enter selects the default. Now if you enter '.' it will set the context to empty.
+
 # 9.0.3
 - Fixe for failed release
 # 9.0.1
