@@ -29,10 +29,10 @@ class DoctorCommand extends Command<void> {
   @override
   void run() {
     print('');
-    _colprint(['OS', (Platform.operatingSystem)]);
-    print(Format().row(['OS Version', (Platform.operatingSystemVersion)],
+    _colprint(['OS', Platform.operatingSystem]);
+    print(Format().row(['OS Version', Platform.operatingSystemVersion],
         widths: [17, -1]));
-    _colprint(['Path separator', (Platform.pathSeparator)]);
+    _colprint(['Path separator', Platform.pathSeparator]);
     print('');
     _colprint(['dart version', DartSdk().version]);
     print('');
@@ -60,7 +60,7 @@ class DoctorCommand extends Command<void> {
     _colprint(['ConfigPath', config.configPath]);
     _colprint(['Mode', config.mode]);
     _colprint(['FQDN', config.fqdn]);
-    _colprint([(Environment.tldKey), config.tld]);
+    _colprint([Environment.tldKey, config.tld]);
     _colprint(['Docker ImageID', config.image?.imageid]);
     _colprint(['Cert Type', config.certificateType]);
     _colprint(['Docker container', config.containerid]);
