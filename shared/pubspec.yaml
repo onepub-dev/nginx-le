@@ -1,5 +1,5 @@
 name: nginx_le_shared
-version: 10.0.0
+version: 10.0.1
 homepage: https://github.com/bsutton/nginx-le
 documentation: https://nginxle.onepub.dev/
 description: shared library used by Nginx-LE
