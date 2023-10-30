@@ -1,10 +1,9 @@
 # builder
 # compiles the dart scripts.
-FROM ubuntu:23.04 as builder
+FROM ubuntu:23.10 as builder
 
 
 RUN apt update  && apt install --no-install-recommends -y \
-    ca-certificates \
     git \
     gnupg \
     openssh-client \
@@ -32,7 +31,7 @@ RUN dcli version
 RUN mkdir -p /home/build/container/bin/cerbot_hooks
 RUN mkdir -p /home/build/container/lib
 
-RUN echo 'forcing source update' # update-source: c703ebfd-aaba-49c5-b261-c6143dfc5da2
+RUN echo 'forcing source update' # update-source: a65d41d5-b6bd-4fbd-8163-0a67e5ed816c
 
 COPY container/bin /home/build/container/bin/ 
 COPY container/lib /home/build/container/lib/
@@ -56,10 +55,8 @@ RUN dcli compile container/bin/certbot_hooks/*.dart
 
 # CMD ["/bin/bash"]
 
-###############################################################################
 # Final image
-###############################################################################
-FROM ubuntu:23.04
+FROM ubuntu:23.10
 
 WORKDIR /
 
@@ -72,55 +69,20 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 
 RUN apt  update && apt install --no-install-recommends -y \
-    curl\
     ca-certificates \
     dnsutils \
     gnupg2 \
-    gzip \
-    libaugeas0 \
-    logrotate \
-    lsb-release \
-    openssl \
     pip \
-    python3 \
-    python3-venv \
+    nginx \
+    openssl \
     software-properties-common \
     tzdata \
-    ubuntu-keyring \
-    vim 
-
-#######################################################
-#
-### Setup NGINX 1.25 so we have http3 support
-#
-# Once nginx quic becomes stable we can revert the below section to using
-# the standard apt install - probably from 24.04 or 24.10
-#
-
-# Import an official nginx signing key so apt could verify the packages authenticity. Fetch the key:
-RUN curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
-    |  tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
-
-# Verify that the downloaded file contains the proper key:
-RUN gpg --dry-run --quiet --no-keyring --import --import-options import-show /usr/share/keyrings/nginx-archive-keyring.gpg 
-
-# To set up the apt repository for stable nginx packages, run the following command:
-RUN echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
-    http://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx" \
-    |  tee /etc/apt/sources.list.d/nginx.list
-
-# Set up repository pinning to prefer our packages over distribution-provided ones:
-RUN printf "%s\n" "Package: *" "Pin: origin nginx.org" "Pin: release o=nginx" \
-    "Pin-Priority: 900" > /etc/apt/preferences.d/99nginx     
-
-RUN cat /etc/apt/preferences.d/99nginx
-# install ngix
-RUN apt  update && apt install --no-install-recommends -y \
-    nginx
-
-#
-### NGXIN install complete
-############################################################
+    vim \
+    python3 \
+    python3-venv \
+    libaugeas0 \
+    logrotate \
+    gzip
 
 RUN python3 -m venv /opt/certbot/
 RUN /opt/certbot/bin/pip install --upgrade pip
@@ -130,7 +92,7 @@ RUN /opt/certbot/bin/pip install certbot-dns-cloudflare
 
 
 # config nginx 
-# RUN useradd nginx - no longer required.
+RUN useradd nginx
 
 # setup nginx log files.
 RUN mkdir -p /var/nginx
@@ -210,6 +172,7 @@ COPY --from=builder /home/build/container/bin/certbot_hooks/deploy_hook /home/bi
 ENV CERTBOT_AUTH_HOOK_PATH="/home/bin/certbot_hooks/auth_hook"
 ENV CERTBOT_CLEANUP_HOOK_PATH="/home/bin/certbot_hooks/cleanup_hook"
 ENV CERTBOT_DEPLOY_HOOK_PATH="/home/bin/certbot_hooks/deploy_hook"
+
 
 EXPOSE 80 443
 

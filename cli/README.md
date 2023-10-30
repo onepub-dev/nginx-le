@@ -158,12 +158,12 @@ When do you need to use the build command?
 | Configure as Proxy | No | Add nginx compatible `.location` and `.upstream` files under /opt/nginx/include
 | Docker-compose | No | Add Nginx-LE as a service in a docker-compose.yaml file.
 
-For details on creating or modifying the docker file see [Create aDockerfile](#create-a-dockerfile)
+For details on creating or modifying the docker file see [Create a Dockerfile](#create-a-dockerfile)
 
 To build the Nginx-LE image run:
 ```
 git clone https://github.com/bsutton/nginx-le.git
-nginx-le build --image=<repo/image:version>
+cli/bin/nginx-le.dart build --image=<repo/image:version>
 ```
 
 ## Switches
