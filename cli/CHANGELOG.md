@@ -1,3 +1,6 @@
+# 10.0.2
+- Upgraded dart packages
+
 # 10.0.1
 - added notice that we support http3
 - each test now runs in its own test environment.
