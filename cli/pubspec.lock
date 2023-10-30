@@ -407,7 +407,7 @@ packages:
       path: "../shared"
       relative: true
     source: path
-    version: "9.0.4"
+    version: "10.0.0"
   node_preamble:
     dependency: transitive
     description:
