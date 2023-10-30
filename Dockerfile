@@ -32,7 +32,7 @@ RUN dcli version
 RUN mkdir -p /home/build/container/bin/cerbot_hooks
 RUN mkdir -p /home/build/container/lib
 
-RUN echo 'forcing source update' # update-source: c703ebfd-aaba-49c5-b261-c6143dfc5da2
+RUN echo 'forcing source update' # update-source: 372eaaf7-0d0f-429b-8d1d-e2cc9b8f26f8
 
 COPY container/bin /home/build/container/bin/ 
 COPY container/lib /home/build/container/lib/
