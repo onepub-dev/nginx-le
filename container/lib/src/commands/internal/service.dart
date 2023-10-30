@@ -85,7 +85,7 @@ Future<void> _start() async {
 
   await LogManager().start();
 
-  /// In case the host, domain or wildard settings have changed.
+  /// In case the host, domain or wildcard settings have changed.
   /// Also cleans up an old expired certificates
 
   /// We originally revoked certificates but decided it was safer
