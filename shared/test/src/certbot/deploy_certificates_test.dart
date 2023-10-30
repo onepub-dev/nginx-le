@@ -7,23 +7,26 @@
 import 'package:nginx_le_shared/nginx_le_shared.dart';
 import 'package:test/test.dart';
 
+import '../util/with_test_environment.dart';
 import 'dns_auth_hook_test.dart';
 
 void main() {
-  test('deploy certificates ...', () {
-    prepareCloudflareCertHooks(
-        hostname: 'auditor',
-        domain: 'squarephone.biz',
-        tld: 'biz',
-        wildcard: false);
+  test('deploy certificates ...', () async {
+    await withTestEnvironment(() async {
+      prepareCloudflareCertHooks(
+          hostname: 'auditor',
+          domain: 'squarephone.biz',
+          tld: 'biz',
+          wildcard: false);
 
-    Environment().hostname = 'auditor';
-    Environment().domain = 'squarephone.biz';
-    Environment().domainWildcard = false;
-    Environment().autoAcquire = true;
+      Environment().hostname = 'auditor';
+      Environment().domain = 'squarephone.biz';
+      Environment().domainWildcard = false;
+      Environment().autoAcquire = true;
 
-    Certbot().deployCertificate();
+      Certbot().deployCertificate();
 
-    print('deploy has returned');
+      print('deploy has returned');
+    });
   });
 }

@@ -13,30 +13,32 @@ import 'package:nginx_le_shared/src/certbot/certbot_paths.dart';
 import 'package:nginx_le_shared/src/certbot/certificate.dart';
 import 'package:test/test.dart';
 
-import '../util/prepare.dart';
+import '../util/with_test_environment.dart';
 
 void main() {
   test('certificate ...', () async {
-    prepareEnvironment();
-    final certificates = Certificate.load();
+    await withTestEnvironment(() {
+      final certificates = Certificate.load();
 
-    for (final cert in certificates) {
-      print(cert);
-    }
+      for (final cert in certificates) {
+        print(cert);
+      }
+    });
   });
 
   test('check for certificate with matching details ...', () async {
-    prepareEnvironment();
+    await withTestEnvironment(() {
+      print(
+          'loading certificates from: ${CertbotPaths().letsEncryptConfigPath}');
+      final certificates = Certificate.load();
 
-    print('loading certificates from: ${CertbotPaths().letsEncryptConfigPath}');
-    final certificates = Certificate.load();
+      print('Found ${certificates.length} certificates');
 
-    print('Found ${certificates.length} certificates');
-
-    for (final cert in certificates) {
-      print(cert);
-      // if (cert.wasIssuedFor())
-    }
+      for (final cert in certificates) {
+        print(cert);
+        // if (cert.wasIssuedFor())
+      }
+    });
   });
 
   test('parse', () {

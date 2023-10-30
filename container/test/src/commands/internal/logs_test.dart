@@ -10,74 +10,51 @@ library;
 import 'package:dcli/dcli.dart';
 import 'package:nginx_le_container/src/commands/internal/logs.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
-import 'package:path/path.dart';
 import 'package:test/test.dart';
+
+import '../../with_test_environment.dart';
 
 void main() {
   test('Log Command -no follow - all default logfiles', () async {
-    setup();
+    await withTestEnvironment(() async {
+      Nginx.accesslogpath.append('Hellow world');
 
-    Nginx.accesslogpath.append('Hellow world');
-
-    await logs([
-      '--debug',
-    ]);
+      await logs([
+        '--debug',
+      ]);
+    });
   });
 
   test('Log Command - no follow - just access logfile.', () async {
-    setup();
+    await withTestEnvironment(() async {
+      Nginx.accesslogpath.append('Hellow world');
 
-    Nginx.accesslogpath.append('Hellow world');
-
-    await logs([
-      '--access',
-      '--debug',
-    ]);
+      await logs([
+        '--access',
+        '--debug',
+      ]);
+    });
   });
 
   test('Log Command - no follow - just access and error logfile.', () async {
-    setup();
+    await withTestEnvironment(() async {
+      Nginx.accesslogpath.append('Hellow world');
 
-    Nginx.accesslogpath.append('Hellow world');
-
-    await logs([
-      '--access',
-      '--error',
-      '--debug',
-    ]);
+      await logs([
+        '--access',
+        '--error',
+        '--debug',
+      ]);
+    });
   });
 
   test('Log Command - follow -  accesslogfile.', () async {
-    setup();
+    await withTestEnvironment(() async {
+      Nginx.accesslogpath.append('Hellow world');
 
-    Nginx.accesslogpath.append('Hellow world');
-
-    await logs(['--access', '--debug', '--follow']);
+      await logs(['--access', '--debug', '--follow']);
+    });
 
     /// can't run this as the command will run forever.
   }, skip: true);
-}
-
-void setup() {
-  final testingDir = createTempDir();
-  Environment().certbotRootPath = join(testingDir, 'letsencrypt');
-  if (!exists(CertbotPaths().letsEncryptRootPath)) {
-    createDir(CertbotPaths().letsEncryptRootPath);
-  }
-
-  if (!exists(CertbotPaths().letsEncryptLogPath)) {
-    createDir(CertbotPaths().letsEncryptLogPath);
-  }
-
-  touch(join(CertbotPaths().letsEncryptLogPath, CertbotPaths().logFilename),
-      create: true);
-
-  Environment().nginxAccessLogPath = join(testingDir, 'access.log');
-  Environment().nginxErrorLogPath = join(testingDir, 'error.log');
-
-  if (!exists(dirname(Nginx.accesslogpath))) {
-    createDir(dirname(Nginx.accesslogpath), recursive: true);
-  }
-  touch(join(Nginx.accesslogpath), create: true);
-  touch(join(Nginx.errorlogpath), create: true);
 }
