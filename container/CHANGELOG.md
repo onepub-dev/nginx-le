@@ -1,3 +1,9 @@
+# 10.0.1
+- added notice that we support http3
+- each test now runs in its own test environment.
+- Fixed for http3 as browser were still connecting on http2.
+
+
 # 10.0.0
 - upgraded to nginx 1.25.2 with quic support
 - lint fixes.
