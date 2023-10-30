@@ -1,3 +1,7 @@
+# 10.0.3
+- updated build instructions.
+- replaced missing default_server options as h3 wasn't working without them.
+
 # 10.0.2
 Upgraded dart packages
 

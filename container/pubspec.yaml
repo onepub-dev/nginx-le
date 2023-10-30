@@ -1,5 +1,5 @@
 name: nginx_le_container
-version: 10.0.2
+version: 10.0.3
 documentation: https://nginxle.onepub.dev/
 description: Commands that live in the nginx-le docker container.
 repository: https://github.com/bsutton/nginx-le
@@ -15,7 +15,7 @@ dependencies:
   intl: ^0.18.0
   isolates: ^3.0.0
   meta: ^1.8.0
-  nginx_le_shared: ^10.0.2
+  nginx_le_shared: ^10.0.3
   path: ^1.8.2
   public_suffix: ^3.0.0
   scope: ^4.0.1
