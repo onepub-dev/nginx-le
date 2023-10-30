@@ -149,6 +149,13 @@ nginx-le config
 
 Most users of Nginx-LE will never need to run a build. The build tooling is primarily used by the Nginx-LE development team and if you need to customize the code that underpins the Nginx-LE docker image.
 
+NOTE: whilst the build command exists we use the 'pub_release' package to do releases.
+
+```
+cd cli
+pub_release multi
+```
+
 When do you need to use the build command?
 
 | Method | Build Required | Usage| 
