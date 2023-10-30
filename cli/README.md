@@ -1,5 +1,7 @@
 # Nginx-LE
 
+UPDATE: as of version 10.0.0 we know support HTTP3 as the default with a fall back to HTTP2.
+
 Nginx-LE provides a docker container and tools to create an Nginx web server that automatically acquires and renews HTTPS certificates.
 
 Nginx-LE uses the LetsEncrypt cli tool, Certbot, to acquire and renew certificates. 
