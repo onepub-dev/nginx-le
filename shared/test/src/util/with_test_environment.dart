@@ -20,18 +20,18 @@ Future<void> withTestEnvironment(void Function() action) async {
     Environment().nginxErrorLogPath = join(tempDir, 'nginx', 'error.log');
 
     Environment().nginxCertRootPathOverwrite = join(tempDir, 'nginx', 'certs');
-    await _createDir(CertbotPaths().nginxCertPath);
-    await _createDir(CertbotPaths().letsEncryptRootPath);
-    await _createDir(CertbotPaths().letsEncryptWorkPath);
-    await _createDir(CertbotPaths().letsEncryptLogPath);
-    await _createDir(CertbotPaths().letsEncryptConfigPath);
-    await _createDir(join(CertbotPaths().letsEncryptLivePath));
+    await lcreateDir(CertbotPaths().nginxCertPath);
+    await lcreateDir(CertbotPaths().letsEncryptRootPath);
+    await lcreateDir(CertbotPaths().letsEncryptWorkPath);
+    await lcreateDir(CertbotPaths().letsEncryptLogPath);
+    await lcreateDir(CertbotPaths().letsEncryptConfigPath);
+    await lcreateDir(join(CertbotPaths().letsEncryptLivePath));
 
     action();
   });
 }
 
-Future<String> _createDir(String dir) async {
+Future<String> lcreateDir(String dir) async {
   if (!exists(dir)) {
     await createDir(dir, recursive: true);
   }

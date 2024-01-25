@@ -27,13 +27,14 @@ class ConfigYaml {
     mode = settings[modeKey] as String?;
     startPaused = settings[Environment.startPausedKey] as bool?;
     fqdn = settings[fqdnKey] as String?;
+    aliases = settings[aliasesKey] as String?;
     tld = settings[tldKey] as String?;
     image = Images().findByImageId((settings[imageKey] as String?)!);
     certificateType = settings[certificateTypeKey] as String?;
     emailaddress = settings[emailAddressKey] as String?;
     containerid = settings[containerIDKey] as String?;
     authProvider = settings[authProviderKey] as String?;
-    contentProvider = settings[contentProviderKey] as String?;
+    contentProviders = settings[contentProviderKey] as String?;
     _hostIncludePath = settings[hostIncludePathKey] as String?;
 
     smtpServer = settings[Environment.smtpServerKey] as String?;
@@ -64,6 +65,7 @@ class ConfigYaml {
   static const modeKey = 'mode';
   static const hostnameKey = 'host';
   static const fqdnKey = 'fqdn';
+  static const aliasesKey = 'aliases';
   static const tldKey = 'tld';
   static const imageKey = 'image';
   static const containerIDKey = 'containerid';
@@ -85,6 +87,9 @@ class ConfigYaml {
   String? mode;
   bool? startPaused;
   String? fqdn;
+
+  /// List of alternate fqdns that the cert will validate.
+  String? aliases;
   String? tld;
   Image? image;
 
@@ -101,8 +106,9 @@ class ConfigYaml {
   /// If true we are using a wildcard dns (e.g. *.squarephone.biz)
   bool domainWildcard = false;
 
-  // The name of the selected [ContentProvider]
-  String? contentProvider;
+  /// The a list of the names of the selected [ContentProvider]
+  /// Items in the list are comma separated with no spaces.
+  String? contentProviders;
 
   /// host path which is mounted into ngix and contains .location
   /// and .upstream files from.
@@ -160,13 +166,14 @@ class ConfigYaml {
     settings[modeKey] = mode;
     settings[Environment.startPausedKey] = startPaused;
     settings[fqdnKey] = fqdn;
+    settings[aliasesKey] = aliases;
     settings[tldKey] = tld;
     settings[imageKey] = '${image?.imageid}';
     settings[certificateTypeKey] = certificateType;
     settings[emailAddressKey] = emailaddress;
     settings[containerIDKey] = containerid;
     settings[authProviderKey] = authProvider;
-    settings[contentProviderKey] = contentProvider;
+    settings[contentProviderKey] = contentProviders;
     settings[hostIncludePathKey] = hostIncludePath;
 
     settings[Environment.smtpServerKey] = smtpServer;

@@ -6,8 +6,10 @@
 
 import 'package:dcli/dcli.dart';
 import 'package:path/path.dart';
+import 'package:strings/strings.dart';
 
 import '../../../nginx_le_shared.dart';
+import '../../util/create_dir.dart';
 
 abstract class GenericAuthProvider extends AuthProvider {
   /// over load this method to do any checks before the acquire method is run.
@@ -32,15 +34,16 @@ abstract class GenericAuthProvider extends AuthProvider {
   ///  ```
   @override
   void acquire() {
-    final workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
-    final logDir = _createDir(CertbotPaths().letsEncryptLogPath);
-    final configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
+    final workDir = lcreateDir(CertbotPaths().letsEncryptWorkPath);
+    final logDir = lcreateDir(CertbotPaths().letsEncryptLogPath);
+    final configDir = lcreateDir(CertbotPaths().letsEncryptConfigPath);
 
     /// Pass environment vars down to the auth hook.
     Environment().logfile = join(logDir, 'letsencrypt.log');
 
     var hostname = Environment().hostname;
     final domain = Environment().domain;
+    final aliases = Environment().aliases;
     final wildcard = Environment().domainWildcard;
 
     hostname = wildcard ? '*' : hostname;
@@ -64,13 +67,18 @@ abstract class GenericAuthProvider extends AuthProvider {
 
     verbose(() => 'Starting cerbot with authProvider: $name');
 
+    final domainList = StringBuffer()..write(fqdn);
+    if (Strings.isNotEmpty(aliases)) {
+      domainList.write(', $aliases');
+    }
+
     NamedLock(name: 'certbot', timeout: const Duration(minutes: 20))
         .withLock(() {
       var certbot = '${Certbot.pathTo} certonly '
           ' --manual '
           ' --preferred-challenges=dns '
           ' -m $emailaddress  '
-          ' -d $fqdn '
+          ' -d $domainList '
           ' --agree-tos '
           ' --non-interactive '
           ' --manual-auth-hook="$authHookPath" '
@@ -103,12 +111,5 @@ abstract class GenericAuthProvider extends AuthProvider {
             details: lines.join('\n'));
       }
     });
-  }
-
-  String _createDir(String dir) {
-    if (!exists(dir)) {
-      createDir(dir, recursive: true);
-    }
-    return dir;
   }
 }

@@ -8,8 +8,10 @@ import 'dart:io';
 
 import 'package:dcli/dcli.dart';
 import 'package:path/path.dart';
+import 'package:strings/strings.dart';
 
 import '../../../../nginx_le_shared.dart';
+import '../../../util/create_dir.dart';
 import '../../../util/env_var.dart';
 
 class CloudFlareProvider extends GenericAuthProvider {
@@ -60,9 +62,9 @@ class CloudFlareProvider extends GenericAuthProvider {
 
   @override
   void acquire() {
-    final workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
-    final logDir = _createDir(CertbotPaths().letsEncryptLogPath);
-    final configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
+    final workDir = lcreateDir(CertbotPaths().letsEncryptWorkPath);
+    final logDir = lcreateDir(CertbotPaths().letsEncryptLogPath);
+    final configDir = lcreateDir(CertbotPaths().letsEncryptConfigPath);
 
     /// Pass environment vars down to the auth hook.
     Environment().logfile = join(logDir, 'letsencrypt.log');
@@ -71,6 +73,7 @@ class CloudFlareProvider extends GenericAuthProvider {
 
     var hostname = Environment().hostname;
     final domain = Environment().domain;
+    final aliases = Environment().aliases;
     final wildcard = Environment().domainWildcard;
     final production = Environment().production;
     final emailaddress = Environment().authProviderEmailAddress;
@@ -85,6 +88,11 @@ class CloudFlareProvider extends GenericAuthProvider {
     verbose(() => 'Cloudflare api token. '
         'Env:${Environment.authProviderTokenKey}: $envToken');
 
+    final domainList = StringBuffer()..write(fqdn);
+    if (Strings.isNotEmpty(aliases)) {
+      domainList.write(', $aliases');
+    }
+
     NamedLock(name: 'certbot', timeout: const Duration(minutes: 20))
         .withLock(() {
       var certbot = '${Certbot.pathTo} certonly '
@@ -93,7 +101,7 @@ class CloudFlareProvider extends GenericAuthProvider {
           '${Environment().certbotDNSWaitTime}'
           ' --dns-cloudflare-credentials ${CertbotPaths().cloudFlareSettings}'
           ' -m $emailaddress '
-          ' -d $fqdn '
+          ' -d $domainList '
           ' --agree-tos '
           ' --non-interactive '
           ' --work-dir=$workDir '
@@ -133,18 +141,11 @@ class CloudFlareProvider extends GenericAuthProvider {
     });
   }
 
-  String _createDir(String dir) {
-    if (!exists(dir)) {
-      createDir(dir, recursive: true);
-    }
-    return dir;
-  }
-
   /// The cloudflare api provider requires an ini style file with the
   /// settings.
   /// This method creates that file.
   void _createSettings() {
-    _createDir(dirname(CertbotPaths().cloudFlareSettings));
+    lcreateDir(dirname(CertbotPaths().cloudFlareSettings));
 
     // Only works with a cloudflare global api token.
     CertbotPaths().cloudFlareSettings.write('dns_cloudflare_api_key=$envToken');

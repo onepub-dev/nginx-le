@@ -44,15 +44,15 @@ void prepareCloudflareCertHooks(
   Environment().nginxCertRootPathOverwrite = '/tmp/nginx/certs';
   Environment().authProvider = CloudFlareProvider().name;
 
-  _createDir(CertbotPaths().nginxCertPath);
+  lcreateDir(CertbotPaths().nginxCertPath);
 
-  _createDir(CertbotPaths().letsEncryptWorkPath);
-  _createDir(CertbotPaths().letsEncryptLogPath);
-  _createDir(CertbotPaths().letsEncryptConfigPath);
-  _createDir(join(CertbotPaths().letsEncryptLivePath));
+  lcreateDir(CertbotPaths().letsEncryptWorkPath);
+  lcreateDir(CertbotPaths().letsEncryptLogPath);
+  lcreateDir(CertbotPaths().letsEncryptConfigPath);
+  lcreateDir(join(CertbotPaths().letsEncryptLivePath));
 }
 
-String _createDir(String dir) {
+String lcreateDir(String dir) {
   if (!exists(dir)) {
     createDir(dir, recursive: true);
   }

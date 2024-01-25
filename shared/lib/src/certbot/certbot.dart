@@ -7,8 +7,8 @@
 import 'dart:math';
 
 import 'package:cron/cron.dart';
-import 'package:dcli/dcli.dart' hide delete;
 import 'package:dcli/dcli.dart' as dcli;
+import 'package:dcli/dcli.dart' hide delete;
 import 'package:path/path.dart';
 
 import '../../nginx_le_shared.dart';
@@ -290,9 +290,9 @@ class Certbot {
       required bool? production,
       required bool wildcard,
       required String? emailaddress}) {
-    final workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
-    final logDir = _createDir(CertbotPaths().letsEncryptLogPath);
-    final configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
+    final workDir = lcreateDir(CertbotPaths().letsEncryptWorkPath);
+    final logDir = lcreateDir(CertbotPaths().letsEncryptLogPath);
+    final configDir = lcreateDir(CertbotPaths().letsEncryptConfigPath);
 
     final certFilePath = join(
         CertbotPaths()
@@ -345,9 +345,9 @@ class Certbot {
     required String domain,
     String? hostname,
   }) {
-    final workDir = _createDir(CertbotPaths().letsEncryptWorkPath);
-    final logDir = _createDir(CertbotPaths().letsEncryptLogPath);
-    final configDir = _createDir(CertbotPaths().letsEncryptConfigPath);
+    final workDir = lcreateDir(CertbotPaths().letsEncryptWorkPath);
+    final logDir = lcreateDir(CertbotPaths().letsEncryptLogPath);
+    final configDir = lcreateDir(CertbotPaths().letsEncryptConfigPath);
 
     NamedLock(name: 'certbot', timeout: const Duration(minutes: 20))
         .withLock(() {
@@ -481,7 +481,7 @@ class Certbot {
       ..append('*' * 80);
   }
 
-  String _createDir(String dir) {
+  String lcreateDir(String dir) {
     if (!exists(dir)) {
       createDir(dir, recursive: true);
     }

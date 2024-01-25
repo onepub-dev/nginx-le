@@ -20,5 +20,4 @@ export 'src/tail/tail_cli.dart';
 export 'src/util/email.dart';
 export 'src/util/environment.dart';
 export 'src/util/exceptions.dart';
-export 'src/util/strings.dart';
 export 'src/version/version.g.dart';

@@ -11,6 +11,7 @@ import 'package:args/command_runner.dart';
 import 'package:dcli/dcli.dart';
 import 'package:docker2/docker2.dart';
 import 'package:nginx_le_shared/nginx_le_shared.dart';
+import 'package:strings/strings.dart';
 
 import '../../content_providers/content_provider.dart';
 import '../../content_providers/content_providers.dart';
@@ -41,6 +42,7 @@ class ConfigCommand extends Command<void> {
     final config = ConfigYaml();
 
     selectFQDN(config);
+    selectAliases(config);
     selectTLD(config);
     selectMode(config);
     selectCertType(config);
@@ -273,6 +275,34 @@ class ConfigCommand extends Command<void> {
     config.fqdn = fqdn;
   }
 
+  /// Allow the user to enter a list of alternate fqdns which will
+  /// added to the cert and allow connections on.
+  void selectAliases(ConfigYaml config) {
+    print(
+        'Add one or more FQDN Aliases. Enter on a blank line to terminate entry');
+    print(green('An Alias (e.g. www.microsoft.com)'));
+
+    var aliases = '';
+
+    for (final alias in config.aliases?.split(',') ?? <String>[]) {
+      final fqdn = ask('Alias:',
+          defaultValue: alias,
+          validator: Ask.any([const AskFQDNOrLocalhost(), const _AskBlank()]));
+      if (Strings.isNotEmpty(fqdn)) {
+        if (Strings.isEmpty(aliases)) {
+          config.aliases = aliases;
+        }
+        return;
+      }
+      if (Strings.isEmpty(config.aliases)) {
+        aliases = fqdn;
+      } else {
+        aliases += ',$fqdn';
+      }
+    }
+    config.aliases = aliases;
+  }
+
   Image selectImage(ConfigYaml config) {
     print('');
     print(green('Select the image to utilise.'));
@@ -360,17 +390,23 @@ class ConfigCommand extends Command<void> {
 
   /// Ask users where the website content is located.
   void selectContentProvider(ConfigYaml config) {
-    final contentProviders = ContentProviders().providers;
+    final availableProviders = ContentProviders().providers;
 
-    final defaultProvider =
-        ContentProviders().getByName(config.contentProvider);
     print('');
-    print(green('Select the Content Provider'));
-    final provider = menu<ContentProvider>('Content Provider:',
-        options: contentProviders,
-        defaultOption: defaultProvider,
-        format: (provider) =>
-            '${provider.name.padRight(12)} - ${provider.summary}');
+    print(green('Select one or more Content Provider'));
+
+    final contentProviders = config.contentProviders?.split(',') ?? <String>[];
+    for (var contentProvider in contentProviders) {
+      final defaultProvider =
+          ContentProviders().getByName(contentProvider);
+
+
+      final provider = menu<ContentProvider>('Content Provider:',
+          options: [...availableProviders, ],
+          defaultOption: defaultProvider,
+          format: (provider) =>
+              '${provider.name.padRight(12)} - ${provider.summary}');
+    }
 
     config.contentProvider = provider.name;
 
@@ -417,4 +453,16 @@ class ConfigCommand extends Command<void> {
 void showUsage(ArgParser parser) {
   print(parser.usage);
   exit(-1);
+}
+
+/// Accepts a blank line and only a blank lie as input.
+class _AskBlank extends AskValidator {
+  const _AskBlank();
+  @override
+  String validate(String line) {
+    if (Strings.isNotBlank(line)) {
+      throw AskValidatorException(red('Entry must by blank'));
+    }
+    return line;
+  }
 }

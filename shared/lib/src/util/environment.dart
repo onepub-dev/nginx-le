@@ -51,6 +51,12 @@ class Environment {
 
   set domain(String? domain) => env[domainKey] = domain;
 
+  /// alternate fqdn's by which this server can be reached.
+  /// The list must be comma delimited with no spaces.
+  static const aliasesKey = 'ALIASES';
+  String? get aliases => env[hostnameKey];
+  set aliases(String? _aliases) => env[aliasesKey] = _aliases;
+
   static const tldKey = 'TLD';
   String? get tld => env[tldKey];
   set tld(String? tld) => env[tldKey] = tld;
